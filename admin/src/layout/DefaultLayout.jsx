@@ -1,10 +1,10 @@
 import React from 'react'
-import { AppContent, AppSidebar, AppFooter, AppHeader } from '../components'
+import { AppContent, AppFooter, AppHeader } from '../components'
 
 const DefaultLayout = () => {
   return (
     <div>
-      <AppSidebar />
+      {/* Sidebar removed - using horizontal navigation instead */}
       <div className="wrapper d-flex flex-column min-vh-100">
         <AppHeader />
         <div className="body flex-grow-1">

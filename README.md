@@ -1,4 +1,4 @@
-# Hotel Management Web Application
+# Teja Hotel - Hotel Management Web Application
 
 A comprehensive web application for managing hotel restaurant operations, room bookings, billing, and financial management.
 

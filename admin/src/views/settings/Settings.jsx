@@ -21,7 +21,7 @@ const Settings = () => {
 
   const [settingsData, setSettingsData] = useState({
     businessInfo: {
-      company_name: 'Codexaa Base Project',
+      company_name: 'Teja Hotel',
       business_email: '',
       business_phone: '',
       business_website: '',
@@ -1044,7 +1044,7 @@ const Settings = () => {
           <Form.Group className="mb-3">
             <Form.Label className="fw-semibold">From Name</Form.Label>
             <FormControl
-              placeholder="e.g., Codexaa Base Project"
+              placeholder="e.g., Teja Hotel"
               value={settingsData.emailSettings.from_name}
               onChange={(e) => handleChange('emailSettings', 'from_name', e.target.value)}
               onBlur={(e) => handleBlur('emailSettings', 'from_name', e.target.value)}

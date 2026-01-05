@@ -19,18 +19,18 @@ const getCopyrightYearRange = () => {
 // Generate footer text with dynamic year
 const getFooterText = () => {
   const yearRange = getCopyrightYearRange()
-  return `© ${yearRange} Codexaa Base Project. All rights reserved.`
+  return `© ${yearRange} Teja Hotel. All rights reserved.`
 }
 
 export const APP_CONFIG = {
   // Application Name
-  APP_NAME: 'Codexaa Base Project',
+  APP_NAME: 'Teja Hotel',
   
   // Application Subtitle/Tagline
-  APP_SUBTITLE: 'Base Project Template for Codexaa Applications',
+  APP_SUBTITLE: 'Hotel Management System',
   
   // Application Tagline (for login page overlay)
-  APP_TAGLINE: 'Build Excellence, Manage Innovation',
+  APP_TAGLINE: 'Your Perfect Stay, Our Commitment',
   
   // Footer Text (function to get dynamic year)
   get FOOTER_TEXT() {
@@ -44,7 +44,7 @@ export const APP_CONFIG = {
   COPYRIGHT_YEAR_RANGE: getCopyrightYearRange(),
   
   // Application Logo Alt Text
-  LOGO_ALT_TEXT: 'Codexaa Base Project Logo',
+  LOGO_ALT_TEXT: 'Teja Hotel Logo',
   
   // Brand Information
   BRAND_NAME: 'Codexaa Software Solution',

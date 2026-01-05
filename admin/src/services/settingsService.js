@@ -443,7 +443,7 @@ class SettingsService {
     // Define default values - these will be used if API response is empty or missing fields
     const formData = {
       businessInfo: {
-        company_name: 'Codexaa Base Project',
+        company_name: 'Teja Hotel',
         business_email: '',
         business_phone: '',
         gstNumber: '',
