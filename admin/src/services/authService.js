@@ -5,15 +5,15 @@ import { handleApiError } from '../utils/errorHandler'
 const PERMISSION_ALIAS_MAP = {
   // User Management
   view_user: ['user:read'],
-  create_user: ['user:write', 'user:manage'],
-  edit_user: ['user:write', 'user:manage'],
-  delete_user: ['user:delete', 'user:manage'],
+  create_user: ['user:write'],
+  edit_user: ['user:write'],
+  delete_user: ['user:delete'],
   
   // Role Management
   view_role: ['role:read'],
-  create_role: ['role:write', 'role:manage'],
-  edit_role: ['role:write', 'role:manage'],
-  delete_role: ['role:delete', 'role:manage'],
+  create_role: ['role:write'],
+  edit_role: ['role:write'],
+  delete_role: ['role:delete'],
   view_permission: ['role:read'],
   
   // Settings Management
@@ -22,15 +22,26 @@ const PERMISSION_ALIAS_MAP = {
   
   // Branch Management
   view_branch: ['branch:read'],
-  create_branch: ['branch:write', 'branch:manage'],
-  edit_branch: ['branch:write', 'branch:manage'],
-  delete_branch: ['branch:delete', 'branch:manage'],
+  create_branch: ['branch:write'],
+  edit_branch: ['branch:write'],
+  delete_branch: ['branch:delete'],
   
   // Dashboard
   view_dashboard: ['dashboard:read'],
   
   // Report Management
   view_report: ['report:read'],
+  
+  // Special Permissions (no aliases needed, use canonical names directly)
+  special_export_data: ['special_export_data'],
+  special_import_data: ['special_import_data'],
+  special_bulk_delete: ['special_bulk_delete'],
+  special_bulk_update: ['special_bulk_update'],
+  special_view_audit_logs: ['special_view_audit_logs'],
+  special_manage_backups: ['special_manage_backups'],
+  special_system_maintenance: ['special_system_maintenance'],
+  special_view_all_branches: ['special_view_all_branches'],
+  special_override_restrictions: ['special_override_restrictions'],
 }
 
 const startCase = (value = '') =>

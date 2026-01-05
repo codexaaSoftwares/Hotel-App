@@ -21,7 +21,7 @@ const Settings = () => {
 
   const [settingsData, setSettingsData] = useState({
     businessInfo: {
-      company_name: 'Photo Studio Management',
+      company_name: 'Codexaa Base Project',
       business_email: '',
       business_phone: '',
       business_website: '',
@@ -1028,7 +1028,7 @@ const Settings = () => {
             <Form.Label className="fw-semibold">From Email</Form.Label>
             <FormControl
               type="email"
-              placeholder="e.g., noreply@photostudio.com"
+              placeholder="e.g., noreply@codexaa.com"
               value={settingsData.emailSettings.from_address}
               onChange={(e) => handleChange('emailSettings', 'from_address', e.target.value)}
               onBlur={(e) => handleBlur('emailSettings', 'from_address', e.target.value)}
@@ -1044,7 +1044,7 @@ const Settings = () => {
           <Form.Group className="mb-3">
             <Form.Label className="fw-semibold">From Name</Form.Label>
             <FormControl
-              placeholder="e.g., Photo Studio Management"
+              placeholder="e.g., Codexaa Base Project"
               value={settingsData.emailSettings.from_name}
               onChange={(e) => handleChange('emailSettings', 'from_name', e.target.value)}
               onBlur={(e) => handleBlur('emailSettings', 'from_name', e.target.value)}

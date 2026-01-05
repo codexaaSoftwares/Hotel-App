@@ -20,18 +20,13 @@ export const PERMISSIONS = {
   BRANCH_DELETE: 'branch:delete',
   BRANCH_MANAGE: 'branch:manage',
 
-  // Report Management
-  REPORT_READ: 'report:read',
-  REPORT_EXPORT: 'report:read', // Export uses same permission as view
-
-
   // Dashboard
   DASHBOARD_READ: 'dashboard:read',
   DASHBOARD_WRITE: 'dashboard:write',
 
-  // Reports
+  // Report Management
   REPORT_READ: 'report:read',
-  REPORT_EXPORT: 'report:export',
+  REPORT_EXPORT: 'report:read', // Export uses same permission as view
 
   // Settings
   SETTINGS_READ: 'settings:read',
@@ -44,6 +39,17 @@ export const PERMISSIONS = {
   // Admin
   ADMIN_ACCESS: 'admin:access',
   SYSTEM_CONFIG: 'system:config',
+
+  // Special Permissions
+  EXPORT_DATA: 'special_export_data',
+  IMPORT_DATA: 'special_import_data',
+  BULK_DELETE: 'special_bulk_delete',
+  BULK_UPDATE: 'special_bulk_update',
+  VIEW_AUDIT_LOGS: 'special_view_audit_logs',
+  MANAGE_BACKUPS: 'special_manage_backups',
+  SYSTEM_MAINTENANCE: 'special_system_maintenance',
+  VIEW_ALL_BRANCHES: 'special_view_all_branches',
+  OVERRIDE_RESTRICTIONS: 'special_override_restrictions',
 }
 
 // Define roles and their permissions
@@ -140,6 +146,17 @@ export const PERMISSION_GROUPS = {
   ADMIN: [
     PERMISSIONS.ADMIN_ACCESS,
     PERMISSIONS.SYSTEM_CONFIG,
+  ],
+  SPECIAL_PERMISSIONS: [
+    PERMISSIONS.EXPORT_DATA,
+    PERMISSIONS.IMPORT_DATA,
+    PERMISSIONS.BULK_DELETE,
+    PERMISSIONS.BULK_UPDATE,
+    PERMISSIONS.VIEW_AUDIT_LOGS,
+    PERMISSIONS.MANAGE_BACKUPS,
+    PERMISSIONS.SYSTEM_MAINTENANCE,
+    PERMISSIONS.VIEW_ALL_BRANCHES,
+    PERMISSIONS.OVERRIDE_RESTRICTIONS,
   ],
 }
 

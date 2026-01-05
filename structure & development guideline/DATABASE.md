@@ -232,6 +232,29 @@ System permissions for role-based access control.
 - Uses boolean flags for soft delete instead of `deleted_at` timestamp
 - Module/submodule structure allows hierarchical permission organization
 
+**Permission Types:**
+- `read` - View/read operations
+- `write` - Create/edit operations
+- `delete` - Delete operations
+- `special` - Special permissions (export, import, bulk operations, etc.)
+
+**Special Permissions:**
+All special permissions use the `special_` prefix and are grouped under:
+- Module: `special`
+- Submodule: `special`
+- Type: `special`
+
+Available special permissions:
+- `special_export_data` - Export data to Excel/PDF
+- `special_import_data` - Import data from Excel/CSV
+- `special_bulk_delete` - Bulk delete operations
+- `special_bulk_update` - Bulk update operations
+- `special_view_audit_logs` - View audit logs and activity history
+- `special_manage_backups` - Manage database backups
+- `special_system_maintenance` - Access system maintenance mode
+- `special_view_all_branches` - View all branches regardless of assignment
+- `special_override_restrictions` - Override business rules and restrictions
+
 ---
 
 ### 12. `user_role`

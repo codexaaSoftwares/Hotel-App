@@ -100,8 +100,11 @@ export const usePermissions = () => {
   const { user } = useAuth()
 
   const hasPermission = useCallback((permission) => {
-    if (!user || !user.permissions) return false
-    return user.permissions.includes(permission)
+    if (!user) return false
+    // Check both aliases (e.g., 'branch:write') and canonical names (e.g., 'create_branch', 'edit_branch')
+    const hasAlias = user.permissions && user.permissions.includes(permission)
+    const hasCanonical = user.permissionIdentifiers && user.permissionIdentifiers.includes(permission)
+    return hasAlias || hasCanonical
   }, [user])
 
   const hasAnyPermission = useCallback((permissions) => {

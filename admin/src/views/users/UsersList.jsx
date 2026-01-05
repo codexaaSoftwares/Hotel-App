@@ -68,18 +68,11 @@ const UsersList = () => {
     fetchUsers,
   ])
 
-  const canCreateUser = hasPermission
-    ? hasPermission(PERMISSIONS.USER_WRITE) || hasPermission(PERMISSIONS.USER_MANAGE)
-    : true
-  const canUpdateUser = hasPermission
-    ? hasPermission(PERMISSIONS.USER_WRITE) || hasPermission(PERMISSIONS.USER_MANAGE)
-    : true
-  const canDeleteUser = hasPermission
-    ? hasPermission(PERMISSIONS.USER_DELETE) || hasPermission(PERMISSIONS.USER_MANAGE)
-    : true
-  const canViewUser = hasPermission
-    ? hasPermission(PERMISSIONS.USER_READ) || hasPermission(PERMISSIONS.USER_MANAGE)
-    : true
+  // Check canonical permissions first (more specific), then fall back to aliases
+  const canCreateUser = hasPermission('create_user')
+  const canUpdateUser = hasPermission('edit_user')
+  const canDeleteUser = hasPermission('delete_user')
+  const canViewUser = hasPermission('view_user') || hasPermission(PERMISSIONS.USER_READ)
 
   useEffect(() => {
     if (!canViewUser) {
@@ -255,14 +248,6 @@ const UsersList = () => {
     const activeRoles = roles.filter((role) => !role.isDeleted && role.isActive !== false)
 
     if (!hasPermission) {
-      return activeRoles.map((role) => ({
-        value: role.id,
-        label: capitalize(role.name),
-        name: role.name,
-      }))
-    }
-
-    if (hasPermission(PERMISSIONS.ROLE_MANAGE)) {
       return activeRoles.map((role) => ({
         value: role.id,
         label: capitalize(role.name),

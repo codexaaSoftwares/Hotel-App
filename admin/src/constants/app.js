@@ -19,18 +19,18 @@ const getCopyrightYearRange = () => {
 // Generate footer text with dynamic year
 const getFooterText = () => {
   const yearRange = getCopyrightYearRange()
-  return `© ${yearRange} Photo Studio Management App. All rights reserved.`
+  return `© ${yearRange} Codexaa Base Project. All rights reserved.`
 }
 
 export const APP_CONFIG = {
   // Application Name
-  APP_NAME: 'Photo Studio Management',
+  APP_NAME: 'Codexaa Base Project',
   
   // Application Subtitle/Tagline
-  APP_SUBTITLE: 'Professional Photo Studio Management System',
+  APP_SUBTITLE: 'Base Project Template for Codexaa Applications',
   
   // Application Tagline (for login page overlay)
-  APP_TAGLINE: 'Capture Moments, Manage Excellence',
+  APP_TAGLINE: 'Build Excellence, Manage Innovation',
   
   // Footer Text (function to get dynamic year)
   get FOOTER_TEXT() {
@@ -44,7 +44,7 @@ export const APP_CONFIG = {
   COPYRIGHT_YEAR_RANGE: getCopyrightYearRange(),
   
   // Application Logo Alt Text
-  LOGO_ALT_TEXT: 'Photo Studio Management App Logo',
+  LOGO_ALT_TEXT: 'Codexaa Base Project Logo',
   
   // Brand Information
   BRAND_NAME: 'Codexaa Software Solution',

@@ -678,6 +678,40 @@ const userService = {
 - **Backend permission mapping** via `authService`
 - **All pages protected** with proper permission checks (Reports, Financial Transactions, Financial Categories)
 
+**Permission Types:**
+- **Standard Permissions**: Follow pattern `{action}_{resource}` (e.g., `view_user`, `create_branch`, `edit_role`)
+  - Checked using canonical permission names directly (e.g., `hasPermission('create_branch')`)
+  - No alias fallback for create/edit/delete to ensure granular control
+- **Special Permissions**: All start with `special_` prefix
+  - Module: `special`, Submodule: `special`, Type: `special`
+  - Examples: `special_export_data`, `special_bulk_delete`, `special_view_audit_logs`
+  - Available special permissions:
+    1. `special_export_data` - Export data to Excel/PDF
+    2. `special_import_data` - Import data from Excel/CSV
+    3. `special_bulk_delete` - Bulk delete operations
+    4. `special_bulk_update` - Bulk update operations
+    5. `special_view_audit_logs` - View audit logs and activity history
+    6. `special_manage_backups` - Manage database backups
+    7. `special_system_maintenance` - Access system maintenance mode
+    8. `special_view_all_branches` - View all branches regardless of assignment
+    9. `special_override_restrictions` - Override business rules and restrictions
+
+**Permission Checking:**
+```javascript
+import { usePermissions } from '../../hooks'
+import { PERMISSIONS } from '../../constants/permissions'
+
+const MyComponent = () => {
+  const { hasPermission } = usePermissions()
+  
+  // Check standard permission (canonical name)
+  const canCreate = hasPermission('create_branch')
+  
+  // Check special permission
+  const canExport = hasPermission(PERMISSIONS.EXPORT_DATA) // or 'special_export_data'
+}
+```
+
 ### Code Quality Rules
 
 #### 1. **Code Style**
@@ -774,3 +808,5 @@ npm run lint
 - ✅ Payment Management module retained
 - ✅ Report Management structure retained (Branch, Ledger, Sales, Staff reports)
 - ✅ All core infrastructure preserved (Auth, Users, Roles, Permissions, Settings, Financial)
+- ✅ Special Permissions system added with 9 special permissions (export, import, bulk operations, audit logs, backups, maintenance, etc.)
+- ✅ Permission system updated: Create/Edit/Delete permissions now checked independently (no shared alias fallback)

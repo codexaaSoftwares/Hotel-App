@@ -280,6 +280,28 @@ backend/
 - **Permissions**: `view_permission`
 - **Status**: ✅ Fully implemented
 
+**Permission Structure:**
+- **Standard Permissions**: Follow pattern `{action}_{resource}` (e.g., `view_user`, `create_branch`, `edit_role`)
+  - `read` type: View operations
+  - `write` type: Create/edit operations
+  - `delete` type: Delete operations
+- **Special Permissions**: All start with `special_` prefix
+  - Module: `special`
+  - Submodule: `special`
+  - Type: `special`
+  - Examples: `special_export_data`, `special_bulk_delete`, `special_view_audit_logs`
+
+**Available Special Permissions:**
+1. `special_export_data` - Export data to Excel/PDF
+2. `special_import_data` - Import data from Excel/CSV
+3. `special_bulk_delete` - Bulk delete operations
+4. `special_bulk_update` - Bulk update operations
+5. `special_view_audit_logs` - View audit logs and activity history
+6. `special_manage_backups` - Manage database backups
+7. `special_system_maintenance` - Access system maintenance mode
+8. `special_view_all_branches` - View all branches regardless of assignment
+9. `special_override_restrictions` - Override business rules and restrictions
+
 ### 5. **Branch Management Module**
 - **Location**: `app/Http/Controllers/API/BranchController.php`
 - **Routes**: `/api/branches/*`

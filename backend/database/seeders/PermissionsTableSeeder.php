@@ -45,6 +45,17 @@ class PermissionsTableSeeder extends Seeder
 
             // Report Management
             ['name' => 'view_report', 'description' => 'View reports', 'module' => 'reports', 'submodule' => 'management', 'type' => 'read'],
+
+            // Special Permissions
+            ['name' => 'special_export_data', 'description' => 'Export data to Excel/PDF', 'module' => 'special', 'submodule' => 'special', 'type' => 'special'],
+            ['name' => 'special_import_data', 'description' => 'Import data from Excel/CSV', 'module' => 'special', 'submodule' => 'special', 'type' => 'special'],
+            ['name' => 'special_bulk_delete', 'description' => 'Bulk delete operations', 'module' => 'special', 'submodule' => 'special', 'type' => 'special'],
+            ['name' => 'special_bulk_update', 'description' => 'Bulk update operations', 'module' => 'special', 'submodule' => 'special', 'type' => 'special'],
+            ['name' => 'special_view_audit_logs', 'description' => 'View audit logs and activity history', 'module' => 'special', 'submodule' => 'special', 'type' => 'special'],
+            ['name' => 'special_manage_backups', 'description' => 'Manage database backups', 'module' => 'special', 'submodule' => 'special', 'type' => 'special'],
+            ['name' => 'special_system_maintenance', 'description' => 'Access system maintenance mode', 'module' => 'special', 'submodule' => 'special', 'type' => 'special'],
+            ['name' => 'special_view_all_branches', 'description' => 'View all branches regardless of assignment', 'module' => 'special', 'submodule' => 'special', 'type' => 'special'],
+            ['name' => 'special_override_restrictions', 'description' => 'Override business rules and restrictions', 'module' => 'special', 'submodule' => 'special', 'type' => 'special'],
         ];
 
         foreach ($permissions as $permission) {

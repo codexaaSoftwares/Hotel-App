@@ -153,7 +153,7 @@ const AppSidebar = () => {
         <CSidebarBrand to="/" className="sidebar-brand-custom">
           <img
             src={businessLogo || logoImg}
-            alt="Photo Studio Management App"
+            alt="Codexaa Base Project"
             className="sidebar-brand-logo-full"
             onError={(e) => {
               // Fallback to default logo if business logo fails to load
