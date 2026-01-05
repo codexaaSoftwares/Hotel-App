@@ -20,6 +20,8 @@
 
 **Hotel Management App Admin** is a modern React-based admin dashboard for managing hotel operations. It provides comprehensive features for managing branches, financial transactions, reports, users, roles, and system settings.
 
+**Note**: This is a multi-tenant/reseller application where client-specific content (business name, logo, branding) is dynamically loaded from the database settings. The current implementation supports "Teja Hotel" as a client, but the system is designed to support multiple clients with their own branding.
+
 ### Key Features
 - 🎨 Modern UI with React Bootstrap and CoreUI
 - 🌓 Dark/Light theme support
@@ -91,9 +93,10 @@ admin/
 │   │   │   ├── AppBreadcrumb.jsx     # Breadcrumb navigation
 │   │   │   ├── AppContent.jsx        # Main content wrapper + routes
 │   │   │   ├── AppFooter.jsx         # Application footer
-│   │   │   ├── AppHeader.jsx         # Application header
-│   │   │   ├── AppSidebar.jsx        # Sidebar (CoreUI)
-│   │   │   ├── AppSidebarNav.jsx     # Sidebar navigation
+│   │   │   ├── AppHeader.jsx         # Application header (horizontal navigation)
+│   │   │   ├── AppHorizontalNav.jsx  # Horizontal navigation menu
+│   │   │   ├── AppSidebar.jsx        # Sidebar (CoreUI) - Legacy, not used
+│   │   │   ├── AppSidebarNav.jsx     # Sidebar navigation - Legacy, not used
 │   │   │   ├── PermissionRoute.jsx   # Route permission wrapper
 │   │   │   └── 📁 header/            # Header sub-components
 │   │   │       ├── AppHeaderDropdown.jsx
@@ -387,12 +390,15 @@ admin/
 - **Location**: `src/constants/app.js`
 - **Features**:
   - Centralized static content management
-  - Application name, subtitle, tagline
+  - Application name: "Hotel Management App" (default, can be overridden by client settings)
+  - Subtitle: "Hotel Management System"
+  - Tagline: "Your Perfect Stay, Our Commitment"
   - Dynamic copyright year range (2024-{currentYear})
   - Footer text with brand information
   - Brand name and URL (Codexaa Software Solution)
-  - Logo alt text
+  - Logo alt text: Dynamic from client settings
 - **Usage**: Import constants in components for consistent branding
+- **Note**: Client-specific branding (business name, logo) is loaded dynamically from database settings
 - **Status**: ✅ Fully implemented
 
 ---
@@ -429,11 +435,12 @@ admin/
 
 #### 1. **UI Framework Rules**
 - **Primary Framework**: React Bootstrap (for main content)
-- **Sidebar Framework**: CoreUI React (for sidebar and navigation only)
-- **Icon Library**: FontAwesome (free solid icons) + CoreUI Icons (sidebar only)
+- **Navigation Framework**: React Bootstrap Navbar (horizontal navigation)
+- **Icon Library**: FontAwesome (free solid icons) for all UI elements
 - **Styling**: Bootstrap classes + custom CSS + CoreUI overrides
-- **Theme**: Custom white sidebar with purple/violet accents (#8b5cf6)
-- **Responsive Design**: Mobile-first approach
+- **Theme**: Elegant Teal color scheme (#0d9488) - Professional hospitality theme
+- **Navigation**: Horizontal top navigation bar (compact design, supports multi-level dropdowns)
+- **Responsive Design**: Mobile-first approach with hamburger menu for mobile devices
 
 #### 2. **Component Structure Pattern**
 ```jsx
@@ -550,15 +557,23 @@ import { Table } from '../components'
 - **CoreUI Integration**: Uses `useColorModes` hook
 - **CSS Architecture**: Theme-responsive selectors using `html[data-coreui-theme="dark"]`
 
-#### 2. **Theme Color Palette**
+#### 2. **Theme Color Palette - Hotel Industry Theme**
 ```css
-/* Light Theme Colors */
+/* Light Theme Colors - Elegant Teal */
 --light-bg-primary: #ffffff;
---light-bg-secondary: #f8fafc;
+--light-bg-secondary: #f0fdfa;
 --light-text-primary: #1f2937;
 --light-text-secondary: #6b7280;
 --light-border: #e5e7eb;
---light-accent: #8b5cf6; /* Purple/Violet */
+--light-accent: #0d9488; /* Elegant Teal - Professional hospitality */
+
+/* Primary Color Variables */
+--cui-primary: #0d9488; /* Teal-600 */
+--cui-primary-rgb: 13, 148, 136;
+--cui-success: #059669; /* Emerald-600 */
+--cui-info: #0284c7; /* Sky-600 */
+--cui-warning: #d97706; /* Amber-600 */
+--cui-danger: #dc2626; /* Red-600 */
 
 /* Dark Theme Colors */
 --dark-bg-primary: #1f2937;
@@ -566,7 +581,7 @@ import { Table } from '../components'
 --dark-text-primary: #f9fafb;
 --dark-text-secondary: #d1d5db;
 --dark-border: #4b5563;
---dark-accent: #a78bfa; /* Brighter violet */
+--dark-accent: #14b8a6; /* Brighter teal for dark mode */
 ```
 
 #### 3. **Theme-Aware CSS Pattern**
@@ -659,9 +674,22 @@ const userService = {
 - **Route config** in `routesConfig.jsx` for breadcrumbs
 
 #### 2. **Navigation Structure**
-- **Sidebar navigation** in `_nav.jsx`
+- **Horizontal navigation** in `_nav.jsx` (hierarchical menu structure)
+- **Multi-level dropdowns** support (parent-child relationships)
 - **Permission-based visibility** using `PERMISSIONS` constants
 - **Breadcrumb navigation** using `AppBreadcrumb`
+- **Compact design** with reduced padding and font sizes
+- **Active state highlighting** with teal background for current route
+- **Navigation Structure Example**:
+  ```
+  1. Dashboard
+  2. Administrator
+     -- 2.1 User Management
+        ---- 2.1.1 Users
+        ---- 2.1.2 Role and Permission
+     -- 2.2 Branch
+     -- 2.3 Settings
+  ```
 
 ### Authentication & Authorization
 
@@ -799,9 +827,35 @@ npm run lint
 ---
 
 **Last Updated**: January 2025
-**Version**: 1.0.0
+**Version**: 2.0.0 (Hotel Management Edition)
 
 ## 🔄 Recent Updates
+
+### Version 2.0.0 - Hotel Management Theme & Navigation Redesign
+- ✅ **Multi-Tenant Architecture**: System redesigned as reseller/multi-tenant application
+- ✅ **Dynamic Branding**: Client-specific content (business name, logo) loaded dynamically from database settings
+- ✅ **Theme Redesign**: Updated color palette from Purple/Violet to Elegant Teal (#0d9488) - Professional hospitality theme
+- ✅ **Navigation Redesign**: Replaced sidebar navigation with horizontal top navigation bar
+- ✅ **Compact Navigation**: Reduced navbar height (44px), padding, and font sizes for better space efficiency
+- ✅ **Hierarchical Menu**: Implemented multi-level dropdown support (parent-child relationships)
+- ✅ **Header Enhancement**: New header design with:
+  - Logo + Business Name (left) - Dynamic from settings
+  - Welcome Message (center)
+  - Watch/Time Display (right)
+  - Fullscreen button
+  - User avatar dropdown
+- ✅ **Navigation Structure**: Updated to hierarchical menu:
+  - Dashboard (Level 1)
+  - Administrator (Level 1 - Parent)
+    - User Management (Level 2 - Parent)
+      - Users (Level 3)
+      - Role and Permission (Level 3)
+    - Branch (Level 2)
+    - Settings (Level 2)
+- ✅ **Full-width Layout**: Top header bar and navigation container now span 100% width
+- ✅ **Settings Integration**: Business name and logo dynamically loaded from settings (supports multiple clients)
+
+### Previous Updates
 - ✅ System cleanup: Removed Order Management, Customer Management, Package Management, Transaction Management, and Company Health Report modules
 - ✅ Dashboard simplified to empty placeholder (ready for future implementation)
 - ✅ Financial Management module retained (Income & Expense transactions)
