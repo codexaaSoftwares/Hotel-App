@@ -4,9 +4,9 @@
 
 # **PROJECT SCOPE – PHASE 1 (MVP)**
 
-**TEJA HOTEL – RESTAURANT MANAGEMENT (WEB-APP)**
+**HOTEL MANAGEMENT APP – RESTAURANT MANAGEMENT (WEB-APP)**
 
-Below is a clean, professional SCOPE document (Phase-1 / MVP) for Teja Hotel – Restaurant Management Web Application.
+Below is a clean, professional SCOPE document (Phase-1 / MVP) for Hotel Management App – Restaurant Management Web Application.
 
 # **SCOPE FEATURES (WHAT WE WILL BUILD)**
 
@@ -224,9 +224,9 @@ Track **non-food, non-salary** daily expenses
 
 # **PROJECT SCOPE – PHASE 2 (MVP)**
 
-**TEJA HOTEL – ROOM MANAGEMENT (WEB-APP)**
+**HOTEL MANAGEMENT APP – ROOM MANAGEMENT (WEB-APP)**
 
-Below is a clean, professional SCOPE document (Phase-2 / MVP) for Teja Hotel – Room Management Web Application.
+Below is a clean, professional SCOPE document (Phase-2 / MVP) for Hotel Management App – Room Management Web Application.
 
 # **SCOPE FEATURES (WHAT WE WILL BUILD)**
 

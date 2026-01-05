@@ -1,4 +1,4 @@
-# API Integration Documentation - Photo Studio Management
+# API Integration Documentation - Hotel Management App
 
 ## 📋 Table of Contents
 1. [Overview](#overview)
@@ -8,15 +8,26 @@
 5. [Permission Management APIs](#permission-management-apis)
 6. [Branch Management APIs](#branch-management-apis)
 7. [Settings Management APIs](#settings-management-apis)
-8. [API Response Format](#api-response-format)
-9. [Error Handling](#error-handling)
-10. [Frontend Integration Points](#frontend-integration-points)
+8. [Financial Management APIs](#financial-management-apis)
+9. [API Response Format](#api-response-format)
+10. [Error Handling](#error-handling)
+11. [Frontend Integration Points](#frontend-integration-points)
+
+## ⚠️ Removed API Endpoints
+
+The following API endpoints have been removed as part of the system cleanup:
+- **Customer Management APIs** (`/api/customers/*`) - Removed
+- **Package Management APIs** (`/api/packages/*`, `/api/package-types/*`) - Removed
+- **Order Management APIs** (`/api/orders/*`) - Removed
+- **Payment Management APIs** (`/api/payments/*`) - Removed
+- **Transaction Management APIs** - Removed
+- **Company Health Report APIs** (`/api/reports/company-health/*`) - Removed
 
 ---
 
 ## 🔍 Overview
 
-यह document Photo Studio Management system में सभी API endpoints और उनके frontend integration points को document करता है।
+यह document Hotel Management App system में सभी API endpoints और उनके frontend integration points को document करता है।
 
 ### API Base URL
 - **Development**: `http://localhost:8000/api`

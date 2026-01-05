@@ -531,8 +531,8 @@ export const exportSinglePhotographerToPDF = (photographer) => {
             </div>
 
             <div class="footer">
-              <p>This document was generated automatically by Photo Studio Management System</p>
-              <p style="margin-top: 5px;">© ${new Date().getFullYear()} Photo Studio. All rights reserved.</p>
+              <p>This document was generated automatically by Codexaa Base Project</p>
+              <p style="margin-top: 5px;">© ${new Date().getFullYear()} Codexaa Base Project. All rights reserved.</p>
             </div>
           </div>
         </body>
@@ -934,8 +934,8 @@ export const exportOrderToPDF = (order) => {
             </div>
 
             <div class="footer">
-              <p>This invoice was generated automatically by Photo Studio Management System</p>
-              <p style="margin-top: 5px;">© ${new Date().getFullYear()} Photo Studio. All rights reserved.</p>
+              <p>This invoice was generated automatically by Codexaa Base Project</p>
+              <p style="margin-top: 5px;">© ${new Date().getFullYear()} Codexaa Base Project. All rights reserved.</p>
             </div>
           </div>
         </body>

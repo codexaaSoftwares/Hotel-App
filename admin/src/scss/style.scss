@@ -20,8 +20,11 @@ body {
   min-height: calc(4rem + 1px); // stylelint-disable-line function-disallowed-list
 }
 
-.sidebar-brand-full {
-  margin-left: 3px;
+.sidebar-brand-logo-full {
+  max-height: 80px !important;
+  width: auto;
+  height: auto;
+  object-fit: contain;
 }
 
 .sidebar-header {

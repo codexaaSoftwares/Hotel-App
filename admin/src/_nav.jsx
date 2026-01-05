@@ -2,18 +2,10 @@ import React from 'react'
 import CIcon from '@coreui/icons-react'
 import {
   cilSpeedometer,
-  cilSettings,
-  cilHome,
-  cilTag,
-  cilCart,
   cilPeople,
   cilCog,
-  cilBarChart,
-  cilWallet,
   cilBuilding,
   cilLockLocked,
-  cilDollar,
-  cilListRich,
 } from '@coreui/icons'
 import { CNavItem, CNavTitle } from '@coreui/react'
 import { PERMISSIONS } from './constants/permissions'
@@ -32,60 +24,6 @@ const _nav = [
   },
   {
     component: CNavTitle,
-    name: 'Customer & Orders',
-  },
-  {
-    component: CNavItem,
-    name: 'Customers',
-    to: '/customers',
-    icon: <CIcon icon={cilPeople} customClassName="nav-icon" />,
-    permission: PERMISSIONS.CUSTOMER_READ,
-  },
-  {
-    component: CNavItem,
-    name: 'Orders',
-    to: '/orders',
-    icon: <CIcon icon={cilCart} customClassName="nav-icon" />,
-    permission: PERMISSIONS.ORDER_READ,
-  },
-  {
-    component: CNavItem,
-    name: 'Transactions',
-    to: '/transactions',
-    icon: <CIcon icon={cilWallet} customClassName="nav-icon" />,
-    permission: PERMISSIONS.PAYMENT_READ,
-  },
-  {
-    component: CNavTitle,
-    name: 'Financial',
-  },
-  {
-    component: CNavItem,
-    name: 'Income & Expenses',
-    to: '/financial/transactions',
-    icon: <CIcon icon={cilDollar} customClassName="nav-icon" />,
-    permission: PERMISSIONS.FINANCIAL_TRANSACTION_READ,
-  },
-  {
-    component: CNavItem,
-    name: 'Financial Categories',
-    to: '/financial/categories',
-    icon: <CIcon icon={cilListRich} customClassName="nav-icon" />,
-    permission: PERMISSIONS.FINANCIAL_CATEGORY_READ,
-  },
-  {
-    component: CNavTitle,
-    name: 'Reports',
-  },
-  {
-    component: CNavItem,
-    name: 'Company Health',
-    to: '/reports/company-health',
-    icon: <CIcon icon={cilBarChart} customClassName="nav-icon" />,
-    permission: PERMISSIONS.REPORT_READ,
-  },
-  {
-    component: CNavTitle,
     name: 'Masters',
   },
   {
@@ -94,13 +32,6 @@ const _nav = [
     to: '/branches',
     icon: <CIcon icon={cilBuilding} customClassName="nav-icon" />,
     permission: PERMISSIONS.BRANCH_READ,
-  },
-  {
-    component: CNavItem,
-    name: 'Packages',
-    to: '/packages',
-    icon: <CIcon icon={cilTag} customClassName="nav-icon" />,
-    permission: PERMISSIONS.PACKAGE_READ,
   },
   {
     component: CNavTitle,

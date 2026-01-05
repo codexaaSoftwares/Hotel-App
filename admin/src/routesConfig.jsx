@@ -19,31 +19,6 @@ const routesConfig = [
   { path: '/branches', name: 'Branches' },
   { path: '/branches/:id', name: 'Branch Details' },
   
-  // Package Management Routes
-  { path: '/packages', name: 'Packages' },
-  { path: '/packages/:id', name: 'Package Details' },
-  
-  // Order Management Routes
-  { path: '/orders', name: 'Orders' },
-  { path: '/orders/:id', name: 'Order Details' },
-  
-  // Customer Management Routes
-  { path: '/customers', name: 'Customers' },
-  { path: '/customers/:id', name: 'Customer Details' },
-  
-  // Transaction Routes
-  { path: '/transactions', name: 'Transactions' },
-  { path: '/transactions/create', name: 'Create Transaction' },
-  { path: '/transactions/:id', name: 'Transaction Details' },
-  
-  // Payment Routes
-  { path: '/payments', name: 'Payments' },
-  { path: '/payments/create', name: 'Create Payment' },
-  { path: '/payments/:id', name: 'Payment Details' },
-  
-  // Report Routes
-  { path: '/reports/company-health', name: 'Company Health Report' },
-  
   // Account Routes
   { path: '/profile', name: 'Profile' },
   { path: '/profile/edit', name: 'Edit Profile' },

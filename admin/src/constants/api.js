@@ -108,21 +108,6 @@ export const API_ENDPOINTS = {
     PREFERENCES: '/notifications/preferences',
   },
 
-  // Customer Management
-  CUSTOMERS: {
-    BASE: '/customers',
-    LIST: '/customers',
-    CREATE: '/customers',
-    GET_BY_ID: (id) => `/customers/${id}`,
-    UPDATE: (id) => `/customers/${id}`,
-    DELETE: (id) => `/customers/${id}`,
-    UPDATE_STATUS: (id) => `/customers/${id}/status`,
-    RECALCULATE_STATS: (id) => `/customers/${id}/recalculate-stats`,
-    WALLET: (id) => `/customers/${id}/wallet`,
-    EXPORT_PDF: (id) => `/customers/${id}/export-pdf`,
-    LEDGER: (id) => `/customers/${id}/ledger`,
-  },
-
   // Branch Management
   BRANCHES: {
     BASE: '/branches',
@@ -131,89 +116,6 @@ export const API_ENDPOINTS = {
     GET_BY_ID: (id) => `/branches/${id}`,
     UPDATE: (id) => `/branches/${id}`,
     DELETE: (id) => `/branches/${id}`,
-  },
-
-  // Package Management
-  PACKAGES: {
-    BASE: '/packages',
-    LIST: '/packages',
-    CREATE: '/packages',
-    GET_BY_ID: (id) => `/packages/${id}`,
-    UPDATE: (id) => `/packages/${id}`,
-    DELETE: (id) => `/packages/${id}`,
-  },
-
-  // Package Types (Master Data)
-  PACKAGE_TYPES: {
-    BASE: '/package-types',
-    LIST: '/package-types',
-  },
-
-  // Order Management
-  ORDERS: {
-    BASE: '/orders',
-    LIST: '/orders',
-    CREATE: '/orders',
-    GET_BY_ID: (id) => `/orders/${id}`,
-    UPDATE: (id) => `/orders/${id}`,
-    DELETE: (id) => `/orders/${id}`,
-    BULK_UPDATE: '/orders/bulk-update',
-    BULK_DELETE: '/orders/bulk-delete',
-    SEARCH: '/orders/search',
-    EXPORT: '/orders/export',
-    EXPORT_PDF: (id) => `/orders/${id}/export-pdf`,
-    STATS: '/orders/stats',
-    ANALYTICS: '/orders/analytics',
-    UPDATE_STATUS: (id) => `/orders/${id}/status`,
-    UPDATE_PAYMENT_STATUS: (id) => `/orders/${id}/payment-status`,
-    GET_BY_CUSTOMER: (customerId) => `/orders/customer/${customerId}`,
-    GET_ITEMS: (id) => `/orders/${id}/items`,
-    UPDATE_ITEM: (orderId, itemId) => `/orders/${orderId}/items/${itemId}`,
-    REMOVE_ITEM: (orderId, itemId) => `/orders/${orderId}/items/${itemId}`,
-    ADD_ITEM: (orderId) => `/orders/${orderId}/items`,
-    PRINT_INVOICE: (id) => `/orders/${id}/invoice`,
-    PRINT_RECEIPT: (id) => `/orders/${id}/receipt`,
-  },
-
-  // Transactions (Wallet/Credit-Debit)
-  TRANSACTIONS: {
-    BASE: '/transactions',
-    LIST: '/transactions',
-    CREATE: '/transactions',
-    GET_BY_ID: (id) => `/transactions/${id}`,
-    UPDATE: (id) => `/transactions/${id}`,
-    GET_BY_CUSTOMER: (customerId) => `/transactions/customer/${customerId}`,
-    GET_BY_ORDER: (orderId) => `/transactions/order/${orderId}`,
-  },
-
-  // Payments
-  PAYMENTS: {
-    BASE: '/payments',
-    CREATE: '/payments',
-    GET_BY_ORDER: (orderId) => `/payments/order/${orderId}`,
-    GET_BY_ID: (id) => `/payments/${id}`,
-    EXPORT_PDF: (id) => `/payments/${id}/export-pdf`,
-  },
-
-  // Financial Management
-  FINANCIAL_TRANSACTIONS: {
-    BASE: '/financial-transactions',
-    LIST: '/financial-transactions',
-    CREATE: '/financial-transactions',
-    GET_BY_ID: (id) => `/financial-transactions/${id}`,
-    UPDATE: (id) => `/financial-transactions/${id}`,
-    DELETE: (id) => `/financial-transactions/${id}`,
-    STATS: '/financial-transactions/stats',
-    EXPORT_PDF: '/financial-transactions/export-pdf',
-  },
-
-  FINANCIAL_CATEGORIES: {
-    BASE: '/financial-categories',
-    LIST: '/financial-categories',
-    CREATE: '/financial-categories',
-    GET_BY_ID: (id) => `/financial-categories/${id}`,
-    UPDATE: (id) => `/financial-categories/${id}`,
-    DELETE: (id) => `/financial-categories/${id}`,
   },
 
   // Reports

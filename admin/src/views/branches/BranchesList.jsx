@@ -48,18 +48,11 @@ const BranchesList = () => {
 
   const debouncedSearch = useDebounce(searchTerm, 400)
 
-  const canCreateBranch = hasPermission
-    ? hasPermission(PERMISSIONS.BRANCH_WRITE) || hasPermission(PERMISSIONS.BRANCH_MANAGE)
-    : true
-  const canUpdateBranch = hasPermission
-    ? hasPermission(PERMISSIONS.BRANCH_WRITE) || hasPermission(PERMISSIONS.BRANCH_MANAGE)
-    : true
-  const canDeleteBranch = hasPermission
-    ? hasPermission(PERMISSIONS.BRANCH_DELETE) || hasPermission(PERMISSIONS.BRANCH_MANAGE)
-    : true
-  const canViewBranch = hasPermission
-    ? hasPermission(PERMISSIONS.BRANCH_READ) || hasPermission(PERMISSIONS.BRANCH_MANAGE)
-    : true
+  // Check canonical permissions first (more specific), then fall back to aliases
+  const canCreateBranch = hasPermission('create_branch')
+  const canUpdateBranch = hasPermission('edit_branch')
+  const canDeleteBranch = hasPermission('delete_branch')
+  const canViewBranch = hasPermission('view_branch') || hasPermission(PERMISSIONS.BRANCH_READ)
 
   const fetchBranchesWithParams = useCallback(async () => {
     setLoading(true)

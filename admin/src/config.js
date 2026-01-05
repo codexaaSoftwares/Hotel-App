@@ -27,9 +27,9 @@ const config = {
 
   // App Information
   app: {
-    name: import.meta.env.VITE_APP_NAME || 'Photo Studio Management',
+    name: import.meta.env.VITE_APP_NAME || 'Codexaa Base Project',
     version: import.meta.env.VITE_APP_VERSION || '1.0.0',
-    description: import.meta.env.VITE_APP_DESCRIPTION || 'Photo Studio Admin Management System',
+    description: import.meta.env.VITE_APP_DESCRIPTION || 'Base Project Template for Codexaa Applications',
   },
 
   // Authentication

@@ -198,9 +198,9 @@ const ForgotPassword = () => {
               />
               <div className="login-image-overlay">
                 <div className="login-image-content">
-                  <img src={logoImg} alt="Photo Studio Management App Logo" className="login-image-logo" />
-                  <h2 className="login-image-title">Photo Studio Management</h2>
-                  <p className="login-image-subtitle">Capture Moments, Manage Excellence</p>
+                  <img src={logoImg} alt={LOGO_ALT_TEXT} className="login-image-logo" />
+                  <h2 className="login-image-title">{APP_NAME}</h2>
+                  <p className="login-image-subtitle">{APP_TAGLINE}</p>
                 </div>
               </div>
             </div>

@@ -5,15 +5,15 @@ import { handleApiError } from '../utils/errorHandler'
 const PERMISSION_ALIAS_MAP = {
   // User Management
   view_user: ['user:read'],
-  create_user: ['user:write', 'user:manage'],
-  edit_user: ['user:write', 'user:manage'],
-  delete_user: ['user:delete', 'user:manage'],
+  create_user: ['user:write'],
+  edit_user: ['user:write'],
+  delete_user: ['user:delete'],
   
   // Role Management
   view_role: ['role:read'],
-  create_role: ['role:write', 'role:manage'],
-  edit_role: ['role:write', 'role:manage'],
-  delete_role: ['role:delete', 'role:manage'],
+  create_role: ['role:write'],
+  edit_role: ['role:write'],
+  delete_role: ['role:delete'],
   view_permission: ['role:read'],
   
   // Settings Management
@@ -22,33 +22,9 @@ const PERMISSION_ALIAS_MAP = {
   
   // Branch Management
   view_branch: ['branch:read'],
-  create_branch: ['branch:write', 'branch:manage'],
-  edit_branch: ['branch:write', 'branch:manage'],
-  delete_branch: ['branch:delete', 'branch:manage'],
-  
-  // Package Management
-  view_package: ['package:read'],
-  create_package: ['package:write', 'package:manage'],
-  edit_package: ['package:write', 'package:manage'],
-  delete_package: ['package:delete', 'package:manage'],
-  
-  // Customer Management
-  view_customer: ['customer:read'],
-  create_customer: ['customer:write', 'customer:manage'],
-  edit_customer: ['customer:write', 'customer:manage'],
-  delete_customer: ['customer:delete', 'customer:manage'],
-  
-  // Order Management
-  view_order: ['order:read'],
-  create_order: ['order:write', 'order:manage'],
-  edit_order: ['order:write', 'order:manage'],
-  delete_order: ['order:delete', 'order:manage'],
-  
-  // Payment Management
-  view_payment: ['payment:read', 'transaction:read'],
-  create_payment: ['payment:write', 'payment:manage', 'transaction:write'],
-  edit_payment: ['payment:write', 'payment:manage', 'transaction:write'],
-  delete_payment: ['payment:delete', 'payment:manage', 'transaction:delete'],
+  create_branch: ['branch:write'],
+  edit_branch: ['branch:write'],
+  delete_branch: ['branch:delete'],
   
   // Dashboard
   view_dashboard: ['dashboard:read'],
@@ -56,17 +32,16 @@ const PERMISSION_ALIAS_MAP = {
   // Report Management
   view_report: ['report:read'],
   
-  // Financial Transaction Management
-  view_financial_transaction: ['view_financial_transaction'],
-  create_financial_transaction: ['create_financial_transaction', 'view_financial_transaction'],
-  edit_financial_transaction: ['edit_financial_transaction', 'view_financial_transaction'],
-  delete_financial_transaction: ['delete_financial_transaction', 'view_financial_transaction'],
-  
-  // Financial Category Management
-  view_financial_category: ['view_financial_category'],
-  create_financial_category: ['create_financial_category', 'view_financial_category'],
-  edit_financial_category: ['edit_financial_category', 'view_financial_category'],
-  delete_financial_category: ['delete_financial_category', 'view_financial_category'],
+  // Special Permissions (no aliases needed, use canonical names directly)
+  special_export_data: ['special_export_data'],
+  special_import_data: ['special_import_data'],
+  special_bulk_delete: ['special_bulk_delete'],
+  special_bulk_update: ['special_bulk_update'],
+  special_view_audit_logs: ['special_view_audit_logs'],
+  special_manage_backups: ['special_manage_backups'],
+  special_system_maintenance: ['special_system_maintenance'],
+  special_view_all_branches: ['special_view_all_branches'],
+  special_override_restrictions: ['special_override_restrictions'],
 }
 
 const startCase = (value = '') =>

@@ -50,18 +50,11 @@ const RolesList = () => {
   const { success: showSuccess, error: showError, warning: showWarning } = useToast()
   const debouncedSearch = useDebounce(searchTerm, 400)
 
-  const canCreateRole = hasPermission
-    ? hasPermission(PERMISSIONS.ROLE_WRITE) || hasPermission(PERMISSIONS.ROLE_MANAGE)
-    : true
-  const canUpdateRole = hasPermission
-    ? hasPermission(PERMISSIONS.ROLE_WRITE) || hasPermission(PERMISSIONS.ROLE_MANAGE)
-    : true
-  const canDeleteRole = hasPermission
-    ? hasPermission(PERMISSIONS.ROLE_DELETE) || hasPermission(PERMISSIONS.ROLE_MANAGE)
-    : true
-  const canViewRole = hasPermission
-    ? hasPermission(PERMISSIONS.ROLE_READ) || hasPermission(PERMISSIONS.ROLE_MANAGE)
-    : true
+  // Check canonical permissions first (more specific), then fall back to aliases
+  const canCreateRole = hasPermission('create_role')
+  const canUpdateRole = hasPermission('edit_role')
+  const canDeleteRole = hasPermission('delete_role')
+  const canViewRole = hasPermission('view_role') || hasPermission(PERMISSIONS.ROLE_READ)
 
   const fetchRolesWithParams = useCallback(async () => {
     const searchValue = (debouncedSearch || '').trim()
