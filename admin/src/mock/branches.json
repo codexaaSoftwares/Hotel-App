@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "branch_name": "Lunawada Branch",
+    "branch_code": "L001",
+    "address": "123 Main Street, Lunawada",
+    "city": "Lunawada",
+    "state": "Gujarat",
+    "contact_number": "+91 98765 43210",
+    "email": "lunawada@photostudio.com",
+    "status": "active",
+    "created_at": "2023-01-01T10:00:00.000Z",
+    "updated_at": "2025-01-20T14:22:00.000Z"
+  },
+  {
+    "id": 2,
+    "branch_name": "Vadodara Branch",
+    "branch_code": "V001",
+    "address": "456 Station Road, Vadodara",
+    "city": "Vadodara",
+    "state": "Gujarat",
+    "contact_number": "+91 98765 43211",
+    "email": "vadodara@photostudio.com",
+    "status": "active",
+    "created_at": "2023-01-01T10:00:00.000Z",
+    "updated_at": "2025-01-20T14:22:00.000Z"
+  }
+]
+

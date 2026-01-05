@@ -1,0 +1,204 @@
+@use "@coreui/coreui/scss/coreui" as * with ( 
+  $enable-deprecation-messages: false,
+);
+@use "@coreui/chartjs/scss/coreui-chartjs";
+@use "vendors/simplebar";
+
+body {
+  background-color: var(--cui-tertiary-bg);
+}
+
+.wrapper {
+  width: 100%;
+  padding-inline: var(--cui-sidebar-occupy-start, 0) var(--cui-sidebar-occupy-end, 0);
+  will-change: auto;
+  @include transition(padding .15s);
+}
+
+.header > .container-fluid,
+.sidebar-header {
+  min-height: calc(4rem + 1px); // stylelint-disable-line function-disallowed-list
+}
+
+.sidebar-brand-full {
+  margin-left: 3px;
+}
+
+.sidebar-header {
+  .nav-underline-border {
+    --cui-nav-underline-border-link-padding-x: 1rem;
+    --cui-nav-underline-border-gap: 0;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    min-height: calc(4rem + 1px); // stylelint-disable-line function-disallowed-list
+  }
+}
+
+.sidebar-toggler {
+  margin-inline-start: auto;
+}
+
+.sidebar-narrow,
+.sidebar-narrow-unfoldable:not(:hover) {
+  .sidebar-toggler {
+    margin-inline-end: auto;
+  }
+}
+
+.header > .container-fluid + .container-fluid {
+  min-height: 3rem;
+}
+
+.footer {
+  min-height: calc(3rem + 1px); // stylelint-disable-line function-disallowed-list
+}
+
+// Sidebar navigation styling
+.sidebar-nav {
+  .nav-link {
+    color: #1f2937;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    transition: color 0.2s ease, background-color 0.2s ease, opacity 0.2s ease;
+
+    &:not(.disabled):hover,
+    &:not(.disabled):focus {
+      color: #0f172a;
+      background-color: rgba(15, 23, 42, 0.08);
+    }
+  }
+
+  .nav-link.disabled,
+  .nav-link:disabled {
+    color: #cbd5f5;
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: transparent !important;
+    pointer-events: none;
+
+    .nav-icon {
+      color: inherit;
+      opacity: 0.8;
+    }
+  }
+}
+
+.dashboard-page {
+  background: linear-gradient(135deg, #f8f5ff 0%, #fefefe 100%);
+  min-height: 100vh;
+  padding-bottom: 2rem;
+
+  .dashboard-header {
+    border-bottom-color: rgba(139, 92, 246, 0.2) !important;
+  }
+
+  .text-theme {
+    color: #8b5cf6 !important;
+  }
+
+  .btn-outline-success {
+    border-color: #8b5cf6;
+    color: #8b5cf6;
+
+    &:hover,
+    &:focus {
+      background-color: #8b5cf6;
+      border-color: #8b5cf6;
+      color: #fff;
+    }
+  }
+
+  .dashboard-date-picker input {
+    border-color: rgba(139, 92, 246, 0.3) !important;
+  }
+
+  .dashboard-stat-card {
+    border-radius: 1rem;
+    background: #fff;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 25px 60px rgba(15, 23, 42, 0.05);
+
+    .stat-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+    }
+
+    .change-badge {
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.35rem 0.8rem;
+      border-radius: 999px;
+
+      &.positive {
+        background: rgba(34, 197, 94, 0.15);
+        color: #16a34a;
+      }
+
+      &.negative {
+        background: rgba(239, 68, 68, 0.15);
+        color: #dc2626;
+      }
+    }
+
+    .stat-progress {
+      width: 100%;
+      height: 5px;
+      background: rgba(15, 23, 42, 0.06);
+      border-radius: 999px;
+
+      .stat-progress-fill {
+        height: 100%;
+        border-radius: inherit;
+        transition: width 0.4s ease;
+
+        &.success {
+          background: linear-gradient(90deg, #34d399, #10b981);
+        }
+
+        &.info {
+          background: linear-gradient(90deg, #60a5fa, #3b82f6);
+        }
+
+        &.primary {
+          background: linear-gradient(90deg, #a78bfa, #8b5cf6);
+        }
+      }
+    }
+  }
+
+  .dashboard-card {
+    border-radius: 1rem;
+    border: 1px solid rgba(15, 23, 42, 0.05);
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.05);
+
+    .activity-card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 30px rgba(15, 23, 42, 0.1);
+      }
+    }
+  }
+}
+
+@include color-mode(dark) {
+  body {
+    background-color: var(--cui-dark-bg-subtle);
+  }
+
+  .footer {
+    --cui-footer-bg: var(--cui-body-bg);
+  }
+}

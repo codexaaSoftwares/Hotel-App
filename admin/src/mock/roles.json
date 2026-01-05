@@ -1,0 +1,126 @@
+[
+  {
+    "id": 1,
+    "name": "Super Admin",
+    "description": "Full system access with all permissions",
+    "permissions": [
+      "user:read",
+      "user:write", 
+      "user:delete",
+      "role:read",
+      "role:write",
+      "role:delete",
+      "dashboard:read",
+      "dashboard:write",
+      "settings:access",
+      "reports:read",
+      "reports:write"
+    ],
+    "isActive": true,
+    "isDefault": false,
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z"
+  },
+  {
+    "id": 2,
+    "name": "Admin",
+    "description": "Administrative access with user and role management",
+    "permissions": [
+      "user:read",
+      "user:write",
+      "user:delete",
+      "role:read",
+      "role:write",
+      "dashboard:read",
+      "dashboard:write",
+      "reports:read"
+    ],
+    "isActive": true,
+    "isDefault": false,
+    "createdAt": "2024-01-16T09:15:00Z",
+    "updatedAt": "2024-01-16T09:15:00Z"
+  },
+  {
+    "id": 3,
+    "name": "Manager",
+    "description": "Management level access with limited permissions",
+    "permissions": [
+      "user:read",
+      "user:write",
+      "dashboard:read",
+      "reports:read"
+    ],
+    "isActive": true,
+    "isDefault": true,
+    "createdAt": "2024-01-17T14:20:00Z",
+    "updatedAt": "2024-01-17T14:20:00Z"
+  },
+  {
+    "id": 4,
+    "name": "User",
+    "description": "Basic user access with read-only permissions",
+    "permissions": [
+      "dashboard:read",
+      "reports:read"
+    ],
+    "isActive": true,
+    "isDefault": false,
+    "createdAt": "2024-01-18T11:45:00Z",
+    "updatedAt": "2024-01-18T11:45:00Z"
+  },
+  {
+    "id": 5,
+    "name": "Guest",
+    "description": "Limited guest access with minimal permissions",
+    "permissions": [
+      "dashboard:read"
+    ],
+    "isActive": true,
+    "isDefault": false,
+    "createdAt": "2024-01-19T16:30:00Z",
+    "updatedAt": "2024-01-19T16:30:00Z"
+  },
+  {
+    "id": 6,
+    "name": "Moderator",
+    "description": "Content moderation role with specific permissions",
+    "permissions": [
+      "user:read",
+      "user:write",
+      "dashboard:read",
+      "reports:read",
+      "reports:write"
+    ],
+    "isActive": true,
+    "isDefault": false,
+    "createdAt": "2024-01-20T13:15:00Z",
+    "updatedAt": "2024-01-20T13:15:00Z"
+  },
+  {
+    "id": 7,
+    "name": "Analyst",
+    "description": "Data analysis role with reporting permissions",
+    "permissions": [
+      "dashboard:read",
+      "reports:read",
+      "reports:write"
+    ],
+    "isActive": true,
+    "isDefault": false,
+    "createdAt": "2024-01-21T10:00:00Z",
+    "updatedAt": "2024-01-21T10:00:00Z"
+  },
+  {
+    "id": 8,
+    "name": "Support",
+    "description": "Customer support role with user assistance permissions",
+    "permissions": [
+      "user:read",
+      "dashboard:read"
+    ],
+    "isActive": false,
+    "isDefault": false,
+    "createdAt": "2024-01-22T15:45:00Z",
+    "updatedAt": "2024-01-22T15:45:00Z"
+  }
+]

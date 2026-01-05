@@ -1,0 +1,225 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "admin@example.com",
+      "password": "admin123",
+      "firstName": "Admin",
+      "lastName": "User",
+      "role": "admin",
+      "permissions": ["user:read", "user:write", "user:delete", "role:read", "role:write", "role:delete", "dashboard:read", "dashboard:write"],
+      "avatar": "https://ui-avatars.com/api/?name=Admin+User&background=007bff&color=ffffff&size=40",
+      "isActive": true,
+      "phone": "+1-555-0101",
+      "department": "IT",
+      "lastLogin": "2024-01-15T10:30:00Z",
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-01-15T10:30:00Z"
+    },
+    {
+      "id": 2,
+      "email": "user@example.com",
+      "password": "user123",
+      "firstName": "John",
+      "lastName": "Doe",
+      "role": "user",
+      "permissions": ["dashboard:read"],
+      "avatar": "https://ui-avatars.com/api/?name=John+Doe&background=28a745&color=ffffff&size=40",
+      "isActive": true,
+      "phone": "+1-555-0102",
+      "department": "Sales",
+      "lastLogin": "2024-01-14T09:15:00Z",
+      "createdAt": "2024-01-02T00:00:00Z",
+      "updatedAt": "2024-01-14T09:15:00Z"
+    },
+    {
+      "id": 3,
+      "email": "manager@example.com",
+      "password": "manager123",
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "role": "manager",
+      "permissions": ["user:read", "user:write", "dashboard:read", "dashboard:write"],
+      "avatar": "https://ui-avatars.com/api/?name=Jane+Smith&background=dc3545&color=ffffff&size=40",
+      "isActive": true,
+      "phone": "+1-555-0103",
+      "department": "Marketing",
+      "lastLogin": "2024-01-15T08:45:00Z",
+      "createdAt": "2024-01-03T00:00:00Z",
+      "updatedAt": "2024-01-15T08:45:00Z"
+    },
+    {
+      "id": 4,
+      "email": "alice@example.com",
+      "password": "alice123",
+      "firstName": "Alice",
+      "lastName": "Johnson",
+      "role": "user",
+      "permissions": ["dashboard:read"],
+      "avatar": "https://ui-avatars.com/api/?name=Alice+Johnson&background=17a2b8&color=ffffff&size=40",
+      "isActive": true,
+      "createdAt": "2024-01-04T00:00:00Z"
+    },
+    {
+      "id": 5,
+      "email": "bob@example.com",
+      "password": "bob123",
+      "firstName": "Bob",
+      "lastName": "Wilson",
+      "role": "manager",
+      "permissions": ["user:read", "user:write", "dashboard:read", "dashboard:write"],
+      "avatar": "https://ui-avatars.com/api/?name=Bob+Wilson&background=ffc107&color=000000&size=40",
+      "isActive": true,
+      "createdAt": "2024-01-05T00:00:00Z"
+    },
+    {
+      "id": 6,
+      "email": "charlie@example.com",
+      "password": "charlie123",
+      "firstName": "Charlie",
+      "lastName": "Brown",
+      "role": "user",
+      "permissions": ["dashboard:read"],
+      "avatar": "https://ui-avatars.com/api/?name=Charlie+Brown&background=6f42c1&color=ffffff&size=40",
+      "isActive": false,
+      "createdAt": "2024-01-06T00:00:00Z"
+    },
+    {
+      "id": 7,
+      "email": "diana@example.com",
+      "password": "diana123",
+      "firstName": "Diana",
+      "lastName": "Prince",
+      "role": "admin",
+      "permissions": ["user:read", "user:write", "user:delete", "role:read", "role:write", "role:delete", "dashboard:read", "dashboard:write"],
+      "avatar": "https://ui-avatars.com/api/?name=Diana+Prince&background=e83e8c&color=ffffff&size=40",
+      "isActive": true,
+      "createdAt": "2024-01-07T00:00:00Z"
+    },
+    {
+      "id": 8,
+      "email": "eve@example.com",
+      "password": "eve123",
+      "firstName": "Eve",
+      "lastName": "Adams",
+      "role": "user",
+      "permissions": ["dashboard:read"],
+      "avatar": "https://ui-avatars.com/api/?name=Eve+Adams&background=20c997&color=ffffff&size=40",
+      "isActive": true,
+      "createdAt": "2024-01-08T00:00:00Z"
+    },
+    {
+      "id": 9,
+      "email": "frank@example.com",
+      "password": "frank123",
+      "firstName": "Frank",
+      "lastName": "Miller",
+      "role": "manager",
+      "permissions": ["user:read", "user:write", "dashboard:read", "dashboard:write"],
+      "avatar": "https://ui-avatars.com/api/?name=Frank+Miller&background=fd7e14&color=ffffff&size=40",
+      "isActive": true,
+      "createdAt": "2024-01-09T00:00:00Z"
+    },
+    {
+      "id": 10,
+      "email": "grace@example.com",
+      "password": "grace123",
+      "firstName": "Grace",
+      "lastName": "Lee",
+      "role": "user",
+      "permissions": ["dashboard:read"],
+      "avatar": "https://ui-avatars.com/api/?name=Grace+Lee&background=6c757d&color=ffffff&size=40",
+      "isActive": true,
+      "createdAt": "2024-01-10T00:00:00Z"
+    },
+    {
+      "id": 11,
+      "email": "henry@example.com",
+      "password": "henry123",
+      "firstName": "Henry",
+      "lastName": "Davis",
+      "role": "user",
+      "permissions": ["dashboard:read"],
+      "avatar": "https://ui-avatars.com/api/?name=Henry+Davis&background=343a40&color=ffffff&size=40",
+      "isActive": false,
+      "createdAt": "2024-01-11T00:00:00Z"
+    },
+    {
+      "id": 12,
+      "email": "iris@example.com",
+      "password": "iris123",
+      "firstName": "Iris",
+      "lastName": "Taylor",
+      "role": "manager",
+      "permissions": ["user:read", "user:write", "dashboard:read", "dashboard:write"],
+      "avatar": "https://ui-avatars.com/api/?name=Iris+Taylor&background=007bff&color=ffffff&size=40",
+      "isActive": true,
+      "createdAt": "2024-01-12T00:00:00Z"
+    }
+  ],
+  "roles": [
+    {
+      "id": "admin",
+      "name": "Administrator",
+      "description": "Full system access with all permissions",
+      "permissions": ["user:read", "user:write", "user:delete", "role:read", "role:write", "role:delete", "dashboard:read", "dashboard:write"],
+      "isActive": true,
+      "isDefault": false,
+      "createdAt": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": "manager",
+      "name": "Manager",
+      "description": "Management level access with user management capabilities",
+      "permissions": ["user:read", "user:write", "dashboard:read", "dashboard:write"],
+      "isActive": true,
+      "isDefault": false,
+      "createdAt": "2024-01-02T00:00:00Z"
+    },
+    {
+      "id": "user",
+      "name": "User",
+      "description": "Basic user access with limited permissions",
+      "permissions": ["dashboard:read"],
+      "isActive": true,
+      "isDefault": true,
+      "createdAt": "2024-01-03T00:00:00Z"
+    },
+    {
+      "id": "editor",
+      "name": "Content Editor",
+      "description": "Can edit content but not manage users",
+      "permissions": ["dashboard:read", "dashboard:write", "content:read", "content:write"],
+      "isActive": true,
+      "isDefault": false,
+      "createdAt": "2024-01-04T00:00:00Z"
+    },
+    {
+      "id": "viewer",
+      "name": "Viewer",
+      "description": "Read-only access to dashboard and reports",
+      "permissions": ["dashboard:read", "reports:read"],
+      "isActive": true,
+      "isDefault": false,
+      "createdAt": "2024-01-05T00:00:00Z"
+    },
+    {
+      "id": "moderator",
+      "name": "Moderator",
+      "description": "Can moderate content and manage basic user functions",
+      "permissions": ["user:read", "dashboard:read", "dashboard:write", "content:read", "content:write", "content:moderate"],
+      "isActive": true,
+      "isDefault": false,
+      "createdAt": "2024-01-06T00:00:00Z"
+    },
+    {
+      "id": "guest",
+      "name": "Guest",
+      "description": "Limited guest access with minimal permissions",
+      "permissions": ["dashboard:read"],
+      "isActive": false,
+      "isDefault": false,
+      "createdAt": "2024-01-07T00:00:00Z"
+    }
+  ]
+}

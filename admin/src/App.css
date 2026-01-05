@@ -1,0 +1,313 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* Enhanced Time Display Animations */
+@keyframes pulse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes timeGlow {
+  0% {
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  }
+  50% {
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1), 0 0 8px rgba(13, 110, 253, 0.3);
+  }
+  100% {
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  }
+}
+
+.time-display {
+  animation: timeGlow 3s ease-in-out infinite;
+}
+
+/* Global Spinner Styles */
+.global-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.global-spinner-sm {
+  min-height: 100px;
+}
+
+.global-spinner-lg {
+  min-height: 300px;
+}
+
+.global-spinner-full {
+  min-height: 100vh;
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(2px);
+}
+
+/* Enhanced Spinner Animations */
+@keyframes spinnerPulse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.spinner-enhanced {
+  animation: spinnerPulse 2s ease-in-out infinite;
+}
+
+/* Consistent Spinner Colors */
+.spinner-primary {
+  color: var(--cui-primary) !important;
+}
+
+.spinner-success {
+  color: var(--cui-success) !important;
+}
+
+.spinner-info {
+  color: var(--cui-info) !important;
+}
+
+.spinner-warning {
+  color: var(--cui-warning) !important;
+}
+
+.spinner-danger {
+  color: var(--cui-danger) !important;
+}
+
+
+
+/* Auth Form Enhancements */
+.auth-card {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.auth-input-icon {
+  color: #6c757d;
+  transition: color 0.3s ease;
+}
+
+.auth-input-icon:hover {
+  color: var(--cui-primary);
+}
+
+/* Enhanced Button Styles */
+.btn-auth {
+  border-radius: 0.5rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.btn-auth:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Demo Credentials Styling */
+.demo-credentials {
+  background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+  border: 1px solid rgba(13, 110, 253, 0.1);
+}
+
+/* Responsive Auth Layout */
+@media (max-width: 768px) {
+  .auth-container {
+    padding: 1rem;
+  }
+  
+  .auth-logo {
+    width: 60px !important;
+    height: 60px !important;
+  }
+  
+  .auth-title {
+    font-size: 1.5rem;
+  }
+}
+
+/* Form Validation Error Display */
+.invalid-feedback {
+  display: block !important;
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #dc3545;
+}
+
+.form-control.is-invalid {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.form-control.is-invalid:focus {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+/* Ensure error messages are visible */
+.invalid-feedback.d-block {
+  display: block !important;
+}
+
+/* Toast Color Styles */
+.toast-success {
+  background-color: #198754 !important;
+  border-color: #198754 !important;
+  color: white !important;
+}
+
+.toast-danger {
+  background-color: #dc3545 !important;
+  border-color: #dc3545 !important;
+  color: white !important;
+}
+
+.toast-warning {
+  background-color: #ffc107 !important;
+  border-color: #ffc107 !important;
+  color: #000 !important;
+}
+
+.toast-info {
+  background-color: #0dcaf0 !important;
+  border-color: #0dcaf0 !important;
+  color: white !important;
+}
+
+/* Toast Body Styling */
+.toast-body {
+  padding: 0.75rem !important;
+}
+
+/* Toast Icon Styling */
+.toast-body i {
+  font-size: 1.1rem;
+}
+
+/* Toast Background Classes - Glass Effect */
+.toast-bg-success,
+.toast.toast-bg-success,
+div.toast-bg-success {
+  background: rgba(40, 167, 69, 0.85) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  box-shadow: 0 8px 32px rgba(40, 167, 69, 0.3) !important;
+}
+
+.toast-bg-danger,
+.toast.toast-bg-danger,
+div.toast-bg-danger {
+  background: rgba(220, 53, 69, 0.85) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  box-shadow: 0 8px 32px rgba(220, 53, 69, 0.3) !important;
+}
+
+.toast-bg-warning,
+.toast.toast-bg-warning,
+div.toast-bg-warning {
+  background: rgba(253, 126, 20, 0.85) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  box-shadow: 0 8px 32px rgba(253, 126, 20, 0.3) !important;
+}
+
+.toast-bg-info,
+.toast.toast-bg-info,
+div.toast-bg-info {
+  background: rgba(23, 162, 184, 0.85) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  box-shadow: 0 8px 32px rgba(23, 162, 184, 0.3) !important;
+}
+
+/* Override CoreUI Toast Default Styles */
+.toast-bg-success .toast-header,
+.toast-bg-danger .toast-header,
+.toast-bg-warning .toast-header,
+.toast-bg-info .toast-header {
+  background-color: transparent !important;
+  border-bottom: none !important;
+}
+
+.toast-bg-success .toast-body,
+.toast-bg-danger .toast-body,
+.toast-bg-warning .toast-body,
+.toast-bg-info .toast-body {
+  background-color: transparent !important;
+  color: inherit !important;
+}

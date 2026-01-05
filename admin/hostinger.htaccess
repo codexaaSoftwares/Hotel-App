@@ -1,0 +1,38 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /admin/
+
+  # Route /admin/uploads/* → Laravel public/uploads
+  RewriteRule ^uploads/(.*)$ api/public/uploads/$1 [L]
+
+  # Route /admin/storage/* → Laravel public/index.php (custom handler serves files directly from storage/app/public)
+  # Note: Actual storage requests come via /admin/api/storage/* and are handled by custom handler in index.php
+  RewriteRule ^storage/(.*)$ api/public/storage/$1 [L]
+
+  # Route /admin/api/* → Laravel backend, preserving path info for Laravel router
+  RewriteRule ^api/(.*)$ api/public/index.php [L,QSA,E=PATH_INFO:/$1]
+  RewriteRule ^api/?$ api/public/index.php [L,QSA,E=PATH_INFO:/]
+
+  # Serve existing files directly (CSS, JS, assets)
+  RewriteCond %{REQUEST_FILENAME} -f
+  RewriteRule ^ - [L]
+
+  # React SPA fallback for everything else under /admin
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/jpg "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/gif "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+  ExpiresByType text/html "access plus 0 seconds"
+</IfModule>
+

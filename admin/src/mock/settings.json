@@ -1,0 +1,31 @@
+{
+  "settings": {
+    "general": {
+      "appName": "Photo Studio Management App",
+      "businessName": "Photo Studio Management",
+      "businessAddress": "",
+      "contactInfo": "",
+      "email": "admin@photostudio.com",
+      "theme": "light",
+      "updatedAt": "2024-01-15T10:30:00Z"
+    },
+    "email": {
+      "smtpHost": "smtp.gmail.com",
+      "smtpPort": "587",
+      "smtpUsername": "noreply@photostudio.com",
+      "smtpPassword": "encrypted_password_here",
+      "fromEmail": "noreply@photostudio.com",
+      "fromName": "Photo Studio Management App",
+      "encryption": "tls",
+      "updatedAt": "2024-01-15T10:30:00Z"
+    },
+    "aws": {
+      "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+      "secretAccessKey": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+      "bucketName": "photostudio-storage",
+      "region": "us-east-1",
+      "endpoint": "",
+      "updatedAt": "2024-01-15T10:30:00Z"
+    }
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "profile": {
+    "id": 1,
+    "email": "admin@example.com",
+    "firstName": "Admin",
+    "lastName": "User",
+    "phone": "+1-555-0101",
+    "address": "123 Main Street",
+    "city": "New York",
+    "state": "NY",
+    "zipCode": "10001",
+    "country": "United States",
+    "bio": "Experienced administrator with expertise in system management and user administration. Passionate about creating efficient workflows and maintaining system security.",
+    "dateOfBirth": "1985-06-15",
+    "gender": "male",
+    "avatar": "https://ui-avatars.com/api/?name=Admin+User&background=007bff&color=ffffff&size=200",
+    "role": "admin",
+    "permissions": [
+      "user:read",
+      "user:write", 
+      "user:delete",
+      "role:read",
+      "role:write",
+      "role:delete",
+      "dashboard:read",
+      "dashboard:write",
+      "profile:read",
+      "profile:write"
+    ],
+    "isActive": true,
+    "department": "IT",
+    "lastLogin": "2024-01-15T10:30:00Z",
+    "createdAt": "2024-01-01T00:00:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z",
+    "preferences": {
+      "theme": "light",
+      "language": "en",
+      "timezone": "America/New_York",
+      "notifications": {
+        "email": true,
+        "push": true,
+        "sms": false
+      },
+      "privacy": {
+        "profileVisibility": "public",
+        "showEmail": false,
+        "showPhone": false
+      }
+    },
+    "statistics": {
+      "totalLogins": 156,
+      "lastActivity": "2024-01-15T10:30:00Z",
+      "profileViews": 23,
+      "accountAge": "15 days"
+    },
+    "activityLogs": [
+      {
+        "id": 1,
+        "activity": "profile_updated",
+        "description": "Updated personal information",
+        "timestamp": "2024-01-15T10:30:00Z",
+        "ipAddress": "192.168.1.100",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+      },
+      {
+        "id": 2,
+        "activity": "password_changed",
+        "description": "Changed account password",
+        "timestamp": "2024-01-14T15:45:00Z",
+        "ipAddress": "192.168.1.100",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+      },
+      {
+        "id": 3,
+        "activity": "avatar_updated",
+        "description": "Updated profile picture",
+        "timestamp": "2024-01-13T09:20:00Z",
+        "ipAddress": "192.168.1.100",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+      },
+      {
+        "id": 4,
+        "activity": "login",
+        "description": "Successful login",
+        "timestamp": "2024-01-12T08:15:00Z",
+        "ipAddress": "192.168.1.100",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+      }
+    ]
+  }
+}
