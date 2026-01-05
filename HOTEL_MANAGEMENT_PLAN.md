@@ -1,6 +1,6 @@
 # Hotel Management Web App - Project Planning & Migration Guide
 
-**Project**: Teja Hotel – Restaurant & Room Management (Web-App)  
+**Project**: Hotel Management App – Restaurant & Room Management (Web-App)  
 **Base Project**: Photo Studio Management  
 **Created**: January 2025  
 **Status**: Planning Phase

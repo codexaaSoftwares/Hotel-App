@@ -1,0 +1,32 @@
+# PDF Templates Directory
+
+This directory contains PDF templates for generating invoices, reports, and other documents.
+
+## Sample Templates
+
+- **invoice.blade.php** - Sample invoice template with items, totals, and customer information
+- **report.blade.php** - Sample report template with sections and data tables
+
+## Usage
+
+PDF templates are Blade templates that can be used with the PdfExportService to generate PDF documents.
+
+Example usage in controller:
+```php
+use App\Services\PdfExportService;
+
+$pdfService = new PdfExportService();
+return $pdfService->export('pdfs.invoice', [
+    'invoiceNumber' => 'INV-001',
+    'customerName' => 'John Doe',
+    'items' => [...],
+    'total' => 1000
+], 'invoice.pdf');
+```
+
+## Available Services
+
+- **PdfExportService**: Service for generating PDFs from Blade templates
+- Located at: `app/Services/PdfExportService.php`
+- Methods: `export()`, `download()`, `stream()`, `raw()`
+

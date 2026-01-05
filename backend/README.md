@@ -1,145 +1,109 @@
-# Photo Studio Management - Backend API
+# Hotel Management - Backend API
 
-Laravel 9 REST API backend for Photo Studio Management System.
+Laravel 9 REST API backend for Hotel Management System.
 
-## Features
+## 🚀 Quick Start
 
-- **Authentication**: Laravel Sanctum token-based authentication
-- **Role-Based Access Control**: Comprehensive role and permission system
-- **Service Layer**: Email, PDF, and S3 services
-- **Database-Driven Configuration**: Settings stored in database
-- **Email System**: Dynamic SMTP configuration with email logging
-- **File Storage**: AWS S3 integration with database configuration
+### 1. Install Dependencies
+```bash
+composer install
+```
 
-## Requirements
+### 2. Setup Environment
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-- PHP >= 8.0.2
-- Composer
-- MySQL
-- Node.js & NPM (for frontend assets if needed)
+### 3. Configure Database
+Update `.env` with your database credentials:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=hotel_management
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-## Installation
+### 4. Run Migrations & Seeders
+```bash
+php artisan migrate
+php artisan db:seed
+```
 
-1. **Install dependencies:**
-   ```bash
-   composer install
-   ```
+### 5. Start Development Server
+```bash
+php artisan serve
+```
 
-2. **Copy environment file:**
-   ```bash
-   cp .env.example .env
-   ```
+API will be available at [http://localhost:8000/api](http://localhost:8000/api)
 
-3. **Generate application key:**
-   ```bash
-   php artisan key:generate
-   ```
+## 📦 Tech Stack
 
-4. **Configure database in `.env`:**
-   ```env
-   DB_CONNECTION=mysql
-   DB_HOST=127.0.0.1
-   DB_PORT=3306
-   DB_DATABASE=photo_studio
-   DB_USERNAME=root
-   DB_PASSWORD=your_password
-   ```
+- **Laravel 9** - PHP framework
+- **MySQL** - Database
+- **Laravel Sanctum** - API authentication
+- **DomPDF** - PDF generation
+- **Guzzle** - HTTP client
 
-5. **Run migrations:**
-   ```bash
-   php artisan migrate
-   ```
-
-6. **Seed database:**
-   ```bash
-   php artisan db:seed
-   ```
-
-7. **Start development server:**
-   ```bash
-   php artisan serve
-   ```
-
-## Default Admin Credentials
+## 🔐 Default Admin Credentials
 
 - **Email:** admin@example.com
 - **Password:** password
 
-## API Endpoints
+## 📋 API Endpoints
 
 ### Authentication
 - `POST /api/auth/login` - User login
-- `POST /api/auth/logout` - User logout (protected)
-- `GET /api/auth/user` - Get current user (protected)
+- `POST /api/auth/logout` - User logout
+- `GET /api/auth/user` - Get current user
 - `POST /api/auth/forgot-password` - Password reset request
+- `POST /api/auth/reset-password` - Reset password
+- `PUT /api/auth/change-password` - Change password
 
 ### Users
-- `GET /api/users` - List users (protected)
-- `POST /api/users` - Create user (protected)
-- `GET /api/users/{id}` - Get user (protected)
-- `PUT /api/users/{id}` - Update user (protected)
-- `DELETE /api/users/{id}` - Delete user (protected)
+- `GET /api/users` - List users
+- `POST /api/users` - Create user
+- `GET /api/users/{id}` - Get user
+- `PUT /api/users/{id}` - Update user
+- `DELETE /api/users/{id}` - Delete user
+- `GET /api/users/profile` - Get current user profile
+- `PUT /api/users/profile` - Update profile
 
-### Roles
-- `GET /api/roles` - List roles (protected)
-- `POST /api/roles` - Create role (protected)
-- `GET /api/roles/{id}` - Get role (protected)
-- `PUT /api/roles/{id}` - Update role (protected)
-- `PUT /api/roles/{id}/permissions` - Update role permissions (protected)
-- `DELETE /api/roles/{id}` - Delete role (protected)
-
-### Permissions
-- `GET /api/permissions` - List permissions (protected)
-- `GET /api/permissions/{id}` - Get permission (protected)
+### Roles & Permissions
+- `GET /api/roles` - List roles
+- `POST /api/roles` - Create role
+- `PUT /api/roles/{id}/permissions` - Update role permissions
+- `GET /api/permissions` - List permissions
 
 ### Settings
-- `GET /api/settings` - Get settings (protected)
-- `POST /api/settings/{group}` - Update settings by group (protected)
-- `POST /api/settings/test-s3` - Test S3 connection (protected)
-- `POST /api/settings/test-email` - Test email configuration (protected)
+- `GET /api/settings` - Get settings
+- `POST /api/settings/{group}` - Update settings group
+- `POST /api/settings/test-email` - Test email configuration
 
-## Permission System
+### Financial Management
+- `GET /api/financial-transactions` - List transactions
+- `POST /api/financial-transactions` - Create transaction
+- `GET /api/financial-categories` - List categories
 
-The system uses a role-based permission system where:
-- Admin role has **all permissions** automatically
-- Permissions are organized by `module` and `submodule`
-- Permissions can be checked using middleware: `permission:view_user`
-- Roles can be checked using middleware: `role:admin`
+### Dashboard
+- `GET /api/dashboard/summary` - Dashboard summary
+- `GET /api/dashboard/financial-summary` - Financial summary
 
-## Services
+## 🔧 Services
 
-### EmailService
-- Dynamic SMTP configuration from database
-- Email logging
-- Template rendering
-- Attachment support
+- **EmailService** - Email sending with database-driven SMTP configuration
+- **PdfExportService** - PDF generation and export
 
-### PdfExportService
-- PDF generation using DomPDF
-- Download and stream responses
-- Raw binary output for attachments
+## 📝 Development
 
-### S3Service
-- Database-driven S3 configuration
-- File upload/download
-- Connection testing
+- **Serve**: `php artisan serve`
+- **Migrate**: `php artisan migrate`
+- **Seed**: `php artisan db:seed`
+- **Test**: `php artisan test`
 
-## Configuration
+---
 
-Settings are stored in the `settings` table and organized by groups:
-- `email` - Email configuration
-- `s3` - AWS S3 configuration
-- `general` - General application settings
-
-## Testing
-
-```bash
-php artisan test
-```
-
-Ensure you have a MySQL database named `photo_studio_test` configured with credentials matching the values in `phpunit.xml` or override the `DB_*` variables before running the suite.
-
-## License
-
-MIT
-
+**Status**: In Development  
+**Version**: 1.0.0

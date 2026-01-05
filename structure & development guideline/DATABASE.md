@@ -1,7 +1,7 @@
 # Database Documentation
 
 ## Overview
-This document provides a comprehensive overview of the Photo Studio Management System database schema, including all tables, relationships, indexes, and data types.
+This document provides a comprehensive overview of the Hotel Management App database schema, including all tables, relationships, indexes, and data types.
 
 **Database Engine:** MySQL  
 **Character Set:** utf8mb4  
@@ -18,6 +18,16 @@ This document provides a comprehensive overview of the Photo Studio Management S
 6. [Indexes](#indexes)
 7. [Data Integrity](#data-integrity)
 8. [Notes & Recommendations](#notes--recommendations)
+
+## ⚠️ Removed Tables
+
+The following tables have been removed as part of the system cleanup:
+- `customers` - Customer management (removed)
+- `packages` - Package management (removed)
+- `package_types` - Package type management (removed)
+- `orders` - Order management (removed)
+- `order_items` - Order items (removed)
+- `payments` - Payment transactions (removed)
 
 ---
 
@@ -88,200 +98,8 @@ Branch/location information for multi-location photo studios.
 
 ---
 
-### 3. `customers`
-Customer/client information.
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| `id` | bigint unsigned | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
-| `customer_code` | varchar(255) | UNIQUE, NULLABLE | Customer code (e.g., #CUST001) |
-| `first_name` | varchar(255) | NOT NULL | First name |
-| `last_name` | varchar(255) | NULLABLE | Last name |
-| `email` | varchar(255) | NULLABLE | Email address |
-| `phone` | varchar(50) | NULLABLE | Phone number |
-| `mobile` | varchar(50) | NULLABLE | Mobile number |
-| `address` | text | NULLABLE | Full address |
-| `city` | varchar(255) | NULLABLE | City |
-| `state` | varchar(255) | NULLABLE | State/Province |
-| `postal_code` | varchar(20) | NULLABLE | Postal/ZIP code |
-| `country` | varchar(255) | NULLABLE | Country |
-| `branch_id` | bigint unsigned | FOREIGN KEY, NULLABLE | Associated branch |
-| `status` | enum | DEFAULT 'active' | Status: 'active', 'suspended', 'pending', 'inactive' |
-| `dob` | date | NULLABLE | Date of birth |
-| `anniversary_date` | date | NULLABLE | Anniversary date |
-| `total_orders` | integer | DEFAULT 0 | Total order count (cached) |
-| `total_services` | integer | DEFAULT 0 | Total services count (cached) |
-| `total_amount` | decimal(12,2) | DEFAULT 0 | Total spent (cached) |
-| `paid_amount` | decimal(12,2) | DEFAULT 0 | Total paid (cached) |
-| `remaining_amount` | decimal(12,2) | DEFAULT 0 | Remaining balance (cached) |
-| `wallet_balance` | decimal(12,2) | DEFAULT 0 | Wallet balance |
-| `last_order_date` | datetime | NULLABLE | Last order date |
-| `notes` | text | NULLABLE | Additional notes |
-| `preferences` | json | NULLABLE | Customer preferences |
-| `avatar` | varchar(255) | NULLABLE | Avatar file path |
-| `created_at` | timestamp | NULLABLE | Creation timestamp |
-| `updated_at` | timestamp | NULLABLE | Last update timestamp |
-| `deleted_at` | timestamp | NULLABLE | Soft delete timestamp |
-
-**Foreign Keys:**
-- `branch_id` → `branches.id` (ON DELETE SET NULL)
-
-**Indexes:**
-- PRIMARY KEY (`id`)
-- UNIQUE (`customer_code`)
-- INDEX (`email`)
-- INDEX (`phone`)
-- INDEX (`branch_id`)
-- INDEX (`status`)
-- INDEX (`created_at`)
-
-**Soft Deletes:** Yes
-
-**Notes:**
-- Statistics fields (total_orders, total_amount, etc.) are cached and should be recalculated when orders/payments change
-- Customer code is nullable but should ideally be auto-generated
-
----
-
-### 4. `packages`
-Service packages offered by the photo studio.
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| `id` | bigint unsigned | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
-| `package_name` | varchar(255) | NOT NULL | Package name |
-| `package_type` | enum | NOT NULL | Type: 'Album', 'PhotoShoot', 'Editing', 'Video' |
-| `default_price` | decimal(10,2) | NOT NULL | Default price |
-| `description` | text | NULLABLE | Package description |
-| `status` | enum | DEFAULT 'active' | Status: 'active', 'inactive' |
-| `created_at` | timestamp | NULLABLE | Creation timestamp |
-| `updated_at` | timestamp | NULLABLE | Last update timestamp |
-| `deleted_at` | timestamp | NULLABLE | Soft delete timestamp |
-
-**Indexes:**
-- PRIMARY KEY (`id`)
-- INDEX (`package_type`)
-- INDEX (`status`)
-- INDEX (`created_at`)
-
-**Soft Deletes:** Yes
-
----
-
-### 5. `orders`
-Customer orders for photo studio services.
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| `id` | bigint unsigned | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
-| `order_number` | varchar(255) | UNIQUE, NOT NULL | Order number (e.g., #ORD001) |
-| `customer_id` | bigint unsigned | FOREIGN KEY, NOT NULL | Customer reference |
-| `branch_id` | bigint unsigned | FOREIGN KEY, NULLABLE | Branch reference |
-| `order_date` | date | NOT NULL | Event date (when photo shoot/event happens) |
-| `due_date` | date | NULLABLE | Final delivery date (reminder/follow-up date) |
-| `subtotal` | decimal(12,2) | DEFAULT 0 | Subtotal (sum of items) |
-| `discount` | decimal(12,2) | DEFAULT 0 | Discount amount |
-| `total_amount` | decimal(12,2) | NOT NULL | Total amount (subtotal - discount) |
-| `paid_amount` | decimal(12,2) | DEFAULT 0 | Total paid amount |
-| `remaining_amount` | decimal(12,2) | DEFAULT 0 | Remaining balance (total - paid) |
-| `status` | enum | DEFAULT 'pending' | Order status: 'pending', 'processing', 'completed', 'cancelled' |
-| `payment_status` | enum | DEFAULT 'pending' | Payment status: 'pending', 'paid', 'partial', 'refunded' |
-| `payment_method` | varchar(255) | NULLABLE | Payment method: 'cash', 'upi', 'card', 'bank_transfer' |
-| `notes` | text | NULLABLE | Order notes |
-| `timeline` | json | NULLABLE | Order status timeline |
-| `links` | json | NULLABLE | Important links array (title + URL pairs) |
-| `created_at` | timestamp | NULLABLE | Creation timestamp |
-| `updated_at` | timestamp | NULLABLE | Last update timestamp |
-| `deleted_at` | timestamp | NULLABLE | Soft delete timestamp |
-
-**Foreign Keys:**
-- `customer_id` → `customers.id` (ON DELETE RESTRICT)
-- `branch_id` → `branches.id` (ON DELETE SET NULL)
-
-**Indexes:**
-- PRIMARY KEY (`id`)
-- UNIQUE (`order_number`)
-- INDEX (`customer_id`)
-- INDEX (`branch_id`)
-- INDEX (`order_date`)
-- INDEX (`status`)
-- INDEX (`payment_status`)
-- INDEX (`created_at`)
-
-**Soft Deletes:** Yes
-
-**Notes:**
-- `remaining_amount` is calculated: `total_amount - paid_amount`
-- `payment_status` should be auto-updated based on `paid_amount` vs `total_amount`
-- `subtotal` should be calculated from `order_items`
-- `order_date` represents the **Event Date** (when the photo shoot/event happens)
-- `due_date` represents the **Final Delivery Date** (reminder/follow-up date for delivery or next action)
-- `notes` field stores order notes/special instructions (displayed in form, details view, and PDF export)
-- `links` stores JSON array of link objects: `[{"id": 1234567890, "title": "Photo Share Link", "url": "https://..."}]`
-- Links can be managed via Order Details page (CRUD operations)
-
----
-
-### 6. `order_items`
-Items/packages within an order.
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| `id` | bigint unsigned | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
-| `order_id` | bigint unsigned | FOREIGN KEY, NOT NULL | Order reference |
-| `package_id` | bigint unsigned | FOREIGN KEY, NOT NULL | Package reference |
-| `quantity` | integer | DEFAULT 1 | Quantity |
-| `unit_price` | decimal(10,2) | NOT NULL | Unit price at time of order |
-| `total_price` | decimal(12,2) | NOT NULL | Total price (quantity × unit_price) |
-| `package_name` | varchar(255) | NULLABLE | Snapshot of package name |
-| `package_type` | varchar(255) | NULLABLE | Snapshot of package type |
-| `created_at` | timestamp | NULLABLE | Creation timestamp |
-| `updated_at` | timestamp | NULLABLE | Last update timestamp |
-
-**Foreign Keys:**
-- `order_id` → `orders.id` (ON DELETE CASCADE)
-- `package_id` → `packages.id` (ON DELETE RESTRICT)
-
-**Indexes:**
-- PRIMARY KEY (`id`)
-- INDEX (`order_id`)
-- INDEX (`package_id`)
-
-**Notes:**
-- `total_price` should be auto-calculated: `quantity × unit_price`
-- Package name/type snapshots preserve historical data if package is deleted/modified
-- No soft deletes (cascade delete with order)
-
----
-
-### 7. `payments`
-Payment transactions for orders.
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| `id` | bigint unsigned | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
-| `payment_number` | varchar(255) | UNIQUE, NOT NULL | Payment number (e.g., #PAY001) |
-| `order_id` | bigint unsigned | FOREIGN KEY, NOT NULL | Order reference |
-| `customer_id` | bigint unsigned | FOREIGN KEY, NOT NULL | Customer reference |
-| `branch_id` | bigint unsigned | FOREIGN KEY, NULLABLE | Branch reference |
-| `payment_date` | date | NOT NULL | Payment date |
-| `payment_type` | enum | DEFAULT 'credit' | Type: 'credit' (payment received), 'debit' (refund) |
-| `amount` | decimal(12,2) | NOT NULL | Payment amount |
-| `payment_method` | enum | DEFAULT 'cash' | Method: 'cash', 'upi', 'card', 'bank_transfer' |
-| `remarks` | text | NULLABLE | Payment remarks |
-| `created_at` | timestamp | NULLABLE | Creation timestamp |
-| `updated_at` | timestamp | NULLABLE | Last update timestamp |
-| `deleted_at` | timestamp | NULLABLE | Soft delete timestamp |
-
-**Foreign Keys:**
-- `order_id` → `orders.id` (ON DELETE RESTRICT)
-- `customer_id` → `customers.id` (ON DELETE RESTRICT)
-- `branch_id` → `branches.id` (ON DELETE SET NULL)
-
-**Indexes:**
-- PRIMARY KEY (`id`)
-- UNIQUE (`payment_number`)
-- INDEX (`order_id`)
+### 3. `financial_categories`
+Financial categories for income and expense transactions.
 - INDEX (`customer_id`)
 - INDEX (`branch_id`)
 - INDEX (`payment_date`)
@@ -584,14 +402,7 @@ users
   │                 └── permissions
 
 branches
-  ├── customers (one-to-many)
-  │     ├── orders (one-to-many)
-  │     │     ├── order_items (one-to-many)
-  │     │     │     └── packages (many-to-one)
-  │     │     └── payments (one-to-many)
-  │     └── payments (one-to-many)
-  ├── orders (one-to-many)
-  └── payments (one-to-many)
+  └── (relationships removed - customers, orders, payments tables deleted)
 
 financial_categories
   └── financial_transactions (one-to-many)
@@ -612,43 +423,11 @@ users
    - A role can have multiple permissions
    - A permission can be assigned to multiple roles
 
-3. **Branch ↔ Customer** (One-to-Many)
-   - A branch can have many customers
-   - A customer belongs to one branch (nullable)
-
-4. **Customer ↔ Order** (One-to-Many)
-   - A customer can have many orders
-   - An order belongs to one customer
-
-5. **Order ↔ OrderItem** (One-to-Many)
-   - An order can have many order items
-   - An order item belongs to one order
-
-6. **OrderItem ↔ Package** (Many-to-One)
-   - An order item references one package
-   - A package can be in many order items
-
-7. **Order ↔ Payment** (One-to-Many)
-   - An order can have many payments
-   - A payment belongs to one order
-
-8. **Customer ↔ Payment** (One-to-Many)
-   - A customer can have many payments
-   - A payment belongs to one customer
-
-9. **Branch ↔ Order** (One-to-Many)
-   - A branch can have many orders
-   - An order belongs to one branch (nullable)
-
-10. **Branch ↔ Payment** (One-to-Many)
-    - A branch can have many payments
-    - A payment belongs to one branch (nullable)
-
-11. **FinancialCategory ↔ FinancialTransaction** (One-to-Many)
+3. **FinancialCategory ↔ FinancialTransaction** (One-to-Many)
     - A category can have many transactions
     - A transaction belongs to one category
 
-12. **User ↔ FinancialTransaction** (One-to-Many)
+4. **User ↔ FinancialTransaction** (One-to-Many)
     - A user can create many transactions
     - A transaction is created by one user (nullable)
 

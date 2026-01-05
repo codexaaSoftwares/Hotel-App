@@ -1,6 +1,6 @@
 # Hotel Management Migration - Progress Tracking
 
-**Project**: Teja Hotel – Restaurant & Room Management  
+**Project**: Hotel Management App – Restaurant & Room Management  
 **Base Project**: Photo Studio Management  
 **Status**: 🟡 Planning Complete
 

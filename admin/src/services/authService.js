@@ -26,47 +26,11 @@ const PERMISSION_ALIAS_MAP = {
   edit_branch: ['branch:write', 'branch:manage'],
   delete_branch: ['branch:delete', 'branch:manage'],
   
-  // Package Management
-  view_package: ['package:read'],
-  create_package: ['package:write', 'package:manage'],
-  edit_package: ['package:write', 'package:manage'],
-  delete_package: ['package:delete', 'package:manage'],
-  
-  // Customer Management
-  view_customer: ['customer:read'],
-  create_customer: ['customer:write', 'customer:manage'],
-  edit_customer: ['customer:write', 'customer:manage'],
-  delete_customer: ['customer:delete', 'customer:manage'],
-  
-  // Order Management
-  view_order: ['order:read'],
-  create_order: ['order:write', 'order:manage'],
-  edit_order: ['order:write', 'order:manage'],
-  delete_order: ['order:delete', 'order:manage'],
-  
-  // Payment Management
-  view_payment: ['payment:read', 'transaction:read'],
-  create_payment: ['payment:write', 'payment:manage', 'transaction:write'],
-  edit_payment: ['payment:write', 'payment:manage', 'transaction:write'],
-  delete_payment: ['payment:delete', 'payment:manage', 'transaction:delete'],
-  
   // Dashboard
   view_dashboard: ['dashboard:read'],
   
   // Report Management
   view_report: ['report:read'],
-  
-  // Financial Transaction Management
-  view_financial_transaction: ['view_financial_transaction'],
-  create_financial_transaction: ['create_financial_transaction', 'view_financial_transaction'],
-  edit_financial_transaction: ['edit_financial_transaction', 'view_financial_transaction'],
-  delete_financial_transaction: ['delete_financial_transaction', 'view_financial_transaction'],
-  
-  // Financial Category Management
-  view_financial_category: ['view_financial_category'],
-  create_financial_category: ['create_financial_category', 'view_financial_category'],
-  edit_financial_category: ['edit_financial_category', 'view_financial_category'],
-  delete_financial_category: ['delete_financial_category', 'view_financial_category'],
 }
 
 const startCase = (value = '') =>

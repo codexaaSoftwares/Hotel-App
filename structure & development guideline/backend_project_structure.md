@@ -1,4 +1,4 @@
-# Photo Studio Management - Backend API Project Structure & Development Guidelines
+# Hotel Management App - Backend API Project Structure & Development Guidelines
 
 ## 📋 Table of Contents
 1. [Project Overview](#project-overview)
@@ -17,7 +17,7 @@
 
 ## 🚀 Project Overview
 
-**Photo Studio Management Backend** is a Laravel 9 RESTful API that powers the Photo Studio Management admin dashboard. It provides comprehensive backend services for managing users, roles, permissions, branches, settings, and more.
+**Hotel Management App Backend** is a Laravel 9 RESTful API that powers the Hotel Management App admin dashboard. It provides comprehensive backend services for managing users, roles, permissions, branches, financial transactions, settings, and more.
 
 ### Key Features
 - 🔐 JWT Authentication with Laravel Sanctum
@@ -47,15 +47,10 @@ backend/
 │   │   ├── 📁 Controllers/         # Request handlers
 │   │   │   ├── 📁 API/             # API controllers
 │   │   │   │   ├── BranchController.php
-│   │   │   │   ├── CustomerController.php
 │   │   │   │   ├── DashboardController.php
 │   │   │   │   ├── FinancialCategoryController.php
 │   │   │   │   ├── FinancialTransactionController.php
-│   │   │   │   ├── OrderController.php
-│   │   │   │   ├── PackageController.php
-│   │   │   │   ├── PaymentController.php
 │   │   │   │   ├── PermissionController.php
-│   │   │   │   ├── ReportController.php
 │   │   │   │   ├── RoleController.php
 │   │   │   │   ├── SettingController.php
 │   │   │   │   └── UserController.php
@@ -78,38 +73,22 @@ backend/
 │   │   ├── 📁 Requests/            # Form request validation
 │   │   │   ├── BranchStoreRequest.php
 │   │   │   ├── BranchUpdateRequest.php
-│   │   │   ├── CustomerStoreRequest.php
-│   │   │   ├── CustomerUpdateRequest.php
 │   │   │   ├── FinancialCategoryStoreRequest.php
 │   │   │   ├── FinancialCategoryUpdateRequest.php
 │   │   │   ├── FinancialTransactionStoreRequest.php
-│   │   │   ├── FinancialTransactionUpdateRequest.php
-│   │   │   ├── OrderStoreRequest.php
-│   │   │   ├── OrderUpdateRequest.php
-│   │   │   ├── PackageStoreRequest.php
-│   │   │   └── PackageUpdateRequest.php
+│   │   │   └── FinancialTransactionUpdateRequest.php
 │   │   └── 📁 Resources/            # API resources
 │   │       ├── BranchResource.php
-│   │       ├── CustomerResource.php
 │   │       ├── FinancialCategoryResource.php
-│   │       ├── FinancialTransactionResource.php
-│   │       ├── OrderItemResource.php
-│   │       ├── OrderResource.php
-│   │       ├── PackageResource.php
-│   │       └── PaymentResource.php
+│   │       └── FinancialTransactionResource.php
 │   │
 │   ├── 📁 Mail/                     # Email classes
 │   │   └── GenericEmail.php        # Generic mailable class
 │   │
 │   ├── 📁 Models/                   # Eloquent models
 │   │   ├── Branch.php               # Branch model
-│   │   ├── Customer.php             # Customer model (with stats auto-calculation)
 │   │   ├── FinancialCategory.php    # Financial category model
 │   │   ├── FinancialTransaction.php # Financial transaction model
-│   │   ├── Order.php                # Order model (with payment recalculation)
-│   │   ├── OrderItem.php            # OrderItem model
-│   │   ├── Package.php              # Package model
-│   │   ├── Payment.php              # Payment model (with auto order status update)
 │   │   ├── Permission.php           # Permission model
 │   │   ├── Role.php                  # Role model (with soft delete)
 │   │   ├── Setting.php               # Setting model
@@ -184,10 +163,8 @@ backend/
 │       │   ├── test.blade.php        # Test email template
 │       │   └── welcome.blade.php
 │       └── 📁 pdfs/                 # PDF export templates
-│           ├── company_health.blade.php   # Company Health Report PDF template
-│           ├── order_invoice.blade.php    # Order invoice PDF template
-│           ├── customer.blade.php         # Customer history report PDF template
-│           └── transaction.blade.php     # Payment receipt PDF template
+│           ├── invoice.blade.php         # Sample invoice template
+│           └── report.blade.php          # Sample report template
 │
 ├── 📁 routes/                       # Route definitions
 │   ├── api.php                      # API routes
@@ -315,89 +292,7 @@ backend/
 - **Permissions**: `view_branch`, `create_branch`, `edit_branch`, `delete_branch`
 - **Status**: ✅ Fully implemented
 
-### 6. **Package Management Module**
-- **Location**: `app/Http/Controllers/API/PackageController.php`
-- **Routes**: `/api/packages/*`
-- **Features**:
-  - List packages (paginated, sortable with server-side filtering)
-  - Get package by ID
-  - Create package
-  - Update package
-  - Delete package (soft delete)
-- **Permissions**: `view_package`, `create_package`, `edit_package`, `delete_package`
-- **Status**: ✅ Fully implemented
-
-### 7. **Customer Management Module**
-- **Location**: `app/Http/Controllers/API/CustomerController.php`
-- **Routes**: `/api/customers/*`, `/api/customers/{customer}/export-pdf`
-- **Features**:
-  - List customers (paginated, sortable, searchable with server-side filtering)
-  - Get customer by ID
-  - Create customer
-  - Update customer
-  - Delete customer (soft delete)
-  - Update customer status
-  - Recalculate customer statistics from orders
-  - Export customer history report as PDF
-- **Permissions**: `view_customer`, `create_customer`, `edit_customer`, `delete_customer`
-- **Status**: ✅ Fully implemented
-- **Note**: Customer statistics (totalOrders, total_amount, paid_amount, etc.) automatically calculated from orders via model events
-- **PDF Export**: Customer history report with complete order and payment history, pure black and white design
-
-### 8. **Order Management Module**
-- **Location**: `app/Http/Controllers/API/OrderController.php`
-- **Routes**: `/api/orders/*`, `/api/orders/{order}/export-pdf`
-- **Features**:
-  - List orders (paginated, sortable, searchable with server-side filtering)
-  - Get order by ID (includes payment history in response)
-  - Create order (with multiple packages/items)
-  - Update order (with items update)
-  - Delete order (soft delete)
-  - Update order status (manual status change endpoint)
-  - Update payment status
-  - Get orders by customer
-  - Order statistics endpoint (`/api/orders/stats`) with date range filtering
-  - Export order invoice as PDF (includes notes section)
-  - **Important Links Management** - Store and manage dynamic links array (title + URL) per order
-  - **Notes Field** - Store order notes/special instructions (displayed in form, details view, and PDF export)
-- **Date Fields Semantics**:
-  - `order_date` = **Event Date** (when the photo shoot/event happens)
-  - `due_date` = **Final Delivery Date** (reminder/follow-up date for delivery or next action)
-  - `created_at` = System timestamp (when order was booked/created in system)
-- **Permissions**: `view_order`, `create_order`, `edit_order`, `delete_order`
-- **Status**: ✅ Fully implemented
-- **Note**: 
-  - Order create/update/delete होने पर customer stats automatically update होते हैं
-  - Payment status simplified to `pending` or `completed` (calculated from remaining amount)
-  - Order details endpoint includes payment history ordered by date (descending)
-  - API resources use camelCase only (no duplicate snake_case fields)
-  - Links stored as JSON array in `links` column, validated with title (string, max 255) and url (valid URL, max 500)
-  - Notes field (text) available in create/update forms, displayed in order details modal and PDF export
-- **PDF Export**: Order invoice with payment transactions and notes, pure black and white design
-
-### 9. **Payment Management Module**
-- **Location**: `app/Http/Controllers/API/PaymentController.php`
-- **Routes**: `/api/payments/*`, `/api/payments/{payment}/export-pdf`
-- **Features**:
-  - List payments (paginated, sortable, searchable)
-  - Get payment by ID
-  - Create payment (from orders)
-  - Update payment
-  - Delete payment (soft delete)
-  - Get payments by order
-  - Export payment receipt as PDF
-  - Auto-generates payment_number (#PAY001, #PAY002, etc.)
-  - Auto-updates order payment status on create/update/delete
-  - Auto-updates customer stats
-- Returns enriched `PaymentResource` snapshots (order + customer financials) so frontend can display real-time totals per credit/debit
-- Central `syncOrderFinancials()` helper ensures debit refunds also recalculate `orders` and `customers` tables before responses are sent
-- PaymentResource uses camelCase only (no duplicate fields)
-- **Permissions**: `view_payment`, `create_payment`, `edit_payment`, `delete_payment`
-- **Status**: ✅ Fully implemented
-- **Note**: Payment record होने पर order payment status और customer stats automatically update होते हैं
-- **PDF Export**: Payment receipt with order reference and items, pure black and white design
-
-### 10. **Financial Management Module**
+### 6. **Financial Management Module**
 - **Location**: 
   - `app/Http/Controllers/API/FinancialTransactionController.php`
   - `app/Http/Controllers/API/FinancialCategoryController.php`
@@ -440,53 +335,17 @@ backend/
   - Transaction number auto-generated based on type
   - Statistics endpoint supports date range filtering
 
-### 11. **Dashboard & Analytics Module**
+### 7. **Dashboard & Analytics Module**
 - **Location**: `app/Http/Controllers/API/DashboardController.php`
 - **Routes**: 
-  - `/api/dashboard/summary` - KPI totals (orders, customers) with period comparison
-  - `/api/dashboard/orders-summary` - Order status counts (total, pending, processing, completed)
-  - `/api/dashboard/upcoming-orders` - Orders with upcoming event dates (order_date >= today)
-  - `/api/dashboard/upcoming-events` - Customer birthdays and anniversaries (next 30 days)
-  - `/api/dashboard/last-transactions` - Combined payments and financial transactions
-  - `/api/dashboard/company-health-chart` - Monthly aggregation (orders revenue, income, expenses, profit)
-  - `/api/dashboard/recent-activities` - Recent orders, payments, and customer events
+  - `/api/dashboard/summary` - Dashboard summary (placeholder)
+  - `/api/dashboard/financial-summary` - Financial summary (placeholder)
 - **Features**:
-  - Aggregated KPI summary (orders, customers) with previous-period deltas
-  - Orders summary by status (pending, processing, completed)
-  - Upcoming orders by event date (order_date)
-  - Upcoming customer events (birthdays, anniversaries) for gift preparation
-  - Last transactions (payments + financial transactions combined)
-  - Company health chart with multi-line visualization (orders revenue, income, expenses, profit)
-  - Recent activities feed combining latest orders, payments, and customer events
+  - Dashboard placeholder endpoints (ready for future implementation)
 - **Permissions**: `view_dashboard`
-- **Status**: ✅ Fully implemented
-- **Consumers**: Admin Dashboard widgets (KPI cards, summary cards, upcoming orders, events, transactions, company health chart)
+- **Status**: ⏳ Empty placeholder, ready for implementation
 
-### 12. **Report Management Module**
-- **Location**: `app/Http/Controllers/API/ReportController.php`
-- **Routes**: 
-  - `/api/reports/company-health` (GET)
-  - `/api/reports/company-health/export-pdf` (GET)
-- **Features**:
-  - **Company Health Report**:
-    - Order Summary (total orders, order amount, paid amounts, remaining amounts)
-    - All customers list with financial summary
-    - Income & Expense Summary (total records, total income, total expenses, net profit)
-    - Income by category breakdown with records
-    - Expenses by category breakdown with records
-    - Financial Overview (incoming flow, expense flow, company profit, outstanding)
-    - Date range filtering (default: current year Jan 1st to Dec 31st)
-    - Branch filtering
-    - PDF export with colorful design
-- **Permissions**: 
-  - `view_dashboard` (for Company Health Report)
-- **Status**: ✅ Fully implemented
-- **Note**: 
-  - All calculations performed on backend
-  - Company Health Report PDF includes colorful design with light backgrounds and colored borders
-  - PDF template: `resources/views/pdfs/company_health.blade.php`
-
-### 13. **Settings Management Module**
+### 8. **Settings Management Module**
 - **Location**: `app/Http/Controllers/API/SettingController.php`
 - **Routes**: `/api/settings/*`, `/api/global-settings/*`
 - **Features**:
@@ -502,7 +361,7 @@ backend/
 - **Permissions**: `view_setting`, `edit_setting`
 - **Status**: ✅ Fully implemented
 
-### 14. **Email Service**
+### 9. **Email Service**
 - **Location**: `app/Services/EmailService.php`
 - **Features**:
   - Send generic emails
@@ -514,27 +373,22 @@ backend/
   - Email template rendering (Blade templates)
 - **Status**: ✅ Fully implemented
 
-### 15. **PDF Export Service**
+### 10. **PDF Export Service**
 - **Location**: `app/Services/PdfExportService.php`
 - **Features**:
   - Generate PDF documents
   - Export reports to PDF
-  - Order invoice export
-  - Customer history report export
-  - Payment receipt export
-  - Company Health Report export
+  - Download, stream, and raw PDF output methods
 - **Status**: ✅ Fully implemented
 - **PDF Templates**:
-  - `resources/views/pdfs/order_invoice.blade.php` - Order invoice with payment transactions
-  - `resources/views/pdfs/customer.blade.php` - Customer history report with orders and payments
-  - `resources/views/pdfs/transaction.blade.php` - Payment receipt with order reference
-  - `resources/views/pdfs/company_health.blade.php` - Company Health Report with colorful design
+  - `resources/views/pdfs/invoice.blade.php` - Sample invoice template
+  - `resources/views/pdfs/report.blade.php` - Sample report template
 - **Design Standards**: 
-  - Order/Customer/Payment PDFs: Pure black and white, no background colors, single thin line dividers
-  - Company Health Report PDF: Colorful design with light backgrounds, colored borders (1px solid), and colored text
-  - Consistent footer format across all PDFs
+  - Pure black and white design
+  - Consistent footer format
+  - Ready for custom templates
 
-### 16. **File Storage & Upload Service**
+### 11. **File Storage & Upload Service**
 - **Location**: 
   - `app/Http/Controllers/API/UserController.php` - Avatar upload/delete
   - `app/Http/Controllers/API/SettingController.php` - Business logo upload/delete

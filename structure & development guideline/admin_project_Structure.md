@@ -1,4 +1,4 @@
-# Photo Studio Management - Admin Frontend Project Structure & Development Guidelines
+# Hotel Management App - Admin Frontend Project Structure & Development Guidelines
 
 ## 📋 Table of Contents
 1. [Project Overview](#project-overview)
@@ -18,7 +18,7 @@
 
 ## 📱 Project Overview
 
-**Photo Studio Management Admin** is a modern React-based admin dashboard for managing a photo studio business. It provides comprehensive features for managing branches, packages, customers, orders, payments, transactions, reports, users, roles, and system settings.
+**Hotel Management App Admin** is a modern React-based admin dashboard for managing hotel operations. It provides comprehensive features for managing branches, financial transactions, reports, users, roles, and system settings.
 
 ### Key Features
 - 🎨 Modern UI with React Bootstrap and CoreUI
@@ -102,24 +102,11 @@ admin/
 │   │   ├── 📁 pages/                 # Page-specific components
 │   │   │   ├── 📁 branches/          # Branch management
 │   │   │   │   └── BranchForm.jsx    # Branch form component
-│   │   │   ├── 📁 customers/         # Customer management
-│   │   │   │   ├── CustomerDetailsModal.jsx
-│   │   │   │   ├── CustomerForm.jsx
-│   │   │   │   └── README.md
-│   │   │   ├── 📁 orders/            # Order management
-│   │   │   │   ├── OrderDetailsModal.jsx
-│   │   │   │   ├── OrderForm.jsx
-│   │   │   │   └── README.md
-│   │   │   ├── 📁 packages/          # Package management
-│   │   │   │   └── PackageForm.jsx
 │   │   │   ├── 📁 payments/          # Payment management
 │   │   │   │   ├── PaymentDetailsModal.jsx
 │   │   │   │   └── PaymentForm.jsx
 │   │   │   ├── 📁 roles/            # Role management
 │   │   │   │   └── RoleForm.jsx
-│   │   │   ├── 📁 transactions/      # Transaction management
-│   │   │   │   ├── TransactionDetailsModal.jsx
-│   │   │   │   └── TransactionForm.jsx
 │   │   │   ├── 📁 financial/         # Financial management
 │   │   │   │   ├── FinancialTransactionForm.jsx
 │   │   │   │   ├── FinancialTransactionDetailsModal.jsx
@@ -160,14 +147,10 @@ admin/
 │   │
 │   ├── 📁 mock/                       # Mock data for development
 │   │   ├── branches.json
-│   │   ├── customers.json
-│   │   ├── orders.json
-│   │   ├── packages.json
 │   │   ├── photographers.json
 │   │   ├── profile.json
 │   │   ├── roles.json
 │   │   ├── settings.json
-│   │   ├── transactions.json
 │   │   └── users.json
 │   │
 │   ├── 📁 pages/                     # Page components
@@ -186,19 +169,14 @@ admin/
 │   │   ├── authService.js            # Authentication API (login, logout, forgot/reset password)
 │   │   ├── branchService.js          # Branch API
 │   │   ├── dashboardService.js       # Dashboard analytics (summary, trend, activities)
-│   │   ├── customerService.js        # Customer API
-│   │   ├── financialService.js      # Financial transactions API
 │   │   ├── financialCategoryService.js # Financial categories API
-│   │   ├── orderService.js           # Order API
-│   │   ├── packageService.js         # Package API
+│   │   ├── financialTransactionService.js # Financial transactions API
 │   │   ├── paymentService.js        # Payment API
 │   │   ├── permissionService.js      # Permission API
 │   │   ├── profileService.js         # Profile API (get/update profile, change password)
 │   │   ├── README.md
-│   │   ├── reportService.js          # Report API
 │   │   ├── roleService.js            # Role API
 │   │   ├── settingsService.js        # Settings API (email settings, test email, business info)
-│   │   ├── transactionService.js     # Transaction API
 │   │   └── userService.js            # User API
 │   │
 │   ├── 📁 styles/                    # Additional styles
@@ -212,27 +190,21 @@ admin/
 │   ├── 📁 views/                     # Main view components
 │   │   ├── 📁 branches/              # Branch management views
 │   │   │   └── BranchesList.jsx
-│   │   ├── 📁 customers/             # Customer management views
-│   │   │   └── CustomersList.jsx
 │   │   ├── 📁 dashboard/             # Dashboard views
-│   │   │   ├── Dashboard.jsx        # Main dashboard
+│   │   │   ├── Dashboard.jsx        # Main dashboard (empty placeholder)
 │   │   │   └── MainChart.jsx         # Dashboard chart component
-│   │   ├── 📁 orders/                # Order management views
-│   │   │   └── OrdersList.jsx
-│   │   ├── 📁 packages/              # Package management views
-│   │   │   └── PackagesList.jsx
 │   │   ├── 📁 payments/              # Payment management views
 │   │   │   ├── PaymentFormView.jsx
 │   │   │   └── PaymentsList.jsx
 │   │   ├── 📁 reports/               # Report views
-│   │   │   └── CompanyHealthReport.jsx
+│   │   │   ├── BranchReport.jsx
+│   │   │   ├── LedgerReport.jsx
+│   │   │   ├── SalesReport.jsx
+│   │   │   └── StaffReport.jsx
 │   │   ├── 📁 roles/                 # Role management views
 │   │   │   └── RolesList.jsx
 │   │   ├── 📁 settings/              # Settings views
 │   │   │   └── Settings.jsx
-│   │   ├── 📁 transactions/          # Transaction management views
-│   │   │   ├── TransactionFormView.jsx
-│   │   │   └── TransactionsList.jsx
 │   │   ├── 📁 financial/             # Financial management views
 │   │   │   ├── FinancialTransactionsList.jsx
 │   │   │   └── FinancialCategoriesList.jsx
@@ -325,14 +297,9 @@ admin/
 ### 2. **Dashboard Module**
 - **Location**: `src/views/dashboard/`
 - **Features**:
-  - **KPI Cards**: Total Orders and Total Customers with period comparison (from `/dashboard/summary`)
-  - **Orders Summary Cards**: 4 cards showing Total Orders, Pending, Processing, Completed (from `/dashboard/orders-summary`)
-  - **Upcoming Orders Widget**: Shows orders with upcoming event dates (order_date >= today) from `/dashboard/upcoming-orders`
-  - **Upcoming Customer Events Widget**: Shows birthdays and anniversaries in next 30 days (from `/dashboard/upcoming-events`)
-  - **Last Transactions Widget**: Combined payments and financial transactions (from `/dashboard/last-transactions`)
-  - **Company Health Chart**: Multi-line chart showing Orders Revenue, Income, Expenses, and Company Profit over time (from `/dashboard/company-health-chart`)
-  - Date-range filtering + manual refresh
-- **Status**: ✅ Fully implemented with API integration
+  - Dashboard placeholder (ready for future implementation)
+  - MainChart component available for future charts
+- **Status**: ⏳ Empty placeholder, ready for implementation
 
 ### 3. **Branch Management**
 - **Location**: `src/views/branches/`, `src/services/branchService.js`
@@ -343,47 +310,7 @@ admin/
   - Branch details
 - **Status**: ✅ Fully implemented with API integration
 
-### 4. **Package Management**
-- **Location**: `src/views/packages/`, `src/services/packageService.js`
-- **Features**:
-  - Package list (server-side pagination, filtering, searching)
-  - Create/Edit package
-  - Delete package
-  - Package details
-- **Status**: ✅ Fully implemented with API integration + Server-side pagination/filtering
-
-### 5. **Customer Management**
-- **Location**: `src/views/customers/`, `src/services/customerService.js`
-- **Features**:
-  - Customer/Photographer list (server-side pagination, filtering, searching)
-  - Customer details modal
-  - Create/Edit customer
-  - PDF export (Customer History Report with complete order and payment history)
-  - Customer statistics (auto-calculated from orders)
-  - Derived financial summary (total/paid/remaining) with balance-aware status chips
-- **Status**: ✅ Fully implemented with API integration + Server-side pagination/filtering + PDF Export
-
-### 6. **Order Management**
-- **Location**: `src/views/orders/`, `src/services/orderService.js`
-- **Features**:
-  - Order list (server-side pagination, filtering, searching)
-  - **Order Date (Event Date)** column in listing - shows when the photo shoot/event happens
-  - Create/Edit order (multi-package support)
-  - **Notes field** - Add/edit notes in order form, displayed in Order Details and PDF export
-  - Order form labels: "Order Date (Event Date)" and "Due Date (Final Delivery Date)"
-  - Order details modal with integrated payment history (no separate API call needed)
-  - **Important Links CRUD** - Add/Edit/Delete links with custom titles and URLs (managed from Order Details page)
-  - PDF invoice export (pure black and white design) - includes notes section
-  - Order status tracking with manual status update functionality
-  - Payment status management (simplified to Pending/Completed)
-  - Record payment from order actions
-  - Customer stats auto-update on order changes
-  - Order list now surfaces API errors (no mock fallback)
-  - Payment history displays payment numbers in #PAY003 format
-  - Clean API responses with camelCase fields only (no duplicate snake_case fields)
-- **Status**: ✅ Fully implemented with API integration + Server-side pagination/filtering + PDF Export + Links CRUD + Notes field
-
-### 7. **Payment Management**
+### 4. **Payment Management**
 - **Location**: `src/views/payments/`, `src/components/pages/payments/`, `src/services/paymentService.js`
 - **Features**:
   - Record payment from orders (Actions → Record Payment)
@@ -395,29 +322,16 @@ admin/
   - PDF receipt export (pure black and white design)
 - **Status**: ✅ Fully implemented with API integration (real database) + PDF Export
 
-### 8. **Transaction Management**
-- **Location**: `src/views/transactions/`, `src/services/transactionService.js`, `src/services/paymentService.js`
+### 5. **Report Management**
+- **Location**: `src/views/reports/`
 - **Features**:
-  - Transaction list (shows all payments from orders)
-  - Payments from orders automatically appear here
-  - Payment numbers displayed in #PAY003 format
-  - Create transaction
-  - Transaction details modal
-  - Edit/Delete transactions
-  - Transactions list consumes enriched payment payload (order/customer totals + payment type) so remaining amounts flip immediately after any debit
-  - PDF receipt export (pure black and white design)
-- **Status**: ✅ Fully implemented - Shows payments from orders module + PDF Export
+  - Branch Report
+  - Ledger Report
+  - Sales Report
+  - Staff Report
+- **Status**: ✅ Available (ready for implementation)
 
-### 9. **Report Management**
-- **Location**: `src/views/reports/`, `src/services/reportService.js`
-- **Features**:
-  - Company Health Report (overall orders, payments, income, expenses with financial overview)
-  - Date range filtering
-  - Branch filtering
-  - PDF export for Company Health Report
-- **Status**: ✅ Fully implemented with API integration + PDF Export
-
-### 10. **User Management**
+### 6. **User Management**
 - **Location**: `src/views/users/`, `src/services/userService.js`, `src/services/profileService.js`
 - **Features**:
   - User list
@@ -429,7 +343,7 @@ admin/
   - Change password
 - **Status**: ✅ Fully implemented with API integration
 
-### 11. **Role & Permission Management**
+### 7. **Role & Permission Management**
 - **Location**: `src/views/roles/`, `src/services/roleService.js`
 - **Features**:
   - Role list
@@ -438,7 +352,7 @@ admin/
   - Permission management
 - **Status**: ✅ Fully implemented with API integration
 
-### 12. **Financial Management**
+### 8. **Financial Management**
 - **Location**: `src/views/financial/`, `src/services/financialService.js`, `src/services/financialCategoryService.js`
 - **Features**:
   - Financial Transactions list (income & expense)
@@ -455,7 +369,7 @@ admin/
   - Transaction type cannot be changed after creation
 - **Status**: ✅ Fully implemented with API integration + Server-side pagination/filtering
 
-### 13. **Settings Management**
+### 9. **Settings Management**
 - **Location**: `src/views/settings/`, `src/services/settingsService.js`
 - **Features**:
   - System settings
@@ -469,7 +383,7 @@ admin/
   - Global settings management
 - **Status**: ✅ Fully implemented with API integration
 
-### 14. **App Constants**
+### 10. **App Constants**
 - **Location**: `src/constants/app.js`
 - **Features**:
   - Centralized static content management
@@ -797,13 +711,10 @@ const userService = {
 - User Profile (Personal Info, Address, Change Password)
 - Role & Permission Management
 - Settings Management (Business Info, Invoice, Email Settings with test, App Settings with Web URL, Currency & Regional)
-- Dashboard (live KPI cards, revenue trends with backend analytics endpoints)
-- Customer Management (with PDF export, auto-calculated stats from orders, server-side pagination/filtering)
-- Order Management (multi-package support, customer stats auto-update, server-side pagination/filtering, payment recording, PDF export, **Important Links CRUD**)
-- Package Management (server-side pagination/filtering)
-- Payment Management (record payments from orders, auto-updates order status and customer stats, PDF export)
-- Transaction Management (shows payments from orders, PDF export)
-- Report Management (Company Health Report, Customer Payment Status Report with PDF export)
+- Branch Management (CRUD operations)
+- Financial Management (Income & Expense transactions, Categories)
+- Payment Management
+- Report Management (Branch, Ledger, Sales, Staff reports)
 - Theme System (Dark/Light mode)
 
 ### 🟡 Partially Implemented (UI Complete, API Pending)
@@ -853,35 +764,13 @@ npm run lint
 
 ---
 
-**Last Updated**: December 2025
-**Version**: 1.2.0
+**Last Updated**: January 2025
+**Version**: 1.0.0
 
 ## 🔄 Recent Updates
-- ✅ Branch Management fully implemented with API integration (server-side pagination, filtering, searching)
-- ✅ Payment Management fully implemented with real database integration
-- ✅ Transaction Management shows payments from orders
-- ✅ Server-side pagination, filtering, and searching for Packages, Customers, and Orders
-- ✅ Payment form shows customer name with #CUST code format
-- ✅ Order actions include "Record Payment" functionality
-- ✅ Dashboard cards + revenue chart now powered by `/dashboard/*` APIs with themed UI refresh
-- ✅ Customer/Order/Transaction PDFs export fully implemented with pure black and white design
-- ✅ All PDF exports use consistent design: pure black and white, no background colors, single thin line dividers
-- ✅ All PDF exports use consistent footer format: Business Name | Address | Phone | Website | Footer Text
-- ✅ Standardized PDF filename format: `Order_{OrderID}_{CustomerName}.pdf`, `Customer_{CustomerID}_{CustomerName}.pdf`, `Payment_{PaymentId}_{CustomerName}.pdf`
-- ✅ CORS configuration updated to expose Content-Disposition header for filename extraction
-- ✅ Orders & Customers lists now rely solely on live API responses (no mock fallback), deriving status from outstanding balances and displaying payment type badges inside Order Details
-- ✅ Order Details API now includes payment history (no separate API call needed)
-- ✅ Payment status simplified to Pending/Completed (removed Partial/Refunded from UI)
-- ✅ Manual order status update functionality added
-- ✅ Payment numbers displayed in #PAY003 format in payment history and transactions
-- ✅ API responses cleaned up - removed duplicate fields, using camelCase only
-- ✅ **File Upload Service** - Avatar and business logo upload implemented (local storage, no S3)
-- ✅ Avatar upload/delete functionality in Profile page
-- ✅ Business logo upload/delete functionality in Settings page
-- ✅ Custom storage file serving (no symlink required, works on shared hosting)
-- ✅ **Important Links CRUD** - Dynamic links management (add/edit/delete) with custom titles and URLs, managed from Order Details page
-- ✅ **Report Management Module** - Company Health Report fully implemented with date range filtering, branch filtering, and PDF export
-- ✅ **Permissions System** - All pages now have proper permission checks (Reports, Financial Transactions, Financial Categories)
-- ✅ **App Constants** - Centralized constants file (`constants/app.js`) for app name, footer text, brand information
-- ✅ **Footer Updates** - Dynamic copyright year range (2024-2025), brand link (Codexaa Software Solution), consistent across all pages
-- ✅ **Authentication Pages** - Removed demo credentials section, updated with brand footer
+- ✅ System cleanup: Removed Order Management, Customer Management, Package Management, Transaction Management, and Company Health Report modules
+- ✅ Dashboard simplified to empty placeholder (ready for future implementation)
+- ✅ Financial Management module retained (Income & Expense transactions)
+- ✅ Payment Management module retained
+- ✅ Report Management structure retained (Branch, Ledger, Sales, Staff reports)
+- ✅ All core infrastructure preserved (Auth, Users, Roles, Permissions, Settings, Financial)
