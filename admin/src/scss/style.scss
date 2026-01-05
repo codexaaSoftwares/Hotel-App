@@ -91,32 +91,32 @@ body {
 }
 
 .dashboard-page {
-  background: linear-gradient(135deg, #f8f5ff 0%, #fefefe 100%);
+  background: linear-gradient(135deg, #f0fdfa 0%, #fefefe 100%);
   min-height: 100vh;
   padding-bottom: 2rem;
 
   .dashboard-header {
-    border-bottom-color: rgba(139, 92, 246, 0.2) !important;
+    border-bottom-color: rgba(13, 148, 136, 0.2) !important;
   }
 
   .text-theme {
-    color: #8b5cf6 !important;
+    color: #0d9488 !important;
   }
 
   .btn-outline-success {
-    border-color: #8b5cf6;
-    color: #8b5cf6;
+    border-color: #0d9488;
+    color: #0d9488;
 
     &:hover,
     &:focus {
-      background-color: #8b5cf6;
-      border-color: #8b5cf6;
+      background-color: #0d9488;
+      border-color: #0d9488;
       color: #fff;
     }
   }
 
   .dashboard-date-picker input {
-    border-color: rgba(139, 92, 246, 0.3) !important;
+    border-color: rgba(13, 148, 136, 0.3) !important;
   }
 
   .dashboard-stat-card {
@@ -174,7 +174,7 @@ body {
         }
 
         &.primary {
-          background: linear-gradient(90deg, #a78bfa, #8b5cf6);
+          background: linear-gradient(90deg, #14b8a6, #0d9488);
         }
       }
     }

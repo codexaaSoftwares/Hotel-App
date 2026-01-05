@@ -428,9 +428,9 @@ const Settings = () => {
   const renderBusinessInfo = () => (
     <div className="mb-5">
       {/* Section Header */}
-      <div className="d-flex align-items-center mb-4 pb-3 border-bottom border-success border-2">
-        <FontAwesomeIcon icon={faBuilding} className="me-3 text-success fs-4" />
-        <h4 className="mb-0 text-success">Business Information</h4>
+      <div className="d-flex align-items-center mb-4 pb-3 border-bottom border-primary border-2">
+        <FontAwesomeIcon icon={faBuilding} className="me-3 text-primary fs-4" />
+        <h4 className="mb-0 text-primary">Business Information</h4>
       </div>
 
       <Row>
@@ -646,9 +646,9 @@ const Settings = () => {
   const renderInvoiceSettings = () => (
     <div className="mb-5">
       {/* Section Header */}
-      <div className="d-flex align-items-center mb-4 pb-3 border-bottom border-success border-2">
-        <FontAwesomeIcon icon={faFileInvoice} className="me-3 text-success fs-4" />
-        <h4 className="mb-0 text-success">Invoice Settings</h4>
+      <div className="d-flex align-items-center mb-4 pb-3 border-bottom border-primary border-2">
+        <FontAwesomeIcon icon={faFileInvoice} className="me-3 text-primary fs-4" />
+        <h4 className="mb-0 text-primary">Invoice Settings</h4>
       </div>
 
       <Row>
@@ -944,9 +944,9 @@ const Settings = () => {
   const renderEmailSettings = () => (
     <div className="mb-5">
       {/* Section Header */}
-      <div className="d-flex align-items-center mb-4 pb-3 border-bottom border-success border-2">
-        <FontAwesomeIcon icon={faEnvelope} className="me-3 text-success fs-4" />
-        <h4 className="mb-0 text-success">Email Settings</h4>
+      <div className="d-flex align-items-center mb-4 pb-3 border-bottom border-primary border-2">
+        <FontAwesomeIcon icon={faEnvelope} className="me-3 text-primary fs-4" />
+        <h4 className="mb-0 text-primary">Email Settings</h4>
       </div>
 
       <Row>
@@ -1168,9 +1168,9 @@ const Settings = () => {
   const renderCurrencyRegional = () => (
     <div className="mb-5">
       {/* Section Header */}
-      <div className="d-flex align-items-center mb-4 pb-3 border-bottom border-success border-2">
-        <FontAwesomeIcon icon={faGlobe} className="me-3 text-success fs-4" />
-        <h4 className="mb-0 text-success">Currency & Regional Settings</h4>
+      <div className="d-flex align-items-center mb-4 pb-3 border-bottom border-primary border-2">
+        <FontAwesomeIcon icon={faGlobe} className="me-3 text-primary fs-4" />
+        <h4 className="mb-0 text-primary">Currency & Regional Settings</h4>
       </div>
 
       <Row>

@@ -1,57 +1,59 @@
-/* Photo Studio Management App Theme - Purple & Violet Design */
+/* Hotel Management App Theme - Elegant Hospitality Design */
 
 :root,
 html,
 body,
 html[data-coreui-theme="light"],
 body[data-coreui-theme="light"] {
-  /* Primary Purple/Violet Theme - Creative & Artistic */
-  --cui-primary: #8b5cf6 !important; /* Vibrant violet - creative & artistic */
-  --cui-primary-rgb: 139, 92, 246 !important;
+  /* Primary Teal/Blue Theme - Professional & Trustworthy (Hotel Industry Standard) */
+  --cui-primary: #0d9488 !important; /* Elegant teal - professional hospitality */
+  --cui-primary-rgb: 13, 148, 136 !important;
   --cui-secondary: #6b7280 !important; /* Neutral gray */
-  --cui-success: #10b981 !important; /* Success green */
-  --cui-info: #3b82f6 !important; /* Blue for data visualization */
-  --cui-warning: #f59e0b !important; /* Amber orange */
-  --cui-danger: #ef4444 !important; /* Red */
+  --cui-success: #059669 !important; /* Success green */
+  --cui-info: #0284c7 !important; /* Sky blue for information */
+  --cui-warning: #d97706 !important; /* Warm amber for warnings */
+  --cui-danger: #dc2626 !important; /* Red for errors */
   --cui-light: #f8fafc !important; /* Light gray background */
   --cui-dark: #1e293b !important; /* Dark gray */
   
-  /* Additional color palette for charts and data */
-  --chart-purple: #8b5cf6 !important;
-  --chart-blue: #3b82f6 !important;
-  --chart-light-purple: #c4b5fd !important;
-  --chart-light-blue: #93c5fd !important;
-  --chart-dark-purple: #7c3aed !important;
-  --chart-dark-blue: #1d4ed8 !important;
+  /* Hotel Industry Color Palette - Charts and Data Visualization */
+  --chart-primary: #0d9488 !important; /* Primary teal */
+  --chart-secondary: #0284c7 !important; /* Sky blue */
+  --chart-accent: #059669 !important; /* Success green */
+  --chart-warm: #d97706 !important; /* Warm amber */
+  --chart-light-teal: #5eead4 !important; /* Light teal */
+  --chart-light-blue: #7dd3fc !important; /* Light blue */
+  --chart-dark-teal: #0f766e !important; /* Dark teal */
+  --chart-dark-blue: #0369a1 !important; /* Dark blue */
   
-  /* Theme-based Gradient Variables - Light & Subtle */
-  --gradient-primary: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 100%) !important;
-  --gradient-success: linear-gradient(135deg, #6ee7b7 0%, #34d399 100%) !important;
-  --gradient-info: linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%) !important;
-  --gradient-warning: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
-  --gradient-danger: linear-gradient(135deg, #fca5a5 0%, #f87171 100%) !important;
+  /* Theme-based Gradient Variables - Elegant & Professional */
+  --gradient-primary: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%) !important;
+  --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  --gradient-info: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%) !important;
+  --gradient-warning: linear-gradient(135deg, #fbbf24 0%, #d97706 100%) !important;
+  --gradient-danger: linear-gradient(135deg, #f87171 0%, #dc2626 100%) !important;
   
-  /* Card Gradient Backgrounds - Light & Subtle */
-  --card-gradient-primary: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 100%) !important;
-  --card-gradient-success: linear-gradient(135deg, #6ee7b7 0%, #34d399 100%) !important;
-  --card-gradient-info: linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%) !important;
-  --card-gradient-warning: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
+  /* Card Gradient Backgrounds - Subtle & Professional */
+  --card-gradient-primary: linear-gradient(135deg, #5eead4 0%, #14b8a6 100%) !important;
+  --card-gradient-success: linear-gradient(135deg, #6ee7b7 0%, #10b981 100%) !important;
+  --card-gradient-info: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%) !important;
+  --card-gradient-warning: linear-gradient(135deg, #fcd34d 0%, #fbbf24 100%) !important;
   
-  /* Logo-Inspired Purple-Blue Gradient */
-  --card-gradient-logo: linear-gradient(135deg, #c4b5fd 0%, #b8d7fd 100%) !important;
-  --card-gradient-logo-alt: linear-gradient(135deg, #a78bfa 0%, #fbffbb 100%) !important;
+  /* Hotel-Inspired Elegant Gradients */
+  --card-gradient-logo: linear-gradient(135deg, #5eead4 0%, #7dd3fc 100%) !important;
+  --card-gradient-logo-alt: linear-gradient(135deg, #14b8a6 0%, #0284c7 100%) !important;
   
-  /* Subtle Background Gradients */
-  --bg-gradient-light: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
-  --bg-gradient-primary-subtle: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(124, 58, 237, 0.05) 100%) !important;
+  /* Subtle Background Gradients - Calm & Professional */
+  --bg-gradient-light: linear-gradient(135deg, #f0fdfa 0%, #f8fafc 100%) !important;
+  --bg-gradient-primary-subtle: linear-gradient(135deg, rgba(13, 148, 136, 0.05) 0%, rgba(15, 118, 110, 0.05) 100%) !important;
 }
 
-/* Dark theme adjustments */
+/* Dark theme adjustments - Maintains elegance in dark mode */
 html[data-coreui-theme="dark"],
 body[data-coreui-theme="dark"] {
-  --cui-primary: #a78bfa !important; /* Brighter violet for dark mode */
-  --cui-primary-rgb: 167, 139, 250 !important;
-  --cui-info: #60a5fa !important; /* Lighter blue for dark mode */
+  --cui-primary: #14b8a6 !important; /* Brighter teal for dark mode */
+  --cui-primary-rgb: 20, 184, 166 !important;
+  --cui-info: #38bdf8 !important; /* Lighter blue for dark mode */
 }
 
 /* Force immediate primary look on common utilities/components */
@@ -67,7 +69,7 @@ body[data-coreui-theme="dark"] {
 /* Links */
 :root, html, body {
   --cui-link-color: var(--cui-primary) !important;
-  --cui-link-hover-color: #7c3aed !important; /* Darker violet */
+  --cui-link-hover-color: #0f766e !important; /* Darker teal */
 }
 
 a, .link-primary { color: var(--cui-link-color) !important; }
@@ -76,8 +78,8 @@ a:hover, a:focus, .link-primary:hover { color: var(--cui-link-hover-color) !impo
 /* Enhanced button styles */
 .btn-primary:hover,
 .btn-primary:focus {
-  background-color: #7c3aed !important;
-  border-color: #7c3aed !important;
+  background-color: #0f766e !important;
+  border-color: #0f766e !important;
   transform: translateY(-1px) !important;
   box-shadow: 0 4px 8px rgba(var(--cui-primary-rgb), 0.3) !important;
 }
@@ -85,8 +87,8 @@ a:hover, a:focus, .link-primary:hover { color: var(--cui-link-hover-color) !impo
 .btn-primary:active,
 .btn-primary.active,
 .show > .btn-primary.dropdown-toggle {
-  background-color: #6d28d9 !important;
-  border-color: #6d28d9 !important;
+  background-color: #115e59 !important;
+  border-color: #115e59 !important;
   transform: translateY(0) !important;
 }
 
@@ -876,8 +878,8 @@ html[data-coreui-theme="dark"] .sidebar .close-button:hover {
 }
 
 .pagination-btn.active:hover {
-  background-color: #7c3aed;
-  border-color: #7c3aed;
+  background-color: #0f766e;
+  border-color: #0f766e;
 }
 
 /* Responsive pagination */
@@ -1233,7 +1235,7 @@ html[data-coreui-theme="dark"] .bg-gradient-info {
 }
 
 html[data-coreui-theme="dark"] .bg-gradient-primary {
-  background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%) !important;
+  background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%) !important;
 }
 
 /* Dashboard Activity Icons Dark Theme */
