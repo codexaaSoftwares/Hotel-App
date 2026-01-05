@@ -1,39 +1,126 @@
-/* Hotel Management App Theme - Elegant Hospitality Design */
+/* Hotel Management App Theme - Enhanced Elegant Hospitality Design */
 
 :root,
 html,
 body,
 html[data-coreui-theme="light"],
 body[data-coreui-theme="light"] {
-  /* Primary Teal/Blue Theme - Professional & Trustworthy (Hotel Industry Standard) */
-  --cui-primary: #0d9488 !important; /* Elegant teal - professional hospitality */
+  /* ============================================
+     PRIMARY COLOR SYSTEM - Hotel Industry Optimized
+     ============================================ */
+  
+  /* Primary Teal - Professional Hospitality Color */
+  --cui-primary: #0d9488 !important; /* Teal-600 - Main brand color */
   --cui-primary-rgb: 13, 148, 136 !important;
+  --cui-primary-50: #f0fdfa !important;
+  --cui-primary-100: #ccfbf1 !important;
+  --cui-primary-200: #99f6e4 !important;
+  --cui-primary-300: #5eead4 !important;
+  --cui-primary-400: #2dd4bf !important;
+  --cui-primary-500: #14b8a6 !important;
+  --cui-primary-600: #0d9488 !important;
+  --cui-primary-700: #0f766e !important;
+  --cui-primary-800: #115e59 !important;
+  --cui-primary-900: #134e4a !important;
+  
+  /* Supporting Colors */
   --cui-secondary: #6b7280 !important; /* Neutral gray */
-  --cui-success: #059669 !important; /* Success green */
-  --cui-info: #0284c7 !important; /* Sky blue for information */
-  --cui-warning: #d97706 !important; /* Warm amber for warnings */
-  --cui-danger: #dc2626 !important; /* Red for errors */
+  --cui-success: #059669 !important; /* Emerald-600 - Success */
+  --cui-info: #0284c7 !important; /* Sky-600 - Information */
+  --cui-warning: #d97706 !important; /* Amber-600 - Warnings */
+  --cui-danger: #dc2626 !important; /* Red-600 - Errors */
   --cui-light: #f8fafc !important; /* Light gray background */
   --cui-dark: #1e293b !important; /* Dark gray */
   
-  /* Hotel Industry Color Palette - Charts and Data Visualization */
-  --chart-primary: #0d9488 !important; /* Primary teal */
-  --chart-secondary: #0284c7 !important; /* Sky blue */
-  --chart-accent: #059669 !important; /* Success green */
-  --chart-warm: #d97706 !important; /* Warm amber */
-  --chart-light-teal: #5eead4 !important; /* Light teal */
-  --chart-light-blue: #7dd3fc !important; /* Light blue */
-  --chart-dark-teal: #0f766e !important; /* Dark teal */
-  --chart-dark-blue: #0369a1 !important; /* Dark blue */
+  /* ============================================
+     NAVIGATION COLOR SYSTEM
+     ============================================ */
   
-  /* Theme-based Gradient Variables - Elegant & Professional */
+  /* Top Header Bar Gradient - Elegant Teal */
+  --nav-header-gradient: linear-gradient(135deg, #0d9488 0%, #14b8a6 50%, #2dd4bf 100%) !important;
+  --nav-header-gradient-dark: linear-gradient(135deg, #0f766e 0%, #0d9488 50%, #14b8a6 100%) !important;
+  
+  /* Navigation Background Colors */
+  --nav-bg: #ffffff !important;
+  --nav-bg-hover: rgba(13, 148, 136, 0.08) !important;
+  --nav-bg-active: rgba(13, 148, 136, 0.15) !important;
+  --nav-border: #e2e8f0 !important;
+  
+  /* Navigation Text Colors */
+  --nav-text: #6b7280 !important;
+  --nav-text-hover: #0d9488 !important;
+  --nav-text-active: #0d9488 !important;
+  --nav-text-header: #ffffff !important;
+  
+  /* Navigation Active Indicator */
+  --nav-active-bg: #0d9488 !important;
+  --nav-active-text: #ffffff !important;
+  --nav-active-border: #0f766e !important;
+  
+  /* ============================================
+     COMPONENT COLOR SYSTEM
+     ============================================ */
+  
+  /* Button Colors */
+  --btn-primary: #0d9488 !important;
+  --btn-primary-hover: #0f766e !important;
+  --btn-primary-active: #115e59 !important;
+  --btn-primary-text: #ffffff !important;
+  
+  /* Card Colors */
+  --card-bg: #ffffff !important;
+  --card-border: #e2e8f0 !important;
+  --card-header-bg: #f8fafc !important;
+  --card-shadow: rgba(0, 0, 0, 0.1) !important;
+  
+  /* Table Colors */
+  --table-header-bg: #f8fafc !important;
+  --table-border: #e2e8f0 !important;
+  --table-row-hover: rgba(13, 148, 136, 0.05) !important;
+  --table-row-active: rgba(13, 148, 136, 0.1) !important;
+  
+  /* Form Colors */
+  --form-border: #e2e8f0 !important;
+  --form-border-focus: #0d9488 !important;
+  --form-bg: #ffffff !important;
+  --form-bg-focus: #ffffff !important;
+  
+  /* Badge Colors */
+  --badge-primary: #0d9488 !important;
+  --badge-success: #059669 !important;
+  --badge-warning: #d97706 !important;
+  --badge-danger: #dc2626 !important;
+  --badge-info: #0284c7 !important;
+  
+  /* Alert Colors */
+  --alert-primary-bg: rgba(13, 148, 136, 0.1) !important;
+  --alert-primary-border: rgba(13, 148, 136, 0.2) !important;
+  --alert-primary-text: #0f766e !important;
+  
+  /* ============================================
+     CHART & DATA VISUALIZATION COLORS
+     ============================================ */
+  --chart-primary: #0d9488 !important;
+  --chart-secondary: #0284c7 !important;
+  --chart-accent: #059669 !important;
+  --chart-warm: #d97706 !important;
+  --chart-light-teal: #5eead4 !important;
+  --chart-light-blue: #7dd3fc !important;
+  --chart-dark-teal: #0f766e !important;
+  --chart-dark-blue: #0369a1 !important;
+  
+  /* ============================================
+     GRADIENT SYSTEM - Elegant & Professional
+     ============================================ */
   --gradient-primary: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%) !important;
+  --gradient-primary-soft: linear-gradient(135deg, #2dd4bf 0%, #14b8a6 100%) !important;
+  --gradient-primary-strong: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important;
   --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
   --gradient-info: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%) !important;
   --gradient-warning: linear-gradient(135deg, #fbbf24 0%, #d97706 100%) !important;
   --gradient-danger: linear-gradient(135deg, #f87171 0%, #dc2626 100%) !important;
   
-  /* Card Gradient Backgrounds - Subtle & Professional */
+  /* Card Gradient Backgrounds */
   --card-gradient-primary: linear-gradient(135deg, #5eead4 0%, #14b8a6 100%) !important;
   --card-gradient-success: linear-gradient(135deg, #6ee7b7 0%, #10b981 100%) !important;
   --card-gradient-info: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%) !important;
@@ -43,17 +130,60 @@ body[data-coreui-theme="light"] {
   --card-gradient-logo: linear-gradient(135deg, #5eead4 0%, #7dd3fc 100%) !important;
   --card-gradient-logo-alt: linear-gradient(135deg, #14b8a6 0%, #0284c7 100%) !important;
   
-  /* Subtle Background Gradients - Calm & Professional */
+  /* Background Gradients */
   --bg-gradient-light: linear-gradient(135deg, #f0fdfa 0%, #f8fafc 100%) !important;
   --bg-gradient-primary-subtle: linear-gradient(135deg, rgba(13, 148, 136, 0.05) 0%, rgba(15, 118, 110, 0.05) 100%) !important;
+  
+  /* ============================================
+     SHADOW SYSTEM
+     ============================================ */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+  --shadow-md: 0 8px 12px rgba(0, 0, 0, 0.15) !important;
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.2) !important;
+  --shadow-primary: 0 4px 12px rgba(13, 148, 136, 0.25) !important;
+  --shadow-primary-hover: 0 8px 20px rgba(13, 148, 136, 0.3) !important;
 }
 
-/* Dark theme adjustments - Maintains elegance in dark mode */
+/* ============================================
+   DARK THEME ADJUSTMENTS - Maintains Elegance
+   ============================================ */
 html[data-coreui-theme="dark"],
 body[data-coreui-theme="dark"] {
-  --cui-primary: #14b8a6 !important; /* Brighter teal for dark mode */
+  /* Primary Colors - Brighter for dark mode */
+  --cui-primary: #14b8a6 !important; /* Teal-500 - Brighter for dark mode */
   --cui-primary-rgb: 20, 184, 166 !important;
-  --cui-info: #38bdf8 !important; /* Lighter blue for dark mode */
+  --cui-info: #38bdf8 !important; /* Sky-400 - Lighter blue for dark mode */
+  
+  /* Navigation Colors - Dark Theme */
+  --nav-bg: #1f2937 !important;
+  --nav-bg-hover: rgba(20, 184, 166, 0.15) !important;
+  --nav-bg-active: rgba(20, 184, 166, 0.2) !important;
+  --nav-border: #374151 !important;
+  --nav-text: #d1d5db !important;
+  --nav-text-hover: #14b8a6 !important;
+  --nav-text-active: #14b8a6 !important;
+  
+  /* Component Colors - Dark Theme */
+  --card-bg: #374151 !important;
+  --card-border: #4b5563 !important;
+  --card-header-bg: #4b5563 !important;
+  --card-shadow: rgba(0, 0, 0, 0.3) !important;
+  
+  --table-header-bg: #4b5563 !important;
+  --table-border: #4b5563 !important;
+  --table-row-hover: rgba(20, 184, 166, 0.1) !important;
+  --table-row-active: rgba(20, 184, 166, 0.15) !important;
+  
+  --form-border: #4b5563 !important;
+  --form-border-focus: #14b8a6 !important;
+  --form-bg: #4b5563 !important;
+  --form-bg-focus: #4b5563 !important;
+  
+  /* Button Colors - Dark Theme */
+  --btn-primary: #14b8a6 !important;
+  --btn-primary-hover: #2dd4bf !important;
+  --btn-primary-active: #0d9488 !important;
 }
 
 /* Force immediate primary look on common utilities/components */
@@ -75,21 +205,31 @@ body[data-coreui-theme="dark"] {
 a, .link-primary { color: var(--cui-link-color) !important; }
 a:hover, a:focus, .link-primary:hover { color: var(--cui-link-hover-color) !important; }
 
-/* Enhanced button styles */
+/* ============================================
+   ENHANCED BUTTON STYLES - Global
+   ============================================ */
+.btn-primary {
+  background: var(--gradient-primary) !important;
+  border: none !important;
+  box-shadow: var(--shadow-primary) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
 .btn-primary:hover,
 .btn-primary:focus {
-  background-color: #0f766e !important;
-  border-color: #0f766e !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 8px rgba(var(--cui-primary-rgb), 0.3) !important;
+  background: var(--gradient-primary-strong) !important;
+  border-color: var(--btn-primary-hover) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: var(--shadow-primary-hover) !important;
 }
 
 .btn-primary:active,
 .btn-primary.active,
 .show > .btn-primary.dropdown-toggle {
-  background-color: #115e59 !important;
-  border-color: #115e59 !important;
+  background: var(--gradient-primary-strong) !important;
+  border-color: var(--btn-primary-active) !important;
   transform: translateY(0) !important;
+  box-shadow: var(--shadow-sm) !important;
 }
 
 .btn-primary:focus-visible {
@@ -108,17 +248,81 @@ a:hover, a:focus, .link-primary:hover { color: var(--cui-link-hover-color) !impo
   border-color: var(--cui-primary) !important;
 }
 
-/* Badges */
+/* ============================================
+   ENHANCED BADGE STYLES - Global
+   ============================================ */
 .badge.bg-primary,
 .badge.text-bg-primary {
-  background-color: var(--cui-primary) !important;
+  background: var(--gradient-primary) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  padding: 0.375rem 0.75rem !important;
+  border-radius: 6px !important;
+  box-shadow: 0 2px 4px rgba(var(--cui-primary-rgb), 0.2) !important;
 }
 
-/* Alerts */
+.badge.bg-success,
+.badge.text-bg-success {
+  background: var(--gradient-success) !important;
+  color: #ffffff !important;
+}
+
+.badge.bg-info,
+.badge.text-bg-info {
+  background: var(--gradient-info) !important;
+  color: #ffffff !important;
+}
+
+.badge.bg-warning,
+.badge.text-bg-warning {
+  background: var(--gradient-warning) !important;
+  color: #ffffff !important;
+}
+
+.badge.bg-danger,
+.badge.text-bg-danger {
+  background: var(--gradient-danger) !important;
+  color: #ffffff !important;
+}
+
+/* ============================================
+   ENHANCED ALERT STYLES - Global
+   ============================================ */
 .alert-primary {
-  color: #12351a !important;
-  background-color: rgba(var(--cui-primary-rgb), 0.1) !important;
-  border-color: rgba(var(--cui-primary-rgb), 0.2) !important;
+  color: var(--alert-primary-text) !important;
+  background-color: var(--alert-primary-bg) !important;
+  border-color: var(--alert-primary-border) !important;
+  border-left: 4px solid var(--cui-primary) !important;
+  border-radius: 8px !important;
+  padding: 1rem 1.25rem !important;
+}
+
+.alert-success {
+  background-color: rgba(5, 150, 105, 0.1) !important;
+  border-color: rgba(5, 150, 105, 0.2) !important;
+  border-left: 4px solid var(--cui-success) !important;
+  color: #065f46 !important;
+}
+
+.alert-info {
+  background-color: rgba(2, 132, 199, 0.1) !important;
+  border-color: rgba(2, 132, 199, 0.2) !important;
+  border-left: 4px solid var(--cui-info) !important;
+  color: #075985 !important;
+}
+
+.alert-warning {
+  background-color: rgba(217, 119, 6, 0.1) !important;
+  border-color: rgba(217, 119, 6, 0.2) !important;
+  border-left: 4px solid var(--cui-warning) !important;
+  color: #92400e !important;
+}
+
+.alert-danger {
+  background-color: rgba(220, 38, 38, 0.1) !important;
+  border-color: rgba(220, 38, 38, 0.2) !important;
+  border-left: 4px solid var(--cui-danger) !important;
+  color: #991b1b !important;
 }
 
 /* Nav active states */
@@ -766,32 +970,85 @@ html[data-coreui-theme="dark"] .sidebar .close-button:hover {
   margin-top: 1rem;
 }
 
-/* Enhanced Card Styles */
+/* ============================================
+   ENHANCED CARD STYLES - Global
+   ============================================ */
 .card {
-  border: 1px solid #e2e8f0 !important;
+  border: 1px solid var(--card-border) !important;
   border-radius: 12px !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
-  background-color: #ffffff !important;
+  box-shadow: var(--shadow-sm) !important;
+  background-color: var(--card-bg) !important;
+  transition: all 0.3s ease !important;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md) !important;
+  transform: translateY(-2px) !important;
 }
 
 .card-header {
-  background-color: #f8fafc !important;
-  border-bottom: 1px solid #e2e8f0 !important;
+  background: var(--card-header-bg) !important;
+  border-bottom: 1px solid var(--card-border) !important;
   border-radius: 12px 12px 0 0 !important;
   padding: 1.25rem 1.5rem !important;
+  background-image: linear-gradient(180deg, rgba(var(--cui-primary-rgb), 0.03), rgba(0,0,0,0)) !important;
 }
 
 .card-body {
   padding: 1.5rem !important;
 }
 
-/* Table Container Styles */
+/* Card with primary accent */
+.card-primary {
+  border-left: 4px solid var(--cui-primary) !important;
+}
+
+.card-success {
+  border-left: 4px solid var(--cui-success) !important;
+}
+
+.card-info {
+  border-left: 4px solid var(--cui-info) !important;
+}
+
+.card-warning {
+  border-left: 4px solid var(--cui-warning) !important;
+}
+
+/* ============================================
+   ENHANCED TABLE STYLES - Global
+   ============================================ */
 .table-container {
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
   border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
+}
+
+.table thead th {
+  background-color: var(--table-header-bg) !important;
+  color: #374151 !important;
+  font-weight: 600 !important;
+  border-bottom: 2px solid var(--table-border) !important;
+  padding: 1rem !important;
+}
+
+.table tbody tr {
+  transition: all 0.2s ease !important;
+}
+
+.table tbody tr:hover {
+  background-color: var(--table-row-hover) !important;
+}
+
+.table tbody tr.active {
+  background-color: var(--table-row-active) !important;
+}
+
+.table tbody td {
+  padding: 0.875rem 1rem !important;
+  border-color: var(--table-border) !important;
 }
 
 /* Table Border Styles */
@@ -871,15 +1128,18 @@ html[data-coreui-theme="dark"] .sidebar .close-button:hover {
 }
 
 .pagination-btn.active {
-  background-color: var(--cui-primary);
-  border-color: var(--cui-primary);
-  color: #ffffff;
-  box-shadow: 0 2px 4px rgba(var(--cui-primary-rgb), 0.2);
+  background: var(--gradient-primary) !important;
+  border-color: var(--cui-primary) !important;
+  color: #ffffff !important;
+  box-shadow: var(--shadow-primary) !important;
+  font-weight: 600 !important;
 }
 
 .pagination-btn.active:hover {
-  background-color: #0f766e;
-  border-color: #0f766e;
+  background: var(--gradient-primary-strong) !important;
+  border-color: var(--btn-primary-hover) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: var(--shadow-primary-hover) !important;
 }
 
 /* Responsive pagination */
@@ -1130,16 +1390,42 @@ html[data-coreui-theme="dark"] .border-2 {
   border-width: 2px !important;
 }
 
+/* ============================================
+   ENHANCED FORM CONTROLS - Global
+   ============================================ */
+.form-control {
+  border: 2px solid var(--form-border) !important;
+  border-radius: 8px !important;
+  padding: 0.625rem 0.875rem !important;
+  transition: all 0.2s ease !important;
+  background-color: var(--form-bg) !important;
+}
+
+.form-control:focus {
+  border-color: var(--form-border-focus) !important;
+  background-color: var(--form-bg-focus) !important;
+  box-shadow: 0 0 0 0.2rem rgba(var(--cui-primary-rgb), 0.15) !important;
+  outline: none !important;
+}
+
+.form-control.is-invalid {
+  border-color: var(--cui-danger) !important;
+}
+
+.form-control.is-valid {
+  border-color: var(--cui-success) !important;
+}
+
 /* Dashboard Form Controls Dark Theme */
 html[data-coreui-theme="dark"] .form-control {
-  background-color: #4b5563 !important;
-  border-color: #6b7280 !important;
+  background-color: var(--form-bg) !important;
+  border-color: var(--form-border) !important;
   color: #f9fafb !important;
 }
 
 html[data-coreui-theme="dark"] .form-control:focus {
-  background-color: #4b5563 !important;
-  border-color: var(--cui-primary) !important;
+  background-color: var(--form-bg-focus) !important;
+  border-color: var(--form-border-focus) !important;
   color: #f9fafb !important;
   box-shadow: 0 0 0 0.2rem rgba(var(--cui-primary-rgb), 0.25) !important;
 }
@@ -1339,17 +1625,34 @@ html[data-coreui-theme="dark"] .bg-info.bg-opacity-10 {
    HORIZONTAL NAVIGATION STYLES
    ======================================== */
 
-/* Top Header Bar - Colored Background - Full Width */
+/* ============================================
+   TOP HEADER BAR - Enhanced Teal Gradient
+   ============================================ */
 .top-header-bar {
   width: 100% !important;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%) !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  background: var(--nav-header-gradient) !important;
+  box-shadow: 0 2px 8px rgba(13, 148, 136, 0.2) !important;
   margin: 0 !important;
   padding: 0 !important;
+  position: relative !important;
+  overflow: visible !important; /* Changed from hidden to allow dropdown to show */
+}
+
+/* Subtle animated overlay for depth */
+.top-header-bar::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(255, 255, 255, 0.05) 100%) !important;
+  pointer-events: none !important;
 }
 
 html[data-coreui-theme="dark"] .top-header-bar {
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #9333ea 100%) !important;
+  background: var(--nav-header-gradient-dark) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
 }
 
 /* Top Header Container - Constrains content width */
@@ -1529,6 +1832,7 @@ html[data-coreui-theme="dark"] .top-header-bar {
   z-index: 1030 !important;
   margin: 0 !important;
   padding: 0 !important;
+  overflow: visible !important; /* Allow dropdowns to show */
 }
 
 html[data-coreui-theme="dark"] .horizontal-header {
@@ -1544,6 +1848,7 @@ html[data-coreui-theme="dark"] .horizontal-header {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
   margin: 0 !important;
   padding: 0 !important;
+  overflow: visible !important; /* Allow dropdowns to show */
 }
 
 html[data-coreui-theme="dark"] .horizontal-nav-container {
@@ -1586,11 +1891,11 @@ html[data-coreui-theme="dark"] .horizontal-nav-container {
 }
 
 .horizontal-nav-link {
-  color: #6b7280 !important;
+  color: var(--nav-text) !important;
   font-weight: 500 !important;
   padding: 0.5rem 1rem !important;
-  border-radius: 0 !important;
-  transition: all 0.2s ease !important;
+  border-radius: 6px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
   text-decoration: none !important;
   display: flex !important;
   align-items: center !important;
@@ -1598,63 +1903,86 @@ html[data-coreui-theme="dark"] .horizontal-nav-container {
   position: relative !important;
   margin: 0 0.125rem !important;
   font-size: 0.9rem !important;
+  background-color: transparent !important;
 }
 
 .horizontal-nav-link:hover,
 .horizontal-nav-link:focus {
-  color: var(--cui-primary) !important;
-  background-color: transparent !important;
+  color: var(--nav-text-hover) !important;
+  background-color: var(--nav-bg-hover) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 4px rgba(var(--cui-primary-rgb), 0.15) !important;
 }
 
 .horizontal-nav-link.active,
 .horizontal-nav-link[aria-current="page"] {
-  color: #ffffff !important;
-  background-color: var(--cui-primary) !important;
+  color: var(--nav-active-text) !important;
+  background-color: var(--nav-active-bg) !important;
   font-weight: 600 !important;
   border-radius: 6px !important;
+  box-shadow: var(--shadow-primary) !important;
+  position: relative !important;
+}
+
+.horizontal-nav-link.active::after {
+  content: '' !important;
+  position: absolute !important;
+  bottom: -2px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 60% !important;
+  height: 3px !important;
+  background: var(--nav-active-border) !important;
+  border-radius: 2px 2px 0 0 !important;
 }
 
 html[data-coreui-theme="dark"] .horizontal-nav-link {
-  color: #d1d5db !important;
+  color: var(--nav-text) !important;
 }
 
 html[data-coreui-theme="dark"] .horizontal-nav-link:hover,
 html[data-coreui-theme="dark"] .horizontal-nav-link:focus {
-  color: var(--cui-primary) !important;
-  background-color: rgba(var(--cui-primary-rgb), 0.15) !important;
+  color: var(--nav-text-hover) !important;
+  background-color: var(--nav-bg-hover) !important;
+  box-shadow: 0 2px 4px rgba(20, 184, 166, 0.2) !important;
 }
 
 html[data-coreui-theme="dark"] .horizontal-nav-link.active {
-  color: var(--cui-primary) !important;
-  background-color: rgba(var(--cui-primary-rgb), 0.2) !important;
+  color: var(--nav-active-text) !important;
+  background-color: var(--nav-bg-active) !important;
+  box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3) !important;
 }
 
 /* Horizontal Nav Dropdown - Compact */
 .horizontal-nav-dropdown .nav-link {
-  color: #6b7280 !important;
+  color: var(--nav-text) !important;
   font-weight: 500 !important;
   padding: 0.5rem 1rem !important;
-  border-radius: 0 !important;
-  transition: all 0.2s ease !important;
+  border-radius: 6px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
   display: flex !important;
   align-items: center !important;
   margin: 0 0.125rem !important;
   font-size: 0.9rem !important;
+  background-color: transparent !important;
 }
 
 .horizontal-nav-dropdown .nav-link:hover,
 .horizontal-nav-dropdown .nav-link:focus {
-  color: var(--cui-primary) !important;
-  background-color: transparent !important;
+  color: var(--nav-text-hover) !important;
+  background-color: var(--nav-bg-hover) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 4px rgba(var(--cui-primary-rgb), 0.15) !important;
 }
 
 .horizontal-nav-dropdown.show .nav-link,
 .horizontal-nav-dropdown.active .nav-link,
 .horizontal-nav-dropdown[class*="show"] .nav-link {
-  color: #ffffff !important;
-  background-color: var(--cui-primary) !important;
+  color: var(--nav-active-text) !important;
+  background-color: var(--nav-active-bg) !important;
   font-weight: 600 !important;
   border-radius: 6px !important;
+  box-shadow: var(--shadow-primary) !important;
 }
 
 html[data-coreui-theme="dark"] .horizontal-nav-dropdown .nav-link {
@@ -1724,12 +2052,14 @@ html[data-coreui-theme="dark"] .horizontal-nav-dropdown .dropdown-menu {
 }
 
 .horizontal-nav-dropdown .dropdown-item {
-  padding: 0.5rem 1rem !important;
+  padding: 0.625rem 1rem !important;
   color: #374151 !important;
   transition: all 0.2s ease !important;
   display: flex !important;
   align-items: center !important;
   font-size: 0.9rem !important;
+  border-radius: 4px !important;
+  margin: 0.125rem 0.5rem !important;
 }
 
 /* Nested Dropdown Item */
@@ -1739,14 +2069,17 @@ html[data-coreui-theme="dark"] .horizontal-nav-dropdown .dropdown-menu {
 
 .horizontal-nav-dropdown .dropdown-item:hover,
 .horizontal-nav-dropdown .dropdown-item:focus {
-  background-color: rgba(var(--cui-primary-rgb), 0.08) !important;
-  color: var(--cui-primary) !important;
+  background-color: var(--nav-bg-hover) !important;
+  color: var(--nav-text-hover) !important;
+  transform: translateX(4px) !important;
+  box-shadow: 0 2px 4px rgba(var(--cui-primary-rgb), 0.1) !important;
 }
 
 .horizontal-nav-dropdown .dropdown-item.active {
-  background-color: rgba(var(--cui-primary-rgb), 0.12) !important;
-  color: var(--cui-primary) !important;
+  background-color: var(--nav-bg-active) !important;
+  color: var(--nav-text-active) !important;
   font-weight: 600 !important;
+  border-left: 3px solid var(--cui-primary) !important;
 }
 
 html[data-coreui-theme="dark"] .horizontal-nav-dropdown .dropdown-item {

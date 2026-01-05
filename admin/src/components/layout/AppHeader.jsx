@@ -1,8 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import {
-  CContainer,
   CHeader,
-  CHeaderNav,
 } from '@coreui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -10,7 +8,7 @@ import {
   faClock,
 } from '@fortawesome/free-solid-svg-icons'
 
-import { AppBreadcrumb, AppHorizontalNav } from '../index'
+import { AppHorizontalNav } from '../index'
 import { AppHeaderDropdown } from './header/index.jsx'
 import { useAuth } from '../../context/AuthContext'
 import { settingsService } from '../../services/settingsService'
@@ -227,11 +225,6 @@ const AppHeader = () => {
       <div className="horizontal-nav-container">
         <AppHorizontalNav />
       </div>
-
-      {/* Breadcrumb */}
-      <CContainer className="px-4 py-2" fluid>
-        <AppBreadcrumb />
-      </CContainer>
     </CHeader>
   )
 }
