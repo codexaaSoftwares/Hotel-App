@@ -46,6 +46,22 @@ class PermissionsTableSeeder extends Seeder
             // Report Management
             ['name' => 'view_report', 'description' => 'View reports', 'module' => 'reports', 'submodule' => 'management', 'type' => 'read'],
 
+            // Restaurant Settings Management
+            ['name' => 'view_restaurant_settings', 'description' => 'View restaurant settings', 'module' => 'restaurant', 'submodule' => 'settings', 'type' => 'read'],
+            ['name' => 'edit_restaurant_settings', 'description' => 'Edit restaurant settings', 'module' => 'restaurant', 'submodule' => 'settings', 'type' => 'write'],
+
+            // Food Category Management
+            ['name' => 'view_food_category', 'description' => 'View food categories', 'module' => 'restaurant', 'submodule' => 'food_categories', 'type' => 'read'],
+            ['name' => 'create_food_category', 'description' => 'Create food categories', 'module' => 'restaurant', 'submodule' => 'food_categories', 'type' => 'write'],
+            ['name' => 'edit_food_category', 'description' => 'Edit food categories', 'module' => 'restaurant', 'submodule' => 'food_categories', 'type' => 'write'],
+            ['name' => 'delete_food_category', 'description' => 'Delete food categories', 'module' => 'restaurant', 'submodule' => 'food_categories', 'type' => 'delete'],
+
+            // Food Item Management
+            ['name' => 'view_food_item', 'description' => 'View food items', 'module' => 'restaurant', 'submodule' => 'food_items', 'type' => 'read'],
+            ['name' => 'create_food_item', 'description' => 'Create food items', 'module' => 'restaurant', 'submodule' => 'food_items', 'type' => 'write'],
+            ['name' => 'edit_food_item', 'description' => 'Edit food items', 'module' => 'restaurant', 'submodule' => 'food_items', 'type' => 'write'],
+            ['name' => 'delete_food_item', 'description' => 'Delete food items', 'module' => 'restaurant', 'submodule' => 'food_items', 'type' => 'delete'],
+
             // Special Permissions
             ['name' => 'special_export_data', 'description' => 'Export data to Excel/PDF', 'module' => 'special', 'submodule' => 'special', 'type' => 'special'],
             ['name' => 'special_import_data', 'description' => 'Import data from Excel/CSV', 'module' => 'special', 'submodule' => 'special', 'type' => 'special'],

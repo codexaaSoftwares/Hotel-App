@@ -24,6 +24,9 @@ const routesConfig = [
   { path: '/profile/edit', name: 'Edit Profile' },
   { path: '/settings', name: 'Settings' },
   
+  // Restaurant Routes
+  { path: '/restaurant/settings', name: 'Restaurant Settings' },
+  
   // Auth Routes
   { path: '/login', name: 'Login' },
   { path: '/forgot-password', name: 'Forgot Password' },

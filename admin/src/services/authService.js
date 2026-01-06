@@ -20,6 +20,22 @@ const PERMISSION_ALIAS_MAP = {
   view_setting: ['settings:read'],
   edit_setting: ['settings:write'],
   
+  // Restaurant Settings Management
+  view_restaurant_settings: ['restaurant_settings:read'],
+  edit_restaurant_settings: ['restaurant_settings:write'],
+  
+  // Food Category Management
+  view_food_category: ['food_category:read'],
+  create_food_category: ['food_category:write'],
+  edit_food_category: ['food_category:write'],
+  delete_food_category: ['food_category:delete'],
+  
+  // Food Item Management
+  view_food_item: ['food_item:read'],
+  create_food_item: ['food_item:write'],
+  edit_food_item: ['food_item:write'],
+  delete_food_item: ['food_item:delete'],
+  
   // Branch Management
   view_branch: ['branch:read'],
   create_branch: ['branch:write'],

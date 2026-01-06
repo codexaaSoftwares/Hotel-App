@@ -3852,6 +3852,419 @@ const handleSaveSettings = async (section, settingsData) => {
 
 ---
 
+## 🍽️ Restaurant Management APIs
+
+### Restaurant Settings APIs
+
+### 1. **GET /api/restaurant-settings/**
+**Description**: सभी restaurant settings fetch करने के लिए (grouped by section)
+
+**Backend Controller**: `RestaurantSettingsController@index`
+
+**Query Parameters**:
+- `section` - Optional section filter ('GST Settings', 'Invoice Settings', 'Thermal Printer')
+
+**Response**:
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "key": "default_gst_percentage",
+      "value": "5",
+      "section": "GST Settings",
+      "description": null,
+      "created_at": "2025-01-20T00:00:00.000000Z",
+      "updated_at": "2025-01-20T00:00:00.000000Z"
+    }
+  ]
+}
+```
+
+**Permission Required**: `view_restaurant_settings`
+
+**Frontend Integration**:
+- **Service**: `src/services/restaurantSettingsService.js`
+- **Method**: `restaurantSettingsService.getRestaurantSettings()`
+- **Used In**: `src/views/restaurant/settings/RestaurantSettings.jsx`
+
+---
+
+### 2. **GET /api/restaurant-settings/by-section**
+**Description**: सभी sections और उनकी settings fetch करने के लिए (grouped format)
+
+**Backend Controller**: `RestaurantSettingsController@listBySection`
+
+**Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "GST Settings": {
+      "default_gst_percentage": "5",
+      "gst_calculation_method": "bill_total"
+    },
+    "Invoice Settings": {
+      "invoice_prefix": "BILL",
+      "invoice_business_name": "Teja Hotel",
+      "invoice_business_address": "123 Main St",
+      "invoice_contact_phone": "+91 98765 43210",
+      "invoice_contact_email": "info@tejahotel.com",
+      "invoice_footer_text": "Thank you for visiting!",
+      "invoice_other_text": ""
+    },
+    "Thermal Printer": {
+      "printer_name": "Kitchen Printer",
+      "printer_ip": "192.168.1.100",
+      "printer_port": "9100",
+      "paper_width": "80",
+      "enabled": "true"
+    }
+  }
+}
+```
+
+**Permission Required**: `view_restaurant_settings`
+
+**Frontend Integration**:
+- **Service**: `src/services/restaurantSettingsService.js`
+- **Method**: `restaurantSettingsService.getAllSections()`
+- **Used In**: `src/views/restaurant/settings/RestaurantSettings.jsx` - Initial data load
+
+---
+
+### 3. **GET /api/restaurant-settings/by-section/{section}**
+**Description**: Specific section की settings fetch करने के लिए
+
+**Backend Controller**: `RestaurantSettingsController@getSection`
+
+**Path Parameter**:
+- `section` - Section name ('GST Settings', 'Invoice Settings', 'Thermal Printer')
+
+**Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "default_gst_percentage": "5",
+    "gst_calculation_method": "bill_total"
+  }
+}
+```
+
+**Permission Required**: `view_restaurant_settings`
+
+**Frontend Integration**:
+- **Service**: `src/services/restaurantSettingsService.js`
+- **Method**: `restaurantSettingsService.getSettingsBySection(section)`
+
+---
+
+### 4. **GET /api/restaurant-settings/key/{key}**
+**Description**: Specific setting key से value fetch करने के लिए
+
+**Backend Controller**: `RestaurantSettingsController@showByKey`
+
+**Query Parameters**:
+- `section` - Optional section filter
+
+**Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "key": "default_gst_percentage",
+    "value": "5",
+    "section": "GST Settings"
+  }
+}
+```
+
+**Permission Required**: `view_restaurant_settings`
+
+---
+
+### 5. **POST /api/restaurant-settings/**
+**Description**: New restaurant setting create करने के लिए (or update if exists)
+
+**Backend Controller**: `RestaurantSettingsController@store`
+
+**Request Body**:
+```json
+{
+  "key": "default_gst_percentage",
+  "value": "5",
+  "section": "GST Settings",
+  "type": "string"
+}
+```
+
+**Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "key": "default_gst_percentage",
+    "value": "5",
+    "section": "GST Settings"
+  },
+  "message": "Setting saved successfully"
+}
+```
+
+**Permission Required**: `edit_restaurant_settings`
+
+**Frontend Integration**:
+- **Service**: `src/services/restaurantSettingsService.js`
+- **Method**: `restaurantSettingsService.updateSetting(key, value, section, type)`
+- **Used In**: `src/views/restaurant/settings/RestaurantSettings.jsx` - Single field save
+
+---
+
+### 6. **POST /api/restaurant-settings/bulk**
+**Description**: Multiple settings को bulk update करने के लिए
+
+**Backend Controller**: `RestaurantSettingsController@bulkUpdate`
+
+**Request Body**:
+```json
+{
+  "settings": [
+    {
+      "key": "default_gst_percentage",
+      "value": "5",
+      "section": "GST Settings",
+      "type": "string"
+    },
+    {
+      "key": "invoice_prefix",
+      "value": "BILL",
+      "section": "Invoice Settings",
+      "type": "string"
+    }
+  ]
+}
+```
+
+**Response**:
+```json
+{
+  "success": true,
+  "message": "Settings updated successfully"
+}
+```
+
+**Permission Required**: `edit_restaurant_settings`
+
+**Frontend Integration**:
+- **Service**: `src/services/restaurantSettingsService.js`
+- **Method**: `restaurantSettingsService.updateAllSettings(settingsData)`
+- **Used In**: `src/views/restaurant/settings/RestaurantSettings.jsx` - Section-wide save
+
+**Note**: Supports both array format (from frontend) and object format (alternative)
+
+---
+
+### Food Categories APIs
+
+### 7. **GET /api/food-categories**
+**Description**: Food categories की list fetch करने के लिए (paginated, sortable, searchable)
+
+**Backend Controller**: `FoodCategoryController@index`
+
+**Query Parameters**:
+- `page` - Page number (default: 1)
+- `limit` - Items per page (default: 20, max: 100)
+- `search` - Search term (name, description में search)
+- `status` - Filter by status (active/inactive)
+- `sort_by` - Sort column (name, display_order, status, created_at)
+- `sort_direction` - Sort direction (asc/desc)
+
+**Response**:
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "Main Course",
+      "description": "Main course dishes",
+      "display_order": 1,
+      "status": "active",
+      "created_at": "2025-01-20T00:00:00.000000Z",
+      "updated_at": "2025-01-20T00:00:00.000000Z"
+    }
+  ],
+  "meta": {
+    "total": 10,
+    "page": 1,
+    "limit": 20,
+    "totalPages": 1,
+    "hasNext": false,
+    "hasPrev": false
+  }
+}
+```
+
+**Permission Required**: `view_food_category`
+
+**Frontend Integration**:
+- **Service**: To be created (`src/services/foodCategoryService.js`)
+- **Used In**: Food Categories list page (to be implemented)
+
+---
+
+### 8. **GET /api/food-categories/{category}**
+**Description**: Specific food category की details fetch करने के लिए
+
+**Backend Controller**: `FoodCategoryController@show`
+
+**Permission Required**: `view_food_category`
+
+---
+
+### 9. **POST /api/food-categories**
+**Description**: New food category create करने के लिए
+
+**Backend Controller**: `FoodCategoryController@store`
+
+**Request Body**:
+```json
+{
+  "name": "Main Course",
+  "description": "Main course dishes",
+  "display_order": 1,
+  "status": "active"
+}
+```
+
+**Permission Required**: `create_food_category`
+
+---
+
+### 10. **PUT /api/food-categories/{category}**
+**Description**: Existing food category update करने के लिए
+
+**Backend Controller**: `FoodCategoryController@update`
+
+**Permission Required**: `edit_food_category`
+
+---
+
+### 11. **DELETE /api/food-categories/{category}**
+**Description**: Food category delete करने के लिए (soft delete)
+
+**Backend Controller**: `FoodCategoryController@destroy`
+
+**Permission Required**: `delete_food_category`
+
+---
+
+### Food Items APIs
+
+### 12. **GET /api/food-items**
+**Description**: Food items की list fetch करने के लिए (paginated, sortable, searchable)
+
+**Backend Controller**: `FoodItemController@index`
+
+**Query Parameters**:
+- `page` - Page number (default: 1)
+- `limit` - Items per page (default: 20, max: 100)
+- `search` - Search term (name, description में search)
+- `category_id` - Filter by food category
+- `status` - Filter by status (active/inactive)
+- `is_veg` - Filter by veg/non-veg (true/false)
+- `sort_by` - Sort column (name, price, category, status, created_at)
+- `sort_direction` - Sort direction (asc/desc)
+
+**Response**:
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "food_category_id": 1,
+      "category_name": "Main Course",
+      "name": "Butter Chicken",
+      "description": "Creamy butter chicken",
+      "price": "250.00",
+      "gst_percentage": "5",
+      "is_veg": false,
+      "status": "active",
+      "created_at": "2025-01-20T00:00:00.000000Z",
+      "updated_at": "2025-01-20T00:00:00.000000Z"
+    }
+  ],
+  "meta": {
+    "total": 50,
+    "page": 1,
+    "limit": 20,
+    "totalPages": 3
+  }
+}
+```
+
+**Permission Required**: `view_food_item`
+
+**Frontend Integration**:
+- **Service**: To be created (`src/services/foodItemService.js`)
+- **Used In**: Food Items list page (to be implemented)
+
+---
+
+### 13. **GET /api/food-items/{item}**
+**Description**: Specific food item की details fetch करने के लिए
+
+**Backend Controller**: `FoodItemController@show`
+
+**Permission Required**: `view_food_item`
+
+---
+
+### 14. **POST /api/food-items**
+**Description**: New food item create करने के लिए
+
+**Backend Controller**: `FoodItemController@store`
+
+**Request Body**:
+```json
+{
+  "food_category_id": 1,
+  "name": "Butter Chicken",
+  "description": "Creamy butter chicken",
+  "price": 250.00,
+  "gst_percentage": 5,
+  "is_veg": false,
+  "status": "active"
+}
+```
+
+**Permission Required**: `create_food_item`
+
+---
+
+### 15. **PUT /api/food-items/{item}**
+**Description**: Existing food item update करने के लिए
+
+**Backend Controller**: `FoodItemController@update`
+
+**Permission Required**: `edit_food_item`
+
+---
+
+### 16. **DELETE /api/food-items/{item}**
+**Description**: Food item delete करने के लिए (soft delete)
+
+**Backend Controller**: `FoodItemController@destroy`
+
+**Permission Required**: `delete_food_item`
+
+---
+
 ## 📱 App Settings
 
 ### App Settings Section
@@ -4174,6 +4587,9 @@ const Settings = () => {
 ✅ Financial Management (Transactions CRUD + Categories CRUD + Statistics + Server-side pagination/filtering/searching)
 ✅ Report Management (Company Health Report + PDF Export)
 ✅ Settings Management (Full CRUD + Email Test + Logo Upload/Delete + App Settings with Web URL)
+✅ Restaurant Settings (Full CRUD + Section-based grouping + Bulk update)
+✅ Food Categories (Full CRUD + Server-side pagination/filtering/searching - Backend ready)
+✅ Food Items (Full CRUD + Server-side pagination/filtering/searching - Backend ready)
 
 ### Frontend Integration Status
 - ✅ **AuthService** - Fully integrated in Login, AuthContext, PrivateRoute, ForgotPassword, ResetPassword
@@ -4191,6 +4607,9 @@ const Settings = () => {
 - ✅ **PaymentService** - Fully integrated in PaymentForm, TransactionsList (real database integration, PDF Export)
 - ✅ **ReportService** - Fully integrated in CompanyHealthReport (with PDF export)
 - ✅ **SettingsService** - Fully integrated in Settings page (Business Info, Invoice, Email Settings with test, App Settings with Web URL, Currency & Regional, S3 Settings)
+- ✅ **RestaurantSettingsService** - Fully integrated in RestaurantSettings page (GST Settings, Invoice Settings, Thermal Printer Settings)
+- ⏳ **FoodCategoryService** - Backend ready, frontend service to be created
+- ⏳ **FoodItemService** - Backend ready, frontend service to be created
 
 ### Server-Side Features
 - **Package Management**: Server-side pagination, filtering (type, status, price range), searching (name, description, type)
@@ -4206,13 +4625,16 @@ const Settings = () => {
 
 ---
 
-**Last Updated**: December 2025
+**Last Updated**: January 2025
 
 ## 🔄 Recent Updates
-- ✅ **Permissions System** - Added `view_report` permission for reports module, all pages now have proper permission protection
-- ✅ **Report API Permissions** - Updated report endpoints to use `view_report` permission instead of `view_dashboard`
-- ✅ **Financial Permissions** - All financial transaction and category endpoints have proper permission checks
-**Version**: 1.2.0
+- ✅ **Restaurant Settings Module** - Fully implemented frontend and backend with GST Settings, Invoice Settings, and Thermal Printer Settings
+- ✅ **Restaurant Settings APIs** - Full CRUD operations with section-based grouping and bulk update support
+- ✅ **Food Categories APIs** - Backend fully implemented with CRUD operations, server-side pagination, filtering, and searching
+- ✅ **Food Items APIs** - Backend fully implemented with CRUD operations, server-side pagination, filtering, and searching
+- ✅ **Restaurant Permissions** - Added `view_restaurant_settings`, `edit_restaurant_settings`, and all Food Category/Item permissions
+- ✅ **Data Storage** - Restaurant settings stored in `settings` table with groups: 'GST Settings', 'Invoice Settings', 'Thermal Printer'
+**Version**: 1.3.0
 
 ## 🔄 Recent Updates
 - ✅ Payment Management APIs fully implemented

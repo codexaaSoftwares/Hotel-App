@@ -406,11 +406,18 @@ admin/
 - **Modules**:
   - **POS Panel**: Main POS interface with split-screen layout (Tables | Products | Billing Cart)
   - **Bills Management**: Unified bills page with filters (Pending, Today, Paid, etc.)
-  - **Restaurant Setup**: Food Categories, Food Items, Table Management, Restaurant Settings
+  - **Restaurant Setup**:
+    - ✅ **Restaurant Settings** - GST Settings, Invoice Settings, Thermal Printer Settings (fully implemented)
+    - ⏳ **Food Categories** - Backend ready, frontend pending
+    - ⏳ **Food Items** - Backend ready, frontend pending
+    - ⏳ **Table Management** - Pending
   - **Customer Management**: Customers list, Customer Ledger
   - **Staff Management**: Staff list, Salary Payments
   - **Expense Management**: Expense Categories, Expense Records
-- **Status**: ⏳ Navigation structure implemented, modules to be developed
+- **Status**: 
+  - ✅ Restaurant Settings (Frontend + Backend fully implemented)
+  - ⏳ Food Categories & Food Items (Backend ready, frontend pending)
+  - ⏳ Other modules pending
 - **Specification**: See `scope/POS_Panel_Specification.md` and `module details/ProjectModules.md`
 
 ---
@@ -813,14 +820,19 @@ const MyComponent = () => {
 - Report Management (Branch, Ledger, Sales, Staff reports)
 - Theme System (Dark/Light mode)
 - Navigation Menu Structure (Restaurant Management modules - navigation configured)
+- Restaurant Settings (GST Settings, Invoice Settings, Thermal Printer Settings - Frontend + Backend)
 
 ### 🟡 Partially Implemented (UI Complete, API Pending)
 - None (all existing modules fully implemented)
 
+### 🟡 Partially Implemented (Backend Ready, Frontend Pending)
+- Food Categories (Backend CRUD APIs ready, frontend pending)
+- Food Items (Backend CRUD APIs ready, frontend pending)
+
 ### 🔴 Needs Implementation (Phase 1 - Restaurant Management)
 - POS Panel (Main POS interface with split-screen layout)
 - Bills Management (Unified bills page with filters)
-- Restaurant Setup (Food Categories, Food Items, Tables, Settings)
+- Table Management (Restaurant Setup)
 - Customer Management (Customers, Customer Ledger)
 - Staff Management (Staff, Salary Payments)
 - Expense Management (Expense Categories, Expense Records)
@@ -868,7 +880,7 @@ npm run lint
 ---
 
 **Last Updated**: January 2025
-**Version**: 2.1.0 (Restaurant Management Navigation Update)
+**Version**: 2.2.0 (Restaurant Settings Implementation)
 
 ## 🔄 Recent Updates
 
@@ -907,6 +919,19 @@ npm run lint
 - ✅ **New Permissions Added**: Restaurant, POS, Customer, Staff, Expense, and Report permissions
 - ✅ **Compact Navigation Styling**: Enhanced dropdown item hover and active states
 - ✅ **POS Panel Specification**: Created detailed specification document for POS Panel implementation
+
+### Version 2.2.0 - Restaurant Settings Implementation
+- ✅ **Restaurant Settings Module**: Fully implemented frontend and backend
+  - GST Settings (default GST percentage, calculation method)
+  - Invoice Settings (prefix, business name, address, contact info, footer text, other text)
+  - Thermal Printer Settings (printer name, IP, port, paper width, enabled status)
+- ✅ **Backend APIs**: RestaurantSettingsController with full CRUD operations
+- ✅ **Data Storage**: Uses `settings` table with groups: 'GST Settings', 'Invoice Settings', 'Thermal Printer'
+- ✅ **Permissions**: `view_restaurant_settings`, `edit_restaurant_settings` added and seeded
+- ✅ **Food Categories Backend**: Full CRUD APIs implemented (migration, model, controller, requests, resources)
+- ✅ **Food Items Backend**: Full CRUD APIs implemented (migration, model, controller, requests, resources)
+- ✅ **Section-Specific Validation**: Form validation only validates the section being saved
+- ✅ **Data Population**: Fixed API response transformation to correctly populate form fields
 
 ### Previous Updates
 - ✅ System cleanup: Removed Order Management, Customer Management, Package Management, Transaction Management, and Company Health Report modules

@@ -8,6 +8,9 @@ use App\Http\Controllers\API\PermissionController;
 use App\Http\Controllers\API\SettingController;
 use App\Http\Controllers\API\BranchController;
 use App\Http\Controllers\API\DashboardController;
+use App\Http\Controllers\API\FoodCategoryController;
+use App\Http\Controllers\API\RestaurantSettingsController;
+use App\Http\Controllers\API\FoodItemController;
 
 /*
 |--------------------------------------------------------------------------
@@ -65,6 +68,33 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/branches/{branch}', [BranchController::class, 'show'])->middleware('permission:view_branch');
     Route::put('/branches/{branch}', [BranchController::class, 'update'])->middleware('permission:edit_branch');
     Route::delete('/branches/{branch}', [BranchController::class, 'destroy'])->middleware('permission:delete_branch');
+
+    // Food Category Management
+    Route::get('/food-categories', [FoodCategoryController::class, 'index'])->middleware('permission:view_food_category');
+    Route::post('/food-categories', [FoodCategoryController::class, 'store'])->middleware('permission:create_food_category');
+    Route::get('/food-categories/{foodCategory}', [FoodCategoryController::class, 'show'])->middleware('permission:view_food_category');
+    Route::put('/food-categories/{foodCategory}', [FoodCategoryController::class, 'update'])->middleware('permission:edit_food_category');
+    Route::delete('/food-categories/{foodCategory}', [FoodCategoryController::class, 'destroy'])->middleware('permission:delete_food_category');
+
+    // Food Item Management
+    Route::get('/food-items', [FoodItemController::class, 'index'])->middleware('permission:view_food_item');
+    Route::post('/food-items', [FoodItemController::class, 'store'])->middleware('permission:create_food_item');
+    Route::get('/food-items/{foodItem}', [FoodItemController::class, 'show'])->middleware('permission:view_food_item');
+    Route::put('/food-items/{foodItem}', [FoodItemController::class, 'update'])->middleware('permission:edit_food_item');
+    Route::delete('/food-items/{foodItem}', [FoodItemController::class, 'destroy'])->middleware('permission:delete_food_item');
+
+    // Restaurant Settings Management
+    Route::prefix('restaurant-settings')->middleware('permission:view_restaurant_settings')->group(function () {
+        Route::get('/', [RestaurantSettingsController::class, 'index']);
+        Route::get('/by-section', [RestaurantSettingsController::class, 'listBySection']);
+        Route::get('/by-section/{section}', [RestaurantSettingsController::class, 'getSection']);
+        Route::get('/key/{key}', [RestaurantSettingsController::class, 'showByKey']);
+    });
+
+    Route::prefix('restaurant-settings')->middleware('permission:edit_restaurant_settings')->group(function () {
+        Route::post('/', [RestaurantSettingsController::class, 'store']);
+        Route::post('/bulk', [RestaurantSettingsController::class, 'bulkUpdate']);
+    });
 
 
     // Dashboard

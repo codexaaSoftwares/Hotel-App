@@ -432,6 +432,56 @@ backend/
 - **Status**: ✅ Fully implemented
 - **Note**: Storage files are served via custom handler in `public/index.php` that bypasses Laravel routing for better performance and compatibility with shared hosting
 
+### 12. **Restaurant Settings Module**
+- **Location**: `app/Http/Controllers/API/RestaurantSettingsController.php`
+- **Routes**: `/api/restaurant-settings/*`
+- **Features**:
+  - List all restaurant settings (grouped by section)
+  - Get settings by section (GST Settings, Invoice Settings, Thermal Printer)
+  - Get setting by key
+  - Create/Update setting (single or bulk)
+  - Delete setting
+  - Section-based grouping and filtering
+- **Data Storage**: Uses `settings` table with `group` field:
+  - `'GST Settings'` - Default GST percentage, calculation method
+  - `'Invoice Settings'` - Invoice prefix, business name, address, contact info, footer text, other text
+  - `'Thermal Printer'` - Printer name, IP, port, paper width, enabled status
+- **Permissions**: `view_restaurant_settings`, `edit_restaurant_settings`
+- **Status**: ✅ Fully implemented
+
+### 13. **Food Categories Module**
+- **Location**: `app/Http/Controllers/API/FoodCategoryController.php`
+- **Routes**: `/api/food-categories/*`
+- **Features**:
+  - List food categories (paginated, sortable, searchable)
+  - Get category by ID
+  - Create category
+  - Update category
+  - Delete category (soft delete)
+  - Server-side pagination, filtering, and searching
+- **Model**: `FoodCategory` (with soft deletes)
+- **Request Validation**: `FoodCategoryStoreRequest`, `FoodCategoryUpdateRequest`
+- **API Resource**: `FoodCategoryResource`
+- **Permissions**: `view_food_category`, `create_food_category`, `edit_food_category`, `delete_food_category`
+- **Status**: ✅ Backend fully implemented (frontend pending)
+
+### 14. **Food Items Module**
+- **Location**: `app/Http/Controllers/API/FoodItemController.php`
+- **Routes**: `/api/food-items/*`
+- **Features**:
+  - List food items (paginated, sortable, searchable)
+  - Get item by ID
+  - Create item
+  - Update item
+  - Delete item (soft delete)
+  - Filter by category, status, veg/non-veg
+  - Server-side pagination, filtering, and searching
+- **Model**: `FoodItem` (with soft deletes, relationship to FoodCategory)
+- **Request Validation**: `FoodItemStoreRequest`, `FoodItemUpdateRequest`
+- **API Resource**: `FoodItemResource` (includes category relationship)
+- **Permissions**: `view_food_item`, `create_food_item`, `edit_food_item`, `delete_food_item`
+- **Status**: ✅ Backend fully implemented (frontend pending)
+
 ---
 
 ## 🏗️ Architecture Patterns
@@ -1049,8 +1099,8 @@ php artisan serve
 
 ---
 
-**Last Updated**: December 2025
-**Version**: 1.2.0
+**Last Updated**: January 2025
+**Version**: 1.3.0
 
 ## 🔄 Recent Updates
 - ✅ Financial Management module fully implemented
@@ -1086,3 +1136,8 @@ php artisan serve
 - ✅ **Report Management Module** - Company Health Report fully implemented with date range filtering, branch filtering, comprehensive financial calculations, and PDF export with colorful design
 - ✅ **Permissions System** - Added `view_report` permission for reports module, all pages now have proper permission protection
 - ✅ **Database Seeders** - Updated roles (admin, branch-manager, manager, staff), added default users (admin@example.com, manager@example.com), reduced financial categories to 5 income + 5 expense
+- ✅ **Restaurant Settings Module** - Fully implemented with RestaurantSettingsController, uses settings table with section grouping
+- ✅ **Food Categories Module** - Backend fully implemented (migration, model, controller, requests, resources, routes, permissions)
+- ✅ **Food Items Module** - Backend fully implemented (migration, model, controller, requests, resources, routes, permissions)
+- ✅ **Restaurant Permissions** - Added and seeded: `view_restaurant_settings`, `edit_restaurant_settings`, and all Food Category/Item permissions
+- ✅ **Database Migrations** - Created `food_categories` and `food_items` tables with proper relationships and indexes

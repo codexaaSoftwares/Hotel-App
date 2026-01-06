@@ -323,6 +323,9 @@ System configuration settings (key-value store).
 - Email settings: `smtp_host`, `smtp_port`, `smtp_username`, `smtp_password`, `from_address`, `from_name`
 - Business Information: `business_email`, `business_phone`, `business_website`
 - App Settings: `web_url`
+- **Restaurant Settings** (group: 'GST Settings'): `default_gst_percentage`, `gst_calculation_method`
+- **Restaurant Settings** (group: 'Invoice Settings'): `invoice_prefix`, `invoice_business_name`, `invoice_business_address`, `invoice_contact_phone`, `invoice_contact_email`, `invoice_footer_text`, `invoice_other_text`
+- **Restaurant Settings** (group: 'Thermal Printer'): `printer_name`, `printer_ip`, `printer_port`, `paper_width`, `enabled`
 
 ---
 
@@ -390,7 +393,74 @@ Laravel failed queue jobs.
 
 ---
 
-### 18. `personal_access_tokens`
+### 19. `food_categories`
+Food categories for restaurant menu organization.
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| `id` | bigint unsigned | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
+| `name` | varchar(255) | UNIQUE, NOT NULL | Category name |
+| `description` | text | NULLABLE | Category description |
+| `display_order` | int | DEFAULT 0 | Display order for sorting |
+| `status` | enum | DEFAULT 'active' | Status: 'active', 'inactive' |
+| `created_at` | timestamp | NULLABLE | Creation timestamp |
+| `updated_at` | timestamp | NULLABLE | Last update timestamp |
+| `deleted_at` | timestamp | NULLABLE | Soft delete timestamp |
+
+**Indexes:**
+- PRIMARY KEY (`id`)
+- UNIQUE (`name`)
+- INDEX (`status`)
+- INDEX (`display_order`)
+- INDEX (`created_at`)
+
+**Soft Deletes:** Yes
+
+**Notes:**
+- Categories can be ordered using `display_order` field
+- Status can be 'active' or 'inactive'
+
+---
+
+### 20. `food_items`
+Food items/menu items for restaurant.
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| `id` | bigint unsigned | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
+| `food_category_id` | bigint unsigned | FOREIGN KEY, NOT NULL | Category reference |
+| `name` | varchar(255) | UNIQUE, NOT NULL | Item name |
+| `description` | text | NULLABLE | Item description |
+| `price` | decimal(10,2) | NOT NULL | Item price |
+| `gst_percentage` | decimal(5,2) | NULLABLE | GST percentage (0-100) |
+| `is_veg` | boolean | DEFAULT true | Vegetarian flag |
+| `status` | enum | DEFAULT 'active' | Status: 'active', 'inactive' |
+| `created_at` | timestamp | NULLABLE | Creation timestamp |
+| `updated_at` | timestamp | NULLABLE | Last update timestamp |
+| `deleted_at` | timestamp | NULLABLE | Soft delete timestamp |
+
+**Foreign Keys:**
+- `food_category_id` → `food_categories.id` (ON DELETE RESTRICT)
+
+**Indexes:**
+- PRIMARY KEY (`id`)
+- UNIQUE (`name`)
+- INDEX (`food_category_id`)
+- INDEX (`status`)
+- INDEX (`is_veg`)
+- INDEX (`created_at`)
+
+**Soft Deletes:** Yes
+
+**Notes:**
+- Each item belongs to one category
+- Price stored as decimal(10,2) for precision
+- GST percentage optional (0-100 range)
+- `is_veg` boolean flag for vegetarian/non-vegetarian items
+
+---
+
+### 21. `personal_access_tokens`
 Laravel Sanctum authentication tokens.
 
 | Column | Type | Constraints | Description |
@@ -432,6 +502,9 @@ financial_categories
 
 users
   └── financial_transactions (one-to-many, created_by)
+
+food_categories
+  └── food_items (one-to-many)
 ```
 
 ### Detailed Relationships
@@ -453,6 +526,10 @@ users
 4. **User ↔ FinancialTransaction** (One-to-Many)
     - A user can create many transactions
     - A transaction is created by one user (nullable)
+
+5. **FoodCategory ↔ FoodItem** (One-to-Many)
+    - A category can have many food items
+    - A food item belongs to one category
 
 ---
 
@@ -493,6 +570,7 @@ users
 | `payments` | `branch_id` | `branches.id` | SET NULL | Branch deletion doesn't delete payments |
 | `financial_transactions` | `category_id` | `financial_categories.id` | RESTRICT | Cannot delete category with transactions |
 | `financial_transactions` | `created_by` | `users.id` | SET NULL | User deletion doesn't delete transactions |
+| `food_items` | `food_category_id` | `food_categories.id` | RESTRICT | Cannot delete category with items |
 | `user_role` | `user_id` | `users.id` | CASCADE | User deletion removes role assignments |
 | `user_role` | `role_id` | `roles.id` | CASCADE | Role deletion removes user assignments |
 | `role_permission` | `role_id` | `roles.id` | CASCADE | Role deletion removes permissions |
@@ -651,20 +729,24 @@ users
 - `create_financial_categories_table` (2025_12_18_073853) - Creates financial categories table for income/expense categories
 - `create_financial_transactions_table` (2025_12_18_073853) - Creates financial transactions table for income/expense tracking
 
+### Restaurant Management (2025-01-20)
+- `create_food_categories_table` (2025_01_20_000001) - Creates food categories table for restaurant menu organization
+- `create_food_items_table` (2025_01_20_000002) - Creates food items table for restaurant menu items
+
 ---
 
 ## Summary Statistics
 
-- **Total Tables:** 18
-- **Core Business Tables:** 9 (users, branches, customers, packages, orders, order_items, payments, financial_categories, financial_transactions)
+- **Total Tables:** 21
+- **Core Business Tables:** 11 (users, branches, customers, packages, orders, order_items, payments, financial_categories, financial_transactions, food_categories, food_items)
 - **Auth/Authorization Tables:** 4 (roles, permissions, user_role, role_permission)
-- **System Tables:** 5 (settings, emails, password_resets, failed_jobs, personal_access_tokens)
-- **Tables with Soft Deletes:** 7 (branches, customers, packages, orders, payments, financial_categories, financial_transactions)
-- **Tables with Foreign Keys:** 12
+- **System Tables:** 6 (settings, emails, password_resets, failed_jobs, personal_access_tokens)
+- **Tables with Soft Deletes:** 9 (branches, customers, packages, orders, payments, financial_categories, financial_transactions, food_categories, food_items)
+- **Tables with Foreign Keys:** 13
 - **Pivot Tables:** 2 (user_role, role_permission)
 
 ---
 
-*Last Updated: December 2025*  
-*Database Version: 1.1*
+*Last Updated: January 2025*  
+*Database Version: 1.2*
 
