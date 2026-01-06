@@ -67,11 +67,10 @@ const AppHorizontalNav = () => {
       expanded={expanded}
       onToggle={setExpanded}
     >
-      <Container fluid className="px-3">
+      <Container fluid className="px-2">
         <Navbar.Toggle
           aria-controls="horizontal-navbar-nav"
-          className="border-0"
-          style={{ padding: '0.5rem' }}
+          className="border-0 compact-toggle"
         >
           <FontAwesomeIcon icon={expanded ? faTimes : faBars} className="text-primary" />
         </Navbar.Toggle>
@@ -101,9 +100,9 @@ const AppHorizontalNav = () => {
                   <NavDropdown
                     key={`nav-item-${index}-${name}`}
                     title={
-                      <span className="d-flex align-items-center">
-                        {icon && <span className="me-2 nav-icon-wrapper">{icon}</span>}
-                        {name}
+                      <span className="d-flex align-items-center nav-item-content">
+                        {icon && <span className="nav-icon-wrapper">{icon}</span>}
+                        <span className="nav-item-text">{name}</span>
                       </span>
                     }
                     id={`nav-dropdown-${index}`}
@@ -121,9 +120,9 @@ const AppHorizontalNav = () => {
                           <NavDropdown
                             key={`nav-subitem-${subIndex}-${subItem.name}`}
                             title={
-                              <span className="d-flex align-items-center">
-                                {subItem.icon && <span className="me-2 nav-icon-wrapper">{subItem.icon}</span>}
-                                {subItem.name}
+                              <span className="d-flex align-items-center nav-item-content">
+                                {subItem.icon && <span className="nav-icon-wrapper">{subItem.icon}</span>}
+                                <span className="nav-item-text">{subItem.name}</span>
                               </span>
                             }
                             id={`nav-dropdown-${index}-${subIndex}`}
@@ -143,8 +142,10 @@ const AppHorizontalNav = () => {
                                   onClick={handleNavClick}
                                   className={nestedItemActive ? 'active' : ''}
                                 >
-                                  {nestedItem.icon && <span className="me-2 nav-icon-wrapper">{nestedItem.icon}</span>}
-                                  {nestedItem.name}
+                                  <span className="d-flex align-items-center nav-item-content">
+                                    {nestedItem.icon && <span className="nav-icon-wrapper">{nestedItem.icon}</span>}
+                                    <span className="nav-item-text">{nestedItem.name}</span>
+                                  </span>
                                 </NavDropdown.Item>
                               )
                             })}
@@ -162,8 +163,10 @@ const AppHorizontalNav = () => {
                           onClick={handleNavClick}
                           className={subActive ? 'active' : ''}
                         >
-                          {subItem.icon && <span className="me-2 nav-icon-wrapper">{subItem.icon}</span>}
-                          {subItem.name}
+                          <span className="d-flex align-items-center nav-item-content">
+                            {subItem.icon && <span className="nav-icon-wrapper">{subItem.icon}</span>}
+                            <span className="nav-item-text">{subItem.name}</span>
+                          </span>
                         </NavDropdown.Item>
                       )
                     })}
@@ -181,8 +184,10 @@ const AppHorizontalNav = () => {
                   onClick={handleNavClick}
                   className={`horizontal-nav-link ${active ? 'active' : ''}`}
                 >
-                  {icon && <span className="me-2 nav-icon-wrapper">{icon}</span>}
-                  {name}
+                  <span className="d-flex align-items-center nav-item-content">
+                    {icon && <span className="nav-icon-wrapper">{icon}</span>}
+                    <span className="nav-item-text">{name}</span>
+                  </span>
                 </Nav.Link>
               )
             })}
