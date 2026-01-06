@@ -15,6 +15,7 @@ const Settings = React.lazy(() => import('../../views/settings/Settings'))
 
 // Restaurant Components
 const RestaurantSettings = React.lazy(() => import('../../views/restaurant/settings/RestaurantSettings'))
+const MenuManagement = React.lazy(() => import('../../views/restaurant/MenuManagement'))
 
 // Branch Management Components
 const BranchesList = React.lazy(() => import('../../views/branches/BranchesList'))
@@ -68,6 +69,14 @@ const AppContent = () => {
           />
           
           {/* Restaurant Routes */}
+          <Route
+            path="/restaurant/menu"
+            element={
+              <PermissionRoute requiredPermission={PERMISSIONS.FOOD_CATEGORY_READ} showAccessDenied>
+                <MenuManagement />
+              </PermissionRoute>
+            }
+          />
           <Route
             path="/restaurant/settings"
             element={

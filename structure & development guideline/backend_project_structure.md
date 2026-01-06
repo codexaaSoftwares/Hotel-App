@@ -467,20 +467,25 @@ backend/
 
 ### 14. **Food Items Module**
 - **Location**: `app/Http/Controllers/API/FoodItemController.php`
-- **Routes**: `/api/food-items/*`
+- **Routes**: `/api/food-items/*`, `/api/food-items/{item}/upload-image`, `/api/food-items/{item}/image`, `/api/food-items/{item}/move-up`, `/api/food-items/{item}/move-down`
 - **Features**:
   - List food items (paginated, sortable, searchable)
   - Get item by ID
   - Create item
-  - Update item
+  - Update item (image field excluded if not provided - preserves existing image)
   - Delete item (soft delete)
+  - Upload item image (multipart/form-data, JPEG/PNG/WebP, max 2MB)
+  - Delete item image
+  - Move item up/down within category (reordering via display_order)
   - Filter by category, status, veg/non-veg
   - Server-side pagination, filtering, and searching
-- **Model**: `FoodItem` (with soft deletes, relationship to FoodCategory)
+- **Model**: `FoodItem` (with soft deletes, relationship to FoodCategory, `image` and `display_order` fields)
 - **Request Validation**: `FoodItemStoreRequest`, `FoodItemUpdateRequest`
-- **API Resource**: `FoodItemResource` (includes category relationship)
+- **API Resource**: `FoodItemResource` (includes category relationship, image URL with `/admin/api/storage/` prefix)
+- **Image Storage**: Files stored in `storage/app/public/food-items/`, served via custom handler at `/admin/api/storage/food-items/*`
+- **Image Preservation**: When updating item without new image, `image` field is excluded from payload to preserve existing image
 - **Permissions**: `view_food_item`, `create_food_item`, `edit_food_item`, `delete_food_item`
-- **Status**: ✅ Backend fully implemented (frontend pending)
+- **Status**: ✅ Fully implemented (Frontend + Backend)
 
 ---
 
@@ -1137,7 +1142,11 @@ php artisan serve
 - ✅ **Permissions System** - Added `view_report` permission for reports module, all pages now have proper permission protection
 - ✅ **Database Seeders** - Updated roles (admin, branch-manager, manager, staff), added default users (admin@example.com, manager@example.com), reduced financial categories to 5 income + 5 expense
 - ✅ **Restaurant Settings Module** - Fully implemented with RestaurantSettingsController, uses settings table with section grouping
-- ✅ **Food Categories Module** - Backend fully implemented (migration, model, controller, requests, resources, routes, permissions)
-- ✅ **Food Items Module** - Backend fully implemented (migration, model, controller, requests, resources, routes, permissions)
+- ✅ **Food Categories Module** - Fully implemented (migration, model with foodItems relationship, controller with hierarchy endpoint, requests, resources, routes, permissions)
+- ✅ **Food Items Module** - Fully implemented (migration with image and display_order fields, model, controller with image upload/delete and reordering endpoints, requests, resources, routes, permissions)
+- ✅ **Menu Hierarchy API** - `GET /api/food-categories/hierarchy` endpoint returns categories with nested items, sorted by display_order
+- ✅ **Image Upload Endpoints** - `POST /api/food-items/{item}/upload-image` and `DELETE /api/food-items/{item}/image` for managing item images
+- ✅ **Item Reordering Endpoints** - `POST /api/food-items/{item}/move-up` and `POST /api/food-items/{item}/move-down` for changing item order within categories
+- ✅ **Image Preservation** - When updating items without new image, image field is excluded from payload to preserve existing image in database
 - ✅ **Restaurant Permissions** - Added and seeded: `view_restaurant_settings`, `edit_restaurant_settings`, and all Food Category/Item permissions
 - ✅ **Database Migrations** - Created `food_categories` and `food_items` tables with proper relationships and indexes

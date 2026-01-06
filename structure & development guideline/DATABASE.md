@@ -435,6 +435,8 @@ Food items/menu items for restaurant.
 | `gst_percentage` | decimal(5,2) | NULLABLE | GST percentage (0-100) |
 | `is_veg` | boolean | DEFAULT true | Vegetarian flag |
 | `status` | enum | DEFAULT 'active' | Status: 'active', 'inactive' |
+| `image` | varchar(255) | NULLABLE | Image file path (added via migration) |
+| `display_order` | int | DEFAULT 0 | Display order for sorting within category (added via migration) |
 | `created_at` | timestamp | NULLABLE | Creation timestamp |
 | `updated_at` | timestamp | NULLABLE | Last update timestamp |
 | `deleted_at` | timestamp | NULLABLE | Soft delete timestamp |
@@ -457,6 +459,9 @@ Food items/menu items for restaurant.
 - Price stored as decimal(10,2) for precision
 - GST percentage optional (0-100 range)
 - `is_veg` boolean flag for vegetarian/non-vegetarian items
+- `image` field stores relative path to image file in `storage/app/public/food-items/`
+- `display_order` used for custom sorting within category (default: 0)
+- Images served via custom handler at `/admin/api/storage/food-items/*` (no symlink required)
 
 ---
 
@@ -732,6 +737,7 @@ food_categories
 ### Restaurant Management (2025-01-20)
 - `create_food_categories_table` (2025_01_20_000001) - Creates food categories table for restaurant menu organization
 - `create_food_items_table` (2025_01_20_000002) - Creates food items table for restaurant menu items
+- `add_image_and_display_order_to_food_items_table` (2026_01_06_130603) - Adds `image` (varchar, nullable) and `display_order` (int, default 0) columns to food_items table
 
 ---
 

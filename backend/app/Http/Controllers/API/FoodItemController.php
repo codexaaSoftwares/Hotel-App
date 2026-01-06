@@ -47,11 +47,17 @@ class FoodItemController extends Controller
             $query->where('food_type', $foodType);
         }
 
+        // Default ordering by display_order when category_id is provided
+        $defaultSort = ['column' => 'created_at', 'direction' => 'desc'];
+        if ($request->input('category_id')) {
+            $defaultSort = ['column' => 'display_order', 'direction' => 'asc'];
+        }
+
         $pagination = $this->buildPaginator(
             $request,
             $query,
-            ['name', 'price', 'status', 'food_type', 'created_at'],
-            ['column' => 'created_at', 'direction' => 'desc']
+            ['name', 'price', 'status', 'food_type', 'display_order', 'created_at'],
+            $defaultSort
         );
 
         /** @var \Illuminate\Pagination\LengthAwarePaginator $paginator */
@@ -74,7 +80,16 @@ class FoodItemController extends Controller
      */
     public function store(FoodItemStoreRequest $request)
     {
-        $item = FoodItem::create($request->validated());
+        $data = $request->validated();
+        
+        // Set display_order if not provided
+        if (!isset($data['display_order'])) {
+            $maxOrder = FoodItem::where('food_category_id', $data['food_category_id'])
+                ->max('display_order') ?? 0;
+            $data['display_order'] = $maxOrder + 1;
+        }
+
+        $item = FoodItem::create($data);
         $item->load('foodCategory');
 
         return (new FoodItemResource($item))
@@ -126,6 +141,234 @@ class FoodItemController extends Controller
             'success' => true,
             'message' => 'Food item deleted successfully.',
         ]);
+    }
+
+    /**
+     * Upload image for food item.
+     */
+    public function uploadImage(Request $request, FoodItem $foodItem)
+    {
+        try {
+            $validated = $request->validate([
+                'image' => 'required|image|mimes:jpeg,jpg,png,webp|max:2048', // 2MB max
+            ]);
+
+            // Delete old image if exists
+            if ($foodItem->image) {
+                $oldPath = storage_path('app/public/' . $foodItem->image);
+                if (file_exists($oldPath)) {
+                    @unlink($oldPath);
+                }
+            }
+
+            // Store new image
+            $file = $request->file('image');
+            $filename = 'food_item_' . $foodItem->id . '_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('public/food-items', $filename);
+            
+            // Get relative path for storage (without 'public/' prefix)
+            $relativePath = 'food-items/' . $filename;
+
+            // Update food item image
+            $foodItem->image = $relativePath;
+            $foodItem->save();
+
+            // Generate storage URL
+            $imageUrl = $this->getStorageUrl($relativePath);
+
+            // Reload food item
+            $foodItem->refresh();
+            $foodItem->load('foodCategory');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Image uploaded successfully',
+                'data' => (new FoodItemResource($foodItem))->toArray($request),
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            \Log::error('Food item image upload error', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to upload image: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Delete image for food item.
+     */
+    public function deleteImage(FoodItem $foodItem)
+    {
+        try {
+            if ($foodItem->image) {
+                $oldPath = storage_path('app/public/' . $foodItem->image);
+                if (file_exists($oldPath)) {
+                    @unlink($oldPath);
+                }
+            }
+
+            $foodItem->image = null;
+            $foodItem->save();
+
+            $foodItem->load('foodCategory');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Image deleted successfully',
+                'data' => (new FoodItemResource($foodItem))->toArray(request()),
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Food item image delete error', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete image: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Move item up (decrease display_order).
+     */
+    public function moveUp(FoodItem $foodItem)
+    {
+        try {
+            $categoryItems = FoodItem::where('food_category_id', $foodItem->food_category_id)
+                ->where('status', 'active')
+                ->orderBy('display_order', 'asc')
+                ->orderBy('id', 'asc')
+                ->get();
+
+            $currentIndex = $categoryItems->search(function ($item) use ($foodItem) {
+                return $item->id === $foodItem->id;
+            });
+
+            if ($currentIndex === false || $currentIndex === 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Item cannot be moved up',
+                ], 400);
+            }
+
+            $previousItem = $categoryItems[$currentIndex - 1];
+
+            // Swap display orders
+            $tempOrder = $foodItem->display_order;
+            $foodItem->display_order = $previousItem->display_order;
+            $previousItem->display_order = $tempOrder;
+
+            $foodItem->save();
+            $previousItem->save();
+
+            $foodItem->load('foodCategory');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Item moved up successfully',
+                'data' => (new FoodItemResource($foodItem))->toArray(request()),
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Food item move up error', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to move item: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Move item down (increase display_order).
+     */
+    public function moveDown(FoodItem $foodItem)
+    {
+        try {
+            $categoryItems = FoodItem::where('food_category_id', $foodItem->food_category_id)
+                ->where('status', 'active')
+                ->orderBy('display_order', 'asc')
+                ->orderBy('id', 'asc')
+                ->get();
+
+            $currentIndex = $categoryItems->search(function ($item) use ($foodItem) {
+                return $item->id === $foodItem->id;
+            });
+
+            if ($currentIndex === false || $currentIndex >= $categoryItems->count() - 1) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Item cannot be moved down',
+                ], 400);
+            }
+
+            $nextItem = $categoryItems[$currentIndex + 1];
+
+            // Swap display orders
+            $tempOrder = $foodItem->display_order;
+            $foodItem->display_order = $nextItem->display_order;
+            $nextItem->display_order = $tempOrder;
+
+            $foodItem->save();
+            $nextItem->save();
+
+            $foodItem->load('foodCategory');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Item moved down successfully',
+                'data' => (new FoodItemResource($foodItem))->toArray(request()),
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Food item move down error', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to move item: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Generate storage URL with correct backend path.
+     * Handles subdirectory installations like /admin/api
+     * Storage files are always served at /admin/api/storage/ (as per public/index.php)
+     *
+     * @param string $relativePath Relative path from storage/app/public (e.g., 'food-items/file.png')
+     * @return string Full URL to the storage file
+     */
+    protected function getStorageUrl(string $relativePath): string
+    {
+        $appUrl = rtrim(config('app.url'), '/');
+        
+        // Extract domain and port from APP_URL
+        $parsedUrl = parse_url($appUrl);
+        $scheme = $parsedUrl['scheme'] ?? 'http';
+        $host = $parsedUrl['host'] ?? 'localhost';
+        $port = isset($parsedUrl['port']) ? ':' . $parsedUrl['port'] : '';
+        
+        // Build domain with port
+        $domain = $scheme . '://' . $host . $port;
+        
+        // Storage files are always served at /admin/api/storage/ (as configured in public/index.php)
+        return $domain . '/admin/api/storage/' . $relativePath;
     }
 }
 

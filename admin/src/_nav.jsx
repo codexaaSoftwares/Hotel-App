@@ -53,17 +53,10 @@ const _nav = [
     items: [
       {
         component: CNavItem,
-        name: 'Food Categories',
-        to: '/restaurant/food-categories',
-        icon: <CIcon icon={cilTags} customClassName="nav-icon" />,
-        permission: PERMISSIONS.FOOD_CATEGORY_READ,
-      },
-      {
-        component: CNavItem,
-        name: 'Food Items',
-        to: '/restaurant/food-items',
+        name: 'Menu Management',
+        to: '/restaurant/menu',
         icon: <CIcon icon={cilBasket} customClassName="nav-icon" />,
-        permission: PERMISSIONS.FOOD_ITEM_READ,
+        permission: PERMISSIONS.FOOD_CATEGORY_READ,
       },
       {
         component: CNavItem,

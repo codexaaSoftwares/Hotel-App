@@ -54,5 +54,13 @@ class FoodCategory extends Model
     {
         return $query->orderBy('display_order', 'asc')->orderBy('name', 'asc');
     }
+
+    /**
+     * Get the food items for the food category.
+     */
+    public function foodItems()
+    {
+        return $this->hasMany(FoodItem::class);
+    }
 }
 

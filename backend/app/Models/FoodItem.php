@@ -23,6 +23,8 @@ class FoodItem extends Model
         'food_type',
         'status',
         'description',
+        'image',
+        'display_order',
     ];
 
     /**
@@ -35,6 +37,7 @@ class FoodItem extends Model
         'gst_percentage' => 'decimal:2',
         'food_type' => 'string',
         'status' => 'string',
+        'display_order' => 'integer',
         'deleted_at' => 'datetime',
     ];
 
@@ -79,6 +82,17 @@ class FoodItem extends Model
     public function scopeByFoodType($query, $type)
     {
         return $query->where('food_type', $type);
+    }
+
+    /**
+     * Scope a query to order by display order.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeOrdered($query)
+    {
+        return $query->orderBy('display_order', 'asc')->orderBy('name', 'asc');
     }
 }
 

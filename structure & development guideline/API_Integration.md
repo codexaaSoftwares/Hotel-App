@@ -4112,8 +4112,9 @@ const handleSaveSettings = async (section, settingsData) => {
 **Permission Required**: `view_food_category`
 
 **Frontend Integration**:
-- **Service**: To be created (`src/services/foodCategoryService.js`)
-- **Used In**: Food Categories list page (to be implemented)
+- **Service**: `src/services/menuService.js`
+- **Method**: `menuService.getCategories()`
+- **Used In**: `src/views/restaurant/MenuManagement.jsx` - Menu management page
 
 ---
 
@@ -4252,6 +4253,24 @@ const handleSaveSettings = async (section, settingsData) => {
 
 **Backend Controller**: `FoodItemController@update`
 
+**Request Body**:
+```json
+{
+  "name": "Butter Chicken",
+  "description": "Creamy butter chicken",
+  "price": 250.00,
+  "gst_percentage": 5,
+  "is_veg": false,
+  "status": "active",
+  "display_order": 1
+}
+```
+
+**Note**: 
+- `image` field should NOT be included in update payload if no new image is being uploaded (existing image will be preserved)
+- If `image` field is omitted, the existing image in database remains unchanged
+- Image upload should be done separately via `POST /api/food-items/{item}/upload-image` endpoint
+
 **Permission Required**: `edit_food_item`
 
 ---
@@ -4262,6 +4281,153 @@ const handleSaveSettings = async (section, settingsData) => {
 **Backend Controller**: `FoodItemController@destroy`
 
 **Permission Required**: `delete_food_item`
+
+---
+
+### 17. **POST /api/food-items/{item}/upload-image**
+**Description**: Food item की image upload करने के लिए
+
+**Backend Controller**: `FoodItemController@uploadImage`
+
+**Request**: `multipart/form-data`
+- `image` - Image file (required, JPEG/PNG/WebP, max 2MB)
+
+**Response**:
+```json
+{
+  "success": true,
+  "message": "Image uploaded successfully",
+  "data": {
+    "path": "food-items/food_item_1_1234567890_abc123.jpg",
+    "url": "http://localhost:8000/admin/api/storage/food-items/food_item_1_1234567890_abc123.jpg"
+  }
+}
+```
+
+**Permission Required**: `edit_food_item`
+
+**Frontend Integration**:
+- **Service**: `src/services/menuService.js`
+- **Method**: `menuService.uploadItemImage(itemId, file)`
+- **Used In**: `src/views/restaurant/MenuManagement.jsx` - Item form में image upload
+
+**Note**: 
+- Old image automatically deleted before uploading new one
+- Image stored in `storage/app/public/food-items/`
+- Files served via custom handler at `/admin/api/storage/food-items/*` (no symlink required)
+- Filename format: `food_item_{itemId}_{timestamp}_{uniqid}.{ext}`
+
+---
+
+### 18. **DELETE /api/food-items/{item}/image**
+**Description**: Food item की image delete करने के लिए
+
+**Backend Controller**: `FoodItemController@deleteImage`
+
+**Response**:
+```json
+{
+  "success": true,
+  "message": "Image deleted successfully"
+}
+```
+
+**Permission Required**: `edit_food_item`
+
+**Frontend Integration**:
+- **Service**: `src/services/menuService.js`
+- **Method**: `menuService.deleteItemImage(itemId)`
+- **Used In**: `src/views/restaurant/MenuManagement.jsx` - Item form में image remove
+
+---
+
+### 19. **POST /api/food-items/{item}/move-up**
+**Description**: Food item को category में up (पहले) move करने के लिए
+
+**Backend Controller**: `FoodItemController@moveUp`
+
+**Response**:
+```json
+{
+  "success": true,
+  "message": "Item moved up successfully"
+}
+```
+
+**Permission Required**: `edit_food_item`
+
+**Note**: Swaps `display_order` with the item above it in the same category
+
+---
+
+### 20. **POST /api/food-items/{item}/move-down**
+**Description**: Food item को category में down (बाद में) move करने के लिए
+
+**Backend Controller**: `FoodItemController@moveDown`
+
+**Response**:
+```json
+{
+  "success": true,
+  "message": "Item moved down successfully"
+}
+```
+
+**Permission Required**: `edit_food_item`
+
+**Note**: Swaps `display_order` with the item below it in the same category
+
+---
+
+### 21. **GET /api/food-categories/hierarchy**
+**Description**: Food categories और उनके items को hierarchical format में fetch करने के लिए
+
+**Backend Controller**: `FoodCategoryController@hierarchy`
+
+**Query Parameters**:
+- `status` - Filter by category status (active/inactive, optional)
+
+**Response**:
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "Main Course",
+      "description": "Main course dishes",
+      "display_order": 1,
+      "status": "active",
+      "items": [
+        {
+          "id": 1,
+          "name": "Butter Chicken",
+          "description": "Creamy butter chicken",
+          "price": "250.00",
+          "gst_percentage": "5",
+          "is_veg": false,
+          "status": "active",
+          "image": "http://localhost:8000/admin/api/storage/food-items/food_item_1_1234567890_abc123.jpg",
+          "display_order": 1,
+          "category_name": "Main Course"
+        }
+      ]
+    }
+  ]
+}
+```
+
+**Permission Required**: `view_food_category`
+
+**Frontend Integration**:
+- **Service**: `src/services/menuService.js`
+- **Method**: `menuService.getMenuHierarchy()`
+- **Used In**: `src/views/restaurant/MenuManagement.jsx` - Main menu display
+
+**Note**: 
+- Items are automatically sorted by `display_order` (asc) then `name` (asc)
+- Only active items are included in the response
+- Image URLs are fully qualified with `/admin/api/storage/` prefix
 
 ---
 
@@ -4589,7 +4755,7 @@ const Settings = () => {
 ✅ Settings Management (Full CRUD + Email Test + Logo Upload/Delete + App Settings with Web URL)
 ✅ Restaurant Settings (Full CRUD + Section-based grouping + Bulk update)
 ✅ Food Categories (Full CRUD + Server-side pagination/filtering/searching - Backend ready)
-✅ Food Items (Full CRUD + Server-side pagination/filtering/searching - Backend ready)
+✅ Food Items (Full CRUD + Image Upload + Item Reordering + Server-side pagination/filtering/searching - Fully implemented)
 
 ### Frontend Integration Status
 - ✅ **AuthService** - Fully integrated in Login, AuthContext, PrivateRoute, ForgotPassword, ResetPassword
@@ -4609,7 +4775,7 @@ const Settings = () => {
 - ✅ **SettingsService** - Fully integrated in Settings page (Business Info, Invoice, Email Settings with test, App Settings with Web URL, Currency & Regional, S3 Settings)
 - ✅ **RestaurantSettingsService** - Fully integrated in RestaurantSettings page (GST Settings, Invoice Settings, Thermal Printer Settings)
 - ⏳ **FoodCategoryService** - Backend ready, frontend service to be created
-- ⏳ **FoodItemService** - Backend ready, frontend service to be created
+- ✅ **MenuService** - Fully integrated in MenuManagement.jsx (hierarchy, CRUD, image upload, item reordering)
 
 ### Server-Side Features
 - **Package Management**: Server-side pagination, filtering (type, status, price range), searching (name, description, type)
@@ -4631,7 +4797,10 @@ const Settings = () => {
 - ✅ **Restaurant Settings Module** - Fully implemented frontend and backend with GST Settings, Invoice Settings, and Thermal Printer Settings
 - ✅ **Restaurant Settings APIs** - Full CRUD operations with section-based grouping and bulk update support
 - ✅ **Food Categories APIs** - Backend fully implemented with CRUD operations, server-side pagination, filtering, and searching
-- ✅ **Food Items APIs** - Backend fully implemented with CRUD operations, server-side pagination, filtering, and searching
+- ✅ **Food Items APIs** - Fully implemented with CRUD operations, image upload/delete, item reordering (move up/down), server-side pagination, filtering, and searching
+- ✅ **Menu Hierarchy API** - `GET /api/food-categories/hierarchy` returns categories with nested items, sorted by display_order
+- ✅ **Image Upload Endpoints** - `POST /api/food-items/{item}/upload-image` and `DELETE /api/food-items/{item}/image` for managing item images
+- ✅ **Item Reordering Endpoints** - `POST /api/food-items/{item}/move-up` and `POST /api/food-items/{item}/move-down` for changing item order within categories
 - ✅ **Restaurant Permissions** - Added `view_restaurant_settings`, `edit_restaurant_settings`, and all Food Category/Item permissions
 - ✅ **Data Storage** - Restaurant settings stored in `settings` table with groups: 'GST Settings', 'Invoice Settings', 'Thermal Printer'
 **Version**: 1.3.0

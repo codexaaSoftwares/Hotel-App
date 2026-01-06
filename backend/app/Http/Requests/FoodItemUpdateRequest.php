@@ -32,6 +32,8 @@ class FoodItemUpdateRequest extends FormRequest
             'food_type' => ['nullable', 'in:veg,non_veg'],
             'status' => ['nullable', 'in:active,inactive'],
             'description' => ['nullable', 'string', 'max:1000'],
+            'image' => ['nullable', 'string', 'max:255'],
+            'display_order' => ['nullable', 'integer', 'min:0'],
         ];
     }
 }

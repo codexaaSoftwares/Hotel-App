@@ -115,5 +115,82 @@ class FoodCategoryController extends Controller
             'message' => 'Food category deleted successfully.',
         ]);
     }
+
+    /**
+     * Get menu hierarchy (categories with their items).
+     */
+    public function hierarchy(Request $request)
+    {
+        $query = FoodCategory::with(['foodItems' => function ($q) {
+            $q->where('status', 'active')
+              ->orderBy('display_order', 'asc')
+              ->orderBy('name', 'asc');
+        }]);
+
+        // Status filter
+        if ($status = $request->input('status')) {
+            $query->where('status', $status);
+        } else {
+            // Default to active only
+            $query->where('status', 'active');
+        }
+
+        // Order by display_order
+        $query->ordered();
+
+        $categories = $query->get();
+
+        $data = $categories->map(function ($category) use ($request) {
+            return [
+                'id' => $category->id,
+                'name' => $category->name,
+                'description' => $category->description,
+                'display_order' => $category->display_order,
+                'status' => $category->status,
+                'created_at' => $category->created_at,
+                'updated_at' => $category->updated_at,
+                'items' => $category->foodItems->map(function ($item) use ($category, $request) {
+                    $imageUrl = null;
+                    if ($item->image) {
+                        // Use the same URL generation logic as FoodItemResource
+                        // Storage files are always served at /admin/api/storage/ (as configured in public/index.php)
+                        $appUrl = rtrim(config('app.url'), '/');
+                        $parsedUrl = parse_url($appUrl);
+                        $scheme = $parsedUrl['scheme'] ?? 'http';
+                        $host = $parsedUrl['host'] ?? 'localhost';
+                        $port = isset($parsedUrl['port']) ? ':' . $parsedUrl['port'] : '';
+                        
+                        // Build domain with port
+                        $domain = $scheme . '://' . $host . $port;
+                        
+                        // Storage files are always served at /admin/api/storage/
+                        $imageUrl = $domain . '/admin/api/storage/' . $item->image;
+                    }
+
+                    return [
+                        'id' => $item->id,
+                        'food_category_id' => $item->food_category_id,
+                        'category_name' => $category->name,
+                        'name' => $item->name,
+                        'description' => $item->description,
+                        'price' => (float) $item->price,
+                        'gst_percentage' => (float) $item->gst_percentage,
+                        'food_type' => $item->food_type,
+                        'is_veg' => $item->food_type === 'veg',
+                        'status' => $item->status,
+                        'image' => $imageUrl,
+                        'display_order' => (int) $item->display_order,
+                        'created_at' => $item->created_at,
+                        'updated_at' => $item->updated_at,
+                    ];
+                })->toArray(),
+            ];
+        })->toArray();
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+        ]);
+    }
 }
 

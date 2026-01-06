@@ -25,6 +25,7 @@ const routesConfig = [
   { path: '/settings', name: 'Settings' },
   
   // Restaurant Routes
+  { path: '/restaurant/menu', name: 'Menu Management' },
   { path: '/restaurant/settings', name: 'Restaurant Settings' },
   
   // Auth Routes

@@ -71,6 +71,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Food Category Management
     Route::get('/food-categories', [FoodCategoryController::class, 'index'])->middleware('permission:view_food_category');
+    Route::get('/food-categories/hierarchy', [FoodCategoryController::class, 'hierarchy'])->middleware('permission:view_food_category');
     Route::post('/food-categories', [FoodCategoryController::class, 'store'])->middleware('permission:create_food_category');
     Route::get('/food-categories/{foodCategory}', [FoodCategoryController::class, 'show'])->middleware('permission:view_food_category');
     Route::put('/food-categories/{foodCategory}', [FoodCategoryController::class, 'update'])->middleware('permission:edit_food_category');
@@ -82,6 +83,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/food-items/{foodItem}', [FoodItemController::class, 'show'])->middleware('permission:view_food_item');
     Route::put('/food-items/{foodItem}', [FoodItemController::class, 'update'])->middleware('permission:edit_food_item');
     Route::delete('/food-items/{foodItem}', [FoodItemController::class, 'destroy'])->middleware('permission:delete_food_item');
+    Route::post('/food-items/{foodItem}/upload-image', [FoodItemController::class, 'uploadImage'])->middleware('permission:edit_food_item');
+    Route::delete('/food-items/{foodItem}/image', [FoodItemController::class, 'deleteImage'])->middleware('permission:edit_food_item');
+    Route::post('/food-items/{foodItem}/move-up', [FoodItemController::class, 'moveUp'])->middleware('permission:edit_food_item');
+    Route::post('/food-items/{foodItem}/move-down', [FoodItemController::class, 'moveDown'])->middleware('permission:edit_food_item');
 
     // Restaurant Settings Management
     Route::prefix('restaurant-settings')->middleware('permission:view_restaurant_settings')->group(function () {

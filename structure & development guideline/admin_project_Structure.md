@@ -408,15 +408,14 @@ admin/
   - **Bills Management**: Unified bills page with filters (Pending, Today, Paid, etc.)
   - **Restaurant Setup**:
     - ✅ **Restaurant Settings** - GST Settings, Invoice Settings, Thermal Printer Settings (fully implemented)
-    - ⏳ **Food Categories** - Backend ready, frontend pending
-    - ⏳ **Food Items** - Backend ready, frontend pending
+    - ✅ **Menu Management** - Unified page for Food Categories and Food Items with hierarchical display, CRUD operations, image upload, and item reordering (fully implemented)
     - ⏳ **Table Management** - Pending
   - **Customer Management**: Customers list, Customer Ledger
   - **Staff Management**: Staff list, Salary Payments
   - **Expense Management**: Expense Categories, Expense Records
 - **Status**: 
   - ✅ Restaurant Settings (Frontend + Backend fully implemented)
-  - ⏳ Food Categories & Food Items (Backend ready, frontend pending)
+  - ✅ Menu Management (Food Categories & Food Items - Frontend + Backend fully implemented)
   - ⏳ Other modules pending
 - **Specification**: See `scope/POS_Panel_Specification.md` and `module details/ProjectModules.md`
 
@@ -825,9 +824,8 @@ const MyComponent = () => {
 ### 🟡 Partially Implemented (UI Complete, API Pending)
 - None (all existing modules fully implemented)
 
-### 🟡 Partially Implemented (Backend Ready, Frontend Pending)
-- Food Categories (Backend CRUD APIs ready, frontend pending)
-- Food Items (Backend CRUD APIs ready, frontend pending)
+### ✅ Fully Implemented
+- Menu Management (Unified Food Categories & Food Items management page with hierarchical display, image upload, and item reordering)
 
 ### 🔴 Needs Implementation (Phase 1 - Restaurant Management)
 - POS Panel (Main POS interface with split-screen layout)
@@ -930,6 +928,9 @@ npm run lint
 - ✅ **Permissions**: `view_restaurant_settings`, `edit_restaurant_settings` added and seeded
 - ✅ **Food Categories Backend**: Full CRUD APIs implemented (migration, model, controller, requests, resources)
 - ✅ **Food Items Backend**: Full CRUD APIs implemented (migration, model, controller, requests, resources)
+- ✅ **Menu Management Frontend**: Unified page for managing categories and items with hierarchical display, compact table layout, search/filter, image upload, and item reordering
+- ✅ **Image Upload**: Food items support optional image upload with default placeholder, images preserved when updating other fields
+- ✅ **Item Reordering**: Up/down buttons to reorder items within categories using display_order
 - ✅ **Section-Specific Validation**: Form validation only validates the section being saved
 - ✅ **Data Population**: Fixed API response transformation to correctly populate form fields
 
