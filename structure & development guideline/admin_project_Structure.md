@@ -401,6 +401,18 @@ admin/
 - **Note**: Client-specific branding (business name, logo) is loaded dynamically from database settings
 - **Status**: ✅ Fully implemented
 
+### 11. **Restaurant Management Modules** (Phase 1 - In Development)
+- **Location**: `src/views/restaurant/`, `src/views/pos/`, `src/views/customers/`, `src/views/staff/`, `src/views/expenses/`
+- **Modules**:
+  - **POS Panel**: Main POS interface with split-screen layout (Tables | Products | Billing Cart)
+  - **Bills Management**: Unified bills page with filters (Pending, Today, Paid, etc.)
+  - **Restaurant Setup**: Food Categories, Food Items, Table Management, Restaurant Settings
+  - **Customer Management**: Customers list, Customer Ledger
+  - **Staff Management**: Staff list, Salary Payments
+  - **Expense Management**: Expense Categories, Expense Records
+- **Status**: ⏳ Navigation structure implemented, modules to be developed
+- **Specification**: See `scope/POS_Panel_Specification.md` and `module details/ProjectModules.md`
+
 ---
 
 ## 🎯 Development Guidelines
@@ -683,12 +695,34 @@ const userService = {
 - **Navigation Structure Example**:
   ```
   1. Dashboard
-  2. Administrator
-     -- 2.1 User Management
-        ---- 2.1.1 Users
-        ---- 2.1.2 Role and Permission
-     -- 2.2 Branch
-     -- 2.3 Settings
+  2. POS Panel
+  3. Bills
+  4. Restaurant
+     -- 4.1 Food Categories
+     -- 4.2 Food Items
+     -- 4.3 Table Management
+     -- 4.4 Restaurant Settings
+  5. Management
+     -- 5.1 Customers
+     -- 5.2 Customer Ledger
+     -- 5.3 Staff
+     -- 5.4 Salary Payments
+     -- 5.5 Expense Categories
+     -- 5.6 Expenses
+  6. Reports
+     -- 6.1 Sales Report
+     -- 6.2 Expense Report
+     -- 6.3 GST Summary
+     -- 6.4 Customer Pending Report
+     -- 6.5 Customer Ledger Report
+     -- 6.6 Staff & Salary Report
+     -- 6.7 Business Dashboard
+  7. Administrator
+     -- 7.1 User Management
+        ---- 7.1.1 Users
+        ---- 7.1.2 Role and Permission
+     -- 7.2 Branch
+     -- 7.3 Settings
   ```
 
 ### Authentication & Authorization
@@ -778,12 +812,19 @@ const MyComponent = () => {
 - Payment Management
 - Report Management (Branch, Ledger, Sales, Staff reports)
 - Theme System (Dark/Light mode)
+- Navigation Menu Structure (Restaurant Management modules - navigation configured)
 
 ### 🟡 Partially Implemented (UI Complete, API Pending)
-- None (all modules fully implemented)
+- None (all existing modules fully implemented)
 
-### 🔴 Needs Implementation
-- None (all modules fully implemented)
+### 🔴 Needs Implementation (Phase 1 - Restaurant Management)
+- POS Panel (Main POS interface with split-screen layout)
+- Bills Management (Unified bills page with filters)
+- Restaurant Setup (Food Categories, Food Items, Tables, Settings)
+- Customer Management (Customers, Customer Ledger)
+- Staff Management (Staff, Salary Payments)
+- Expense Management (Expense Categories, Expense Records)
+- Restaurant Reports (Sales, Expense, GST, Customer, Staff reports)
 
 ---
 
@@ -827,7 +868,7 @@ npm run lint
 ---
 
 **Last Updated**: January 2025
-**Version**: 2.0.0 (Hotel Management Edition)
+**Version**: 2.1.0 (Restaurant Management Navigation Update)
 
 ## 🔄 Recent Updates
 
@@ -854,6 +895,18 @@ npm run lint
     - Settings (Level 2)
 - ✅ **Full-width Layout**: Top header bar and navigation container now span 100% width
 - ✅ **Settings Integration**: Business name and logo dynamically loaded from settings (supports multiple clients)
+
+### Version 2.1.0 - Restaurant Management Navigation Update
+- ✅ **Navigation Menu Reorganization**: Restructured navigation for restaurant workflow
+- ✅ **New Menu Items Added**:
+  - POS Panel (standalone top-level item)
+  - Bills (standalone top-level item with unified filters)
+  - Restaurant (grouped: Food Categories, Food Items, Tables, Settings)
+  - Management (grouped: Customers, Staff, Expenses)
+- ✅ **Minimal Navigation Design**: Consolidated multiple menu items into logical groups
+- ✅ **New Permissions Added**: Restaurant, POS, Customer, Staff, Expense, and Report permissions
+- ✅ **Compact Navigation Styling**: Enhanced dropdown item hover and active states
+- ✅ **POS Panel Specification**: Created detailed specification document for POS Panel implementation
 
 ### Previous Updates
 - ✅ System cleanup: Removed Order Management, Customer Management, Package Management, Transaction Management, and Company Health Report modules

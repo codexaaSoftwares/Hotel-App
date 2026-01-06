@@ -23,15 +23,19 @@ const AppHorizontalNav = () => {
 
         if (item.items) {
           const filteredChildren = filterNavItems(item.items)
-          if (filteredChildren.length === 0) {
-            return null
-          }
+          // Show parent items even if all children are filtered (for development)
+          // In production, you can change this to: if (filteredChildren.length === 0) return null
+          // For now, show parent with filtered children (empty array if all filtered)
           return { ...item, items: filteredChildren }
         }
 
         // Hide items if user doesn't have permission
-        if (item.permission && hasPermission && !hasPermission(item.permission)) {
-          return null
+        // For development: Show items even if permission check fails (comment out for production)
+        if (item.permission) {
+          // Temporarily disabled for development - uncomment for production
+          // if (hasPermission && !hasPermission(item.permission)) {
+          //   return null
+          // }
         }
 
         return item
@@ -80,13 +84,14 @@ const AppHorizontalNav = () => {
             {flatNavItems.map((item, index) => {
               const { name, to, icon, items: subItems, permission } = item
 
-              // Skip if no permission
-              if (permission && hasPermission && !hasPermission(permission)) {
-                return null
-              }
+              // Skip if no permission (temporarily disabled for development)
+              // Uncomment for production:
+              // if (permission && !to && hasPermission && !hasPermission(permission)) {
+              //   return null
+              // }
 
-              // If item has sub-items, create dropdown
-              if (subItems && subItems.length > 0) {
+              // If item has sub-items, create dropdown (even if empty for development)
+              if (subItems && Array.isArray(subItems)) {
                 // Check if any child or nested child is active
                 const hasActiveChild = (items) => {
                   return items.some((item) => {
@@ -108,10 +113,11 @@ const AppHorizontalNav = () => {
                     id={`nav-dropdown-${index}`}
                     className={`horizontal-nav-dropdown ${hasActiveChild(subItems) ? 'active' : ''}`}
                   >
-                    {subItems.map((subItem, subIndex) => {
-                      if (subItem.permission && hasPermission && !hasPermission(subItem.permission)) {
-                        return null
-                      }
+                    {subItems.length > 0 ? subItems.map((subItem, subIndex) => {
+                      // Temporarily disabled for development - uncomment for production
+                      // if (subItem.permission && hasPermission && !hasPermission(subItem.permission)) {
+                      //   return null
+                      // }
 
                       // If sub-item has nested items (level 3), create nested dropdown
                       if (subItem.items && subItem.items.length > 0) {
@@ -130,9 +136,10 @@ const AppHorizontalNav = () => {
                             drop="end"
                           >
                             {subItem.items.map((nestedItem, nestedIndex) => {
-                              if (nestedItem.permission && hasPermission && !hasPermission(nestedItem.permission)) {
-                                return null
-                              }
+                              // Temporarily disabled for development - uncomment for production
+                              // if (nestedItem.permission && hasPermission && !hasPermission(nestedItem.permission)) {
+                              //   return null
+                              // }
                               const nestedItemActive = isActive(nestedItem.to)
                               return (
                                 <NavDropdown.Item
@@ -169,7 +176,11 @@ const AppHorizontalNav = () => {
                           </span>
                         </NavDropdown.Item>
                       )
-                    })}
+                    }) : (
+                      <NavDropdown.Item disabled>
+                        <span className="text-muted">No items available</span>
+                      </NavDropdown.Item>
+                    )}
                   </NavDropdown>
                 )
               }

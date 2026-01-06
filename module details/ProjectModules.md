@@ -40,30 +40,27 @@ Based on the project scope, the navigation menu is organized as follows:
 1. Dashboard
    - Overview & Analytics
 
-2. Restaurant Management
+2. POS Panel
+   - Main POS interface for taking orders and billing
+
+3. Bills
+   - All bills with filters (Pending, Today, Paid, etc.)
+
+4. Restaurant
    ├── Food Categories
    ├── Food Items
    ├── Table Management
    └── Restaurant Settings
 
-3. POS & Billing
-   ├── Create Bill
-   ├── Pending Bills (Udhar)
-   └── Bill History
-
-4. Customer Management
+5. Management
    ├── Customers
-   └── Customer Ledger
-
-5. Staff Management
-   ├── Staff List
-   └── Salary Payments
-
-6. Expense Management
+   ├── Customer Ledger
+   ├── Staff
+   ├── Salary Payments
    ├── Expense Categories
-   └── Expense Records
+   └── Expenses
 
-7. Reports
+6. Reports
    ├── Sales Report
    ├── Expense Report
    ├── GST Summary
@@ -72,10 +69,11 @@ Based on the project scope, the navigation menu is organized as follows:
    ├── Staff & Salary Report
    └── Business Dashboard
 
-8. Administrator
+7. Administrator
    ├── User Management
    │   ├── Users
    │   └── Roles & Permissions
+   ├── Branch
    └── Settings
 ```
 
@@ -151,20 +149,33 @@ Based on the project scope, the navigation menu is organized as follows:
 - **Status**: ⏳ To be implemented
 - **Purpose**: Point of Sale and billing system
 - **Sub-modules**:
-  - **Bill Creation**: Create bills with/without table
+  - **POS Panel**: Main POS interface with split-screen layout
+    - Tables Panel (left): All tables with status
+    - Products Panel (center): Products by categories
+    - Billing Cart (right): Order items, customer, payment
+  - **Bills**: Unified bills page with filters
+    - All bills view
+    - Pending bills (Udhar)
+    - Today's bills
+    - Paid bills
+    - Search and filter capabilities
   - **Payment Handling**: Multiple payment modes
-  - **Udhar/Pending Bills**: Credit management
   - **Invoice Generation**: GST-compliant invoices
 - **Features**:
+  - Split-screen POS interface for fast order taking
+  - Multiple orders per table support
+  - Draft order auto-save
   - Create bill with or without table
   - Add multiple items with quantity
   - Automatic calculation
   - Payment modes: Cash, UPI, Card
   - Split payment support
   - Partial payment (registered customers only)
+  - Print bill before payment
   - GST-compliant invoice (CGST/SGST breakup)
   - Thermal printer output (80mm)
   - Invoice cannot be edited after closing
+- **Detailed Specification**: See `scope/POS_Panel_Specification.md`
 
 ### 8. **Staff & Salary Management**
 - **Status**: ⏳ To be implemented
@@ -271,14 +282,15 @@ Each module file will contain:
 2. ⏳ Restaurant & Settings
 3. ⏳ Food & Menu Management
 4. ⏳ Table Management
-5. ⏳ POS/Billing Module
-6. ⏳ Customer Management
-7. ⏳ Reports (Basic)
+5. ⏳ POS Panel (Main POS interface)
+6. ⏳ Bills Management (Unified bills page)
+7. ⏳ Customer Management
+8. ⏳ Reports (Basic)
 
 ### Phase 1 - Extended Modules
-8. ⏳ Staff & Salary Management
-9. ⏳ Expense Management
-10. ⏳ Advanced Reports
+9. ⏳ Staff & Salary Management
+10. ⏳ Expense Management
+11. ⏳ Advanced Reports
 
 ---
 

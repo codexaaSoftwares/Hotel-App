@@ -27,6 +27,13 @@ export const PERMISSIONS = {
   // Report Management
   REPORT_READ: 'report:read',
   REPORT_EXPORT: 'report:read', // Export uses same permission as view
+  SALES_REPORT_READ: 'sales_report:read',
+  EXPENSE_REPORT_READ: 'expense_report:read',
+  GST_REPORT_READ: 'gst_report:read',
+  CUSTOMER_PENDING_REPORT_READ: 'customer_pending_report:read',
+  CUSTOMER_LEDGER_REPORT_READ: 'customer_ledger_report:read',
+  STAFF_SALARY_REPORT_READ: 'staff_salary_report:read',
+  BUSINESS_DASHBOARD_READ: 'business_dashboard:read',
 
   // Settings
   SETTINGS_READ: 'settings:read',
@@ -35,6 +42,49 @@ export const PERMISSIONS = {
   // Profile
   PROFILE_READ: 'profile:read',
   PROFILE_WRITE: 'profile:write',
+
+  // Restaurant Management
+  FOOD_CATEGORY_READ: 'food_category:read',
+  FOOD_CATEGORY_WRITE: 'food_category:write',
+  FOOD_CATEGORY_DELETE: 'food_category:delete',
+  FOOD_ITEM_READ: 'food_item:read',
+  FOOD_ITEM_WRITE: 'food_item:write',
+  FOOD_ITEM_DELETE: 'food_item:delete',
+  TABLE_READ: 'table:read',
+  TABLE_WRITE: 'table:write',
+  TABLE_DELETE: 'table:delete',
+  RESTAURANT_SETTINGS_READ: 'restaurant_settings:read',
+  RESTAURANT_SETTINGS_WRITE: 'restaurant_settings:write',
+
+  // POS & Billing
+  BILL_READ: 'bill:read',
+  BILL_WRITE: 'bill:write',
+  BILL_DELETE: 'bill:delete',
+  BILL_CREATE: 'bill:create',
+  BILL_PAYMENT: 'bill:payment',
+  PENDING_BILL_READ: 'pending_bill:read',
+  PENDING_BILL_WRITE: 'pending_bill:write',
+
+  // Customer Management
+  CUSTOMER_READ: 'customer:read',
+  CUSTOMER_WRITE: 'customer:write',
+  CUSTOMER_DELETE: 'customer:delete',
+  CUSTOMER_LEDGER_READ: 'customer_ledger:read',
+
+  // Staff Management
+  STAFF_READ: 'staff:read',
+  STAFF_WRITE: 'staff:write',
+  STAFF_DELETE: 'staff:delete',
+  SALARY_READ: 'salary:read',
+  SALARY_WRITE: 'salary:write',
+
+  // Expense Management
+  EXPENSE_CATEGORY_READ: 'expense_category:read',
+  EXPENSE_CATEGORY_WRITE: 'expense_category:write',
+  EXPENSE_CATEGORY_DELETE: 'expense_category:delete',
+  EXPENSE_READ: 'expense:read',
+  EXPENSE_WRITE: 'expense:write',
+  EXPENSE_DELETE: 'expense:delete',
 
   // Admin
   ADMIN_ACCESS: 'admin:access',
