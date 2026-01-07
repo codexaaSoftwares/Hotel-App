@@ -20,6 +20,8 @@ class DatabaseSeeder extends Seeder
             BranchSeeder::class,
             UserSeeder::class,
             TableSeeder::class,
+            FoodCategorySeeder::class,
+            FoodItemSeeder::class,
         ]);
     }
 }
