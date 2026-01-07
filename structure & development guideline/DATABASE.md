@@ -501,11 +501,174 @@ Restaurant tables for dine-in service management.
   - `maintenance` - Table is under maintenance/repair
 - `is_active` controls visibility in POS panel (inactive tables are hidden)
 - Multiple bills can be associated with one table (handled in bills table later)
-- Future relationship: `bills` table will have `table_id` foreign key (to be added when Bills module is implemented)
 
 ---
 
-### 22. `personal_access_tokens`
+### 22. `customers`
+Restaurant customers (walk-in and registered).
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| `id` | bigint unsigned | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
+| `customer_code` | varchar(50) | UNIQUE, NULLABLE | Customer code (e.g., #CUST001, auto-generated) |
+| `name` | varchar(255) | NOT NULL | Customer name |
+| `mobile` | varchar(20) | NULLABLE | Mobile number (unique if provided) |
+| `email` | varchar(255) | NULLABLE | Email address |
+| `address` | text | NULLABLE | Full address |
+| `city` | varchar(100) | NULLABLE | City |
+| `state` | varchar(100) | NULLABLE | State/Province |
+| `pincode` | varchar(10) | NULLABLE | PIN/ZIP code |
+| `customer_type` | enum | DEFAULT 'regular' | Type: 'regular', 'credit' (Udhar) |
+| `total_bills` | int | DEFAULT 0 | Total number of bills (calculated) |
+| `total_amount` | decimal(12,2) | DEFAULT 0.00 | Total bill amount (calculated) |
+| `paid_amount` | decimal(12,2) | DEFAULT 0.00 | Total paid amount (calculated) |
+| `remaining_amount` | decimal(12,2) | DEFAULT 0.00 | Remaining balance (calculated) |
+| `status` | enum | DEFAULT 'active' | Status: 'active', 'inactive' |
+| `notes` | text | NULLABLE | Additional notes |
+| `created_at` | timestamp | NULLABLE | Creation timestamp |
+| `updated_at` | timestamp | NULLABLE | Last update timestamp |
+| `deleted_at` | timestamp | NULLABLE | Soft delete timestamp |
+
+**Foreign Keys:** None
+
+**Indexes:**
+- PRIMARY KEY (`id`)
+- UNIQUE (`customer_code`)
+- UNIQUE (`mobile`)
+- INDEX (`customer_type`)
+- INDEX (`status`)
+- INDEX (`name`)
+- INDEX (`created_at`)
+
+**Soft Deletes:** Yes
+
+---
+
+### 23. `bills`
+Restaurant bills/orders (main order header).
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| `id` | bigint unsigned | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
+| `bill_number` | varchar(50) | UNIQUE, NOT NULL | Bill number (e.g., #BILL001, auto-generated) |
+| `table_id` | bigint unsigned | FOREIGN KEY, NULLABLE | Table reference (nullable for takeaway) |
+| `customer_id` | bigint unsigned | FOREIGN KEY, NULLABLE | Customer reference (nullable for walk-in) |
+| `bill_date` | datetime | NOT NULL | Bill date and time |
+| `status` | enum | DEFAULT 'draft' | Status: 'draft', 'pending', 'paid', 'cancelled' |
+| `payment_status` | enum | DEFAULT 'pending' | Payment status: 'pending', 'partial', 'paid' |
+| `subtotal` | decimal(12,2) | DEFAULT 0.00 | Subtotal (sum of all items) |
+| `gst_amount` | decimal(12,2) | DEFAULT 0.00 | Total GST amount |
+| `discount` | decimal(12,2) | DEFAULT 0.00 | Discount amount |
+| `total_amount` | decimal(12,2) | DEFAULT 0.00 | Grand total |
+| `paid_amount` | decimal(12,2) | DEFAULT 0.00 | Total paid amount |
+| `remaining_amount` | decimal(12,2) | DEFAULT 0.00 | Remaining balance |
+| `payment_method` | enum | NULLABLE | Payment method: 'cash', 'upi', 'card', 'split' |
+| `gst_calculation_method` | enum | DEFAULT 'item_wise' | GST method: 'item_wise', 'bill_wise' |
+| `notes` | text | NULLABLE | Additional notes |
+| `created_by` | bigint unsigned | FOREIGN KEY, NULLABLE | User who created the bill |
+| `created_at` | timestamp | NULLABLE | Creation timestamp |
+| `updated_at` | timestamp | NULLABLE | Last update timestamp |
+| `deleted_at` | timestamp | NULLABLE | Soft delete timestamp |
+
+**Foreign Keys:**
+- `table_id` → `tables.id` (ON DELETE SET NULL)
+- `customer_id` → `customers.id` (ON DELETE SET NULL)
+- `created_by` → `users.id` (ON DELETE SET NULL)
+
+**Indexes:**
+- PRIMARY KEY (`id`)
+- UNIQUE (`bill_number`)
+- INDEX (`table_id`)
+- INDEX (`customer_id`)
+- INDEX (`status`)
+- INDEX (`bill_date`)
+- INDEX (`payment_status`)
+- INDEX (`created_at`)
+
+**Soft Deletes:** Yes
+
+---
+
+### 24. `bill_items`
+Individual items in a bill (order line items).
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| `id` | bigint unsigned | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
+| `bill_id` | bigint unsigned | FOREIGN KEY, NOT NULL | Bill reference |
+| `food_item_id` | bigint unsigned | FOREIGN KEY, NOT NULL | Food item reference |
+| `item_name` | varchar(255) | NOT NULL | Item name (snapshot) |
+| `quantity` | int | NOT NULL | Quantity ordered |
+| `unit_price` | decimal(10,2) | NOT NULL | Unit price (snapshot) |
+| `gst_percentage` | decimal(5,2) | NULLABLE | GST percentage (snapshot) |
+| `gst_amount` | decimal(10,2) | DEFAULT 0.00 | GST amount for this item |
+| `total_price` | decimal(12,2) | NOT NULL | Total price (quantity × unit_price) |
+| `display_order` | int | DEFAULT 0 | Display order in bill |
+| `notes` | varchar(500) | NULLABLE | Item-specific notes |
+| `created_at` | timestamp | NULLABLE | Creation timestamp |
+| `updated_at` | timestamp | NULLABLE | Last update timestamp |
+| `deleted_at` | timestamp | NULLABLE | Soft delete timestamp |
+
+**Foreign Keys:**
+- `bill_id` → `bills.id` (ON DELETE CASCADE)
+- `food_item_id` → `food_items.id` (ON DELETE RESTRICT)
+
+**Indexes:**
+- PRIMARY KEY (`id`)
+- INDEX (`bill_id`)
+- INDEX (`food_item_id`)
+- INDEX (`created_at`)
+
+**Soft Deletes:** Yes
+
+---
+
+### 25. `wallet_transactions`
+Customer wallet transactions (credit/debit records for payments and adjustments).
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| `id` | bigint unsigned | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
+| `customer_id` | bigint unsigned | FOREIGN KEY, NOT NULL | Customer reference |
+| `bill_id` | bigint unsigned | FOREIGN KEY, NULLABLE | Bill reference (nullable for standalone transactions) |
+| `transaction_type` | enum | NOT NULL | Type: 'credit' (payment received), 'debit' (refund/adjustment) |
+| `amount` | decimal(12,2) | NOT NULL | Transaction amount |
+| `payment_method` | enum | NULLABLE | Payment method: 'cash', 'upi', 'card', 'bank_transfer' |
+| `transaction_date` | datetime | NOT NULL | Transaction date and time |
+| `description` | text | NULLABLE | Transaction description/notes |
+| `reference_number` | varchar(255) | NULLABLE | Transaction reference (receipt number, UPI ref, etc.) |
+| `created_by` | bigint unsigned | FOREIGN KEY, NULLABLE | User who created the transaction |
+| `created_at` | timestamp | NULLABLE | Creation timestamp |
+| `updated_at` | timestamp | NULLABLE | Last update timestamp |
+| `deleted_at` | timestamp | NULLABLE | Soft delete timestamp |
+
+**Foreign Keys:**
+- `customer_id` → `customers.id` (ON DELETE RESTRICT)
+- `bill_id` → `bills.id` (ON DELETE SET NULL)
+- `created_by` → `users.id` (ON DELETE SET NULL)
+
+**Indexes:**
+- PRIMARY KEY (`id`)
+- INDEX (`customer_id`) - Customer ledger queries
+- INDEX (`bill_id`) - Bill payment tracking
+- INDEX (`transaction_date`) - Date range queries
+- INDEX (`transaction_type`) - Filter credit/debit
+- INDEX (`created_at`) - Recent transactions
+
+**Soft Deletes:** Yes
+
+**Notes:**
+- `transaction_type`: 
+  - `credit` - Payment received from customer (increases customer balance)
+  - `debit` - Refund or adjustment given to customer (decreases customer balance)
+- `bill_id` is nullable to support standalone wallet transactions (adjustments, manual entries)
+- Used to calculate customer balances: `remaining_amount` = SUM(credits) - SUM(debits) from bills
+- Complete audit trail of all customer payment transactions
+- Supports partial payments (multiple transactions per bill)
+
+---
+
+### 26. `personal_access_tokens`
 Laravel Sanctum authentication tokens.
 
 | Column | Type | Constraints | Description |
@@ -552,7 +715,18 @@ food_categories
   └── food_items (one-to-many)
 
 tables
-  └── (future: bills will reference tables via table_id)
+  └── bills (one-to-many)
+
+customers
+  ├── bills (one-to-many)
+  └── wallet_transactions (one-to-many)
+
+bills
+  ├── bill_items (one-to-many)
+  └── wallet_transactions (one-to-many)
+
+food_items
+  └── bill_items (one-to-many)
 ```
 
 ### Detailed Relationships
@@ -579,9 +753,37 @@ tables
     - A category can have many food items
     - A food item belongs to one category
 
-6. **Table ↔ Bill** (One-to-Many) - Future
+6. **Table ↔ Bill** (One-to-Many)
     - A table can have many bills (multiple bills per table support)
     - A bill belongs to one table (nullable for takeaway orders)
+
+7. **Customer ↔ Bill** (One-to-Many)
+    - A customer can have many bills
+    - A bill belongs to one customer (nullable for walk-in customers)
+
+8. **Bill ↔ BillItem** (One-to-Many)
+    - A bill can have many bill items
+    - A bill item belongs to one bill
+
+9. **FoodItem ↔ BillItem** (One-to-Many)
+    - A food item can be in many bill items
+    - A bill item references one food item
+
+10. **User ↔ Bill** (One-to-Many)
+    - A user can create many bills
+    - A bill is created by one user (nullable)
+
+11. **Customer ↔ WalletTransaction** (One-to-Many)
+    - A customer can have many wallet transactions
+    - A wallet transaction belongs to one customer
+
+12. **Bill ↔ WalletTransaction** (One-to-Many)
+    - A bill can have many wallet transactions (multiple payments)
+    - A wallet transaction can be linked to one bill (nullable for standalone transactions)
+
+13. **User ↔ WalletTransaction** (One-to-Many)
+    - A user can create many wallet transactions
+    - A wallet transaction is created by one user (nullable)
 
 ---
 
@@ -645,6 +847,14 @@ tables
 | `financial_transactions` | `category_id` | `financial_categories.id` | RESTRICT | Cannot delete category with transactions |
 | `financial_transactions` | `created_by` | `users.id` | SET NULL | User deletion doesn't delete transactions |
 | `food_items` | `food_category_id` | `food_categories.id` | RESTRICT | Cannot delete category with items |
+| `bills` | `table_id` | `tables.id` | SET NULL | Table deletion doesn't delete bills |
+| `bills` | `customer_id` | `customers.id` | SET NULL | Customer deletion doesn't delete bills |
+| `bills` | `created_by` | `users.id` | SET NULL | User deletion doesn't delete bills |
+| `bill_items` | `bill_id` | `bills.id` | CASCADE | Bill deletion removes items |
+| `bill_items` | `food_item_id` | `food_items.id` | RESTRICT | Cannot delete food item if used in bills |
+| `wallet_transactions` | `customer_id` | `customers.id` | RESTRICT | Cannot delete customer with transactions |
+| `wallet_transactions` | `bill_id` | `bills.id` | SET NULL | Bill deletion doesn't delete transactions |
+| `wallet_transactions` | `created_by` | `users.id` | SET NULL | User deletion doesn't delete transactions |
 | `user_role` | `user_id` | `users.id` | CASCADE | User deletion removes role assignments |
 | `user_role` | `role_id` | `roles.id` | CASCADE | Role deletion removes user assignments |
 | `role_permission` | `role_id` | `roles.id` | CASCADE | Role deletion removes permissions |
@@ -929,20 +1139,26 @@ With proper indexes, expect these query times:
 - `add_image_and_display_order_to_food_items_table` (2026_01_06_130603) - Adds `image` (varchar, nullable) and `display_order` (int, default 0) columns to food_items table
 - `create_tables_table` (2025_01_21_000001) - Creates tables table for restaurant table management (table_number, table_name, capacity, status, is_active)
 
+### Bills & Customers Management (2025-01-22)
+- `create_customers_table` (2025_01_22_000001) - Creates customers table for restaurant customer management (walk-in and registered customers, credit support with balance tracking)
+- `create_bills_table` (2025_01_22_000002) - Creates bills table for restaurant orders/bills (with table_id, customer_id, payment tracking - payments stored directly in bills table)
+- `create_bill_items_table` (2025_01_22_000003) - Creates bill_items table for individual items in bills (with snapshot pricing for historical accuracy)
+- `create_wallet_transactions_table` (2025_01_22_000004) - Creates wallet_transactions table for customer wallet transactions (credit/debit records for payments, refunds, and adjustments)
+
 ---
 
 ## Summary Statistics
 
-- **Total Tables:** 22
-- **Core Business Tables:** 12 (users, branches, customers, packages, orders, order_items, payments, financial_categories, financial_transactions, food_categories, food_items, tables)
+- **Total Tables:** 26
+- **Core Business Tables:** 16 (users, branches, customers, bills, bill_items, wallet_transactions, financial_categories, financial_transactions, food_categories, food_items, tables)
 - **Auth/Authorization Tables:** 4 (roles, permissions, user_role, role_permission)
 - **System Tables:** 6 (settings, emails, password_resets, failed_jobs, personal_access_tokens)
-- **Tables with Soft Deletes:** 10 (branches, customers, packages, orders, payments, financial_categories, financial_transactions, food_categories, food_items, tables)
-- **Tables with Foreign Keys:** 13
+- **Tables with Soft Deletes:** 13 (branches, customers, bills, bill_items, wallet_transactions, financial_categories, financial_transactions, food_categories, food_items, tables)
+- **Tables with Foreign Keys:** 19
 - **Pivot Tables:** 2 (user_role, role_permission)
 
 ---
 
 *Last Updated: January 2025*  
-*Database Version: 1.4* (Scalability & Performance Guidelines Added)
+*Database Version: 1.5* (Bills & Customers Tables Added)
 
