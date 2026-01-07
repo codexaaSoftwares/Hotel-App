@@ -787,7 +787,7 @@ tables
 - `create_food_categories_table` (2025_01_20_000001) - Creates food categories table for restaurant menu organization
 - `create_food_items_table` (2025_01_20_000002) - Creates food items table for restaurant menu items
 - `add_image_and_display_order_to_food_items_table` (2026_01_06_130603) - Adds `image` (varchar, nullable) and `display_order` (int, default 0) columns to food_items table
-- `create_tables_table` (2025_01_XX_XXXXXX) - Creates tables table for restaurant table management (table_number, table_name, capacity, status, is_active)
+- `create_tables_table` (2025_01_21_000001) - Creates tables table for restaurant table management (table_number, table_name, capacity, status, is_active)
 
 ---
 

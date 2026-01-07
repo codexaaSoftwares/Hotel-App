@@ -50,9 +50,13 @@ backend/
 │   │   │   │   ├── DashboardController.php
 │   │   │   │   ├── FinancialCategoryController.php
 │   │   │   │   ├── FinancialTransactionController.php
+│   │   │   │   ├── FoodCategoryController.php
+│   │   │   │   ├── FoodItemController.php
 │   │   │   │   ├── PermissionController.php
+│   │   │   │   ├── RestaurantSettingsController.php
 │   │   │   │   ├── RoleController.php
 │   │   │   │   ├── SettingController.php
+│   │   │   │   ├── TableController.php
 │   │   │   │   └── UserController.php
 │   │   │   ├── 📁 Concerns/        # Shared controller traits
 │   │   │   │   └── PaginatesResults.php
@@ -76,11 +80,20 @@ backend/
 │   │   │   ├── FinancialCategoryStoreRequest.php
 │   │   │   ├── FinancialCategoryUpdateRequest.php
 │   │   │   ├── FinancialTransactionStoreRequest.php
-│   │   │   └── FinancialTransactionUpdateRequest.php
+│   │   │   ├── FinancialTransactionUpdateRequest.php
+│   │   │   ├── FoodCategoryStoreRequest.php
+│   │   │   ├── FoodCategoryUpdateRequest.php
+│   │   │   ├── FoodItemStoreRequest.php
+│   │   │   ├── FoodItemUpdateRequest.php
+│   │   │   ├── TableStoreRequest.php
+│   │   │   └── TableUpdateRequest.php
 │   │   └── 📁 Resources/            # API resources
 │   │       ├── BranchResource.php
 │   │       ├── FinancialCategoryResource.php
-│   │       └── FinancialTransactionResource.php
+│   │       ├── FinancialTransactionResource.php
+│   │       ├── FoodCategoryResource.php
+│   │       ├── FoodItemResource.php
+│   │       └── TableResource.php
 │   │
 │   ├── 📁 Mail/                     # Email classes
 │   │   └── GenericEmail.php        # Generic mailable class
@@ -89,9 +102,12 @@ backend/
 │   │   ├── Branch.php               # Branch model
 │   │   ├── FinancialCategory.php    # Financial category model
 │   │   ├── FinancialTransaction.php # Financial transaction model
+│   │   ├── FoodCategory.php         # Food category model
+│   │   ├── FoodItem.php             # Food item model
 │   │   ├── Permission.php           # Permission model
 │   │   ├── Role.php                  # Role model (with soft delete)
 │   │   ├── Setting.php               # Setting model
+│   │   ├── Table.php                 # Table model
 │   │   └── User.php                  # User model (with roles/permissions)
 │   │
 │   ├── 📁 Providers/                # Service providers
@@ -141,7 +157,11 @@ backend/
 │   │   ├── 2025_11_17_083347_create_password_reset_tokens_table.php
 │   │   ├── 2025_11_17_083400_create_failed_jobs_table.php
 │   │   ├── 2025_12_18_073853_create_financial_categories_table.php
-│   │   └── 2025_12_18_073853_create_financial_transactions_table.php
+│   │   ├── 2025_12_18_073853_create_financial_transactions_table.php
+│   │   ├── 2025_01_20_000001_create_food_categories_table.php
+│   │   ├── 2025_01_20_000002_create_food_items_table.php
+│   │   ├── 2026_01_06_130603_add_image_and_display_order_to_food_items_table.php
+│   │   └── 2025_01_21_000001_create_tables_table.php
 │   └── 📁 seeders/                  # Database seeders
 │       ├── BranchSeeder.php
 │       ├── DatabaseSeeder.php
@@ -149,6 +169,7 @@ backend/
 │       ├── PermissionsTableSeeder.php
 │       ├── RolePermissionSeeder.php
 │       ├── RolesTableSeeder.php
+│       ├── TableSeeder.php
 │       └── UserSeeder.php
 │
 ├── 📁 public/                       # Public web root
@@ -487,6 +508,26 @@ backend/
 - **Permissions**: `view_food_item`, `create_food_item`, `edit_food_item`, `delete_food_item`
 - **Status**: ✅ Fully implemented (Frontend + Backend)
 
+### 15. **Table Management Module**
+- **Location**: `app/Http/Controllers/API/TableController.php`
+- **Routes**: `/api/tables/*`
+- **Features**:
+  - List tables (returns all records in data field, pagination metadata in meta)
+  - Get table by ID
+  - Create table
+  - Update table
+  - Delete table (soft delete)
+  - Filter by status (available, occupied, reserved, cleaning, maintenance)
+  - Filter by active/inactive status
+  - Search by table_number or table_name
+  - Server-side pagination, filtering, and searching
+- **Model**: `Table` (with soft deletes, scopes: active, ordered)
+- **Request Validation**: `TableStoreRequest`, `TableUpdateRequest`
+- **API Resource**: `TableResource` (camelCase format)
+- **Permissions**: `view_table`, `create_table`, `edit_table`, `delete_table`
+- **Status**: ✅ Fully implemented (Frontend + Backend)
+- **Seeder**: `TableSeeder` - Creates 15 sample table records
+
 ---
 
 ## 🏗️ Architecture Patterns
@@ -676,6 +717,7 @@ Schema::create('users', function (Blueprint $table) {
   - `manager@example.com` / `password` (manager role)
 - **BranchSeeder** - Creates sample branches (Lunawada, Vadodara)
 - **FinancialCategorySeeder** - Creates 5 income and 5 expense categories
+- **TableSeeder** - Creates 15 sample table records (T1-T11, Family-1, Family-2, VIP-1, Window-1) with various statuses and capacities
 
 ---
 
@@ -1144,9 +1186,13 @@ php artisan serve
 - ✅ **Restaurant Settings Module** - Fully implemented with RestaurantSettingsController, uses settings table with section grouping
 - ✅ **Food Categories Module** - Fully implemented (migration, model with foodItems relationship, controller with hierarchy endpoint, requests, resources, routes, permissions)
 - ✅ **Food Items Module** - Fully implemented (migration with image and display_order fields, model, controller with image upload/delete and reordering endpoints, requests, resources, routes, permissions)
+- ✅ **Table Management Module** - Fully implemented (migration, model with scopes, controller with CRUD operations, requests, resources, routes, permissions, seeder)
 - ✅ **Menu Hierarchy API** - `GET /api/food-categories/hierarchy` endpoint returns categories with nested items, sorted by display_order
 - ✅ **Image Upload Endpoints** - `POST /api/food-items/{item}/upload-image` and `DELETE /api/food-items/{item}/image` for managing item images
 - ✅ **Item Reordering Endpoints** - `POST /api/food-items/{item}/move-up` and `POST /api/food-items/{item}/move-down` for changing item order within categories
 - ✅ **Image Preservation** - When updating items without new image, image field is excluded from payload to preserve existing image in database
 - ✅ **Restaurant Permissions** - Added and seeded: `view_restaurant_settings`, `edit_restaurant_settings`, and all Food Category/Item permissions
+- ✅ **Table Management Module** - Fully implemented (migration, model with scopes, controller with CRUD operations, requests, resources, routes, permissions, seeder)
+- ✅ **Table Permissions** - Added and seeded: `view_table`, `create_table`, `edit_table`, `delete_table` permissions
+- ✅ **Table Seeder** - Created TableSeeder with 15 sample table records
 - ✅ **Database Migrations** - Created `food_categories` and `food_items` tables with proper relationships and indexes

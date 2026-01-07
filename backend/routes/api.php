@@ -11,6 +11,7 @@ use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\FoodCategoryController;
 use App\Http\Controllers\API\RestaurantSettingsController;
 use App\Http\Controllers\API\FoodItemController;
+use App\Http\Controllers\API\TableController;
 
 /*
 |--------------------------------------------------------------------------
@@ -87,6 +88,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/food-items/{foodItem}/image', [FoodItemController::class, 'deleteImage'])->middleware('permission:edit_food_item');
     Route::post('/food-items/{foodItem}/move-up', [FoodItemController::class, 'moveUp'])->middleware('permission:edit_food_item');
     Route::post('/food-items/{foodItem}/move-down', [FoodItemController::class, 'moveDown'])->middleware('permission:edit_food_item');
+
+    // Table Management
+    Route::get('/tables', [TableController::class, 'index'])->middleware('permission:view_table');
+    Route::post('/tables', [TableController::class, 'store'])->middleware('permission:create_table');
+    Route::get('/tables/{table}', [TableController::class, 'show'])->middleware('permission:view_table');
+    Route::put('/tables/{table}', [TableController::class, 'update'])->middleware('permission:edit_table');
+    Route::delete('/tables/{table}', [TableController::class, 'destroy'])->middleware('permission:delete_table');
 
     // Restaurant Settings Management
     Route::prefix('restaurant-settings')->middleware('permission:view_restaurant_settings')->group(function () {

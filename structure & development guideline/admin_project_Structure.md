@@ -114,6 +114,10 @@ admin/
 │   │   │   │   ├── FinancialTransactionForm.jsx
 │   │   │   │   ├── FinancialTransactionDetailsModal.jsx
 │   │   │   │   └── FinancialCategoryForm.jsx
+│   │   │   ├── 📁 restaurant/       # Restaurant management
+│   │   │   │   ├── CategoryForm.jsx  # Food category form component
+│   │   │   │   ├── ItemForm.jsx      # Food item form component
+│   │   │   │   └── TableForm.jsx     # Table form component
 │   │   │   └── 📁 users/            # User management
 │   │   │       ├── 📁 __tests__/     # User component tests
 │   │   │       │   └── ProfileForm.test.js
@@ -180,6 +184,7 @@ admin/
 │   │   ├── README.md
 │   │   ├── roleService.js            # Role API
 │   │   ├── settingsService.js        # Settings API (email settings, test email, business info)
+│   │   ├── tableService.js           # Table Management API
 │   │   └── userService.js            # User API
 │   │
 │   ├── 📁 styles/                    # Additional styles
@@ -211,6 +216,11 @@ admin/
 │   │   ├── 📁 financial/             # Financial management views
 │   │   │   ├── FinancialTransactionsList.jsx
 │   │   │   └── FinancialCategoriesList.jsx
+│   │   ├── 📁 restaurant/        # Restaurant management views
+│   │   │   ├── MenuManagement.jsx # Food categories and items management
+│   │   │   ├── TablesList.jsx     # Table management list
+│   │   │   └── 📁 settings/        # Restaurant settings
+│   │   │       └── RestaurantSettings.jsx
 │   │   └── 📁 users/                 # User management views
 │   │       ├── Profile.jsx
 │   │       └── UsersList.jsx
@@ -409,13 +419,14 @@ admin/
   - **Restaurant Setup**:
     - ✅ **Restaurant Settings** - GST Settings, Invoice Settings, Thermal Printer Settings (fully implemented)
     - ✅ **Menu Management** - Unified page for Food Categories and Food Items with hierarchical display, CRUD operations, image upload, and item reordering (fully implemented)
-    - ⏳ **Table Management** - Pending
+    - ✅ **Table Management** - Table list with statistics, CRUD operations, status management, server-side pagination, filtering, and searching (fully implemented)
   - **Customer Management**: Customers list, Customer Ledger
   - **Staff Management**: Staff list, Salary Payments
   - **Expense Management**: Expense Categories, Expense Records
 - **Status**: 
   - ✅ Restaurant Settings (Frontend + Backend fully implemented)
   - ✅ Menu Management (Food Categories & Food Items - Frontend + Backend fully implemented)
+  - ✅ Table Management (Frontend + Backend fully implemented)
   - ⏳ Other modules pending
 - **Specification**: See `scope/POS_Panel_Specification.md` and `module details/ProjectModules.md`
 
@@ -820,17 +831,18 @@ const MyComponent = () => {
 - Theme System (Dark/Light mode)
 - Navigation Menu Structure (Restaurant Management modules - navigation configured)
 - Restaurant Settings (GST Settings, Invoice Settings, Thermal Printer Settings - Frontend + Backend)
+- Table Management (Table list with statistics, CRUD operations, status management - Frontend + Backend)
 
 ### 🟡 Partially Implemented (UI Complete, API Pending)
 - None (all existing modules fully implemented)
 
 ### ✅ Fully Implemented
 - Menu Management (Unified Food Categories & Food Items management page with hierarchical display, image upload, and item reordering)
+- Table Management (Table list with statistics cards, CRUD operations, status management, server-side pagination, filtering, and searching)
 
 ### 🔴 Needs Implementation (Phase 1 - Restaurant Management)
 - POS Panel (Main POS interface with split-screen layout)
 - Bills Management (Unified bills page with filters)
-- Table Management (Restaurant Setup)
 - Customer Management (Customers, Customer Ledger)
 - Staff Management (Staff, Salary Payments)
 - Expense Management (Expense Categories, Expense Records)
@@ -878,7 +890,7 @@ npm run lint
 ---
 
 **Last Updated**: January 2025
-**Version**: 2.2.0 (Restaurant Settings Implementation)
+**Version**: 2.3.0 (Table Management Implementation)
 
 ## 🔄 Recent Updates
 
@@ -933,6 +945,23 @@ npm run lint
 - ✅ **Item Reordering**: Up/down buttons to reorder items within categories using display_order
 - ✅ **Section-Specific Validation**: Form validation only validates the section being saved
 - ✅ **Data Population**: Fixed API response transformation to correctly populate form fields
+
+### Version 2.3.0 - Table Management Implementation
+- ✅ **Table Management Module**: Fully implemented frontend and backend
+  - Table list with statistics cards (Total, Available, Occupied, Active)
+  - CRUD operations (Create, Read, Update, Delete)
+  - Status management (Available, Occupied, Reserved, Cleaning, Maintenance)
+  - Active/Inactive toggle
+  - Capacity management (1-50 seats)
+  - Server-side pagination, filtering, and searching
+  - Default page size: 25
+- ✅ **Backend APIs**: TableController with full CRUD operations
+- ✅ **Database**: `tables` table with table_number, table_name, capacity, status, is_active fields
+- ✅ **Permissions**: `view_table`, `create_table`, `edit_table`, `delete_table` added and seeded
+- ✅ **Table Seeder**: Created TableSeeder with 15 sample table records
+- ✅ **Frontend Components**: TablesList.jsx and TableForm.jsx fully implemented
+- ✅ **API Response**: Returns all records in data field with pagination metadata in meta
+- ✅ **Permission Mapping**: Added table permission aliases to authService.js
 
 ### Previous Updates
 - ✅ System cleanup: Removed Order Management, Customer Management, Package Management, Transaction Management, and Company Health Report modules

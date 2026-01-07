@@ -4431,6 +4431,228 @@ const handleSaveSettings = async (section, settingsData) => {
 
 ---
 
+### Table Management APIs
+
+### 22. **GET /api/tables**
+**Description**: Tables की list fetch करने के लिए (paginated, sortable, searchable, filterable)
+
+**Backend Controller**: `TableController@index`
+
+**Query Parameters**:
+- `page` - Page number (default: 1)
+- `limit` - Items per page (default: 25, max: 100)
+- `search` - Search term (table_number, table_name में search)
+- `status` - Filter by status (available, occupied, reserved, cleaning, maintenance)
+- `is_active` - Filter by active status (true/false)
+- `sort_by` - Sort column (table_number, table_name, capacity, status, is_active, created_at)
+- `sort_direction` - Sort direction (asc/desc)
+
+**Response**:
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "tableNumber": "T1",
+      "table_number": "T1",
+      "tableName": null,
+      "table_name": null,
+      "capacity": 4,
+      "status": "available",
+      "isActive": true,
+      "is_active": true,
+      "createdAt": "2025-01-21T00:00:00.000000Z",
+      "created_at": "2025-01-21T00:00:00.000000Z",
+      "updatedAt": "2025-01-21T00:00:00.000000Z",
+      "updated_at": "2025-01-21T00:00:00.000000Z"
+    }
+  ],
+  "meta": {
+    "total": 15,
+    "page": 1,
+    "limit": 25,
+    "totalPages": 1,
+    "hasNext": false,
+    "hasPrev": false,
+    "sortBy": "table_number",
+    "sortDirection": "asc"
+  }
+}
+```
+
+**Note**: Response includes all records in `data` field (not paginated), while `meta` contains pagination information.
+
+**Permission Required**: `view_table`
+
+**Frontend Integration**:
+- **Service**: `src/services/tableService.js`
+- **Method**: `tableService.getTables(params)`
+- **Used In**: `src/views/restaurant/TablesList.jsx` - Tables list page
+
+---
+
+### 23. **GET /api/tables/{table}**
+**Description**: Specific table की details fetch करने के लिए
+
+**Backend Controller**: `TableController@show`
+
+**Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "tableNumber": "T1",
+    "table_number": "T1",
+    "tableName": null,
+    "table_name": null,
+    "capacity": 4,
+    "status": "available",
+    "isActive": true,
+    "is_active": true,
+    "createdAt": "2025-01-21T00:00:00.000000Z",
+    "updatedAt": "2025-01-21T00:00:00.000000Z"
+  },
+  "message": "Table retrieved successfully."
+}
+```
+
+**Permission Required**: `view_table`
+
+**Frontend Integration**:
+- **Service**: `src/services/tableService.js`
+- **Method**: `tableService.getTableById(id)`
+
+---
+
+### 24. **POST /api/tables**
+**Description**: New table create करने के लिए
+
+**Backend Controller**: `TableController@store`
+
+**Request Body**:
+```json
+{
+  "table_number": "T1",
+  "table_name": "Window Table",
+  "capacity": 4,
+  "status": "available",
+  "is_active": true
+}
+```
+
+**Validation Rules**:
+- `table_number` - Required, string, max 50 characters, unique
+- `table_name` - Optional, string, max 255 characters
+- `capacity` - Required, integer, min 1, max 50
+- `status` - Required, enum: 'available', 'occupied', 'reserved', 'cleaning', 'maintenance'
+- `is_active` - Optional, boolean, default: true
+
+**Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "tableNumber": "T1",
+    "table_number": "T1",
+    "tableName": "Window Table",
+    "table_name": "Window Table",
+    "capacity": 4,
+    "status": "available",
+    "isActive": true,
+    "is_active": true,
+    "createdAt": "2025-01-21T00:00:00.000000Z",
+    "updatedAt": "2025-01-21T00:00:00.000000Z"
+  },
+  "message": "Table created successfully."
+}
+```
+
+**Permission Required**: `create_table`
+
+**Frontend Integration**:
+- **Service**: `src/services/tableService.js`
+- **Method**: `tableService.createTable(tableData)`
+- **Used In**: `src/components/pages/restaurant/TableForm.jsx` - Create table form
+
+---
+
+### 25. **PUT /api/tables/{table}**
+**Description**: Existing table update करने के लिए
+
+**Backend Controller**: `TableController@update`
+
+**Request Body**:
+```json
+{
+  "table_number": "T1",
+  "table_name": "VIP Window Table",
+  "capacity": 6,
+  "status": "occupied",
+  "is_active": true
+}
+```
+
+**Validation Rules**:
+- `table_number` - Optional, string, max 50 characters, unique (ignoring current table)
+- `table_name` - Optional, string, max 255 characters
+- `capacity` - Optional, integer, min 1, max 50
+- `status` - Optional, enum: 'available', 'occupied', 'reserved', 'cleaning', 'maintenance'
+- `is_active` - Optional, boolean
+
+**Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "tableNumber": "T1",
+    "table_number": "T1",
+    "tableName": "VIP Window Table",
+    "table_name": "VIP Window Table",
+    "capacity": 6,
+    "status": "occupied",
+    "isActive": true,
+    "is_active": true,
+    "updatedAt": "2025-01-21T00:00:00.000000Z"
+  },
+  "message": "Table updated successfully."
+}
+```
+
+**Permission Required**: `edit_table`
+
+**Frontend Integration**:
+- **Service**: `src/services/tableService.js`
+- **Method**: `tableService.updateTable(id, tableData)`
+- **Used In**: `src/components/pages/restaurant/TableForm.jsx` - Edit table form
+
+---
+
+### 26. **DELETE /api/tables/{table}**
+**Description**: Table delete करने के लिए (soft delete)
+
+**Backend Controller**: `TableController@destroy`
+
+**Response**:
+```json
+{
+  "success": true,
+  "message": "Table deleted successfully."
+}
+```
+
+**Permission Required**: `delete_table`
+
+**Frontend Integration**:
+- **Service**: `src/services/tableService.js`
+- **Method**: `tableService.deleteTable(id)`
+- **Used In**: `src/views/restaurant/TablesList.jsx` - Delete table button
+
+---
+
 ## 📱 App Settings
 
 ### App Settings Section
@@ -4572,6 +4794,7 @@ Component → Service → API Client → Backend API
 - `src/services/permissionService.js` - Permission Management APIs
 - `src/services/branchService.js` - Branch Management APIs
 - `src/services/settingsService.js` - Settings Management APIs
+- `src/services/tableService.js` - Table Management APIs
 
 ### API Client Configuration
 
@@ -4756,6 +4979,7 @@ const Settings = () => {
 ✅ Restaurant Settings (Full CRUD + Section-based grouping + Bulk update)
 ✅ Food Categories (Full CRUD + Server-side pagination/filtering/searching - Backend ready)
 ✅ Food Items (Full CRUD + Image Upload + Item Reordering + Server-side pagination/filtering/searching - Fully implemented)
+✅ Table Management (Full CRUD + Server-side pagination/filtering/searching + Status management - Fully implemented)
 
 ### Frontend Integration Status
 - ✅ **AuthService** - Fully integrated in Login, AuthContext, PrivateRoute, ForgotPassword, ResetPassword
@@ -4776,12 +5000,14 @@ const Settings = () => {
 - ✅ **RestaurantSettingsService** - Fully integrated in RestaurantSettings page (GST Settings, Invoice Settings, Thermal Printer Settings)
 - ⏳ **FoodCategoryService** - Backend ready, frontend service to be created
 - ✅ **MenuService** - Fully integrated in MenuManagement.jsx (hierarchy, CRUD, image upload, item reordering)
+- ✅ **TableService** - Fully integrated in TablesList.jsx (CRUD, server-side pagination, filtering, searching)
 
 ### Server-Side Features
 - **Package Management**: Server-side pagination, filtering (type, status, price range), searching (name, description, type)
 - **Customer Management**: Server-side pagination, filtering (status, branch, city, state, country, date ranges, amount ranges), searching (name, email, phone, customer_code)
 - **Order Management**: Server-side pagination, filtering (status, payment_status, customer, branch, date ranges, payment_method, amount ranges), searching (order_number, customer name/email)
 - **Payment Management**: Real database integration, auto-updates order payment status and customer stats
+- **Table Management**: Server-side pagination, filtering (status, is_active), searching (table_number, table_name), returns all records in data field with pagination metadata
 
 ### Customer Stats Auto-Update
 - Customer statistics (totalOrders, total_amount, paid_amount, remaining_amount, etc.) automatically calculate होते हैं orders से
@@ -4803,7 +5029,10 @@ const Settings = () => {
 - ✅ **Item Reordering Endpoints** - `POST /api/food-items/{item}/move-up` and `POST /api/food-items/{item}/move-down` for changing item order within categories
 - ✅ **Restaurant Permissions** - Added `view_restaurant_settings`, `edit_restaurant_settings`, and all Food Category/Item permissions
 - ✅ **Data Storage** - Restaurant settings stored in `settings` table with groups: 'GST Settings', 'Invoice Settings', 'Thermal Printer'
-**Version**: 1.3.0
+✅ **Table Management APIs** - Fully implemented with CRUD operations, server-side pagination, filtering (status, is_active), searching (table_number, table_name), returns all records in data field with pagination metadata
+✅ **Table Permissions** - Added `view_table`, `create_table`, `edit_table`, `delete_table` permissions
+✅ **Table Seeder** - Created TableSeeder with 15 sample table records
+**Version**: 1.4.0
 
 ## 🔄 Recent Updates
 - ✅ Payment Management APIs fully implemented

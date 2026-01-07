@@ -36,6 +36,12 @@ const PERMISSION_ALIAS_MAP = {
   edit_food_item: ['food_item:write'],
   delete_food_item: ['food_item:delete'],
   
+  // Table Management
+  view_table: ['table:read'],
+  create_table: ['table:write'],
+  edit_table: ['table:write'],
+  delete_table: ['table:delete'],
+  
   // Branch Management
   view_branch: ['branch:read'],
   create_branch: ['branch:write'],
