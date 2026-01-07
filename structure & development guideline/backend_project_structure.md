@@ -703,6 +703,49 @@ Schema::create('users', function (Blueprint $table) {
 });
 ```
 
+**Critical: Indexes for High-Volume Tables**
+
+For tables that will have high record counts (e.g., `bills`, `bill_items`), **always add indexes** in the migration:
+
+```php
+// bills table - Add indexes for performance
+Schema::create('bills', function (Blueprint $table) {
+    // ... columns ...
+    
+    // Foreign keys
+    $table->foreign('table_id')->references('id')->on('tables')->onDelete('set null');
+    $table->foreign('customer_id')->references('id')->on('customers')->onDelete('set null');
+    $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
+    
+    // CRITICAL INDEXES - Must add for performance
+    $table->index('table_id');           // Most queries filter by table
+    $table->index('customer_id');        // Customer bill history
+    $table->index('status');              // Filter active/pending/paid
+    $table->index('bill_date');           // Date range queries, reports
+    $table->index('payment_status');      // Payment filtering
+    $table->index('created_at');          // Recent bills, sorting
+});
+
+// bill_items table - Add indexes for performance
+Schema::create('bill_items', function (Blueprint $table) {
+    // ... columns ...
+    
+    // Foreign keys
+    $table->foreign('bill_id')->references('id')->on('bills')->onDelete('cascade');
+    $table->foreign('food_item_id')->references('id')->on('food_items')->onDelete('restrict');
+    
+    // CRITICAL INDEXES - Must add for performance
+    $table->index('bill_id');            // MOST IMPORTANT - Fetching items for a bill
+    $table->index('food_item_id');        // Popular items reports
+    $table->index('created_at');          // Date range queries
+});
+```
+
+**Why Indexes Matter:**
+- Without `idx_bill_id` on `bill_items`, fetching items becomes slow as data grows (full table scan)
+- Without `idx_table_id` on `bills`, POS panel queries become slow
+- These indexes ensure sub-10ms queries even with 900K+ records over 5 years
+
 #### Seeders
 1. **Idempotent** - Can run multiple times safely
 2. **Use factories** for test data
@@ -1078,8 +1121,9 @@ php artisan serve
 - ✅ Use services for business logic
 - ✅ Validate all inputs
 - ✅ Use Eloquent relationships
-- ✅ Eager load relationships
+- ✅ **Eager load relationships** to avoid N+1 queries (e.g., `Bill::with('items')->get()`)
 - ✅ Use migrations for schema changes
+- ✅ **Add indexes in migrations** for foreign keys and frequently queried columns
 - ✅ Write descriptive commit messages
 - ✅ Follow PSR-12 coding standards
 - ✅ Use dependency injection
@@ -1092,6 +1136,9 @@ php artisan serve
 - ✅ Provide user-friendly error messages
 - ✅ File uploads implemented for avatars and business logos (local storage, no S3)
 - ✅ Custom storage file handler in `public/index.php` (no symlink required)
+- ✅ **Use database transactions** for multi-step operations (e.g., creating bill with items)
+- ✅ **Recalculate totals in database** when possible (use DB::raw() for calculations)
+- ✅ **Monitor query performance** - Check slow query log regularly
 
 ### ❌ Don'ts
 - ❌ Don't put business logic in controllers
@@ -1101,9 +1148,13 @@ php artisan serve
 - ❌ Don't ignore validation errors
 - ❌ Don't hardcode configuration
 - ❌ Don't skip error handling
-- ❌ Don't create N+1 queries
+- ❌ **Don't create N+1 queries** - Always eager load relationships
 - ❌ Don't store sensitive data in logs
 - ❌ Don't bypass authentication/authorization
+- ❌ **Don't skip indexes** on foreign keys and frequently queried columns
+- ❌ **Don't calculate totals in application** - Use database calculations when possible
+- ❌ **Don't fetch all records** - Always use pagination for list endpoints
+- ❌ **Don't forget database transactions** - Use transactions for multi-step operations
 
 ---
 
@@ -1147,7 +1198,7 @@ php artisan serve
 ---
 
 **Last Updated**: January 2025
-**Version**: 1.3.0
+**Version**: 1.4.0 (Database Scalability & Performance Guidelines Added)
 
 ## 🔄 Recent Updates
 - ✅ Financial Management module fully implemented
@@ -1196,3 +1247,7 @@ php artisan serve
 - ✅ **Table Permissions** - Added and seeded: `view_table`, `create_table`, `edit_table`, `delete_table` permissions
 - ✅ **Table Seeder** - Created TableSeeder with 15 sample table records
 - ✅ **Database Migrations** - Created `food_categories` and `food_items` tables with proper relationships and indexes
+- ✅ **Database Scalability Guidelines** - Added comprehensive documentation on database performance optimization, indexing strategies, and scalability considerations for high-volume tables (bills, bill_items)
+- ✅ **Performance Best Practices** - Added guidelines for proper indexing, query optimization, eager loading, and transaction management
+- ✅ **Database Scalability Guidelines** - Added comprehensive documentation on database performance optimization, indexing strategies, and scalability considerations for high-volume tables (bills, bill_items)
+- ✅ **Performance Best Practices** - Added guidelines for proper indexing, query optimization, eager loading, and transaction management

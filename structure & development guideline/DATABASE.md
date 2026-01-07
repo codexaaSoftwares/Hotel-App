@@ -606,6 +606,26 @@ tables
 - `customers.email` - Already indexed ✓
 - `customers.phone` - Already indexed ✓
 
+### Bills & Bill Items Indexes (Critical for Performance)
+
+**For `bills` table:**
+- `INDEX idx_table_id (table_id)` - **CRITICAL**: Most queries filter by table
+- `INDEX idx_customer_id (customer_id)` - Customer bill history
+- `INDEX idx_status (status)` - Filter active/pending/paid bills
+- `INDEX idx_bill_date (bill_date)` - Date range queries, reports
+- `INDEX idx_payment_status (payment_status)` - Payment filtering
+- `INDEX idx_created_at (created_at)` - Recent bills, sorting
+
+**For `bill_items` table:**
+- `INDEX idx_bill_id (bill_id)` - **CRITICAL**: Fetching items for a bill (most important!)
+- `INDEX idx_food_item_id (food_item_id)` - Popular items reports, item history
+- `INDEX idx_created_at (created_at)` - Date range queries, reports
+
+**Why These Indexes Matter:**
+- Without `idx_bill_id` on `bill_items`, fetching items for a bill becomes slow as data grows
+- Without `idx_table_id` on `bills`, POS panel table queries become slow
+- These indexes ensure sub-10ms queries even with millions of records
+
 ---
 
 ## Data Integrity
@@ -744,6 +764,126 @@ tables
 
 ---
 
+## 📊 Database Scalability & Performance Optimization
+
+### Growth Projections
+
+**Restaurant Bills & Items Growth:**
+- **Daily**: 50 orders × 10 items = 500 `bill_items` records
+- **Monthly**: 15,000 `bill_items` records
+- **Yearly**: 180,000 `bill_items` records
+- **5 Years**: ~900,000 `bill_items` records + ~90,000 `bills` records
+
+**Storage Estimate:**
+- `bill_items`: ~150-200 bytes per row → 900K rows = ~135-180 MB
+- `bills`: ~300-400 bytes per row → 90K rows = ~27-36 MB
+- **Total**: ~200-250 MB (very manageable for MySQL)
+
+### Performance Optimization Strategies
+
+#### 1. **Proper Indexing (CRITICAL)**
+Always create indexes on foreign keys and frequently queried columns:
+
+```sql
+-- bills table indexes (MUST HAVE)
+CREATE INDEX idx_table_id ON bills(table_id);
+CREATE INDEX idx_customer_id ON bills(customer_id);
+CREATE INDEX idx_status ON bills(status);
+CREATE INDEX idx_bill_date ON bills(bill_date);
+CREATE INDEX idx_payment_status ON bills(payment_status);
+
+-- bill_items table indexes (MUST HAVE)
+CREATE INDEX idx_bill_id ON bill_items(bill_id);  -- Most critical!
+CREATE INDEX idx_food_item_id ON bill_items(food_item_id);
+CREATE INDEX idx_created_at ON bill_items(created_at);
+```
+
+**Impact:** Queries remain fast (< 10ms) even with millions of records.
+
+#### 2. **Table Partitioning (Future Optimization)**
+For high-growth scenarios (200+ orders/day), consider partitioning by year:
+
+```sql
+-- Partition bills by year (if needed after 2-3 years)
+ALTER TABLE bills PARTITION BY RANGE (YEAR(bill_date)) (
+    PARTITION p2025 VALUES LESS THAN (2026),
+    PARTITION p2026 VALUES LESS THAN (2027),
+    PARTITION p2027 VALUES LESS THAN (2028)
+);
+```
+
+**Benefits:**
+- Faster queries (only relevant partitions scanned)
+- Easier archiving of old data
+- Better maintenance and backup strategies
+
+#### 3. **Data Archiving Strategy**
+After 2-3 years, archive old bills to separate tables:
+
+**Phase 1 (0-2 years):** Keep all data in main tables
+**Phase 2 (2-3 years):** Monitor growth, plan archiving
+**Phase 3 (3+ years):** Move old data (>2 years) to archive tables:
+- `bills_archive` - Archived bills
+- `bill_items_archive` - Archived bill items
+- Keep only recent data in main tables for performance
+
+#### 4. **Soft Deletes Consideration**
+- **Draft Bills**: Hard delete cancelled drafts immediately (no need to keep)
+- **Paid Bills**: Soft delete for audit trail (can archive later)
+- **Alternative**: Separate `deleted_bills` table for audit without affecting main queries
+
+### Query Performance Expectations
+
+With proper indexes, expect these query times:
+
+| Query Type | Expected Time | Notes |
+|------------|---------------|-------|
+| Get bill with items | < 1ms | With `idx_bill_id` on `bill_items` |
+| Today's bills | < 10ms | With `idx_bill_date` |
+| Customer's all bills | < 50ms | With `idx_customer_id` |
+| Sales report (30 days) | < 100ms | With `idx_bill_date` |
+| Popular items report | < 200ms | With `idx_food_item_id` and `idx_created_at` |
+
+### Implementation Checklist
+
+**During Migration Creation:**
+- ✅ Add all required indexes in migration file
+- ✅ Use proper data types (decimal for amounts, not float)
+- ✅ Add foreign key constraints with proper ON DELETE actions
+- ✅ Consider composite indexes for common query patterns
+
+**During Backend Implementation:**
+- ✅ Always eager load relationships (`with('items')`) to avoid N+1 queries
+- ✅ Use database transactions for bill creation/updates
+- ✅ Recalculate totals in database (not in application) when possible
+- ✅ Use database-level calculations for reports (SUM, COUNT, GROUP BY)
+
+**Monitoring:**
+- ✅ Monitor query performance monthly
+- ✅ Check slow query log for unoptimized queries
+- ✅ Review index usage statistics
+- ✅ Plan partitioning/archiving when approaching 1M+ records
+
+### Real-World Scalability
+
+**MySQL Capabilities:**
+- ✅ Can easily handle 900K records in a single table
+- ✅ With proper indexes, queries remain fast
+- ✅ Partitioning available for 10M+ records
+- ✅ Archiving strategy extends capacity indefinitely
+
+**Comparison:**
+- 1 Photo (JPEG): 2-5 MB = 10,000+ bill_items records
+- 5 Years of bill_items: ~200 MB = **Tiny!**
+
+**Conclusion:** The projected growth (900K records in 5 years) is **very manageable** for MySQL with proper indexing. Focus on:
+1. ✅ Creating proper indexes from the start
+2. ✅ Monitoring growth monthly
+3. ✅ Planning archiving strategy after 2 years
+4. ✅ Considering partitioning if growth exceeds 200 orders/day
+
+---
+
 ## Migration History
 
 ### Core Tables (2024-01-01)
@@ -804,5 +944,5 @@ tables
 ---
 
 *Last Updated: January 2025*  
-*Database Version: 1.3*
+*Database Version: 1.4* (Scalability & Performance Guidelines Added)
 
