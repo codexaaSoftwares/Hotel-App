@@ -465,7 +465,47 @@ Food items/menu items for restaurant.
 
 ---
 
-### 21. `personal_access_tokens`
+### 21. `tables`
+Restaurant tables for dine-in service management.
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| `id` | bigint unsigned | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
+| `table_number` | varchar(50) | UNIQUE, NOT NULL | Table identifier (e.g., "T1", "T2", "Family Table") |
+| `table_name` | varchar(255) | NULLABLE | Friendly name (optional, e.g., "Window Table", "VIP Table") |
+| `capacity` | int | DEFAULT 4, NOT NULL | Number of seats (1-50) |
+| `status` | enum | DEFAULT 'available' | Status: 'available', 'occupied', 'reserved', 'cleaning', 'maintenance' |
+| `is_active` | boolean | DEFAULT true | Active/Inactive flag |
+| `created_at` | timestamp | NULLABLE | Creation timestamp |
+| `updated_at` | timestamp | NULLABLE | Last update timestamp |
+| `deleted_at` | timestamp | NULLABLE | Soft delete timestamp |
+
+**Indexes:**
+- PRIMARY KEY (`id`)
+- UNIQUE (`table_number`)
+- INDEX (`status`)
+- INDEX (`is_active`)
+- INDEX (`created_at`)
+
+**Soft Deletes:** Yes
+
+**Notes:**
+- `table_number` must be unique (e.g., "T1", "T2", "Family-1")
+- `table_name` is optional; if not provided, use `table_number` for display
+- `capacity` represents maximum seats (default: 4, range: 1-50)
+- `status` tracks real-time table state for POS operations:
+  - `available` - Table is free and ready for customers
+  - `occupied` - Table has active bill/order
+  - `reserved` - Table is reserved for future booking
+  - `cleaning` - Table is being cleaned
+  - `maintenance` - Table is under maintenance/repair
+- `is_active` controls visibility in POS panel (inactive tables are hidden)
+- Multiple bills can be associated with one table (handled in bills table later)
+- Future relationship: `bills` table will have `table_id` foreign key (to be added when Bills module is implemented)
+
+---
+
+### 22. `personal_access_tokens`
 Laravel Sanctum authentication tokens.
 
 | Column | Type | Constraints | Description |
@@ -510,6 +550,9 @@ users
 
 food_categories
   └── food_items (one-to-many)
+
+tables
+  └── (future: bills will reference tables via table_id)
 ```
 
 ### Detailed Relationships
@@ -536,6 +579,10 @@ food_categories
     - A category can have many food items
     - A food item belongs to one category
 
+6. **Table ↔ Bill** (One-to-Many) - Future
+    - A table can have many bills (multiple bills per table support)
+    - A bill belongs to one table (nullable for takeaway orders)
+
 ---
 
 ## Indexes
@@ -550,6 +597,8 @@ food_categories
 - `payments.customer_id` - Customer payment history
 - `order_items.order_id` - Order item retrieval
 - `customers.branch_id` - Branch customer lists
+- `tables.status` - Frequently queried in POS panel for available/occupied tables
+- `tables.is_active` - Filtered to show only active tables in POS panel
 
 **Missing Indexes (Recommendations):**
 - `payments.payment_date` - Already indexed ✓
@@ -738,21 +787,22 @@ food_categories
 - `create_food_categories_table` (2025_01_20_000001) - Creates food categories table for restaurant menu organization
 - `create_food_items_table` (2025_01_20_000002) - Creates food items table for restaurant menu items
 - `add_image_and_display_order_to_food_items_table` (2026_01_06_130603) - Adds `image` (varchar, nullable) and `display_order` (int, default 0) columns to food_items table
+- `create_tables_table` (2025_01_XX_XXXXXX) - Creates tables table for restaurant table management (table_number, table_name, capacity, status, is_active)
 
 ---
 
 ## Summary Statistics
 
-- **Total Tables:** 21
-- **Core Business Tables:** 11 (users, branches, customers, packages, orders, order_items, payments, financial_categories, financial_transactions, food_categories, food_items)
+- **Total Tables:** 22
+- **Core Business Tables:** 12 (users, branches, customers, packages, orders, order_items, payments, financial_categories, financial_transactions, food_categories, food_items, tables)
 - **Auth/Authorization Tables:** 4 (roles, permissions, user_role, role_permission)
 - **System Tables:** 6 (settings, emails, password_resets, failed_jobs, personal_access_tokens)
-- **Tables with Soft Deletes:** 9 (branches, customers, packages, orders, payments, financial_categories, financial_transactions, food_categories, food_items)
+- **Tables with Soft Deletes:** 10 (branches, customers, packages, orders, payments, financial_categories, financial_transactions, food_categories, food_items, tables)
 - **Tables with Foreign Keys:** 13
 - **Pivot Tables:** 2 (user_role, role_permission)
 
 ---
 
 *Last Updated: January 2025*  
-*Database Version: 1.2*
+*Database Version: 1.3*
 
