@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, Form, Button, Alert } from 'react-bootstrap'
 import PropTypes from 'prop-types'
+import { TextField, TextAreaField, SelectField, FormRow } from '../../common/FormFields'
 
 const CategoryForm = ({ show, onHide, category, onSave, loading = false }) => {
   const [formData, setFormData] = useState({
@@ -82,61 +83,66 @@ const CategoryForm = ({ show, onHide, category, onSave, loading = false }) => {
             </Alert>
           )}
 
-          <Form.Group className="mb-3">
-            <Form.Label className="fw-semibold">
-              Category Name <span className="text-danger">*</span>
-            </Form.Label>
-            <Form.Control
-              type="text"
+          <FormRow>
+            <TextField
+              id="name"
+              label="Category Name"
               name="name"
+              type="text"
               value={formData.name}
               onChange={handleChange}
               placeholder="Enter category name"
-              isInvalid={!!errors.name}
-              className="border-2"
               required
+              invalid={!!errors.name}
+              feedback={errors.name}
+              col={12}
             />
-            <Form.Control.Feedback type="invalid">{errors.name}</Form.Control.Feedback>
-          </Form.Group>
+          </FormRow>
 
-          <Form.Group className="mb-3">
-            <Form.Label className="fw-semibold">Description</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={3}
+          <FormRow>
+            <TextAreaField
+              id="description"
+              label="Description"
               name="description"
               value={formData.description}
               onChange={handleChange}
               placeholder="Enter category description (optional)"
-              className="border-2"
+              rows={3}
+              col={12}
             />
-          </Form.Group>
+          </FormRow>
 
-          <Form.Group className="mb-3">
-            <Form.Label className="fw-semibold">
-              Display Order <span className="text-danger">*</span>
-            </Form.Label>
-            <Form.Control
-              type="number"
+          <FormRow>
+            <TextField
+              id="display_order"
+              label="Display Order"
               name="display_order"
+              type="number"
               value={formData.display_order}
               onChange={handleChange}
               min="1"
-              isInvalid={!!errors.display_order}
-              className="border-2"
               required
+              invalid={!!errors.display_order}
+              feedback={errors.display_order}
+              helpText="Lower numbers appear first in the menu"
+              col={12}
             />
-            <Form.Control.Feedback type="invalid">{errors.display_order}</Form.Control.Feedback>
-            <Form.Text className="text-muted">Lower numbers appear first in the menu</Form.Text>
-          </Form.Group>
+          </FormRow>
 
-          <Form.Group className="mb-3">
-            <Form.Label className="fw-semibold">Status</Form.Label>
-            <Form.Select name="status" value={formData.status} onChange={handleChange} className="border-2">
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </Form.Select>
-          </Form.Group>
+          <FormRow>
+            <SelectField
+              id="status"
+              label="Status"
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              options={[
+                { value: 'active', label: 'Active' },
+                { value: 'inactive', label: 'Inactive' },
+              ]}
+              col={12}
+            />
+          </FormRow>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={onHide} disabled={loading}>

@@ -3,6 +3,7 @@ import { Modal, Form, Button, Alert, Image } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faImage, faTrash, faUpload } from '@fortawesome/free-solid-svg-icons'
 import PropTypes from 'prop-types'
+import { TextField, SelectField, TextAreaField, FormRow } from '../../common/FormFields'
 
 const ItemForm = ({ show, onHide, item, categories = [], selectedCategory = null, onSave, loading = false }) => {
   const [formData, setFormData] = useState({
@@ -170,109 +171,97 @@ const ItemForm = ({ show, onHide, item, categories = [], selectedCategory = null
             </Alert>
           )}
 
-          <Form.Group className="mb-3">
-            <Form.Label className="fw-semibold">
-              Category <span className="text-danger">*</span>
-            </Form.Label>
-            <Form.Select
+          <FormRow>
+            <SelectField
+              id="food_category_id"
+              label="Category"
               name="food_category_id"
               value={formData.food_category_id}
               onChange={handleChange}
-              isInvalid={!!errors.food_category_id}
-              className="border-2"
+              options={[
+                { value: '', label: 'Select a category' },
+                ...categories
+                  .filter((cat) => cat.status === 'active')
+                  .map((category) => ({
+                    value: String(category.id),
+                    label: category.name,
+                  })),
+              ]}
               required
-              disabled={!!item || !!selectedCategory} // Disable when editing OR when category is pre-selected
-            >
-              <option value="">Select a category</option>
-              {categories
-                .filter((cat) => cat.status === 'active')
-                .map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-            </Form.Select>
-            {(item || selectedCategory) && (
-              <Form.Text className="text-muted">
-                {item 
-                  ? 'Category cannot be changed after item is created.'
-                  : 'Category is pre-selected from the category you clicked.'}
-              </Form.Text>
-            )}
-            <Form.Control.Feedback type="invalid">{errors.food_category_id}</Form.Control.Feedback>
-          </Form.Group>
+              invalid={!!errors.food_category_id}
+              feedback={errors.food_category_id}
+              helpText={(item || selectedCategory) 
+                ? (item 
+                    ? 'Category cannot be changed after item is created.'
+                    : 'Category is pre-selected from the category you clicked.')
+                : undefined}
+              col={12}
+              disabled={!!item || !!selectedCategory}
+            />
+          </FormRow>
 
-          <Form.Group className="mb-3">
-            <Form.Label className="fw-semibold">
-              Item Name <span className="text-danger">*</span>
-            </Form.Label>
-            <Form.Control
-              type="text"
+          <FormRow>
+            <TextField
+              id="name"
+              label="Item Name"
               name="name"
+              type="text"
               value={formData.name}
               onChange={handleChange}
               placeholder="Enter item name"
-              isInvalid={!!errors.name}
-              className="border-2"
               required
+              invalid={!!errors.name}
+              feedback={errors.name}
+              col={12}
             />
-            <Form.Control.Feedback type="invalid">{errors.name}</Form.Control.Feedback>
-          </Form.Group>
+          </FormRow>
 
-          <Form.Group className="mb-3">
-            <Form.Label className="fw-semibold">Description</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={3}
+          <FormRow>
+            <TextAreaField
+              id="description"
+              label="Description"
               name="description"
               value={formData.description}
               onChange={handleChange}
               placeholder="Enter item description (optional)"
-              className="border-2"
+              rows={3}
+              col={12}
             />
-          </Form.Group>
+          </FormRow>
 
-          <div className="row">
-            <div className="col-md-6">
-              <Form.Group className="mb-3">
-                <Form.Label className="fw-semibold">
-                  Price (₹) <span className="text-danger">*</span>
-                </Form.Label>
-                <Form.Control
-                  type="number"
-                  name="price"
-                  value={formData.price}
-                  onChange={handleChange}
-                  placeholder="0.00"
-                  min="0"
-                  step="0.01"
-                  isInvalid={!!errors.price}
-                  className="border-2"
-                  required
-                />
-                <Form.Control.Feedback type="invalid">{errors.price}</Form.Control.Feedback>
-              </Form.Group>
-            </div>
-            <div className="col-md-6">
-              <Form.Group className="mb-3">
-                <Form.Label className="fw-semibold">GST Percentage (%)</Form.Label>
-                <Form.Control
-                  type="number"
-                  name="gst_percentage"
-                  value={formData.gst_percentage}
-                  onChange={handleChange}
-                  placeholder="5.00"
-                  min="0"
-                  max="100"
-                  step="0.01"
-                  isInvalid={!!errors.gst_percentage}
-                  className="border-2"
-                />
-                <Form.Control.Feedback type="invalid">{errors.gst_percentage}</Form.Control.Feedback>
-                <Form.Text className="text-muted">Leave empty to use default GST</Form.Text>
-              </Form.Group>
-            </div>
-          </div>
+          <FormRow>
+            <TextField
+              id="price"
+              label="Price (₹)"
+              name="price"
+              type="number"
+              value={formData.price}
+              onChange={handleChange}
+              placeholder="0.00"
+              min="0"
+              step="0.01"
+              required
+              invalid={!!errors.price}
+              feedback={errors.price}
+              col={6}
+            />
+            <TextField
+              id="gst_percentage"
+              label="GST Percentage (%)"
+              name="gst_percentage"
+              type="number"
+              value={formData.gst_percentage}
+              onChange={handleChange}
+              placeholder="5.00"
+              min="0"
+              max="100"
+              step="0.01"
+              invalid={!!errors.gst_percentage}
+              feedback={errors.gst_percentage}
+              helpText="Leave empty to use default GST"
+              col={6}
+            />
+          </FormRow>
 
           <div className="row">
             <div className="col-md-6">
@@ -309,19 +298,20 @@ const ItemForm = ({ show, onHide, item, categories = [], selectedCategory = null
             </div>
           </div>
 
-          <Form.Group className="mb-3">
-            <Form.Label className="fw-semibold">Display Order</Form.Label>
-            <Form.Control
-              type="number"
+          <FormRow>
+            <TextField
+              id="display_order"
+              label="Display Order"
               name="display_order"
+              type="number"
               value={formData.display_order}
               onChange={handleChange}
               min="0"
               placeholder="0"
-              className="border-2"
+              helpText="Lower numbers appear first in the menu"
+              col={12}
             />
-            <Form.Text className="text-muted">Lower numbers appear first in the menu</Form.Text>
-          </Form.Group>
+          </FormRow>
 
           <Form.Group className="mb-3">
             <Form.Label className="fw-semibold">Item Image (Optional)</Form.Label>

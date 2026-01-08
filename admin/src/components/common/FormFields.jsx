@@ -14,32 +14,27 @@ export const TextField = ({
   invalid = false,
   feedback,
   labelClassName = '',
+  showLabel = true,
   ...props 
-}) => {
-  // Only apply height to text inputs, not textarea or other types
-  const inputStyle = props.type === 'textarea' || props.as === 'textarea' 
-    ? {} 
-    : { height: '38px' }
-  
-  return (
-    <Col md={col}>
+}) => (
+  <Col md={col}>
+    {showLabel && label && (
       <FormLabel htmlFor={props.id} className={labelClassName}>
         {label} {required && <span className="text-danger">*</span>}
       </FormLabel>
-      <FormControl
-        {...props}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        required={required}
-        isInvalid={invalid}
-        style={inputStyle}
-      />
-      {feedback && <div className="invalid-feedback d-block">{feedback}</div>}
-      {helpText && <FormText>{helpText}</FormText>}
-    </Col>
-  )
-}
+    )}
+    <FormControl
+      {...props}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      required={required}
+      isInvalid={invalid}
+    />
+    {feedback && <div className="invalid-feedback d-block">{feedback}</div>}
+    {helpText && <FormText>{helpText}</FormText>}
+  </Col>
+)
 
 // Select Field
 export const SelectField = ({ 
@@ -52,19 +47,21 @@ export const SelectField = ({
   col = 6,
   invalid = false,
   feedback,
+  showLabel = true,
   ...props 
 }) => (
   <Col md={col}>
-    <FormLabel htmlFor={props.id}>
-      {label} {required && <span className="text-danger">*</span>}
-    </FormLabel>
+    {showLabel && label && (
+      <FormLabel htmlFor={props.id}>
+        {label} {required && <span className="text-danger">*</span>}
+      </FormLabel>
+    )}
     <FormSelect
       {...props}
       value={value}
       onChange={onChange}
       required={required}
       isInvalid={invalid}
-      style={{ height: '38px' }}
     >
       {options.map((option, index) => (
         <option key={`option-${option.value}-${index}`} value={option.value}>
@@ -119,7 +116,7 @@ export const FormRow = ({ children, className = "mt-3" }) => (
 )
 
 TextField.propTypes = {
-  label: PropTypes.string.isRequired,
+  label: PropTypes.string,
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   placeholder: PropTypes.string,
@@ -127,11 +124,12 @@ TextField.propTypes = {
   helpText: PropTypes.string,
   col: PropTypes.number,
   invalid: PropTypes.bool,
-  feedback: PropTypes.string
+  feedback: PropTypes.string,
+  showLabel: PropTypes.bool
 }
 
 SelectField.propTypes = {
-  label: PropTypes.string.isRequired,
+  label: PropTypes.string,
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   options: PropTypes.arrayOf(PropTypes.shape({
@@ -142,7 +140,8 @@ SelectField.propTypes = {
   helpText: PropTypes.string,
   col: PropTypes.number,
   invalid: PropTypes.bool,
-  feedback: PropTypes.string
+  feedback: PropTypes.string,
+  showLabel: PropTypes.bool
 }
 
 TextAreaField.propTypes = {

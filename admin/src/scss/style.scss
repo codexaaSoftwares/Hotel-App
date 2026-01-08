@@ -196,6 +196,20 @@ body {
   }
 }
 
+// Form field height consistency
+.form-control:not([type="file"]),
+.form-select {
+  height: 38px;
+}
+
+// Exclude textarea from fixed height - must come after the general rule
+.form-control[as="textarea"],
+textarea.form-control,
+textarea {
+  height: auto !important;
+  min-height: 60px; // Minimum height for textarea
+}
+
 @include color-mode(dark) {
   body {
     background-color: var(--cui-dark-bg-subtle);

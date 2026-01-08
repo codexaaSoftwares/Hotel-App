@@ -516,30 +516,55 @@ admin/
 
 #### 3. **Form Structure Pattern**
 ```jsx
-// Standard Form Structure with React Bootstrap
+// Standard Form Structure - Always use FormFields components
+import { TextField, SelectField, TextAreaField, FormRow } from '../../components/common/FormFields'
+
 <Form>
-  <Row>
-    <Col xs={12} md={6}>
-      <Form.Group className="mb-3">
-        <Form.Label htmlFor="field" className="fw-semibold">Field Label</Form.Label>
-        <Form.Control
-          id="field"
-          type="text"
-          value={value}
-          onChange={handleChange}
-          required
-          isInvalid={!!errors.field}
-          className="border-2"
-        />
-        <Form.Control.Feedback type="invalid">
-          {errors.field}
-        </Form.Control.Feedback>
-        <Form.Text className="text-muted">Helper text</Form.Text>
-      </Form.Group>
-    </Col>
-  </Row>
+  <FormRow>
+    <TextField
+      id="field"
+      label="Field Label"
+      type="text"
+      value={value}
+      onChange={handleChange}
+      placeholder="Enter value"
+      required
+      invalid={!!errors.field}
+      feedback={errors.field}
+      helpText="Helper text"
+      col={6}
+    />
+    <SelectField
+      id="status"
+      label="Status"
+      value={status}
+      onChange={handleChange}
+      options={[
+        { value: 'active', label: 'Active' },
+        { value: 'inactive', label: 'Inactive' },
+      ]}
+      col={6}
+    />
+  </FormRow>
+  <FormRow>
+    <TextAreaField
+      id="description"
+      label="Description"
+      value={description}
+      onChange={handleChange}
+      placeholder="Enter description"
+      rows={3}
+      col={12}
+    />
+  </FormRow>
 </Form>
 ```
+
+**Important Rules:**
+- **Always use FormFields components** (`TextField`, `SelectField`, `TextAreaField`, `FormRow`) for all form inputs
+- **Never use direct** `Form.Control` or `FormSelect` in forms
+- Use `showLabel={false}` for filter dropdowns in listing pages if labels are not needed
+- FormFields automatically handle consistent styling, validation feedback, and layout
 
 #### 4. **Modal Structure Pattern**
 ```jsx

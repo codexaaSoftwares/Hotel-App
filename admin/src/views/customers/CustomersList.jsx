@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Container, Row, Col, Button, Badge, Card, Form, FormSelect, InputGroup } from 'react-bootstrap'
+import { Container, Row, Col, Button, Badge, Card, Form, InputGroup } from 'react-bootstrap'
+import { SelectField } from '../../components/common/FormFields'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faTrash,
@@ -547,30 +548,40 @@ const CustomersList = () => {
                   </InputGroup>
                 </Col>
                 <Col xs={12} md={3}>
-                  <FormSelect
+                  <SelectField
+                    id="statusFilter"
+                    label="Status"
                     value={statusFilter}
                     onChange={(e) => {
                       setStatusFilter(e.target.value)
                       setCurrentPage(1)
                     }}
-                  >
-                    <option value="">All Status</option>
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                  </FormSelect>
+                    options={[
+                      { value: '', label: 'All Status' },
+                      { value: 'active', label: 'Active' },
+                      { value: 'inactive', label: 'Inactive' },
+                    ]}
+                    col={12}
+                    showLabel={false}
+                  />
                 </Col>
                 <Col xs={12} md={3}>
-                  <FormSelect
+                  <SelectField
+                    id="customerTypeFilter"
+                    label="Customer Type"
                     value={customerTypeFilter}
                     onChange={(e) => {
                       setCustomerTypeFilter(e.target.value)
                       setCurrentPage(1)
                     }}
-                  >
-                    <option value="">All Types</option>
-                    <option value="regular">Regular</option>
-                    <option value="credit">Credit</option>
-                  </FormSelect>
+                    options={[
+                      { value: '', label: 'All Types' },
+                      { value: 'regular', label: 'Regular' },
+                      { value: 'credit', label: 'Credit' },
+                    ]}
+                    col={12}
+                    showLabel={false}
+                  />
                 </Col>
                 <Col xs={12} md={2}>
                   <Button variant="outline-secondary" onClick={handleRefresh} className="w-100">

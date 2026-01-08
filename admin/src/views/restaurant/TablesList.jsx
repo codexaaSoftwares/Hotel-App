@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
-import { Container, Row, Col, Button, Badge, Card, Form, FormControl, FormSelect, InputGroup } from 'react-bootstrap'
+import { Container, Row, Col, Button, Badge, Card, Form, FormControl, InputGroup } from 'react-bootstrap'
+import { SelectField } from '../../components/common/FormFields'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faTrash,
@@ -445,37 +446,43 @@ const TablesList = () => {
                     </InputGroup>
                   </Col>
                   <Col md={2} sm={6}>
-                    <Form.Label className="fw-semibold text-muted">Status</Form.Label>
-                    <FormSelect
+                    <SelectField
+                      id="statusFilter"
+                      label="Status"
                       value={statusFilter}
                       onChange={(e) => {
                         setStatusFilter(e.target.value)
                         setCurrentPage(1)
                       }}
-                      className="border-2"
-                    >
-                      <option value="">All Status</option>
-                      <option value="available">Available</option>
-                      <option value="occupied">Occupied</option>
-                      <option value="reserved">Reserved</option>
-                      <option value="cleaning">Cleaning</option>
-                      <option value="maintenance">Maintenance</option>
-                    </FormSelect>
+                      options={[
+                        { value: '', label: 'All Status' },
+                        { value: 'available', label: 'Available' },
+                        { value: 'occupied', label: 'Occupied' },
+                        { value: 'reserved', label: 'Reserved' },
+                        { value: 'cleaning', label: 'Cleaning' },
+                        { value: 'maintenance', label: 'Maintenance' },
+                      ]}
+                      col={12}
+                      showLabel={false}
+                    />
                   </Col>
                   <Col md={2} sm={6}>
-                    <Form.Label className="fw-semibold text-muted">Active</Form.Label>
-                    <FormSelect
+                    <SelectField
+                      id="activeFilter"
+                      label="Active"
                       value={activeFilter}
                       onChange={(e) => {
                         setActiveFilter(e.target.value)
                         setCurrentPage(1)
                       }}
-                      className="border-2"
-                    >
-                      <option value="">All</option>
-                      <option value="true">Active</option>
-                      <option value="false">Inactive</option>
-                    </FormSelect>
+                      options={[
+                        { value: '', label: 'All' },
+                        { value: 'true', label: 'Active' },
+                        { value: 'false', label: 'Inactive' },
+                      ]}
+                      col={12}
+                      showLabel={false}
+                    />
                   </Col>
                   <Col md={3} sm={12}>
                     <Form.Label className="fw-semibold text-muted">Actions</Form.Label>

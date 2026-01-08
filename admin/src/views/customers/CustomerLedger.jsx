@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Container, Row, Col, Button, Badge, Card, Form, FormSelect, InputGroup, Alert, OverlayTrigger, Tooltip } from 'react-bootstrap'
+import { Container, Row, Col, Button, Badge, Card, Form, InputGroup, Alert, OverlayTrigger, Tooltip } from 'react-bootstrap'
+import { TextField, SelectField } from '../../components/common/FormFields'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faArrowLeft,
@@ -619,53 +620,71 @@ const CustomerLedger = () => {
                   </InputGroup>
                 </Col>
                 <Col md={2}>
-                  <FormSelect
+                  <SelectField
+                    id="transactionTypeFilter"
+                    label="Transaction Type"
                     value={transactionTypeFilter}
                     onChange={(e) => {
                       setTransactionTypeFilter(e.target.value)
                       setCurrentPage(1)
                     }}
-                  >
-                    <option value="">All Types</option>
-                    <option value="credit">Credit</option>
-                    <option value="debit">Debit</option>
-                  </FormSelect>
+                    options={[
+                      { value: '', label: 'All Types' },
+                      { value: 'credit', label: 'Credit' },
+                      { value: 'debit', label: 'Debit' },
+                    ]}
+                    col={12}
+                    showLabel={false}
+                  />
                 </Col>
                 <Col md={2}>
-                  <FormSelect
+                  <SelectField
+                    id="paymentMethodFilter"
+                    label="Payment Method"
                     value={paymentMethodFilter}
                     onChange={(e) => {
                       setPaymentMethodFilter(e.target.value)
                       setCurrentPage(1)
                     }}
-                  >
-                    <option value="">All Methods</option>
-                    <option value="cash">Cash</option>
-                    <option value="upi">UPI</option>
-                    <option value="card">Card</option>
-                    <option value="bank_transfer">Bank Transfer</option>
-                  </FormSelect>
+                    options={[
+                      { value: '', label: 'All Methods' },
+                      { value: 'cash', label: 'Cash' },
+                      { value: 'upi', label: 'UPI' },
+                      { value: 'card', label: 'Card' },
+                      { value: 'bank_transfer', label: 'Bank Transfer' },
+                    ]}
+                    col={12}
+                    showLabel={false}
+                  />
                 </Col>
                 <Col md={2}>
-                  <Form.Control
+                  <TextField
+                    id="startDate"
+                    label="Start Date"
                     type="date"
-                    placeholder="Start Date"
                     value={startDate}
                     onChange={(e) => {
                       setStartDate(e.target.value)
                       setCurrentPage(1)
                     }}
+                    placeholder="Start Date"
+                    col={12}
+                    showLabel={false}
                   />
                 </Col>
                 <Col md={2}>
-                  <Form.Control
+                  <TextField
+                    id="endDate"
+                    label="End Date"
                     type="date"
-                    placeholder="End Date"
                     value={endDate}
                     onChange={(e) => {
                       setEndDate(e.target.value)
                       setCurrentPage(1)
                     }}
+                    placeholder="End Date"
+                    col={12}
+                    showLabel={false}
                   />
                 </Col>
                 <Col md={1}>

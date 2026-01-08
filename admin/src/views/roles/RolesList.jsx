@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
-import { Container, Row, Col, Button, Form, FormControl, FormSelect, InputGroup, Badge } from 'react-bootstrap'
+import { Container, Row, Col, Button, Form, FormControl, InputGroup, Badge } from 'react-bootstrap'
+import { SelectField } from '../../components/common/FormFields'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faPencil, faTrash, faInfo, faMagnifyingGlass, faLock } from '@fortawesome/free-solid-svg-icons'
 import { useToast } from '../../components'
@@ -430,19 +431,22 @@ const RolesList = () => {
                   </InputGroup>
                 </Col>
                 <Col md={3} sm={6}>
-                  <Form.Label className="fw-semibold text-muted">Status</Form.Label>
-                  <FormSelect
+                  <SelectField
+                    id="statusFilter"
+                    label="Status"
                     value={statusFilter}
                     onChange={(e) => {
                       setStatusFilter(e.target.value)
                       setCurrentPage(1)
                     }}
-                    className="border-2"
-                  >
-                    <option value="">All Status</option>
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                  </FormSelect>
+                    options={[
+                      { value: '', label: 'All Status' },
+                      { value: 'active', label: 'Active' },
+                      { value: 'inactive', label: 'Inactive' },
+                    ]}
+                    col={12}
+                    showLabel={false}
+                  />
                 </Col>
                 <Col md={3} sm={6}>
                   <Form.Label className="fw-semibold text-muted">Quick Insights</Form.Label>

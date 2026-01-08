@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { Container, Row, Col, Button, FormControl, FormSelect, Card } from 'react-bootstrap'
+import { Container, Row, Col, Button, FormControl, Card } from 'react-bootstrap'
+import { SelectField } from '../../components/common/FormFields'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBarChart, faDownload } from '@fortawesome/free-solid-svg-icons'
 import reportService from '../../services/reportService'
@@ -41,14 +42,17 @@ const BranchReport = () => {
             <Card.Body>
               <Row className="g-3 mb-4">
                 <Col md={3}>
-                  <label className="form-label">Branch</label>
-                  <FormSelect
+                  <SelectField
+                    id="branchId"
+                    label="Branch"
                     value={branchId}
                     onChange={(e) => setBranchId(e.target.value)}
-                  >
-                    <option value="">All Branches</option>
-                    {/* Add branch options */}
-                  </FormSelect>
+                    options={[
+                      { value: '', label: 'All Branches' },
+                    ]}
+                    col={12}
+                    showLabel={true}
+                  />
                 </Col>
                 <Col md={3}>
                   <label className="form-label">Start Date</label>
