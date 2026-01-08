@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Container, Row, Col, Button, Spinner, Form, FormControl, FormSelect, FormText, Alert } from 'react-bootstrap'
+import { Container, Row, Col, Button, Spinner, Form, FormControl, FormText, Alert } from 'react-bootstrap'
+import { SelectField } from '../../components/common/FormFields'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBuilding, faEnvelope, faGlobe, faSave, faCheckCircle, faFileInvoice, faPaperPlane, faCog, faImage, faUpload, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { useToast } from '../../components'
@@ -1175,56 +1176,62 @@ const Settings = () => {
 
       <Row>
         <Col md={4}>
-          <Form.Group className="mb-3">
-            <Form.Label className="fw-semibold">Currency</Form.Label>
-            <FormSelect
-              value={settingsData.currencyRegional.currency}
-              onChange={(e) => handleChange('currencyRegional', 'currency', e.target.value)}
-              onBlur={(e) => handleBlur('currencyRegional', 'currency', e.target.value)}
-              className="border-2"  
-            >
-              <option value="INR">Indian Rupee (INR)</option>
-              <option value="NZD">New Zealand Dollar (NZD)</option>
-              <option value="USD">US Dollar (USD)</option>
-              <option value="EUR">Euro (EUR)</option>
-              <option value="GBP">British Pound (GBP)</option>
-              <option value="AUD">Australian Dollar (AUD)</option>
-            </FormSelect>
-          </Form.Group>
+          <SelectField
+            id="currency"
+            label="Currency"
+            value={settingsData.currencyRegional.currency}
+            onChange={(e) => {
+              handleChange('currencyRegional', 'currency', e.target.value)
+              handleBlur('currencyRegional', 'currency', e.target.value)
+            }}
+            options={[
+              { value: 'INR', label: 'Indian Rupee (INR)' },
+              { value: 'NZD', label: 'New Zealand Dollar (NZD)' },
+              { value: 'USD', label: 'US Dollar (USD)' },
+              { value: 'EUR', label: 'Euro (EUR)' },
+              { value: 'GBP', label: 'British Pound (GBP)' },
+              { value: 'AUD', label: 'Australian Dollar (AUD)' },
+            ]}
+            col={12}
+          />
         </Col>
         <Col md={4}>
-          <Form.Group className="mb-3">
-            <Form.Label className="fw-semibold">Date Format</Form.Label>
-            <FormSelect
-              value={settingsData.currencyRegional.dateFormat}
-              onChange={(e) => handleChange('currencyRegional', 'dateFormat', e.target.value)}
-              onBlur={(e) => handleBlur('currencyRegional', 'dateFormat', e.target.value)}
-              className="border-2"
-            >
-              <option value="DD/MM/YYYY">DD/MM/YYYY</option>
-              <option value="MM/DD/YYYY">MM/DD/YYYY</option>
-              <option value="YYYY-MM-DD">YYYY-MM-DD</option>
-              <option value="DD-MM-YYYY">DD-MM-YYYY</option>
-            </FormSelect>
-          </Form.Group>
+          <SelectField
+            id="dateFormat"
+            label="Date Format"
+            value={settingsData.currencyRegional.dateFormat}
+            onChange={(e) => {
+              handleChange('currencyRegional', 'dateFormat', e.target.value)
+              handleBlur('currencyRegional', 'dateFormat', e.target.value)
+            }}
+            options={[
+              { value: 'DD/MM/YYYY', label: 'DD/MM/YYYY' },
+              { value: 'MM/DD/YYYY', label: 'MM/DD/YYYY' },
+              { value: 'YYYY-MM-DD', label: 'YYYY-MM-DD' },
+              { value: 'DD-MM-YYYY', label: 'DD-MM-YYYY' },
+            ]}
+            col={12}
+          />
         </Col>
         <Col md={4}>
-          <Form.Group className="mb-3">
-            <Form.Label className="fw-semibold">Time Zone</Form.Label>
-            <FormSelect
-              value={settingsData.currencyRegional.timeZone}
-              onChange={(e) => handleChange('currencyRegional', 'timeZone', e.target.value)}
-              onBlur={(e) => handleBlur('currencyRegional', 'timeZone', e.target.value)}
-              className="border-2"
-            >
-              <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
-              <option value="Pacific/Auckland">Pacific/Auckland (NZDT/NZST)</option>
-              <option value="UTC">UTC</option>
-              <option value="America/New_York">America/New_York (EST/EDT)</option>
-              <option value="Europe/London">Europe/London (GMT/BST)</option>
-              <option value="Asia/Tokyo">Asia/Tokyo (JST)</option>
-            </FormSelect>
-          </Form.Group>
+          <SelectField
+            id="timeZone"
+            label="Time Zone"
+            value={settingsData.currencyRegional.timeZone}
+            onChange={(e) => {
+              handleChange('currencyRegional', 'timeZone', e.target.value)
+              handleBlur('currencyRegional', 'timeZone', e.target.value)
+            }}
+            options={[
+              { value: 'Asia/Kolkata', label: 'Asia/Kolkata (IST)' },
+              { value: 'Pacific/Auckland', label: 'Pacific/Auckland (NZDT/NZST)' },
+              { value: 'UTC', label: 'UTC' },
+              { value: 'America/New_York', label: 'America/New_York (EST/EDT)' },
+              { value: 'Europe/London', label: 'Europe/London (GMT/BST)' },
+              { value: 'Asia/Tokyo', label: 'Asia/Tokyo (JST)' },
+            ]}
+            col={12}
+          />
         </Col>
       </Row>
     </div>

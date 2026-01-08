@@ -6,6 +6,7 @@ import { useToast } from '../../../components'
 import { restaurantSettingsService } from '../../../services/restaurantSettingsService'
 import { usePermissions } from '../../../hooks'
 import { PERMISSIONS } from '../../../constants/permissions'
+import { TextField, SelectField, TextAreaField, FormRow } from '../../../components/common/FormFields'
 
 const RestaurantSettings = () => {
   const { hasPermission } = usePermissions()
@@ -276,52 +277,38 @@ const RestaurantSettings = () => {
               </div>
 
               <Form>
-                <Row className="mt-3">
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label className="fw-semibold">
-                        Default GST Percentage <span className="text-danger">*</span>
-                      </Form.Label>
-                      <Form.Control
-                        type="number"
-                        min="0"
-                        max="100"
-                        step="0.01"
-                        value={settingsData.gstSettings.default_gst_percentage}
-                        onChange={(e) => handleChange('gstSettings', 'default_gst_percentage', e.target.value)}
-                        disabled={isReadOnly}
-                        isInvalid={!!errors['gstSettings.default_gst_percentage']}
-                        className="border-2"
-                      />
-                      <Form.Control.Feedback type="invalid">
-                        {errors['gstSettings.default_gst_percentage']}
-                      </Form.Control.Feedback>
-                      <Form.Text className="text-muted">
-                        Default GST percentage applied to bills (0-100)
-                      </Form.Text>
-                    </Form.Group>
-                  </Col>
-
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label className="fw-semibold">
-                        GST Calculation Method <span className="text-danger">*</span>
-                      </Form.Label>
-                      <Form.Select
-                        value={settingsData.gstSettings.gst_calculation_method}
-                        onChange={(e) => handleChange('gstSettings', 'gst_calculation_method', e.target.value)}
-                        disabled={isReadOnly}
-                        className="border-2"
-                      >
-                        <option value="bill_total">Calculate on Bill Total</option>
-                        <option value="item_wise">Calculate Item-wise</option>
-                      </Form.Select>
-                      <Form.Text className="text-muted">
-                        How GST should be calculated for bills
-                      </Form.Text>
-                    </Form.Group>
-                  </Col>
-                </Row>
+                <FormRow>
+                  <TextField
+                    id="default_gst_percentage"
+                    label="Default GST Percentage"
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="0.01"
+                    value={settingsData.gstSettings.default_gst_percentage}
+                    onChange={(e) => handleChange('gstSettings', 'default_gst_percentage', e.target.value)}
+                    disabled={isReadOnly}
+                    invalid={!!errors['gstSettings.default_gst_percentage']}
+                    feedback={errors['gstSettings.default_gst_percentage']}
+                    helpText="Default GST percentage applied to bills (0-100)"
+                    required
+                    col={6}
+                  />
+                  <SelectField
+                    id="gst_calculation_method"
+                    label="GST Calculation Method"
+                    value={settingsData.gstSettings.gst_calculation_method}
+                    onChange={(e) => handleChange('gstSettings', 'gst_calculation_method', e.target.value)}
+                    disabled={isReadOnly}
+                    options={[
+                      { value: 'bill_total', label: 'Calculate on Bill Total' },
+                      { value: 'item_wise', label: 'Calculate Item-wise' },
+                    ]}
+                    helpText="How GST should be calculated for bills"
+                    required
+                    col={6}
+                  />
+                </FormRow>
 
                 {!isReadOnly && (
                   <div className="mt-3">
@@ -355,165 +342,121 @@ const RestaurantSettings = () => {
               </div>
 
               <Form>
-                <Row className="mt-3">
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label className="fw-semibold">
-                        Invoice Prefix <span className="text-danger">*</span>
-                      </Form.Label>
-                      <Form.Control
-                        type="text"
-                        value={settingsData.invoiceSettings.invoice_prefix}
-                        onChange={(e) => handleChange('invoiceSettings', 'invoice_prefix', e.target.value)}
-                        disabled={isReadOnly}
-                        isInvalid={!!errors['invoiceSettings.invoice_prefix']}
-                        className="border-2"
-                        placeholder="e.g., BILL, REST-INV"
-                        maxLength={20}
-                      />
-                      <Form.Control.Feedback type="invalid">
-                        {errors['invoiceSettings.invoice_prefix']}
-                      </Form.Control.Feedback>
-                      <Form.Text className="text-muted">
-                        Prefix for restaurant bill/invoice numbers (e.g., BILL001, REST-INV001)
-                      </Form.Text>
-                    </Form.Group>
-                  </Col>
+                <FormRow>
+                  <TextField
+                    id="invoice_prefix"
+                    label="Invoice Prefix"
+                    type="text"
+                    value={settingsData.invoiceSettings.invoice_prefix}
+                    onChange={(e) => handleChange('invoiceSettings', 'invoice_prefix', e.target.value)}
+                    disabled={isReadOnly}
+                    invalid={!!errors['invoiceSettings.invoice_prefix']}
+                    feedback={errors['invoiceSettings.invoice_prefix']}
+                    helpText="Prefix for restaurant bill/invoice numbers (e.g., BILL001, REST-INV001)"
+                    placeholder="e.g., BILL, REST-INV"
+                    maxLength={20}
+                    required
+                    col={6}
+                  />
+                  <TextField
+                    id="invoice_business_name"
+                    label="Invoice Business Name"
+                    type="text"
+                    value={settingsData.invoiceSettings.invoice_business_name}
+                    onChange={(e) => handleChange('invoiceSettings', 'invoice_business_name', e.target.value)}
+                    disabled={isReadOnly}
+                    helpText="Business name to display on restaurant invoices"
+                    placeholder="e.g., Teja Hotel Restaurant"
+                    maxLength={200}
+                    col={6}
+                  />
+                </FormRow>
 
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label className="fw-semibold">
-                        Invoice Business Name
-                      </Form.Label>
-                      <Form.Control
-                        type="text"
-                        value={settingsData.invoiceSettings.invoice_business_name}
-                        onChange={(e) => handleChange('invoiceSettings', 'invoice_business_name', e.target.value)}
-                        disabled={isReadOnly}
-                        className="border-2"
-                        placeholder="e.g., Teja Hotel Restaurant"
-                        maxLength={200}
-                      />
-                      <Form.Text className="text-muted">
-                        Business name to display on restaurant invoices
-                      </Form.Text>
-                    </Form.Group>
-                  </Col>
-                </Row>
+                <FormRow>
+                  <TextAreaField
+                    id="invoice_business_address"
+                    label="Invoice Business Address"
+                    value={settingsData.invoiceSettings.invoice_business_address}
+                    onChange={(e) => handleChange('invoiceSettings', 'invoice_business_address', e.target.value)}
+                    disabled={isReadOnly}
+                    helpText="Business address to display on restaurant invoices"
+                    placeholder="e.g., 123 Main Street, City, State, ZIP"
+                    maxLength={500}
+                    rows={2}
+                    col={12}
+                  />
+                </FormRow>
 
-                <Row>
-                  <Col md={12}>
-                    <Form.Group className="mb-3">
-                      <Form.Label className="fw-semibold">
-                        Invoice Business Address
-                      </Form.Label>
-                      <Form.Control
-                        as="textarea"
-                        rows={2}
-                        value={settingsData.invoiceSettings.invoice_business_address}
-                        onChange={(e) => handleChange('invoiceSettings', 'invoice_business_address', e.target.value)}
-                        disabled={isReadOnly}
-                        className="border-2"
-                        placeholder="e.g., 123 Main Street, City, State, ZIP"
-                        maxLength={500}
-                      />
-                      <Form.Text className="text-muted">
-                        Business address to display on restaurant invoices
-                      </Form.Text>
-                    </Form.Group>
-                  </Col>
-                </Row>
+                <FormRow>
+                  <TextField
+                    id="invoice_contact_phone"
+                    label="Invoice Contact Phone"
+                    type="text"
+                    value={settingsData.invoiceSettings.invoice_contact_phone}
+                    onChange={(e) => handleChange('invoiceSettings', 'invoice_contact_phone', e.target.value)}
+                    disabled={isReadOnly}
+                    helpText="Contact phone number to display on restaurant invoices"
+                    placeholder="e.g., +91 1234567890"
+                    maxLength={50}
+                    col={6}
+                  />
+                  <TextField
+                    id="invoice_contact_email"
+                    label="Invoice Contact Email"
+                    type="email"
+                    value={settingsData.invoiceSettings.invoice_contact_email}
+                    onChange={(e) => handleChange('invoiceSettings', 'invoice_contact_email', e.target.value)}
+                    disabled={isReadOnly}
+                    invalid={!!errors['invoiceSettings.invoice_contact_email']}
+                    feedback={errors['invoiceSettings.invoice_contact_email']}
+                    helpText="Contact email to display on restaurant invoices"
+                    placeholder="e.g., info@restaurant.com"
+                    maxLength={200}
+                    col={6}
+                  />
+                </FormRow>
 
-                <Row>
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label className="fw-semibold">
-                        Invoice Contact Phone
-                      </Form.Label>
-                      <Form.Control
-                        type="text"
-                        value={settingsData.invoiceSettings.invoice_contact_phone}
-                        onChange={(e) => handleChange('invoiceSettings', 'invoice_contact_phone', e.target.value)}
-                        disabled={isReadOnly}
-                        className="border-2"
-                        placeholder="e.g., +91 1234567890"
-                        maxLength={50}
-                      />
-                      <Form.Text className="text-muted">
-                        Contact phone number to display on restaurant invoices
-                      </Form.Text>
-                    </Form.Group>
-                  </Col>
+                <FormRow>
+                  <TextField
+                    id="invoice_footer_text"
+                    label="Invoice Footer Text"
+                    type="text"
+                    value={settingsData.invoiceSettings.invoice_footer_text}
+                    onChange={(e) => handleChange('invoiceSettings', 'invoice_footer_text', e.target.value)}
+                    disabled={isReadOnly}
+                    helpText="Footer text to display on restaurant bills/invoices"
+                    placeholder="e.g., Thank you for visiting!"
+                    maxLength={200}
+                    col={6}
+                  />
+                  <TextField
+                    id="invoice_other_text"
+                    label="Invoice Other Text"
+                    type="text"
+                    value={settingsData.invoiceSettings.invoice_other_text}
+                    onChange={(e) => handleChange('invoiceSettings', 'invoice_other_text', e.target.value)}
+                    disabled={isReadOnly}
+                    helpText="Additional text to display on restaurant bills/invoices"
+                    placeholder="e.g., Terms and conditions"
+                    maxLength={200}
+                    col={6}
+                  />
+                </FormRow>
 
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label className="fw-semibold">
-                        Invoice Contact Email
-                      </Form.Label>
-                      <Form.Control
-                        type="email"
-                        value={settingsData.invoiceSettings.invoice_contact_email}
-                        onChange={(e) => handleChange('invoiceSettings', 'invoice_contact_email', e.target.value)}
-                        disabled={isReadOnly}
-                        isInvalid={!!errors['invoiceSettings.invoice_contact_email']}
-                        className="border-2"
-                        placeholder="e.g., info@restaurant.com"
-                        maxLength={200}
-                      />
-                      <Form.Control.Feedback type="invalid">
-                        {errors['invoiceSettings.invoice_contact_email']}
-                      </Form.Control.Feedback>
-                      <Form.Text className="text-muted">
-                        Contact email to display on restaurant invoices
-                      </Form.Text>
-                    </Form.Group>
-                  </Col>
-                </Row>
-
-                <Row>
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label className="fw-semibold">
-                        Invoice Footer Text
-                      </Form.Label>
-                      <Form.Control
-                        type="text"
-                        value={settingsData.invoiceSettings.invoice_footer_text}
-                        onChange={(e) => handleChange('invoiceSettings', 'invoice_footer_text', e.target.value)}
-                        disabled={isReadOnly}
-                        className="border-2"
-                        placeholder="e.g., Thank you for visiting!"
-                        maxLength={200}
-                      />
-                      <Form.Text className="text-muted">
-                        Footer text to display on restaurant bills/invoices
-                      </Form.Text>
-                    </Form.Group>
-                  </Col>
-                </Row>
-
-                <Row>
-                  <Col md={12}>
-                    <Form.Group className="mb-3">
-                      <Form.Label className="fw-semibold">
-                        Invoice Other Text / Notes
-                      </Form.Label>
-                      <Form.Control
-                        as="textarea"
-                        rows={4}
-                        value={settingsData.invoiceSettings.invoice_other_text}
-                        onChange={(e) => handleChange('invoiceSettings', 'invoice_other_text', e.target.value)}
-                        disabled={isReadOnly}
-                        className="border-2"
-                        placeholder="e.g., Terms & Conditions, Additional Notes, Special Instructions..."
-                        maxLength={500}
-                      />
-                      <Form.Text className="text-muted">
-                        Additional text/notes to display on invoices (Terms & Conditions, special instructions, etc.)
-                      </Form.Text>
-                    </Form.Group>
-                  </Col>
-                </Row>
+                <FormRow>
+                  <TextAreaField
+                    id="invoice_other_text"
+                    label="Invoice Other Text / Notes"
+                    value={settingsData.invoiceSettings.invoice_other_text}
+                    onChange={(e) => handleChange('invoiceSettings', 'invoice_other_text', e.target.value)}
+                    disabled={isReadOnly}
+                    helpText="Additional text/notes to display on invoices (Terms & Conditions, special instructions, etc.)"
+                    placeholder="e.g., Terms & Conditions, Additional Notes, Special Instructions..."
+                    maxLength={500}
+                    rows={4}
+                    col={12}
+                  />
+                </FormRow>
 
                 {!isReadOnly && (
                   <div className="mt-3">
@@ -547,123 +490,80 @@ const RestaurantSettings = () => {
               </div>
 
               <Form>
-                <Row className="mt-3">
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label className="fw-semibold">
-                        Enable Thermal Printer
-                      </Form.Label>
-                      <Form.Select
-                        value={settingsData.thermalPrinter.enabled}
-                        onChange={(e) => handleChange('thermalPrinter', 'enabled', e.target.value)}
-                        disabled={isReadOnly}
-                        className="border-2"
-                      >
-                        <option value="true">Enabled</option>
-                        <option value="false">Disabled</option>
-                      </Form.Select>
-                      <Form.Text className="text-muted">
-                        Enable or disable thermal printer functionality
-                      </Form.Text>
-                    </Form.Group>
-                  </Col>
-
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label className="fw-semibold">
-                        Paper Width (mm)
-                      </Form.Label>
-                      <Form.Control
-                        type="text"
-                        value={settingsData.thermalPrinter.paper_width}
-                        onChange={(e) => handleChange('thermalPrinter', 'paper_width', e.target.value)}
-                        disabled={isReadOnly}
-                        className="border-2"
-                        readOnly
-                      />
-                      <Form.Text className="text-muted">
-                        Thermal printer paper width (fixed at 80mm)
-                      </Form.Text>
-                    </Form.Group>
-                  </Col>
-                </Row>
+                <FormRow>
+                  <SelectField
+                    id="thermal_printer_enabled"
+                    label="Enable Thermal Printer"
+                    value={settingsData.thermalPrinter.enabled}
+                    onChange={(e) => handleChange('thermalPrinter', 'enabled', e.target.value)}
+                    disabled={isReadOnly}
+                    options={[
+                      { value: 'true', label: 'Enabled' },
+                      { value: 'false', label: 'Disabled' },
+                    ]}
+                    helpText="Enable or disable thermal printer functionality"
+                    col={6}
+                  />
+                  <TextField
+                    id="paper_width"
+                    label="Paper Width (mm)"
+                    type="text"
+                    value={settingsData.thermalPrinter.paper_width}
+                    onChange={(e) => handleChange('thermalPrinter', 'paper_width', e.target.value)}
+                    disabled={isReadOnly}
+                    readOnly
+                    helpText="Thermal printer paper width (fixed at 80mm)"
+                    col={6}
+                  />
+                </FormRow>
 
                 {settingsData.thermalPrinter.enabled === 'true' && (
                   <>
-                    <Row>
-                      <Col md={6}>
-                        <Form.Group className="mb-3">
-                          <Form.Label className="fw-semibold">
-                            Printer Name <span className="text-danger">*</span>
-                          </Form.Label>
-                          <Form.Control
-                            type="text"
-                            value={settingsData.thermalPrinter.printer_name}
-                            onChange={(e) => handleChange('thermalPrinter', 'printer_name', e.target.value)}
-                            disabled={isReadOnly}
-                            isInvalid={!!errors['thermalPrinter.printer_name']}
-                            className="border-2"
-                            placeholder="e.g., Kitchen Printer"
-                          />
-                          <Form.Control.Feedback type="invalid">
-                            {errors['thermalPrinter.printer_name']}
-                          </Form.Control.Feedback>
-                          <Form.Text className="text-muted">
-                            Name or identifier for the printer
-                          </Form.Text>
-                        </Form.Group>
-                      </Col>
-
-                      <Col md={6}>
-                        <Form.Group className="mb-3">
-                          <Form.Label className="fw-semibold">
-                            Printer IP Address <span className="text-danger">*</span>
-                          </Form.Label>
-                          <Form.Control
-                            type="text"
-                            value={settingsData.thermalPrinter.printer_ip}
-                            onChange={(e) => handleChange('thermalPrinter', 'printer_ip', e.target.value)}
-                            disabled={isReadOnly}
-                            isInvalid={!!errors['thermalPrinter.printer_ip']}
-                            className="border-2"
-                            placeholder="e.g., 192.168.1.100"
-                          />
-                          <Form.Control.Feedback type="invalid">
-                            {errors['thermalPrinter.printer_ip']}
-                          </Form.Control.Feedback>
-                          <Form.Text className="text-muted">
-                            IP address of the thermal printer
-                          </Form.Text>
-                        </Form.Group>
-                      </Col>
-                    </Row>
-
-                    <Row>
-                      <Col md={6}>
-                        <Form.Group className="mb-3">
-                          <Form.Label className="fw-semibold">
-                            Printer Port
-                          </Form.Label>
-                          <Form.Control
-                            type="number"
-                            min="1"
-                            max="65535"
-                            value={settingsData.thermalPrinter.printer_port}
-                            onChange={(e) => handleChange('thermalPrinter', 'printer_port', e.target.value)}
-                            disabled={isReadOnly}
-                            isInvalid={!!errors['thermalPrinter.printer_port']}
-                            className="border-2"
-                            placeholder="9100"
-                          />
-                          <Form.Control.Feedback type="invalid">
-                            {errors['thermalPrinter.printer_port']}
-                          </Form.Control.Feedback>
-                          <Form.Text className="text-muted">
-                            Network port for printer communication (default: 9100)
-                          </Form.Text>
-                        </Form.Group>
-                      </Col>
-                    </Row>
+                    <FormRow>
+                      <TextField
+                        id="printer_name"
+                        label="Printer Name"
+                        type="text"
+                        value={settingsData.thermalPrinter.printer_name}
+                        onChange={(e) => handleChange('thermalPrinter', 'printer_name', e.target.value)}
+                        disabled={isReadOnly}
+                        invalid={!!errors['thermalPrinter.printer_name']}
+                        feedback={errors['thermalPrinter.printer_name']}
+                        helpText="Name or identifier for the printer"
+                        placeholder="e.g., Kitchen Printer"
+                        required
+                        col={6}
+                      />
+                      <TextField
+                        id="printer_ip"
+                        label="Printer IP Address"
+                        type="text"
+                        value={settingsData.thermalPrinter.printer_ip}
+                        onChange={(e) => handleChange('thermalPrinter', 'printer_ip', e.target.value)}
+                        disabled={isReadOnly}
+                        invalid={!!errors['thermalPrinter.printer_ip']}
+                        feedback={errors['thermalPrinter.printer_ip']}
+                        placeholder="e.g., 192.168.1.100"
+                        helpText="IP address of the thermal printer"
+                        required
+                        col={6}
+                      />
+                      <TextField
+                        id="printer_port"
+                        label="Printer Port"
+                        type="number"
+                        min="1"
+                        max="65535"
+                        value={settingsData.thermalPrinter.printer_port}
+                        onChange={(e) => handleChange('thermalPrinter', 'printer_port', e.target.value)}
+                        disabled={isReadOnly}
+                        invalid={!!errors['thermalPrinter.printer_port']}
+                        feedback={errors['thermalPrinter.printer_port']}
+                        helpText="Network port for printer communication (default: 9100)"
+                        placeholder="9100"
+                        col={6}
+                      />
+                    </FormRow>
                   </>
                 )}
 
