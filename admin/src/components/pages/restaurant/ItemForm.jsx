@@ -16,6 +16,7 @@ const ItemForm = ({ show, onHide, item, categories = [], selectedCategory = null
     status: 'active',
     image: '',
     display_order: 0,
+    is_popular: false,
   })
   const [errors, setErrors] = useState({})
   const [imagePreview, setImagePreview] = useState('')
@@ -35,6 +36,7 @@ const ItemForm = ({ show, onHide, item, categories = [], selectedCategory = null
         status: item.status || 'active',
         image: item.image || '',
         display_order: item.display_order || 0,
+        is_popular: item.isPopular !== undefined ? item.isPopular : false,
       })
       setImagePreview(item.image || '')
       setImageFile(null)
@@ -54,6 +56,7 @@ const ItemForm = ({ show, onHide, item, categories = [], selectedCategory = null
         status: 'active',
         image: '',
         display_order: 0,
+        is_popular: false,
       })
       setImagePreview('')
       setImageFile(null)
@@ -148,6 +151,7 @@ const ItemForm = ({ show, onHide, item, categories = [], selectedCategory = null
         price: parseFloat(formData.price),
         gst_percentage: formData.gst_percentage ? parseFloat(formData.gst_percentage) : null,
         display_order: parseInt(formData.display_order) || 0,
+        is_popular: formData.is_popular || false,
         imageFile: imageFile, // Pass the file separately for upload
       })
     }
@@ -311,6 +315,23 @@ const ItemForm = ({ show, onHide, item, categories = [], selectedCategory = null
               helpText="Lower numbers appear first in the menu"
               col={12}
             />
+          </FormRow>
+
+          <FormRow>
+            <div className="col-md-12">
+              <Form.Group className="mb-3">
+                <Form.Check
+                  type="checkbox"
+                  id="is_popular"
+                  label="Mark as Popular/Favourite"
+                  checked={formData.is_popular || false}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, is_popular: e.target.checked }))}
+                />
+                <Form.Text className="text-muted">
+                  Popular items (like Roti, Papad, Butter Milk) will display on top for easy access
+                </Form.Text>
+              </Form.Group>
+            </div>
           </FormRow>
 
           <Form.Group className="mb-3">

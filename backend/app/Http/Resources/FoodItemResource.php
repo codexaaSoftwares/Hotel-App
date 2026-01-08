@@ -46,6 +46,7 @@ class FoodItemResource extends JsonResource
             'description' => $this->description,
             'image' => $imageUrl,
             'display_order' => (int) $this->display_order,
+            'isPopular' => (bool) $this->is_popular,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

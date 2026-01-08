@@ -32,6 +32,7 @@ const normalizeItem = (item) => {
     status: item.status || 'active',
     image: imageUrl,
     display_order: item.display_order || 0,
+    isPopular: item.isPopular !== undefined ? Boolean(item.isPopular) : (item.is_popular !== undefined ? Boolean(item.is_popular) : false),
     created_at: item.created_at,
     updated_at: item.updated_at,
   }
@@ -62,6 +63,7 @@ const serializeItem = (itemData) => {
     status: itemData.status || 'active',
     description: itemData.description || null,
     display_order: itemData.display_order ? parseInt(itemData.display_order) : null,
+    is_popular: itemData.is_popular !== undefined ? Boolean(itemData.is_popular) : false,
   }
   
   // Only include image if it's provided (don't convert empty string to null)

@@ -56,7 +56,7 @@ class FoodItemController extends Controller
         $pagination = $this->buildPaginator(
             $request,
             $query,
-            ['name', 'price', 'status', 'food_type', 'display_order', 'created_at'],
+            ['name', 'price', 'status', 'food_type', 'display_order', 'is_popular', 'created_at'],
             $defaultSort
         );
 

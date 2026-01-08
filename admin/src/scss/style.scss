@@ -210,6 +210,73 @@ textarea {
   min-height: 60px; // Minimum height for textarea
 }
 
+// Menu Management Styles
+.menu-category-row {
+  background-color: #ffffff;
+  border-color: #e5e7eb;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+  &:hover {
+    background-color: #f0fdfa;
+    border-color: #0d9488;
+    box-shadow: 0 2px 6px rgba(13, 148, 136, 0.1);
+  }
+}
+
+.menu-category-chevron {
+  font-size: 0.75rem;
+  width: 12px;
+}
+
+.menu-category-badge {
+  font-size: 0.65rem;
+}
+
+.menu-action-btn {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.menu-action-btn-teal {
+  border-color: #0d9488;
+  color: #0d9488;
+
+  &:hover:not(:disabled) {
+    background-color: #0d9488;
+    color: #ffffff;
+  }
+}
+
+.menu-action-btn-icon {
+  font-size: 0.7rem;
+}
+
+.menu-item-arrow-btn {
+  font-size: 0.75rem;
+  line-height: 1.2;
+  min-width: 32px;
+  min-height: 28px;
+  border-color: #0d9488;
+  color: #0d9488;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background-color: #0d9488;
+    color: #ffffff;
+    transform: scale(1.05);
+  }
+}
+
+.menu-item-arrow-icon {
+  font-size: 0.75rem;
+}
+
 @include color-mode(dark) {
   body {
     background-color: var(--cui-dark-bg-subtle);
@@ -217,5 +284,15 @@ textarea {
 
   .footer {
     --cui-footer-bg: var(--cui-body-bg);
+  }
+
+  .menu-category-row {
+    background-color: var(--cui-dark-bg);
+    border-color: var(--cui-border-color);
+
+    &:hover {
+      background-color: rgba(13, 148, 136, 0.1);
+      border-color: #14b8a6;
+    }
   }
 }

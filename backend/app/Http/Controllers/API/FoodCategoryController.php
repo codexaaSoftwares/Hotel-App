@@ -180,6 +180,7 @@ class FoodCategoryController extends Controller
                         'status' => $item->status,
                         'image' => $imageUrl,
                         'display_order' => (int) $item->display_order,
+                        'isPopular' => (bool) $item->is_popular,
                         'created_at' => $item->created_at,
                         'updated_at' => $item->updated_at,
                     ];

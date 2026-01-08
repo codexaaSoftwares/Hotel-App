@@ -25,6 +25,7 @@ class FoodItem extends Model
         'description',
         'image',
         'display_order',
+        'is_popular',
     ];
 
     /**
@@ -38,6 +39,7 @@ class FoodItem extends Model
         'food_type' => 'string',
         'status' => 'string',
         'display_order' => 'integer',
+        'is_popular' => 'boolean',
         'deleted_at' => 'datetime',
     ];
 
@@ -92,7 +94,20 @@ class FoodItem extends Model
      */
     public function scopeOrdered($query)
     {
-        return $query->orderBy('display_order', 'asc')->orderBy('name', 'asc');
+        return $query->orderBy('is_popular', 'desc')
+            ->orderBy('display_order', 'asc')
+            ->orderBy('name', 'asc');
+    }
+
+    /**
+     * Scope a query to only include popular items.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopePopular($query)
+    {
+        return $query->where('is_popular', true);
     }
 }
 

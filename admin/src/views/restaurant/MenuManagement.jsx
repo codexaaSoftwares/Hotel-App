@@ -16,6 +16,7 @@ import {
   faArrowUp,
   faArrowDown,
   faImage,
+  faStar,
 } from '@fortawesome/free-solid-svg-icons'
 import { useToast } from '../../components'
 import menuService from '../../services/menuService'
@@ -456,27 +457,21 @@ const MenuManagement = () => {
                       <div key={category.id} className="mb-2">
                         {/* Category Row - Compact */}
                         <div
-                          className="d-flex align-items-center py-1 px-2 mb-1 rounded border"
-                          style={{
-                            backgroundColor: '#f8f9fa',
-                            cursor: 'pointer',
-                            fontSize: '0.875rem',
-                          }}
+                          className="d-flex align-items-center py-2 px-3 mb-1 rounded border menu-category-row"
                           onClick={() => toggleCategory(category.id)}
                         >
                           <FontAwesomeIcon
                             icon={isExpanded ? faChevronDown : faChevronRight}
-                            className="me-2 text-muted"
-                            style={{ fontSize: '0.75rem', width: '12px' }}
+                            className="me-2 text-muted menu-category-chevron"
                           />
                           <div className="flex-grow-1 d-flex align-items-center gap-2">
                             <span className="fw-semibold">{category.name}</span>
                             {category.status === 'inactive' && (
-                              <Badge bg="secondary" className="py-0" style={{ fontSize: '0.65rem' }}>
+                              <Badge bg="secondary" className="py-0 menu-category-badge">
                                 Inactive
                               </Badge>
                             )}
-                            <Badge bg="light" text="dark" className="py-0" style={{ fontSize: '0.65rem' }}>
+                            <Badge bg="light" text="dark" className="py-0 menu-category-badge">
                               {category.items?.length || 0} items
                             </Badge>
                           </div>
@@ -485,43 +480,41 @@ const MenuManagement = () => {
                               <Button
                                 variant="outline-success"
                                 size="sm"
-                                className="py-0 px-2"
-                                style={{ fontSize: '0.75rem' }}
+                                className="menu-action-btn menu-action-btn-teal"
                                 onClick={(e) => {
                                   e.stopPropagation()
                                   handleAddItem(category.id)
                                 }}
                               >
-                                <FontAwesomeIcon icon={faPlus} style={{ fontSize: '0.7rem' }} />
+                                <FontAwesomeIcon icon={faPlus} className="me-1 menu-action-btn-icon" />
+                                Add Item
                               </Button>
                             )}
                             {canEditCategory && (
                               <Button
                                 variant="outline-primary"
                                 size="sm"
-                                className="py-0 px-2"
-                                style={{ fontSize: '0.75rem' }}
+                                className="menu-action-btn"
                                 onClick={(e) => {
                                   e.stopPropagation()
                                   handleEditCategory(category)
                                 }}
                               >
-                                <FontAwesomeIcon icon={faEdit} style={{ fontSize: '0.7rem' }} />
+                                <FontAwesomeIcon icon={faEdit} className="menu-action-btn-icon" />
                               </Button>
                             )}
                             {canDeleteCategory && (
                               <Button
                                 variant="outline-danger"
                                 size="sm"
-                                className="py-0 px-2"
-                                style={{ fontSize: '0.75rem' }}
+                                className="menu-action-btn"
                                 onClick={(e) => {
                                   e.stopPropagation()
                                   handleDeleteCategory(category)
                                 }}
                                 disabled={isDeleting}
                               >
-                                <FontAwesomeIcon icon={faTrash} style={{ fontSize: '0.7rem' }} />
+                                <FontAwesomeIcon icon={faTrash} className="menu-action-btn-icon" />
                               </Button>
                             )}
                           </div>
@@ -543,29 +536,27 @@ const MenuManagement = () => {
                                     return (
                                       <tr key={item.id} style={{ fontSize: '0.8rem' }}>
                                         {/* Order - Up/Down */}
-                                        <td style={{ width: '50px', padding: '4px 8px', textAlign: 'center', verticalAlign: 'middle' }}>
-                                          <div className="d-flex flex-column gap-1">
+                                        <td className="text-center align-middle" style={{ width: '60px', padding: '4px 8px' }}>
+                                          <div className="d-flex flex-column gap-1 align-items-center">
                                             <Button
-                                              variant="outline-secondary"
+                                              variant="outline-primary"
                                               size="sm"
-                                              className="py-0 px-1"
-                                              style={{ fontSize: '0.65rem', lineHeight: '1', minWidth: '24px' }}
+                                              className="menu-item-arrow-btn"
                                               onClick={() => handleMoveItemUp(item, category.id)}
                                               disabled={!canMoveUp}
                                               title="Move up"
                                             >
-                                              <FontAwesomeIcon icon={faArrowUp} style={{ fontSize: '0.6rem' }} />
+                                              <FontAwesomeIcon icon={faArrowUp} className="menu-item-arrow-icon" />
                                             </Button>
                                             <Button
-                                              variant="outline-secondary"
+                                              variant="outline-primary"
                                               size="sm"
-                                              className="py-0 px-1"
-                                              style={{ fontSize: '0.65rem', lineHeight: '1', minWidth: '24px' }}
+                                              className="menu-item-arrow-btn"
                                               onClick={() => handleMoveItemDown(item, category.id)}
                                               disabled={!canMoveDown}
                                               title="Move down"
                                             >
-                                              <FontAwesomeIcon icon={faArrowDown} style={{ fontSize: '0.6rem' }} />
+                                              <FontAwesomeIcon icon={faArrowDown} className="menu-item-arrow-icon" />
                                             </Button>
                                           </div>
                                         </td>
@@ -590,6 +581,12 @@ const MenuManagement = () => {
                                         <td style={{ padding: '4px 8px', verticalAlign: 'middle' }}>
                                           <div>
                                             <span className="fw-medium">{item.name}</span>
+                                            {item.isPopular && (
+                                              <Badge bg="warning" text="dark" className="ms-1 py-0" style={{ fontSize: '0.65rem' }}>
+                                                <FontAwesomeIcon icon={faStar} className="me-1" style={{ fontSize: '0.6rem' }} />
+                                                Popular
+                                              </Badge>
+                                            )}
                                             {item.status === 'inactive' && (
                                               <Badge bg="secondary" className="ms-1 py-0" style={{ fontSize: '0.65rem' }}>
                                                 Inactive
@@ -625,29 +622,27 @@ const MenuManagement = () => {
                                           )}
                                         </td>
                                         {/* Actions */}
-                                        <td style={{ width: '100px', padding: '4px 8px', textAlign: 'right', verticalAlign: 'middle' }}>
+                                        <td className="text-end align-middle" style={{ width: '100px', padding: '4px 8px' }}>
                                           <div className="d-flex gap-1 justify-content-end">
                                             {canEditItem && (
                                               <Button
                                                 variant="outline-primary"
                                                 size="sm"
-                                                className="py-0 px-2"
-                                                style={{ fontSize: '0.7rem' }}
+                                                className="menu-action-btn"
                                                 onClick={() => handleEditItem(item)}
                                               >
-                                                <FontAwesomeIcon icon={faEdit} style={{ fontSize: '0.7rem' }} />
+                                                <FontAwesomeIcon icon={faEdit} className="menu-action-btn-icon" />
                                               </Button>
                                             )}
                                             {canDeleteItem && (
                                               <Button
                                                 variant="outline-danger"
                                                 size="sm"
-                                                className="py-0 px-2"
-                                                style={{ fontSize: '0.7rem' }}
+                                                className="menu-action-btn"
                                                 onClick={() => handleDeleteItem(item)}
                                                 disabled={isDeletingItem}
                                               >
-                                                <FontAwesomeIcon icon={faTrash} style={{ fontSize: '0.7rem' }} />
+                                                <FontAwesomeIcon icon={faTrash} className="menu-action-btn-icon" />
                                               </Button>
                                             )}
                                           </div>
