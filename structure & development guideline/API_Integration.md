@@ -1728,22 +1728,22 @@ const handleDeletePackage = async (packageId) => {
 
 ---
 
-## 👥 Customer Management APIs
+## 👥 Customer Management APIs (Restaurant System)
 
 ### 1. **GET /api/customers**
-**Description**: Customers की list fetch करने के लिए (paginated, sortable)
+**Description**: Customers की list fetch करने के लिए (paginated, sortable, searchable, filterable)
 
 **Backend Controller**: `CustomerController@index`
 
 **Query Parameters**:
 - `page` - Page number (default: 1)
-- `limit` - Items per page (default: 20, max: 100)
-- `search` - Search term (first_name, last_name, email, phone में search)
-- `status` - Filter by status (active, inactive, pending)
-- `branch_id` - Filter by branch
+- `limit` - Items per page (default: 25, max: 100)
+- `search` - Search term (name, customer_code, mobile, email में search)
+- `status` - Filter by status (active, inactive)
+- `customer_type` - Filter by customer type (regular, credit)
 - `city` - Filter by city
-- `sort_by` - Sort column (first_name, email, city, status, created_at)
-- `sort_direction` - Sort direction (asc/desc)
+- `sort_by` - Sort column (name, customer_code, status, created_at)
+- `sort_direction` - Sort direction (asc/desc, default: name asc)
 
 **Response**:
 ```json
@@ -1752,46 +1752,34 @@ const handleDeletePackage = async (packageId) => {
   "data": [
     {
       "id": 1,
-      "customerId": "#CUST001",
-      "customer_code": "#CUST001",
+      "customerCode": "#CUST001",
       "name": "Rajesh Patel",
-      "firstName": "Rajesh",
-      "lastName": "Patel",
+      "mobile": "9876543210",
       "email": "rajesh.patel@email.com",
-      "mobile": "+91 98765 43210",
-      "phone": "+91 98765 43210",
-      "address": {
-        "street": "123 MG Road",
-        "city": "Ahmedabad",
-        "state": "Gujarat",
-        "postalCode": "380001",
-        "country": "India"
-      },
+      "address": "123 MG Road",
+      "city": "Ahmedabad",
+      "state": "Gujarat",
+      "pincode": "380001",
+      "customerType": "regular",
       "status": "active",
-      "branch_id": 1,
-      "branch_name": "Lunawada Main",
-      "branch_code": "MB001",
-      "totalOrders": 5,
-      "total_orders": 5,
-      "totalSpent": 125000,
-      "total_amount": 125000,
-      "paid_amount": 100000,
-      "remaining_amount": 25000,
-      "wallet_balance": 5000,
-      "dob": "1990-05-15",
-      "anniversary_date": "2018-06-20",
-      "created_at": "2024-01-15T10:30:00.000000Z"
+      "totalBills": 5,
+      "totalAmount": 125000.00,
+      "paidAmount": 100000.00,
+      "remainingAmount": 25000.00,
+      "notes": "Regular customer",
+      "createdAt": "2025-01-15T10:30:00.000000Z",
+      "updatedAt": "2025-01-15T10:30:00.000000Z"
     }
   ],
   "meta": {
     "total": 10,
     "page": 1,
-    "limit": 20,
+    "limit": 25,
     "totalPages": 1,
     "hasNext": false,
     "hasPrev": false,
-    "sortBy": "created_at",
-    "sortDirection": "desc"
+    "sortBy": "name",
+    "sortDirection": "asc"
   }
 }
 ```
@@ -1804,15 +1792,15 @@ const handleDeletePackage = async (packageId) => {
 - **Used In**:
   - `src/views/customers/CustomersList.jsx` - Customers list page में
 
-**Latest UI Behavior (Nov 2025)**:
-- Customers list अब API payload से total/paid/remaining values normalize करता है ताकि partial responses में भी सही financial summary दिखे
-- Orders module की तरह यह स्क्रीन अब mock fallback पर निर्भर नहीं करती; किसी भी API failure पर toast error दिखता है और तालिका सुरक्षित empty state में reset होती है
-
-**Note**: Customer stats (totalOrders, total_amount, paid_amount, etc.) automatically calculate होते हैं orders से
+**Features**:
+- Default sort: Name (ascending)
+- Default page size: 25 items
+- Server-side pagination, filtering, and searching
+- Address column combines Address + City in list view
 
 ---
 
-### 2. **GET /api/customers/{customer}**
+### 2. **GET /api/customers/{id}**
 **Description**: Specific customer की details fetch करने के लिए
 
 **Backend Controller**: `CustomerController@show`
@@ -1823,20 +1811,24 @@ const handleDeletePackage = async (packageId) => {
   "success": true,
   "data": {
     "id": 1,
-    "customerId": "#CUST001",
+    "customerCode": "#CUST001",
     "name": "Rajesh Patel",
-    "firstName": "Rajesh",
-    "lastName": "Patel",
+    "mobile": "9876543210",
     "email": "rajesh.patel@email.com",
-    "phone": "+91 98765 43210",
-    "address": {...},
+    "address": "123 MG Road",
+    "city": "Ahmedabad",
+    "state": "Gujarat",
+    "pincode": "380001",
+    "customerType": "regular",
     "status": "active",
-    "totalOrders": 5,
-    "total_amount": 125000,
-    "paid_amount": 100000,
-    "remaining_amount": 25000
-  },
-  "message": "Customer retrieved successfully."
+    "totalBills": 5,
+    "totalAmount": 125000.00,
+    "paidAmount": 100000.00,
+    "remainingAmount": 25000.00,
+    "notes": "Regular customer",
+    "createdAt": "2025-01-15T10:30:00.000000Z",
+    "updatedAt": "2025-01-15T10:30:00.000000Z"
+  }
 }
 ```
 
@@ -1847,7 +1839,6 @@ const handleDeletePackage = async (packageId) => {
 - **Method**: `customerService.getCustomerById(id)`
 - **Used In**:
   - `src/components/pages/customers/CustomerForm.jsx` - Edit customer form में
-  - `src/components/pages/customers/CustomerDetailsModal.jsx` - Customer details modal में
 
 ---
 
@@ -1859,20 +1850,16 @@ const handleDeletePackage = async (packageId) => {
 **Request Body**:
 ```json
 {
-  "first_name": "Rajesh",
-  "last_name": "Patel",
+  "name": "Rajesh Patel",
+  "mobile": "9876543210",
   "email": "rajesh.patel@email.com",
-  "phone": "+91 98765 43210",
-  "mobile": "+91 98765 43210",
   "address": "123 MG Road",
   "city": "Ahmedabad",
   "state": "Gujarat",
-  "postal_code": "380001",
-  "country": "India",
-  "branch_id": 1,
+  "pincode": "380001",
+  "customer_type": "regular",
   "status": "active",
-  "dob": "1990-05-15",
-  "anniversary_date": "2018-06-20"
+  "notes": "Regular customer"
 }
 ```
 
@@ -1882,14 +1869,17 @@ const handleDeletePackage = async (packageId) => {
   "success": true,
   "data": {
     "id": 1,
-    "customer_code": "#CUST001",
-    "first_name": "Rajesh",
-    "last_name": "Patel",
+    "customerCode": "#CUST001",
+    "name": "Rajesh Patel",
+    "mobile": "9876543210",
     "email": "rajesh.patel@email.com",
+    "customerType": "regular",
     "status": "active",
-    "total_orders": 0,
-    "total_amount": 0,
-    "created_at": "2024-01-15T10:30:00.000000Z"
+    "totalBills": 0,
+    "totalAmount": 0.00,
+    "paidAmount": 0.00,
+    "remainingAmount": 0.00,
+    "createdAt": "2025-01-15T10:30:00.000000Z"
   },
   "message": "Customer created successfully."
 }
@@ -1903,9 +1893,11 @@ const handleDeletePackage = async (packageId) => {
 - **Used In**:
   - `src/components/pages/customers/CustomerForm.jsx` - Create customer form में
 
+**Note**: Customer code (#CUST001) automatically generated via model observer
+
 ---
 
-### 4. **PUT /api/customers/{customer}**
+### 4. **PUT /api/customers/{id}**
 **Description**: Existing customer update करने के लिए
 
 **Backend Controller**: `CustomerController@update`
@@ -1913,11 +1905,16 @@ const handleDeletePackage = async (packageId) => {
 **Request Body**:
 ```json
 {
-  "first_name": "Rajesh",
-  "last_name": "Patel",
+  "name": "Rajesh Patel",
+  "mobile": "9876543210",
   "email": "rajesh.patel@email.com",
-  "phone": "+91 98765 43210",
-  "status": "active"
+  "address": "123 MG Road",
+  "city": "Ahmedabad",
+  "state": "Gujarat",
+  "pincode": "380001",
+  "customer_type": "credit",
+  "status": "active",
+  "notes": "Updated notes"
 }
 ```
 
@@ -1925,7 +1922,13 @@ const handleDeletePackage = async (packageId) => {
 ```json
 {
   "success": true,
-  "data": {...},
+  "data": {
+    "id": 1,
+    "customerCode": "#CUST001",
+    "name": "Rajesh Patel",
+    "customerType": "credit",
+    "status": "active"
+  },
   "message": "Customer updated successfully."
 }
 ```
@@ -1940,7 +1943,7 @@ const handleDeletePackage = async (packageId) => {
 
 ---
 
-### 5. **DELETE /api/customers/{customer}**
+### 5. **DELETE /api/customers/{id}**
 **Description**: Customer delete करने के लिए (soft delete)
 
 **Backend Controller**: `CustomerController@destroy`
@@ -1960,85 +1963,6 @@ const handleDeletePackage = async (packageId) => {
 - **Method**: `customerService.deleteCustomer(id)`
 - **Used In**:
   - `src/views/customers/CustomersList.jsx` - Delete customer button click पर
-
----
-
-### 6. **PUT /api/customers/{customer}/status**
-**Description**: Customer status update करने के लिए
-
-**Backend Controller**: `CustomerController@updateStatus`
-
-**Request Body**:
-```json
-{
-      "status": "inactive"
-}
-```
-
-**Response**:
-```json
-{
-  "success": true,
-  "data": {...},
-  "message": "Customer status updated successfully."
-}
-```
-
-**Permission Required**: `edit_customer`
-
-**Frontend Integration**:
-- **Service**: `src/services/customerService.js`
-- **Method**: `customerService.updateCustomerStatus(id, status)`
-- **Used In**:
-
----
-
-### 7. **POST /api/customers/{customer}/recalculate-stats**
-**Description**: Customer statistics manually recalculate करने के लिए (orders से)
-
-**Backend Controller**: `CustomerController@recalculateStats`
-
-**Response**:
-```json
-{
-  "success": true,
-  "data": {...},
-  "message": "Customer statistics recalculated successfully."
-}
-```
-
-**Permission Required**: `edit_customer`
-
-**Note**: Customer stats automatically update होते हैं जब orders create/update/delete होते हैं
-
----
-
-### 8. **GET /api/customers/{customer}/export-pdf**
-**Description**: Customer history report PDF export करने के लिए
-
-**Backend Controller**: `CustomerController@exportPdf`
-
-**Response**: PDF file download
-- **Content-Type**: `application/pdf`
-- **Content-Disposition**: `attachment; filename="Customer_{CustomerID}_{CustomerName}.pdf"`
-
-**Permission Required**: `view_customer`
-
-**Frontend Integration**:
-- **Service**: `src/services/customerService.js`
-- **Method**: `customerService.exportCustomerPdf(customerId)`
-- **Used In**:
-  - `src/views/customers/CustomersList.jsx` - Export button in table actions
-
-**PDF Includes**:
-- Customer basic information (name, contact, address, DOB, anniversary, status)
-- Statistics summary (total orders, total amount, paid amount, remaining, wallet balance)
-- Complete order history table
-- Complete payment/transaction history table
-- Branch information
-- Business information from invoice settings
-
-**Filename Format**: `Customer_{CustomerID}_{CustomerName}.pdf`
 
 ---
 
@@ -5035,6 +4959,10 @@ const Settings = () => {
 **Version**: 1.4.0
 
 ## 🔄 Recent Updates
+- ✅ **Customer Management APIs** - Fully implemented for Restaurant System (CRUD operations, server-side pagination, filtering, searching, sorting)
+- ✅ **Customer API Endpoints** - GET/POST/PUT/DELETE `/api/customers` with full validation and permission checks
+- ✅ **Customer Code Auto-Generation** - Customer code (#CUST001) auto-generated via model observer
+- ✅ **Customer Service** - Frontend service (`customerService.js`) fully integrated in CustomersList and CustomerForm
 - ✅ Payment Management APIs fully implemented
 - ✅ Server-side pagination, filtering, and searching for Packages, Customers, and Orders
 - ✅ Payment recording from Orders module (Actions → Record Payment)

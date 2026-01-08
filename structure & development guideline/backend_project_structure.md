@@ -47,6 +47,7 @@ backend/
 │   │   ├── 📁 Controllers/         # Request handlers
 │   │   │   ├── 📁 API/             # API controllers
 │   │   │   │   ├── BranchController.php
+│   │   │   │   ├── CustomerController.php
 │   │   │   │   ├── DashboardController.php
 │   │   │   │   ├── FinancialCategoryController.php
 │   │   │   │   ├── FinancialTransactionController.php
@@ -89,6 +90,7 @@ backend/
 │   │   │   └── TableUpdateRequest.php
 │   │   └── 📁 Resources/            # API resources
 │   │       ├── BranchResource.php
+│   │       ├── CustomerResource.php
 │   │       ├── FinancialCategoryResource.php
 │   │       ├── FinancialTransactionResource.php
 │   │       ├── FoodCategoryResource.php
@@ -100,6 +102,7 @@ backend/
 │   │
 │   ├── 📁 Models/                   # Eloquent models
 │   │   ├── Branch.php               # Branch model
+│   │   ├── Customer.php             # Customer model
 │   │   ├── FinancialCategory.php    # Financial category model
 │   │   ├── FinancialTransaction.php # Financial transaction model
 │   │   ├── FoodCategory.php         # Food category model
@@ -142,7 +145,8 @@ backend/
 │
 ├── 📁 database/                     # Database files
 │   ├── 📁 factories/                # Model factories
-│   │   └── BranchFactory.php
+│   │   ├── BranchFactory.php
+│   │   └── CustomerFactory.php
 │   ├── 📁 migrations/               # Database migrations
 │   │   ├── 2025_11_17_083104_create_users_table.php
 │   │   ├── 2025_11_17_083129_create_roles_and_permissions_tables.php
@@ -164,6 +168,7 @@ backend/
 │   │   └── 2025_01_21_000001_create_tables_table.php
 │   └── 📁 seeders/                  # Database seeders
 │       ├── BranchSeeder.php
+│       ├── CustomerSeeder.php
 │       ├── DatabaseSeeder.php
 │       ├── FinancialCategorySeeder.php
 │       ├── PermissionsTableSeeder.php
@@ -527,6 +532,29 @@ backend/
 - **Permissions**: `view_table`, `create_table`, `edit_table`, `delete_table`
 - **Status**: ✅ Fully implemented (Frontend + Backend)
 - **Seeder**: `TableSeeder` - Creates 15 sample table records
+
+### 16. **Customer Management Module**
+- **Location**: `app/Http/Controllers/API/CustomerController.php`
+- **Routes**: `/api/customers/*`
+- **Features**:
+  - List customers (paginated, sortable, searchable, filterable)
+  - Get customer by ID
+  - Create customer (auto-generates customer_code: #CUST001)
+  - Update customer
+  - Delete customer (soft delete)
+  - Search by name, customer_code, mobile, email
+  - Filter by customer_type (regular, credit) and status (active, inactive)
+  - Filter by city
+  - Server-side pagination, filtering, and searching
+  - Default sort: name (ascending)
+  - Default page size: 25
+- **Model**: `Customer` (with soft deletes, relationships: bills, walletTransactions, scopes: active, credit, regular)
+- **Request Validation**: `CustomerStoreRequest`, `CustomerUpdateRequest`
+- **API Resource**: `CustomerResource` (camelCase format)
+- **Permissions**: `view_customer`, `create_customer`, `edit_customer`, `delete_customer`
+- **Status**: ✅ Fully implemented (Frontend + Backend)
+- **Seeder**: `CustomerSeeder` - Creates 10 sample customer records
+- **Note**: Customer code auto-generated via model observer before creation
 
 ---
 
@@ -1198,7 +1226,7 @@ php artisan serve
 ---
 
 **Last Updated**: January 2025
-**Version**: 1.4.0 (Database Scalability & Performance Guidelines Added)
+**Version**: 1.5.0 (Customer Management Module Added)
 
 ## 🔄 Recent Updates
 - ✅ Financial Management module fully implemented
