@@ -13,6 +13,7 @@ use App\Http\Controllers\API\RestaurantSettingsController;
 use App\Http\Controllers\API\FoodItemController;
 use App\Http\Controllers\API\TableController;
 use App\Http\Controllers\API\CustomerController;
+use App\Http\Controllers\API\WalletTransactionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -103,6 +104,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/customers/{customer}', [CustomerController::class, 'show'])->middleware('permission:view_customer');
     Route::put('/customers/{customer}', [CustomerController::class, 'update'])->middleware('permission:edit_customer');
     Route::delete('/customers/{customer}', [CustomerController::class, 'destroy'])->middleware('permission:delete_customer');
+
+    // Wallet Transaction Management
+    Route::get('/wallet-transactions', [WalletTransactionController::class, 'index'])->middleware('permission:view_wallet_transaction');
+    Route::post('/wallet-transactions', [WalletTransactionController::class, 'store'])->middleware('permission:create_wallet_transaction');
+    Route::get('/wallet-transactions/{walletTransaction}', [WalletTransactionController::class, 'show'])->middleware('permission:view_wallet_transaction');
+    Route::put('/wallet-transactions/{walletTransaction}', [WalletTransactionController::class, 'update'])->middleware('permission:edit_wallet_transaction');
+    Route::delete('/wallet-transactions/{walletTransaction}', [WalletTransactionController::class, 'destroy'])->middleware('permission:delete_wallet_transaction');
+    
+    // Customer-specific wallet transactions (Customer Ledger)
+    Route::get('/customers/{customer}/wallet-transactions', [WalletTransactionController::class, 'getByCustomer'])->middleware('permission:view_customer_ledger');
 
     // Restaurant Settings Management
     Route::prefix('restaurant-settings')->middleware('permission:view_restaurant_settings')->group(function () {

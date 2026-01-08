@@ -69,7 +69,13 @@ export const PERMISSIONS = {
   CUSTOMER_READ: 'customer:read',
   CUSTOMER_WRITE: 'customer:write',
   CUSTOMER_DELETE: 'customer:delete',
-  CUSTOMER_LEDGER_READ: 'customer_ledger:read',
+  CUSTOMER_LEDGER_READ: 'view_customer_ledger',
+
+  // Wallet Transaction Management
+  WALLET_TRANSACTION_READ: 'view_wallet_transaction',
+  WALLET_TRANSACTION_CREATE: 'create_wallet_transaction',
+  WALLET_TRANSACTION_EDIT: 'edit_wallet_transaction',
+  WALLET_TRANSACTION_DELETE: 'delete_wallet_transaction',
 
   // Staff Management
   STAFF_READ: 'staff:read',

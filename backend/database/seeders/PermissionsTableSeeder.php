@@ -74,6 +74,15 @@ class PermissionsTableSeeder extends Seeder
             ['name' => 'edit_customer', 'description' => 'Edit customers', 'module' => 'customers', 'submodule' => 'management', 'type' => 'write'],
             ['name' => 'delete_customer', 'description' => 'Delete customers', 'module' => 'customers', 'submodule' => 'management', 'type' => 'delete'],
 
+            // Customer Ledger
+            ['name' => 'view_customer_ledger', 'description' => 'View customer ledger', 'module' => 'customers', 'submodule' => 'ledger', 'type' => 'read'],
+
+            // Wallet Transaction Management
+            ['name' => 'view_wallet_transaction', 'description' => 'View wallet transactions', 'module' => 'wallet', 'submodule' => 'transactions', 'type' => 'read'],
+            ['name' => 'create_wallet_transaction', 'description' => 'Create wallet transactions', 'module' => 'wallet', 'submodule' => 'transactions', 'type' => 'write'],
+            ['name' => 'edit_wallet_transaction', 'description' => 'Edit wallet transactions', 'module' => 'wallet', 'submodule' => 'transactions', 'type' => 'write'],
+            ['name' => 'delete_wallet_transaction', 'description' => 'Delete wallet transactions', 'module' => 'wallet', 'submodule' => 'transactions', 'type' => 'delete'],
+
             // Special Permissions
             ['name' => 'special_export_data', 'description' => 'Export data to Excel/PDF', 'module' => 'special', 'submodule' => 'special', 'type' => 'special'],
             ['name' => 'special_import_data', 'description' => 'Import data from Excel/CSV', 'module' => 'special', 'submodule' => 'special', 'type' => 'special'],

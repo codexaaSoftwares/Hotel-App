@@ -1,0 +1,71 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+
+class WalletTransactionStoreRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
+    public function authorize()
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, mixed>
+     */
+    public function rules()
+    {
+        return [
+            'customer_id' => ['required', 'exists:customers,id'],
+            'bill_id' => ['nullable', 'exists:bills,id'],
+            'transaction_type' => ['required', 'in:credit,debit'],
+            'amount' => ['required', 'numeric', 'min:0.01'],
+            'payment_method' => ['nullable', 'in:cash,upi,card,bank_transfer'],
+            'transaction_date' => ['required', 'date'],
+            'description' => ['nullable', 'string', 'max:500'],
+            'reference_number' => ['nullable', 'string', 'max:255'],
+        ];
+    }
+
+    /**
+     * Prepare the data for validation.
+     *
+     * @return void
+     */
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'transaction_date' => $this->input('transaction_date', now()->format('Y-m-d H:i:s')),
+        ]);
+    }
+
+    /**
+     * Convert empty strings to null for nullable fields.
+     *
+     * @return array
+     */
+    public function validated($key = null, $default = null)
+    {
+        $validated = parent::validated($key, $default);
+
+        // Convert empty strings to null for nullable fields
+        $nullableFields = ['bill_id', 'payment_method', 'description', 'reference_number'];
+        foreach ($nullableFields as $field) {
+            if (isset($validated[$field]) && $validated[$field] === '') {
+                $validated[$field] = null;
+            }
+        }
+
+        return $validated;
+    }
+}
+

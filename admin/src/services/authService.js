@@ -48,6 +48,19 @@ const PERMISSION_ALIAS_MAP = {
   edit_branch: ['branch:write'],
   delete_branch: ['branch:delete'],
   
+  // Customer Management
+  view_customer: ['customer:read'],
+  create_customer: ['customer:write'],
+  edit_customer: ['customer:write'],
+  delete_customer: ['customer:delete'],
+  view_customer_ledger: ['customer_ledger:read'],
+  
+  // Wallet Transaction Management
+  view_wallet_transaction: ['wallet_transaction:read'],
+  create_wallet_transaction: ['wallet_transaction:write'],
+  edit_wallet_transaction: ['wallet_transaction:write'],
+  delete_wallet_transaction: ['wallet_transaction:delete'],
+  
   // Dashboard
   view_dashboard: ['dashboard:read'],
   

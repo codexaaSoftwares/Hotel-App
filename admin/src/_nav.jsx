@@ -88,13 +88,6 @@ const _nav = [
       },
       {
         component: CNavItem,
-        name: 'Customer Ledger',
-        to: '/customers/ledger',
-        icon: <CIcon icon={cilGraph} customClassName="nav-icon" />,
-        permission: PERMISSIONS.CUSTOMER_LEDGER_READ,
-      },
-      {
-        component: CNavItem,
         name: 'Staff',
         to: '/staff',
         icon: <CIcon icon={cilUser} customClassName="nav-icon" />,

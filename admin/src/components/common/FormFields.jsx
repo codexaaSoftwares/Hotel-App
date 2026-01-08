@@ -15,23 +15,31 @@ export const TextField = ({
   feedback,
   labelClassName = '',
   ...props 
-}) => (
-  <Col md={col}>
-    <FormLabel htmlFor={props.id} className={labelClassName}>
-      {label} {required && <span className="text-danger">*</span>}
-    </FormLabel>
-    <FormControl
-      {...props}
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      required={required}
-      isInvalid={invalid}
-    />
-    {feedback && <div className="invalid-feedback d-block">{feedback}</div>}
-    {helpText && <FormText>{helpText}</FormText>}
-  </Col>
-)
+}) => {
+  // Only apply height to text inputs, not textarea or other types
+  const inputStyle = props.type === 'textarea' || props.as === 'textarea' 
+    ? {} 
+    : { height: '38px' }
+  
+  return (
+    <Col md={col}>
+      <FormLabel htmlFor={props.id} className={labelClassName}>
+        {label} {required && <span className="text-danger">*</span>}
+      </FormLabel>
+      <FormControl
+        {...props}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        required={required}
+        isInvalid={invalid}
+        style={inputStyle}
+      />
+      {feedback && <div className="invalid-feedback d-block">{feedback}</div>}
+      {helpText && <FormText>{helpText}</FormText>}
+    </Col>
+  )
+}
 
 // Select Field
 export const SelectField = ({ 
@@ -56,6 +64,7 @@ export const SelectField = ({
       onChange={onChange}
       required={required}
       isInvalid={invalid}
+      style={{ height: '38px' }}
     >
       {options.map((option, index) => (
         <option key={`option-${option.value}-${index}`} value={option.value}>

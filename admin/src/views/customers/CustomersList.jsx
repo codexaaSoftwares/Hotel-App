@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Container, Row, Col, Button, Badge, Card, Form, FormSelect, InputGroup } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -11,6 +12,7 @@ import {
   faRefresh,
   faUser,
   faCreditCard,
+  faWallet,
 } from '@fortawesome/free-solid-svg-icons'
 import { Table, Modal, FormModal } from '../../components'
 import CustomerForm from '../../components/pages/customers/CustomerForm'
@@ -20,6 +22,7 @@ import { usePermissions, useDebounce } from '../../hooks'
 import { PERMISSIONS } from '../../constants/permissions'
 
 const CustomersList = () => {
+  const navigate = useNavigate()
   const { success, error, warning } = useToast()
   const { hasPermission } = usePermissions()
 
@@ -54,6 +57,7 @@ const CustomersList = () => {
   const canCreateCustomer = hasPermission('create_customer')
   const canUpdateCustomer = hasPermission('edit_customer')
   const canDeleteCustomer = hasPermission('delete_customer')
+  const canViewLedger = hasPermission(PERMISSIONS.CUSTOMER_LEDGER_READ)
   const canViewCustomer = hasPermission('view_customer')
 
   const fetchCustomersWithParams = useCallback(async () => {
@@ -410,6 +414,16 @@ const CustomersList = () => {
         if (!customer) return <span className="text-muted">—</span>
         return (
           <div className="d-flex gap-2">
+            {canViewLedger && (
+              <Button
+                variant="outline-info"
+                size="sm"
+                onClick={() => navigate(`/customers/ledger/${customer.id}`)}
+                title="View ledger"
+              >
+                <FontAwesomeIcon icon={faWallet} />
+              </Button>
+            )}
             {canUpdateCustomer && (
               <Button
                 variant="outline-primary"

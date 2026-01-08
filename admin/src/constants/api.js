@@ -128,6 +128,17 @@ export const API_ENDPOINTS = {
     DELETE: (id) => `/customers/${id}`,
   },
 
+  // Wallet Transaction Management
+  WALLET_TRANSACTIONS: {
+    BASE: '/wallet-transactions',
+    LIST: '/wallet-transactions',
+    CREATE: '/wallet-transactions',
+    GET_BY_ID: (id) => `/wallet-transactions/${id}`,
+    UPDATE: (id) => `/wallet-transactions/${id}`,
+    DELETE: (id) => `/wallet-transactions/${id}`,
+    GET_BY_CUSTOMER: (customerId) => `/customers/${customerId}/wallet-transactions`,
+  },
+
   // Reports
   REPORTS: {
     BASE: '/reports',
