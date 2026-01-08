@@ -118,6 +118,16 @@ export const API_ENDPOINTS = {
     DELETE: (id) => `/branches/${id}`,
   },
 
+  // Customer Management
+  CUSTOMERS: {
+    BASE: '/customers',
+    LIST: '/customers',
+    CREATE: '/customers',
+    GET_BY_ID: (id) => `/customers/${id}`,
+    UPDATE: (id) => `/customers/${id}`,
+    DELETE: (id) => `/customers/${id}`,
+  },
+
   // Reports
   REPORTS: {
     BASE: '/reports',

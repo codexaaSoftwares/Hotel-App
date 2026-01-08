@@ -12,6 +12,7 @@ use App\Http\Controllers\API\FoodCategoryController;
 use App\Http\Controllers\API\RestaurantSettingsController;
 use App\Http\Controllers\API\FoodItemController;
 use App\Http\Controllers\API\TableController;
+use App\Http\Controllers\API\CustomerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -95,6 +96,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/tables/{table}', [TableController::class, 'show'])->middleware('permission:view_table');
     Route::put('/tables/{table}', [TableController::class, 'update'])->middleware('permission:edit_table');
     Route::delete('/tables/{table}', [TableController::class, 'destroy'])->middleware('permission:delete_table');
+
+    // Customer Management
+    Route::get('/customers', [CustomerController::class, 'index'])->middleware('permission:view_customer');
+    Route::post('/customers', [CustomerController::class, 'store'])->middleware('permission:create_customer');
+    Route::get('/customers/{customer}', [CustomerController::class, 'show'])->middleware('permission:view_customer');
+    Route::put('/customers/{customer}', [CustomerController::class, 'update'])->middleware('permission:edit_customer');
+    Route::delete('/customers/{customer}', [CustomerController::class, 'destroy'])->middleware('permission:delete_customer');
 
     // Restaurant Settings Management
     Route::prefix('restaurant-settings')->middleware('permission:view_restaurant_settings')->group(function () {

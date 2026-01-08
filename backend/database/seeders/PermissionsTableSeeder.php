@@ -68,6 +68,12 @@ class PermissionsTableSeeder extends Seeder
             ['name' => 'edit_table', 'description' => 'Edit tables', 'module' => 'restaurant', 'submodule' => 'tables', 'type' => 'write'],
             ['name' => 'delete_table', 'description' => 'Delete tables', 'module' => 'restaurant', 'submodule' => 'tables', 'type' => 'delete'],
 
+            // Customer Management
+            ['name' => 'view_customer', 'description' => 'View customers', 'module' => 'customers', 'submodule' => 'management', 'type' => 'read'],
+            ['name' => 'create_customer', 'description' => 'Create customers', 'module' => 'customers', 'submodule' => 'management', 'type' => 'write'],
+            ['name' => 'edit_customer', 'description' => 'Edit customers', 'module' => 'customers', 'submodule' => 'management', 'type' => 'write'],
+            ['name' => 'delete_customer', 'description' => 'Delete customers', 'module' => 'customers', 'submodule' => 'management', 'type' => 'delete'],
+
             // Special Permissions
             ['name' => 'special_export_data', 'description' => 'Export data to Excel/PDF', 'module' => 'special', 'submodule' => 'special', 'type' => 'special'],
             ['name' => 'special_import_data', 'description' => 'Import data from Excel/CSV', 'module' => 'special', 'submodule' => 'special', 'type' => 'special'],

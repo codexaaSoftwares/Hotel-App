@@ -19,6 +19,12 @@ const routesConfig = [
   { path: '/branches', name: 'Branches' },
   { path: '/branches/:id', name: 'Branch Details' },
   
+  // Customer Management Routes
+  { path: '/customers', name: 'Customers' },
+  { path: '/customers/create', name: 'Create Customer' },
+  { path: '/customers/edit/:id', name: 'Edit Customer' },
+  { path: '/customers/:id', name: 'Customer Details' },
+  
   // Account Routes
   { path: '/profile', name: 'Profile' },
   { path: '/profile/edit', name: 'Edit Profile' },

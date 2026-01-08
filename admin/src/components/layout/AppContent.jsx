@@ -21,6 +21,9 @@ const TablesList = React.lazy(() => import('../../views/restaurant/TablesList'))
 // Branch Management Components
 const BranchesList = React.lazy(() => import('../../views/branches/BranchesList'))
 
+// Customer Management Components
+const CustomersList = React.lazy(() => import('../../views/customers/CustomersList'))
+
 
 import PermissionRoute from './PermissionRoute'
 import { PERMISSIONS } from '../../constants/permissions'
@@ -106,6 +109,18 @@ const AppContent = () => {
           />
           <Route path="/branches/create" element={<Navigate to="/branches" replace />} />
           <Route path="/branches/edit/:id" element={<Navigate to="/branches" replace />} />
+          
+          {/* Customer Management Routes */}
+          <Route
+            path="/customers"
+            element={
+              <PermissionRoute requiredPermission="view_customer" showAccessDenied>
+                <CustomersList />
+              </PermissionRoute>
+            }
+          />
+          <Route path="/customers/create" element={<Navigate to="/customers" replace />} />
+          <Route path="/customers/edit/:id" element={<Navigate to="/customers" replace />} />
           
           {/* Report Routes */}
           {/* Report routes will be added here as needed */}
