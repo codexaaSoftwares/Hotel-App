@@ -118,6 +118,10 @@ admin/
 │   │   │   │   ├── CategoryForm.jsx  # Food category form component
 │   │   │   │   ├── ItemForm.jsx      # Food item form component
 │   │   │   │   └── TableForm.jsx     # Table form component
+│   │   │   ├── 📁 customers/         # Customer management
+│   │   │   │   ├── CustomerForm.jsx  # Customer form component
+│   │   │   │   ├── CustomerLedgerModal.jsx # Customer ledger modal component
+│   │   │   │   └── WalletTransactionForm.jsx # Wallet transaction form component
 │   │   │   └── 📁 users/            # User management
 │   │   │       ├── 📁 __tests__/     # User component tests
 │   │   │       │   └── ProfileForm.test.js
@@ -420,7 +424,7 @@ admin/
     - ✅ **Restaurant Settings** - GST Settings, Invoice Settings, Thermal Printer Settings (fully implemented)
     - ✅ **Menu Management** - Unified page for Food Categories and Food Items with hierarchical display, CRUD operations, image upload, and item reordering (fully implemented)
     - ✅ **Table Management** - Table list with statistics, CRUD operations, status management, server-side pagination, filtering, and searching (fully implemented)
-  - **Customer Management**: Customers list, Customer Ledger
+  - **Customer Management**: Customers list, Customer Ledger (Modal view with quick access from customer list)
   - **Staff Management**: Staff list, Salary Payments
   - **Expense Management**: Expense Categories, Expense Records
 - **Status**: 
@@ -581,7 +585,26 @@ import { TextField, SelectField, TextAreaField, FormRow } from '../../components
     <Button variant="primary" onClick={onConfirm}>Confirm</Button>
   </Modal.Footer>
 </Modal>
+
+// Large Modal Structure (Full-width/XL size)
+<Modal 
+  show={visible} 
+  onHide={onClose} 
+  size="xl"
+  fullscreen="lg-down"
+  backdrop="static"
+  keyboard={false}
+  className="modal-xl-large"
+>
+  {/* Modal content - Uses global .modal-xl-large class for 95vw width */}
+</Modal>
 ```
+
+**Global Modal Classes:**
+- `.modal-xl-large` - Reusable class for extra-large modals (95vw width on desktop, 90vw on larger screens, fullscreen on mobile/tablet)
+  - Located in `src/scss/style.scss`
+  - Can be applied to any modal that needs larger size
+  - Includes proper height management and flex layout
 
 #### 5. **Table Component Usage**
 ```jsx
@@ -872,7 +895,6 @@ const MyComponent = () => {
 ### 🔴 Needs Implementation (Phase 1 - Restaurant Management)
 - POS Panel (Main POS interface with split-screen layout)
 - Bills Management (Unified bills page with filters)
-- Customer Ledger (Customer transaction history)
 - Staff Management (Staff, Salary Payments)
 - Expense Management (Expense Categories, Expense Records)
 - Restaurant Reports (Sales, Expense, GST, Customer, Staff reports)
@@ -919,7 +941,7 @@ npm run lint
 ---
 
 **Last Updated**: January 2025
-**Version**: 2.4.0 (Customer Management Implementation)
+**Version**: 2.5.0 (Customer Ledger Modal Implementation)
 
 ## 🔄 Recent Updates
 
@@ -1011,6 +1033,32 @@ npm run lint
 - ✅ **Frontend Components**: CustomersList.jsx and CustomerForm.jsx fully implemented
 - ✅ **Form Layout**: Customer Type field moved to first position, proper column sizing for address fields
 - ✅ **API Response**: Standardized `{ success, data, meta }` format with camelCase transformation
+
+### Version 2.5.0 - Customer Ledger Modal Implementation
+- ✅ **Customer Ledger Modal**: Quick view modal for customer transaction history (replaces full page view)
+  - Accessible via "View Ledger" button in customer list actions
+  - Large modal view (95vw width) using global `.modal-xl-large` class
+  - Simplified filters: Search and Transaction Type (Credit/Debit) only
+  - Summary cards: Total Debit, Total Credit, Remaining Amount (calculated from backend)
+  - Color-coded transaction amounts: Green for Credit, Red for Debit
+  - Restricted outside clicks: Modal can only be closed via close button (`backdrop="static"`, `keyboard={false}`)
+  - Full CRUD operations for wallet transactions within modal
+  - Backend calculates totals from all transactions (not just paginated ones)
+  - **Removed**: Full page Customer Ledger view (`CustomerLedger.jsx`) - consolidated into modal for better UX
+- ✅ **Global Modal Class**: Created reusable `.modal-xl-large` class in `src/scss/style.scss`
+  - 95vw width on desktop, 90vw on larger screens
+  - Fullscreen on mobile/tablet (`fullscreen="lg-down"`)
+  - Proper height management and flex layout
+  - Can be reused across the application for any large modal needs
+- ✅ **Backend Enhancement**: WalletTransactionController@getByCustomer now includes totals calculation
+  - `totalDebit`: Sum of all debit transactions for customer
+  - `totalCredit`: Sum of all credit transactions for customer
+  - `remainingAmount`: Debit - Credit (amount customer owes)
+  - Totals calculated from all transactions regardless of filters/pagination
+- ✅ **Frontend Components**: CustomerLedgerModal.jsx and WalletTransactionForm.jsx fully implemented
+- ✅ **Transaction Type Definitions**: 
+  - Credit = Customer pays money OR Hotel refunds
+  - Debit = Customer owes money (bills/usage)
 
 ### Previous Updates
 - ✅ System cleanup: Removed Order Management, Customer Management, Package Management, Transaction Management, and Company Health Report modules

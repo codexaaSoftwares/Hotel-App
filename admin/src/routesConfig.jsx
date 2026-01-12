@@ -23,7 +23,6 @@ const routesConfig = [
   { path: '/customers', name: 'Customers' },
   { path: '/customers/create', name: 'Create Customer' },
   { path: '/customers/edit/:id', name: 'Edit Customer' },
-  { path: '/customers/ledger/:id', name: 'Customer Ledger' },
   { path: '/customers/:id', name: 'Customer Details' },
   
   // Account Routes

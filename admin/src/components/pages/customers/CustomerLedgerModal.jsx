@@ -451,6 +451,27 @@ const CustomerLedgerModal = ({ show, onHide, customerId, customer: initialCustom
 
   if (!show) return null
 
+  // Check if user has permission to view customer ledger
+  if (!hasPermission(PERMISSIONS.CUSTOMER_LEDGER_READ)) {
+    return (
+      <Modal show={show} onHide={onHide} size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>Access Denied</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Alert variant="danger">
+            You do not have permission to view customer ledger. Please contact your administrator.
+          </Alert>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={onHide}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    )
+  }
+
   return (
     <>
       <Modal

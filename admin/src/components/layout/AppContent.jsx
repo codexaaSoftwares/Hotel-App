@@ -23,7 +23,6 @@ const BranchesList = React.lazy(() => import('../../views/branches/BranchesList'
 
 // Customer Management Components
 const CustomersList = React.lazy(() => import('../../views/customers/CustomersList'))
-const CustomerLedger = React.lazy(() => import('../../views/customers/CustomerLedger'))
 
 
 import PermissionRoute from './PermissionRoute'
@@ -117,14 +116,6 @@ const AppContent = () => {
             element={
               <PermissionRoute requiredPermission={PERMISSIONS.CUSTOMER_READ} showAccessDenied>
                 <CustomersList />
-              </PermissionRoute>
-            }
-          />
-          <Route
-            path="/customers/ledger/:id"
-            element={
-              <PermissionRoute requiredPermission={PERMISSIONS.CUSTOMER_LEDGER_READ} showAccessDenied>
-                <CustomerLedger />
               </PermissionRoute>
             }
           />

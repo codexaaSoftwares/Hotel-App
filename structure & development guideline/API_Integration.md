@@ -1966,6 +1966,179 @@ const handleDeletePackage = async (packageId) => {
 
 ---
 
+## 💰 Wallet Transaction Management APIs (Customer Ledger)
+
+### 1. **GET /api/customers/{customer}/wallet-transactions**
+**Description**: Specific customer के wallet transactions (Customer Ledger) fetch करने के लिए (paginated, sortable, filterable)
+
+**Backend Controller**: `WalletTransactionController@getByCustomer`
+
+**Query Parameters**:
+- `page` - Page number (default: 1)
+- `limit` - Items per page (default: 20, max: 100)
+- `search` - Search term (reference_number, description में search)
+- `transaction_type` - Filter by transaction type (credit/debit)
+- `sort_by` - Sort column (transaction_date, amount, transaction_type, created_at)
+- `sort_direction` - Sort direction (asc/desc, default: transaction_date desc)
+
+**Response**:
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "customerId": 1,
+      "transactionDate": "2025-01-20",
+      "transactionType": "credit",
+      "amount": 5000.00,
+      "paymentMethod": "cash",
+      "referenceNumber": "REF001",
+      "description": "Payment received",
+      "runningBalance": 5000.00,
+      "createdAt": "2025-01-20T10:30:00.000000Z"
+    }
+  ],
+  "meta": {
+    "total": 10,
+    "page": 1,
+    "limit": 20,
+    "totalPages": 1,
+    "hasNext": false,
+    "hasPrev": false,
+    "sortBy": "transaction_date",
+    "sortDirection": "desc"
+  },
+  "totals": {
+    "totalDebit": 3000.00,
+    "totalCredit": 2000.00,
+    "remainingAmount": 1000.00
+  },
+  "customer": {
+    "id": 1,
+    "customerCode": "#CUST001",
+    "name": "Rajesh Patel"
+  }
+}
+```
+
+**Permission Required**: `view_customer_ledger`
+
+**Frontend Integration**:
+- **Service**: `src/services/walletTransactionService.js`
+- **Method**: `walletTransactionService.getCustomerLedger(customerId, params)`
+- **Used In**:
+  - `src/components/pages/customers/CustomerLedgerModal.jsx` - Customer ledger modal में (accessible from customer list)
+
+**Features**:
+- **Totals Calculation**: Backend calculates totals from ALL transactions for the customer (not just paginated ones)
+  - `totalDebit`: Sum of all debit transactions
+  - `totalCredit`: Sum of all credit transactions
+  - `remainingAmount`: Debit - Credit (amount customer owes)
+- **Running Balance**: Each transaction includes running balance calculated from oldest to newest
+- **Transaction Types**:
+  - **Credit**: Customer pays money OR Hotel refunds
+  - **Debit**: Customer owes money (bills/usage)
+- Default sort: Transaction Date (descending)
+- Server-side pagination, filtering, and searching
+
+---
+
+### 2. **GET /api/wallet-transactions**
+**Description**: All wallet transactions की list fetch करने के लिए (paginated, sortable, filterable)
+
+**Backend Controller**: `WalletTransactionController@index`
+
+**Query Parameters**:
+- `page` - Page number (default: 1)
+- `limit` - Items per page (default: 20, max: 100)
+- `customer_id` - Filter by customer
+- `transaction_type` - Filter by transaction type (credit/debit)
+- `payment_method` - Filter by payment method (cash/upi/card/bank_transfer)
+- `start_date` - Filter by start date (YYYY-MM-DD)
+- `end_date` - Filter by end date (YYYY-MM-DD)
+- `search` - Search term (reference_number, description)
+- `sort_by` - Sort column
+- `sort_direction` - Sort direction
+
+**Permission Required**: `view_wallet_transaction`
+
+---
+
+### 3. **POST /api/wallet-transactions**
+**Description**: New wallet transaction create करने के लिए
+
+**Backend Controller**: `WalletTransactionController@store`
+
+**Request Body**:
+```json
+{
+  "customer_id": 1,
+  "transaction_date": "2025-01-20",
+  "transaction_type": "credit",
+  "amount": 5000.00,
+  "payment_method": "cash",
+  "reference_number": "REF001",
+  "description": "Payment received"
+}
+```
+
+**Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "customerId": 1,
+    "transactionDate": "2025-01-20",
+    "transactionType": "credit",
+    "amount": 5000.00,
+    "paymentMethod": "cash",
+    "referenceNumber": "REF001",
+    "description": "Payment received"
+  },
+  "message": "Wallet transaction created successfully."
+}
+```
+
+**Permission Required**: `create_wallet_transaction`
+
+**Note**: 
+- Transaction create होने पर customer stats automatically update होते हैं (paid_amount, remaining_amount)
+- Credit transaction increases customer paid_amount
+- Debit transaction decreases customer paid_amount
+
+**Frontend Integration**:
+- **Service**: `src/services/walletTransactionService.js`
+- **Method**: `walletTransactionService.createWalletTransaction(transactionData)`
+- **Used In**:
+  - `src/components/pages/customers/CustomerLedgerModal.jsx` - Add transaction form में
+  - `src/components/pages/customers/WalletTransactionForm.jsx` - Transaction form component
+
+---
+
+### 4. **PUT /api/wallet-transactions/{walletTransaction}**
+**Description**: Existing wallet transaction update करने के लिए
+
+**Backend Controller**: `WalletTransactionController@update`
+
+**Permission Required**: `edit_wallet_transaction`
+
+**Note**: Transaction update होने पर customer stats automatically recalculate होते हैं
+
+---
+
+### 5. **DELETE /api/wallet-transactions/{walletTransaction}**
+**Description**: Wallet transaction delete करने के लिए
+
+**Backend Controller**: `WalletTransactionController@destroy`
+
+**Permission Required**: `delete_wallet_transaction`
+
+**Note**: Transaction delete होने पर customer stats automatically recalculate होते हैं
+
+---
+
 ## 📦 Order Management APIs
 
 ### 1. **GET /api/orders**
@@ -4719,6 +4892,8 @@ Component → Service → API Client → Backend API
 - `src/services/branchService.js` - Branch Management APIs
 - `src/services/settingsService.js` - Settings Management APIs
 - `src/services/tableService.js` - Table Management APIs
+- `src/services/customerService.js` - Customer Management APIs
+- `src/services/walletTransactionService.js` - Wallet Transaction Management APIs (Customer Ledger)
 
 ### API Client Configuration
 
@@ -4917,6 +5092,7 @@ const Settings = () => {
 - ✅ **BranchService** - Fully integrated in BranchesList (server-side pagination/filtering/searching)
 - ✅ **PackageService** - Fully integrated in PackagesList, PackageForm (with server-side pagination/filtering)
 - ✅ **CustomerService** - Fully integrated in CustomersList, CustomerForm, CustomerDetailsModal (server-side pagination/filtering, normalized totals, no mock fallback, PDF Export)
+- ✅ **WalletTransactionService** - Fully integrated in CustomerLedgerModal (customer ledger modal with totals, CRUD operations, server-side pagination/filtering)
 - ✅ **OrderService** - Fully integrated in OrdersList, OrderForm, OrderDetailsModal (server-side pagination/filtering, payment type badges, no mock fallback, PDF Export, **Links CRUD**)
 - ✅ **PaymentService** - Fully integrated in PaymentForm, TransactionsList (real database integration, PDF Export)
 - ✅ **ReportService** - Fully integrated in CompanyHealthReport (with PDF export)
@@ -4944,6 +5120,23 @@ const Settings = () => {
 **Last Updated**: January 2025
 
 ## 🔄 Recent Updates
+- ✅ **Wallet Transaction Management APIs** - Fully implemented with Customer Ledger endpoint
+  - `GET /api/customers/{customer}/wallet-transactions` - Customer ledger with totals calculation
+  - Backend calculates totals from all transactions (totalDebit, totalCredit, remainingAmount)
+  - Running balance calculation for each transaction
+  - Full CRUD operations for wallet transactions
+  - Auto-updates customer stats (paid_amount, remaining_amount) on transaction create/update/delete
+- ✅ **Customer Ledger Modal** - Quick view modal accessible from customer list
+  - Large modal view using global `.modal-xl-large` class (95vw width)
+  - Simplified filters (search and transaction type only)
+  - Summary cards with backend-calculated totals
+  - Color-coded amounts (green for credit, red for debit)
+  - Restricted outside clicks (close button only)
+- ✅ **Global Modal Class** - Created reusable `.modal-xl-large` class in `src/scss/style.scss`
+  - Can be used across the application for any large modal needs
+  - Responsive design with fullscreen on mobile/tablet
+
+## 🔄 Previous Recent Updates
 - ✅ **Restaurant Settings Module** - Fully implemented frontend and backend with GST Settings, Invoice Settings, and Thermal Printer Settings
 - ✅ **Restaurant Settings APIs** - Full CRUD operations with section-based grouping and bulk update support
 - ✅ **Food Categories APIs** - Backend fully implemented with CRUD operations, server-side pagination, filtering, and searching
