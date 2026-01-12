@@ -143,6 +143,16 @@ class WalletTransactionController extends Controller
             $balanceMap[$t->id] = $runningBalance;
         }
 
+        // Calculate totals from ALL transactions (not filtered/paginated)
+        // These totals should be from all transactions regardless of filters
+        $totalDebit = (float) WalletTransaction::where('customer_id', $customerId)
+            ->where('transaction_type', 'debit')
+            ->sum('amount');
+        $totalCredit = (float) WalletTransaction::where('customer_id', $customerId)
+            ->where('transaction_type', 'credit')
+            ->sum('amount');
+        $remainingAmount = $totalDebit - $totalCredit;
+
         // Attach running balance to paginated transactions
         $transactions = $paginator->items();
         $transactionsWithBalance = collect($transactions)->map(function ($transaction) use ($balanceMap) {
@@ -154,13 +164,15 @@ class WalletTransactionController extends Controller
             'success' => true,
             'data' => WalletTransactionResource::collection($transactionsWithBalance),
             'meta' => $this->paginationMeta($paginator, $sortBy, $sortDirection),
+            'totals' => [
+                'totalDebit' => $totalDebit,
+                'totalCredit' => $totalCredit,
+                'remainingAmount' => $remainingAmount,
+            ],
             'customer' => [
                 'id' => $customer->id,
                 'customerCode' => $customer->customer_code,
                 'name' => $customer->name,
-                'totalAmount' => (float) $customer->total_amount,
-                'paidAmount' => (float) $customer->paid_amount,
-                'remainingAmount' => (float) $customer->remaining_amount,
             ],
         ]);
     }

@@ -17,6 +17,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { Table, Modal, FormModal } from '../../components'
 import CustomerForm from '../../components/pages/customers/CustomerForm'
+import CustomerLedgerModal from '../../components/pages/customers/CustomerLedgerModal'
 import customerService from '../../services/customerService'
 import { useToast } from '../../components'
 import { usePermissions, useDebounce } from '../../hooks'
@@ -45,6 +46,8 @@ const CustomersList = () => {
 
   const [showAddModal, setShowAddModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
+  const [showLedgerModal, setShowLedgerModal] = useState(false)
+  const [customerForLedger, setCustomerForLedger] = useState(null)
   const [customerToEdit, setCustomerToEdit] = useState(null)
   const [addLoading, setAddLoading] = useState(false)
   const [editLoading, setEditLoading] = useState(false)
@@ -195,6 +198,11 @@ const CustomersList = () => {
   const handleEdit = (customer) => {
     setCustomerToEdit(customer)
     setShowEditModal(true)
+  }
+
+  const handleViewLedger = (customer) => {
+    setCustomerForLedger(customer)
+    setShowLedgerModal(true)
   }
 
   const handleDelete = (customer) => {
@@ -419,7 +427,7 @@ const CustomersList = () => {
               <Button
                 variant="outline-info"
                 size="sm"
-                onClick={() => navigate(`/customers/ledger/${customer.id}`)}
+                onClick={() => handleViewLedger(customer)}
                 title="View ledger"
               >
                 <FontAwesomeIcon icon={faWallet} />
@@ -669,6 +677,17 @@ const CustomersList = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+
+      {/* Customer Ledger Modal */}
+      <CustomerLedgerModal
+        show={showLedgerModal}
+        onHide={() => {
+          setShowLedgerModal(false)
+          setCustomerForLedger(null)
+        }}
+        customerId={customerForLedger?.id}
+        customer={customerForLedger}
+      />
     </Container>
   )
 }

@@ -34,6 +34,7 @@ class WalletTransactionService {
         sortBy: meta.sortBy ?? null,
         sortDirection: meta.sortDirection ?? null,
       },
+      totals: payload.totals ?? null,
       customer: payload.customer ?? null,
       links: payload.links ?? null,
       message: payload.message ?? '',

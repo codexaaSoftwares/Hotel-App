@@ -277,6 +277,34 @@ textarea {
   font-size: 0.75rem;
 }
 
+// Global Large Modal Styles - Reusable across the application
+.modal-xl-large {
+  .modal-dialog {
+    max-width: 95vw;
+    width: 95vw;
+    margin: 1rem auto;
+  }
+
+  @media (min-width: 992px) {
+    .modal-dialog {
+      max-width: 90vw;
+      width: 90vw;
+    }
+  }
+
+  .modal-content {
+    height: calc(100vh - 2rem);
+    max-height: calc(100vh - 2rem);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modal-body {
+    flex: 1;
+    overflow-y: auto;
+  }
+}
+
 @include color-mode(dark) {
   body {
     background-color: var(--cui-dark-bg-subtle);

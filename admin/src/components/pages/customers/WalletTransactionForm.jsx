@@ -116,10 +116,10 @@ const WalletTransactionForm = forwardRef(
             col={6}
             required
             options={[
-              { value: 'credit', label: 'Credit - Payment Received (Increases Balance)' },
-              { value: 'debit', label: 'Debit - Refund/Adjustment (Decreases Balance)' },
+              { value: 'credit', label: 'Credit - Customer pays money OR Hotel refunds' },
+              { value: 'debit', label: 'Debit - Customer owes money (bills/usage)' },
             ]}
-            helpText="Credit = Money received from customer | Debit = Money given back to customer"
+            helpText="Credit = Customer pays OR Hotel refunds | Debit = Customer owes (bills)"
           />
           <TextField
             id="amount"
