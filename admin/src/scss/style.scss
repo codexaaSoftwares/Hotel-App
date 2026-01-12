@@ -305,6 +305,136 @@ textarea {
   }
 }
 
+// POS Panel Styles
+.pos-panel-container {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.pos-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  min-height: 60px;
+}
+
+.pos-panel-layout {
+  .pos-panel-left,
+  .pos-panel-center,
+  .pos-panel-right {
+    height: 100%;
+    overflow: hidden;
+  }
+}
+
+// Table Card Styles (Legacy - kept for compatibility)
+.table-card {
+  transition: all 0.2s ease;
+  border: 1px solid #dee2e6;
+
+  &:hover:not(.opacity-50) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &.border-primary {
+    background-color: rgba(13, 148, 136, 0.05);
+  }
+}
+
+// Table List Item Styles (Compact POS Panel)
+.table-list-item {
+  transition: all 0.15s ease;
+  position: relative;
+  
+  &:hover:not(.opacity-50):not(.bg-primary) {
+    background-color: rgba(13, 148, 136, 0.08) !important;
+    border-left-color: rgba(13, 148, 136, 0.3) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+  }
+
+  &.bg-primary {
+    &:hover {
+      background-color: rgba(13, 148, 136, 0.95) !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+    }
+  }
+
+  // Add subtle border on hover for better visual feedback
+  &:not(.bg-primary):not(.opacity-50) {
+    &:hover {
+      border-left-width: 3px;
+    }
+  }
+}
+
+// Product Card Styles (Legacy - kept for compatibility)
+.product-card {
+  transition: all 0.2s ease;
+  border: 1px solid #dee2e6;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-img-top {
+    background-color: #f8f9fa;
+  }
+}
+
+// Compact Product Card Styles (POS Panel) - Horizontal Layout
+.product-card-compact {
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+
+  &:hover:not([style*="opacity: 0.6"]) {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    border-color: #0d9488;
+    background-color: rgba(13, 148, 136, 0.02) !important;
+  }
+}
+
+// Category Header Styles
+.category-header {
+  transition: all 0.15s ease;
+
+  &:hover {
+    background-color: rgba(13, 148, 136, 0.08) !important;
+    border-color: #0d9488 !important;
+  }
+}
+
+// Category Items Container - Wrapping Grid
+.category-items {
+  .d-flex.flex-wrap {
+    // Items will wrap to next row automatically
+    // No horizontal scrolling needed
+  }
+}
+
+// Billing Cart Styles
+.billing-cart-panel {
+  .list-group-item {
+    border-left: none;
+    border-right: none;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 991.98px) {
+  .pos-panel-layout {
+    .pos-panel-left,
+    .pos-panel-center,
+    .pos-panel-right {
+      height: auto;
+      min-height: 300px;
+      max-height: 400px;
+    }
+  }
+}
+
 @include color-mode(dark) {
   body {
     background-color: var(--cui-dark-bg-subtle);
@@ -322,5 +452,21 @@ textarea {
       background-color: rgba(13, 148, 136, 0.1);
       border-color: #14b8a6;
     }
+  }
+
+  .table-card,
+  .product-card {
+    background-color: var(--cui-dark-bg);
+    border-color: var(--cui-border-color);
+
+    &:hover:not(.opacity-50) {
+      background-color: rgba(13, 148, 136, 0.1);
+      border-color: #14b8a6;
+    }
+  }
+
+  .pos-header {
+    background-color: var(--cui-dark-bg) !important;
+    border-color: var(--cui-border-color) !important;
   }
 }

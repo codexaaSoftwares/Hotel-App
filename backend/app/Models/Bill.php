@@ -51,6 +51,14 @@ class Bill extends Model
     ];
 
     /**
+     * Get the table that owns the bill.
+     */
+    public function table()
+    {
+        return $this->belongsTo(Table::class);
+    }
+
+    /**
      * Get the customer that owns the bill.
      */
     public function customer()

@@ -83,6 +83,15 @@ class PermissionsTableSeeder extends Seeder
             ['name' => 'edit_wallet_transaction', 'description' => 'Edit wallet transactions', 'module' => 'wallet', 'submodule' => 'transactions', 'type' => 'write'],
             ['name' => 'delete_wallet_transaction', 'description' => 'Delete wallet transactions', 'module' => 'wallet', 'submodule' => 'transactions', 'type' => 'delete'],
 
+            // Bill Management (POS Panel)
+            ['name' => 'view_bill', 'description' => 'View bills', 'module' => 'bills', 'submodule' => 'management', 'type' => 'read'],
+            ['name' => 'create_bill', 'description' => 'Create bills', 'module' => 'bills', 'submodule' => 'management', 'type' => 'write'],
+            ['name' => 'edit_bill', 'description' => 'Edit bills', 'module' => 'bills', 'submodule' => 'management', 'type' => 'write'],
+            ['name' => 'delete_bill', 'description' => 'Delete bills', 'module' => 'bills', 'submodule' => 'management', 'type' => 'delete'],
+            ['name' => 'bill_payment', 'description' => 'Process bill payments', 'module' => 'bills', 'submodule' => 'payments', 'type' => 'write'],
+            ['name' => 'view_pending_bill', 'description' => 'View pending bills', 'module' => 'bills', 'submodule' => 'pending', 'type' => 'read'],
+            ['name' => 'create_pending_bill', 'description' => 'Create pending bills', 'module' => 'bills', 'submodule' => 'pending', 'type' => 'write'],
+
             // Special Permissions
             ['name' => 'special_export_data', 'description' => 'Export data to Excel/PDF', 'module' => 'special', 'submodule' => 'special', 'type' => 'special'],
             ['name' => 'special_import_data', 'description' => 'Import data from Excel/CSV', 'module' => 'special', 'submodule' => 'special', 'type' => 'special'],

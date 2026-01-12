@@ -21,6 +21,18 @@ class TableController extends Controller
     {
         $query = Table::query();
 
+        // Include bill information if requested (for POS Panel)
+        $includeBills = $request->boolean('include_bills', false);
+        if ($includeBills) {
+            $query->withCount([
+                'activeBills as active_orders_count',
+                'bills as total_orders_count'
+            ])->with(['activeBills' => function ($q) {
+                $q->select('id', 'bill_number', 'table_id', 'status', 'total_amount', 'created_at')
+                  ->orderBy('created_at', 'desc');
+            }]);
+        }
+
         // Search functionality
         if ($search = $request->input('search')) {
             $query->where(function ($builder) use ($search) {
@@ -49,6 +61,14 @@ class TableController extends Controller
         $allQuery = clone $query;
         $allTables = $allQuery->get();
 
+        // Calculate total amount for active bills if needed
+        if ($includeBills) {
+            $allTables->load('activeBills');
+            $allTables->each(function ($table) {
+                $table->active_bills_total = $table->activeBills ? $table->activeBills->sum('total_amount') : 0;
+            });
+        }
+
         // Build paginator for metadata
         $pagination = $this->buildPaginator(
             $request,
@@ -62,7 +82,27 @@ class TableController extends Controller
 
         // Transform all records for data field
         $allTablesData = array_map(
-            fn (Table $table) => (new TableResource($table))->toArray($request),
+            function (Table $table) use ($request, $includeBills) {
+                $resource = (new TableResource($table))->toArray($request);
+                
+                // Add bill information if requested
+                if ($includeBills) {
+                    $resource['active_orders_count'] = $table->active_orders_count ?? 0;
+                    $resource['total_orders_count'] = $table->total_orders_count ?? 0;
+                    $resource['active_bills_total'] = $table->active_bills_total ?? 0;
+                    $resource['active_bills'] = $table->activeBills->map(function ($bill) {
+                        return [
+                            'id' => $bill->id,
+                            'bill_number' => $bill->bill_number,
+                            'status' => $bill->status,
+                            'total_amount' => $bill->total_amount,
+                            'created_at' => $bill->created_at,
+                        ];
+                    })->values();
+                }
+                
+                return $resource;
+            },
             $allTables->all()
         );
 

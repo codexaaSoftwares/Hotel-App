@@ -21,6 +21,7 @@ const tableService = {
   /**
    * Get all tables with pagination, filtering, and searching
    * @param {Object} params - Query parameters
+   * @param {boolean} params.include_bills - Include bill information (for POS Panel)
    * @returns {Promise<Object>} Response with tables array and meta
    */
   async getTables(params = {}) {
@@ -28,7 +29,17 @@ const tableService = {
       const response = await apiClient.get('/tables', { params })
       return {
         success: true,
-        data: response.data.data.map(normalizeTable),
+        data: response.data.data.map((table) => {
+          const normalized = normalizeTable(table)
+          // Include bill information if present
+          if (table.active_orders_count !== undefined) {
+            normalized.active_orders_count = table.active_orders_count
+            normalized.total_orders_count = table.total_orders_count
+            normalized.active_bills_total = table.active_bills_total || 0
+            normalized.active_bills = table.active_bills || []
+          }
+          return normalized
+        }),
         meta: response.data.meta,
       }
     } catch (error) {

@@ -24,6 +24,9 @@ const BranchesList = React.lazy(() => import('../../views/branches/BranchesList'
 // Customer Management Components
 const CustomersList = React.lazy(() => import('../../views/customers/CustomersList'))
 
+// POS Panel Components
+const POSPanel = React.lazy(() => import('../../views/pos/POSPanel'))
+
 
 import PermissionRoute from './PermissionRoute'
 import { PERMISSIONS } from '../../constants/permissions'
@@ -121,6 +124,16 @@ const AppContent = () => {
           />
           <Route path="/customers/create" element={<Navigate to="/customers" replace />} />
           <Route path="/customers/edit/:id" element={<Navigate to="/customers" replace />} />
+          
+          {/* POS Panel Routes */}
+          <Route
+            path="/pos/panel"
+            element={
+              <PermissionRoute requiredPermission="create_bill" showAccessDenied>
+                <POSPanel />
+              </PermissionRoute>
+            }
+          />
           
           {/* Report Routes */}
           {/* Report routes will be added here as needed */}

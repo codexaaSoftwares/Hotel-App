@@ -8,6 +8,7 @@ use App\Http\Requests\FoodCategoryStoreRequest;
 use App\Http\Requests\FoodCategoryUpdateRequest;
 use App\Http\Resources\FoodCategoryResource;
 use App\Models\FoodCategory;
+use App\Models\FoodItem;
 use Illuminate\Http\Request;
 
 class FoodCategoryController extends Controller
@@ -191,6 +192,127 @@ class FoodCategoryController extends Controller
         return response()->json([
             'success' => true,
             'data' => $data,
+        ]);
+    }
+
+    /**
+     * Get POS menu (categories hierarchy + popular items).
+     * This endpoint combines menu hierarchy and popular items in a single response.
+     */
+    public function posMenu(Request $request)
+    {
+        // Get menu hierarchy (categories with their items)
+        $categoryQuery = FoodCategory::with(['foodItems' => function ($q) {
+            $q->where('status', 'active')
+              ->orderBy('display_order', 'asc')
+              ->orderBy('name', 'asc');
+        }]);
+
+        // Status filter
+        if ($status = $request->input('status')) {
+            $categoryQuery->where('status', $status);
+        } else {
+            // Default to active only
+            $categoryQuery->where('status', 'active');
+        }
+
+        // Order by display_order
+        $categoryQuery->ordered();
+
+        $categories = $categoryQuery->get();
+
+        // Format categories with items
+        $categoriesData = $categories->map(function ($category) use ($request) {
+            return [
+                'id' => $category->id,
+                'name' => $category->name,
+                'description' => $category->description,
+                'display_order' => $category->display_order,
+                'status' => $category->status,
+                'created_at' => $category->created_at,
+                'updated_at' => $category->updated_at,
+                'items' => $category->foodItems->map(function ($item) use ($category, $request) {
+                    $imageUrl = null;
+                    if ($item->image) {
+                        $appUrl = rtrim(config('app.url'), '/');
+                        $parsedUrl = parse_url($appUrl);
+                        $scheme = $parsedUrl['scheme'] ?? 'http';
+                        $host = $parsedUrl['host'] ?? 'localhost';
+                        $port = isset($parsedUrl['port']) ? ':' . $parsedUrl['port'] : '';
+                        $domain = $scheme . '://' . $host . $port;
+                        $imageUrl = $domain . '/admin/api/storage/' . $item->image;
+                    }
+
+                    return [
+                        'id' => $item->id,
+                        'food_category_id' => $item->food_category_id,
+                        'category_name' => $category->name,
+                        'name' => $item->name,
+                        'description' => $item->description,
+                        'price' => (float) $item->price,
+                        'gst_percentage' => (float) $item->gst_percentage,
+                        'food_type' => $item->food_type,
+                        'is_veg' => $item->food_type === 'veg',
+                        'status' => $item->status,
+                        'image' => $imageUrl,
+                        'display_order' => (int) $item->display_order,
+                        'isPopular' => (bool) $item->is_popular,
+                        'created_at' => $item->created_at,
+                        'updated_at' => $item->updated_at,
+                    ];
+                })->toArray(),
+            ];
+        })->toArray();
+
+        // Get popular items
+        $popularLimit = $request->input('popular_limit', 20);
+        $popularItems = FoodItem::with('foodCategory')
+            ->where('status', 'active')
+            ->where('is_popular', true)
+            ->orderBy('is_popular', 'desc')
+            ->orderBy('display_order', 'asc')
+            ->orderBy('name', 'asc')
+            ->limit($popularLimit)
+            ->get();
+
+        // Format popular items
+        $popularData = $popularItems->map(function ($item) use ($request) {
+            $imageUrl = null;
+            if ($item->image) {
+                $appUrl = rtrim(config('app.url'), '/');
+                $parsedUrl = parse_url($appUrl);
+                $scheme = $parsedUrl['scheme'] ?? 'http';
+                $host = $parsedUrl['host'] ?? 'localhost';
+                $port = isset($parsedUrl['port']) ? ':' . $parsedUrl['port'] : '';
+                $domain = $scheme . '://' . $host . $port;
+                $imageUrl = $domain . '/admin/api/storage/' . $item->image;
+            }
+
+            return [
+                'id' => $item->id,
+                'food_category_id' => $item->food_category_id,
+                'category_name' => $item->foodCategory->name ?? '',
+                'name' => $item->name,
+                'description' => $item->description,
+                'price' => (float) $item->price,
+                'gst_percentage' => (float) $item->gst_percentage,
+                'food_type' => $item->food_type,
+                'is_veg' => $item->food_type === 'veg',
+                'status' => $item->status,
+                'image' => $imageUrl,
+                'display_order' => (int) $item->display_order,
+                'isPopular' => (bool) $item->is_popular,
+                'created_at' => $item->created_at,
+                'updated_at' => $item->updated_at,
+            ];
+        })->toArray();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'categories' => $categoriesData,
+                'popular_items' => $popularData,
+            ],
         ]);
     }
 }

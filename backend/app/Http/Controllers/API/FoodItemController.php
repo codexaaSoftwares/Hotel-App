@@ -76,6 +76,35 @@ class FoodItemController extends Controller
     }
 
     /**
+     * Get popular food items for POS Panel.
+     */
+    public function popular(Request $request)
+    {
+        $query = FoodItem::with('foodCategory')
+            ->where('status', 'active')
+            ->where('is_popular', true)
+            ->ordered();
+
+        // Limit popular items (optional, default: 20)
+        $limit = $request->input('limit', 20);
+        
+        $items = $query->limit($limit)->get();
+
+        $itemsData = array_map(
+            fn (FoodItem $item) => (new FoodItemResource($item))->toArray($request),
+            $items->all()
+        );
+
+        return response()->json([
+            'success' => true,
+            'data' => $itemsData,
+            'meta' => [
+                'total' => $items->count(),
+            ],
+        ]);
+    }
+
+    /**
      * Store a newly created food item.
      */
     public function store(FoodItemStoreRequest $request)

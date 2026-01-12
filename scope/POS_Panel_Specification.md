@@ -434,53 +434,70 @@ The POS (Point of Sale) Panel is the core billing interface for restaurant opera
 
 ## 📋 Implementation Checklist
 
-### Phase 1: Core Structure
-- [ ] Create POS Panel main component
-- [ ] Implement split-screen layout
-- [ ] Create Tables Panel component
-- [ ] Create Products Panel component
-- [ ] Create Billing Cart component
+### Phase 1: Core Structure ✅ COMPLETE
+- [x] Create POS Panel main component
+- [x] Implement split-screen layout (responsive: md/lg/xl breakpoints)
+- [x] Create Tables Panel component (compact list view)
+- [x] Create Products Panel component (category tabs + product grid)
+- [x] Create Billing Cart component (order items + customer + payment)
 
-### Phase 2: Table Management
-- [ ] Table grid/list display
-- [ ] Table status indicators
-- [ ] Table selection logic
-- [ ] Multiple orders per table support
-- [ ] Order switching functionality
+### Phase 2: Table Management 🟡 PARTIAL
+- [x] Table list display (compact row-based layout)
+- [x] Table status indicators (colored dots)
+- [x] Table selection logic
+- [x] Visual enhancements (borders, shadows, hover effects)
+- [x] Active orders count display
+- [x] Total amount display for active bills
+- [x] API integration with bill information
+- [ ] Multiple orders per table support (UI ready, backend pending)
+- [ ] Order switching functionality (pending)
 
-### Phase 3: Product Selection
-- [ ] Category tabs
-- [ ] Product grid with cards
-- [ ] Search functionality
-- [ ] Add to cart functionality
-- [ ] Product filtering
+### Phase 3: Product Selection ✅ COMPLETE
+- [x] Expandable category sections (accordion style)
+- [x] All categories expanded by default
+- [x] Popular items section (with star icon)
+- [x] Horizontal product card layout (Image | Name/Price | Button)
+- [x] Fixed-width cards (31% - 3 columns per row)
+- [x] Wrapping grid layout
+- [x] Search functionality (debounced, frontend-only)
+- [x] Search results grouped by category
+- [x] Add to cart functionality
+- [x] Product filtering by category
+- [x] Veg/Non-Veg indicators (V/NV badges)
+- [x] Product images support (50x50px square)
+- [x] Combined POS Menu API integration
 
-### Phase 4: Order Management
-- [ ] Order items list
-- [ ] Quantity controls
-- [ ] Item removal
-- [ ] Real-time calculations
-- [ ] Draft order auto-save
+### Phase 4: Order Management 🟡 PARTIAL
+- [x] Order items list (in cart)
+- [x] Quantity controls (+ / - / input)
+- [x] Item removal
+- [x] Real-time calculations (subtotal, total - GST pending)
+- [ ] Draft order auto-save (pending)
+- [ ] Load existing orders (pending)
 
-### Phase 5: Customer Management
-- [ ] Quick add customer form
-- [ ] Customer search
-- [ ] Customer selection
-- [ ] Customer display
+### Phase 5: Customer Management ✅ COMPLETE
+- [x] Quick add customer form (name + mobile)
+- [x] Customer search (debounced, dropdown results)
+- [x] Customer selection
+- [x] Customer display (with type badge)
+- [x] Walk-in customer option
+- [x] API integration
 
-### Phase 6: Billing & Payment
-- [ ] Order summary
-- [ ] GST calculation
-- [ ] Payment method selection
-- [ ] Print bill functionality
-- [ ] Payment processing
+### Phase 6: Billing & Payment 🟡 PARTIAL
+- [x] Order summary (subtotal, total - GST calculation pending)
+- [ ] GST calculation (item-wise/bill-wise - pending)
+- [x] Payment method selection (UI complete)
+- [x] Split payment toggle (UI complete)
+- [ ] Print bill functionality (pending)
+- [ ] Payment processing (pending - backend API needed)
 
-### Phase 7: Polish & Optimization
-- [ ] Responsive design
-- [ ] Performance optimization
-- [ ] Error handling
-- [ ] Loading states
-- [ ] Toast notifications
+### Phase 7: Polish & Optimization ✅ COMPLETE
+- [x] Responsive design (md/lg/xl breakpoints)
+- [x] Error handling (toast notifications)
+- [x] Loading states (spinners)
+- [x] Toast notifications
+- [x] Dark mode support (CSS)
+- [ ] Performance optimization (lazy loading, caching - pending)
 
 ---
 
@@ -494,7 +511,179 @@ The POS (Point of Sale) Panel is the core billing interface for restaurant opera
 
 ---
 
+---
+
+## 📊 Implementation Status
+
+### ✅ Completed (Frontend - Phase 1)
+
+#### 1. **Main POS Panel Structure**
+- ✅ Main POS Panel component (`POSPanel.jsx`) created
+- ✅ Split-screen layout implemented (Tables | Products | Billing Cart)
+- ✅ Responsive breakpoints configured:
+  - Tables Panel: `md={3} lg={2} xl={2}` (compact, ~15-20% width)
+  - Products Panel: `md={5} lg={6} xl={6}` (flexible, ~40-50% width)
+  - Billing Cart: `md={4} lg={4} xl={4}` (balanced, ~30-40% width)
+- ✅ Header with table info, order number, and live clock
+- ✅ State management for table, order, cart, customer, payment
+- ✅ Route configured at `/pos/panel`
+- ✅ Permission-based access control (`create_bill` permission)
+
+#### 2. **Tables Panel Component**
+- ✅ Compact list view (not card grid)
+- ✅ Simple row-based layout with minimal spacing
+- ✅ Status indicators (colored dots: green=available, orange=occupied, etc.)
+- ✅ Visual enhancements:
+  - Left border (3px teal) for selected table
+  - Bottom border (1px gray) for row separation
+  - Box shadow on selected/hover states
+  - Hover effects with background color change
+- ✅ Displays active orders count badge
+- ✅ Displays total amount for active bills
+- ✅ Disabled state for cleaning/maintenance tables
+- ✅ API integration with `include_bills` parameter
+- ✅ Auto-refresh on component mount
+
+#### 3. **Products Panel Component**
+- ✅ Expandable category sections (accordion style)
+- ✅ All categories expanded by default
+- ✅ Popular items section at the top (with star icon)
+- ✅ Horizontal product card layout:
+  - Image (50x50px square) on left
+  - Name and price in middle section
+  - Add button on right
+- ✅ Fixed-width cards: `calc(31.00% - 4px)` (3 columns per row)
+- ✅ Wrapping grid layout (flex-wrap)
+- ✅ Search functionality (debounced, frontend-only)
+- ✅ Search results grouped by category
+- ✅ Veg/Non-Veg indicators (V/NV badges)
+- ✅ Add to cart functionality
+- ✅ Compact design (~60px card height)
+- ✅ Hover effects and visual feedback
+
+#### 4. **Billing Cart Panel Component**
+- ✅ Order items list with quantity controls
+- ✅ Customer section:
+  - Quick add customer (name + mobile)
+  - Search existing customers
+  - Walk-in customer option
+- ✅ Order summary with totals
+- ✅ Payment method selection
+- ✅ Split payment toggle
+- ✅ Action buttons (Print, Save Draft, Process Payment)
+
+#### 5. **Backend API Enhancements**
+- ✅ Table listing API enhanced (`GET /api/tables`)
+  - Added `include_bills` query parameter
+  - Returns `active_orders_count`, `total_orders_count`, `active_bills_total`
+  - Returns `active_bills` array with bill details
+- ✅ Table model relationships added:
+  - `bills()` - All bills for table
+  - `activeBills()` - Draft/pending bills only
+- ✅ Bill model relationship added:
+  - `table()` - Belongs to Table
+- ✅ POS Menu API created (`GET /api/pos-menu`)
+  - Combined endpoint for POS Panel
+  - Returns both categories hierarchy and popular items in single response
+  - Optional `popular_limit` parameter (default: 20)
+  - Reduces API calls from 2 to 1 (better performance)
+
+#### 6. **Permissions & Access Control**
+- ✅ Bill permissions added to seeders:
+  - `view_bill`, `create_bill`, `edit_bill`, `delete_bill`
+  - `bill_payment`, `view_pending_bill`, `create_pending_bill`
+- ✅ Permissions assigned to roles:
+  - Manager: Full bill permissions
+  - Staff: Limited bill permissions (view, create, edit, payment)
+- ✅ Permission alias mappings added to `authService.js`
+
+### 🟡 In Progress / Pending
+
+#### 1. **State Management & Order Handling**
+- ⏳ Load existing orders when table is selected
+- ⏳ Multiple orders per table support
+- ⏳ Order switching functionality
+- ⏳ Draft order auto-save (every 30 seconds)
+- ⏳ Manual save draft functionality
+
+#### 2. **GST Calculation**
+- ⏳ Item-wise GST calculation
+- ⏳ Bill-wise GST calculation
+- ⏳ Integration with restaurant settings (GST percentage, calculation method)
+- ⏳ Real-time GST updates in order summary
+
+#### 3. **Bill/Order Management**
+- ⏳ Create bill API integration
+- ⏳ Update bill API integration
+- ⏳ Bill number auto-generation
+- ⏳ Bill status management (draft → pending → paid)
+- ⏳ Payment status calculation
+
+#### 4. **Payment Processing**
+- ⏳ Process payment API integration
+- ⏳ Payment method handling (cash, UPI, card, split)
+- ⏳ Partial payment support (for credit customers)
+- ⏳ Payment validation
+- ⏳ Update customer stats after payment
+
+#### 5. **Print Functionality**
+- ⏳ Print bill feature
+- ⏳ Thermal printer integration
+- ⏳ Bill template design
+- ⏳ Print before payment option
+
+#### 6. **Backend APIs (To Be Created)**
+- ⏳ `POST /api/bills` - Create new bill
+- ⏳ `GET /api/bills` - List bills (with filters)
+- ⏳ `GET /api/bills/{bill}` - Get bill details
+- ⏳ `PUT /api/bills/{bill}` - Update bill
+- ⏳ `DELETE /api/bills/{bill}` - Delete bill
+- ⏳ `GET /api/bills/table/{tableId}` - Get bills for table
+- ⏳ `POST /api/bills/{bill}/process-payment` - Process payment
+
+### 📝 Technical Notes
+
+#### Current Implementation Details
+- **Frontend Framework**: React 19 with React Bootstrap
+- **State Management**: React useState hooks (local state)
+- **API Client**: Axios with custom apiClient configuration
+- **Styling**: Bootstrap + Custom SCSS with dark mode support
+- **Icons**: FontAwesome (free solid icons)
+- **Responsive Design**: Bootstrap breakpoints (md, lg, xl)
+
+#### UI Design Decisions
+- **Compact Layout**: Prioritized space efficiency for POS workflow
+- **List View**: Simple row-based table list (not cards) for better density
+- **Visual Feedback**: Left border + shadow for selected state
+- **Status Indicators**: Colored dots for quick status recognition
+- **Minimal Padding**: Reduced spacing throughout for maximum content visibility
+- **Product Cards**: Horizontal layout (Image | Name/Price | Button) for space efficiency
+- **Fixed Width Cards**: 31% width (3 columns) for uniform appearance
+- **Expandable Sections**: All categories expanded by default for quick access
+- **Popular Items**: Dedicated section at top with star icon indicator
+
+#### API Integration Status
+- ✅ Tables API: Fully integrated with bill information
+- ✅ POS Menu API: Fully integrated (combined categories + popular items)
+  - Single endpoint: `GET /api/pos-menu`
+  - Returns: `{ categories: [...], popular_items: [...] }`
+  - Frontend service: `getPOSMenu()` function
+- ✅ Customer API: Fully integrated (search + quick add)
+- ⏳ Bills API: Pending (needs backend implementation)
+- ⏳ Payment API: Pending (needs backend implementation)
+
+---
+
 **Last Updated**: January 2025  
-**Version**: 1.0.0  
-**Status**: Specification Document
+**Version**: 1.2.0 (Products Panel Enhanced - Horizontal Cards & Combined API)  
+**Status**: In Development - Frontend UI Complete, Backend APIs Pending
+
+### Recent Updates (v1.2.0)
+- ✅ Enhanced Products Panel with expandable categories
+- ✅ Added Popular items section at top
+- ✅ Implemented horizontal product card layout (Image | Name/Price | Button)
+- ✅ Fixed-width cards (31% - 3 columns) for uniform appearance
+- ✅ Created combined `/pos-menu` API endpoint (categories + popular items)
+- ✅ Optimized API calls (reduced from 2 to 1 request)
+- ✅ Improved space efficiency with compact horizontal card design
 

@@ -77,5 +77,21 @@ class Table extends Model
     {
         return $this->table_name ?: $this->table_number;
     }
+
+    /**
+     * Get the bills for the table.
+     */
+    public function bills()
+    {
+        return $this->hasMany(Bill::class);
+    }
+
+    /**
+     * Get active bills (draft or pending) for the table.
+     */
+    public function activeBills()
+    {
+        return $this->hasMany(Bill::class)->whereIn('status', ['draft', 'pending']);
+    }
 }
 

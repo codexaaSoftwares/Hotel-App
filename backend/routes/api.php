@@ -79,9 +79,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/food-categories/{foodCategory}', [FoodCategoryController::class, 'show'])->middleware('permission:view_food_category');
     Route::put('/food-categories/{foodCategory}', [FoodCategoryController::class, 'update'])->middleware('permission:edit_food_category');
     Route::delete('/food-categories/{foodCategory}', [FoodCategoryController::class, 'destroy'])->middleware('permission:delete_food_category');
+    
+    // POS Menu (combined endpoint for POS Panel)
+    Route::get('/pos-menu', [FoodCategoryController::class, 'posMenu'])->middleware('permission:view_food_category');
 
     // Food Item Management
     Route::get('/food-items', [FoodItemController::class, 'index'])->middleware('permission:view_food_item');
+    Route::get('/food-items/popular', [FoodItemController::class, 'popular'])->middleware('permission:view_food_item');
     Route::post('/food-items', [FoodItemController::class, 'store'])->middleware('permission:create_food_item');
     Route::get('/food-items/{foodItem}', [FoodItemController::class, 'show'])->middleware('permission:view_food_item');
     Route::put('/food-items/{foodItem}', [FoodItemController::class, 'update'])->middleware('permission:edit_food_item');

@@ -256,6 +256,34 @@ export const getItems = async (categoryId = null) => {
   }
 }
 
+// Get POS menu (categories + popular items) - Combined endpoint
+export const getPOSMenu = async (popularLimit = 20) => {
+  try {
+    const response = await apiClient.get('/pos-menu', {
+      params: { popular_limit: popularLimit },
+    })
+    
+    if (response.data?.success && response.data?.data) {
+      return {
+        success: true,
+        data: {
+          categories: response.data.data.categories || [],
+          popularItems: (response.data.data.popular_items || []).map(normalizeItem),
+        },
+      }
+    }
+    
+    return {
+      success: false,
+      data: { categories: [], popularItems: [] },
+      message: 'Invalid response format',
+    }
+  } catch (error) {
+    console.error('Error fetching POS menu:', error)
+    return handleApiError(error)
+  }
+}
+
 // Get item by ID
 export const getItemById = async (id) => {
   try {
@@ -470,6 +498,7 @@ export const updateCategoryOrder = async (categoryOrders) => {
 
 const menuService = {
   getMenuHierarchy,
+  getPOSMenu,
   getCategories,
   getCategoryById,
   createCategory,

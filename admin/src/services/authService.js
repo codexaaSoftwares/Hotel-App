@@ -61,6 +61,15 @@ const PERMISSION_ALIAS_MAP = {
   edit_wallet_transaction: ['wallet_transaction:write'],
   delete_wallet_transaction: ['wallet_transaction:delete'],
   
+  // Bill Management
+  view_bill: ['bill:read'],
+  create_bill: ['bill:create', 'bill:write'],
+  edit_bill: ['bill:write'],
+  delete_bill: ['bill:delete'],
+  bill_payment: ['bill:payment'],
+  view_pending_bill: ['pending_bill:read'],
+  create_pending_bill: ['pending_bill:write'],
+  
   // Dashboard
   view_dashboard: ['dashboard:read'],
   
