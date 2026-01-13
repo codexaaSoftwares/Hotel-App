@@ -333,16 +333,25 @@ const ProductsPanel = ({ onAddToCart, currentTable }) => {
 
 // Compact Product Card Component - Horizontal Layout with Fixed Width
 const ProductCard = ({ product, onAdd, currentTable }) => {
+  const [isHovered, setIsHovered] = useState(false)
+
   return (
     <div
-      className="product-card-compact bg-white border rounded p-2 cursor-pointer transition-all d-flex align-items-center gap-2"
+      className="product-card-compact bg-white border rounded p-2 cursor-pointer transition-all d-flex align-items-center gap-2 position-relative"
       onClick={() => onAdd(product)}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       style={{
         width: 'calc(31.00% - 4px)', // Fixed width: 3 columns with gap
         minHeight: '60px',
         flexShrink: 0,
         cursor: currentTable ? 'pointer' : 'not-allowed',
         opacity: currentTable ? 1 : 0.6,
+        transition: 'all 0.2s ease',
+        backgroundColor: isHovered && currentTable ? '#f0fdfa' : '#ffffff',
+        borderColor: isHovered && currentTable ? '#0d9488' : '',
+        transform: isHovered && currentTable ? 'translateY(-2px)' : 'translateY(0)',
+        boxShadow: isHovered && currentTable ? '0 2px 4px rgba(13, 148, 136, 0.2)' : '',
       }}
     >
       {/* Product Image - Square */}
@@ -385,9 +394,13 @@ const ProductCard = ({ product, onAdd, currentTable }) => {
         </Badge>
       </div>
 
-      {/* Product Name & Price - Middle Section */}
-      <div className="flex-grow-1 d-flex flex-column justify-content-center" style={{ minWidth: 0 }}>
-        <div className="fw-semibold text-truncate mb-1" style={{ fontSize: '12px', lineHeight: '1.2' }}>
+      {/* Product Name & Price - Middle Section (Full Width) */}
+      <div className="flex-grow-1 d-flex flex-column justify-content-center" style={{ minWidth: 0, flex: 1 }}>
+        <div 
+          className="fw-semibold text-truncate mb-1" 
+          style={{ fontSize: '12px', lineHeight: '1.2' }}
+          title={product.name} // Tooltip for full name on hover
+        >
           {product.name}
         </div>
         <div className="fw-bold text-primary" style={{ fontSize: '13px' }}>
@@ -395,26 +408,38 @@ const ProductCard = ({ product, onAdd, currentTable }) => {
         </div>
       </div>
 
-      {/* Add Button - Right */}
-      <div className="flex-shrink-0">
-        <button
-          className="btn btn-sm btn-primary d-flex align-items-center justify-content-center"
+      {/* Floating Add Button - Animated on Hover */}
+      {currentTable && (
+        <div
+          className="position-absolute top-0 end-0"
+          style={{
+            opacity: isHovered ? 1 : 0,
+            transform: isHovered ? 'translate(-8px, 8px) scale(1)' : 'translate(-8px, 8px) scale(0.8)',
+            transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+            pointerEvents: isHovered ? 'auto' : 'none',
+            zIndex: 10,
+          }}
           onClick={(e) => {
             e.stopPropagation()
             onAdd(product)
           }}
-          disabled={!currentTable}
-          style={{
-            fontSize: '11px',
-            width: '32px',
-            height: '32px',
-            padding: '0',
-            borderRadius: '6px',
-          }}
         >
-          <FontAwesomeIcon icon={faPlus} style={{ fontSize: '12px' }} />
-        </button>
-      </div>
+          <button
+            className="btn btn-primary rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+            disabled={!currentTable}
+            style={{
+              width: '36px',
+              height: '36px',
+              padding: '0',
+              fontSize: '16px',
+              border: 'none',
+              cursor: 'pointer',
+            }}
+          >
+            <FontAwesomeIcon icon={faPlus} style={{ fontSize: '14px' }} />
+          </button>
+        </div>
+      )}
     </div>
   )
 }
