@@ -466,28 +466,42 @@ The POS (Point of Sale) Panel is the core billing interface for restaurant opera
 - [x] Veg/Non-Veg indicators (V/NV badges)
 - [x] Product images support (50x50px square)
 - [x] Combined POS Menu API integration
+- [x] Long item names with tooltip on hover
+- [x] Animated floating + button (hidden by default, appears on hover)
+- [x] Enhanced hover effects (background, border, transform, shadow)
 
 ### Phase 4: Order Management 🟡 PARTIAL
 - [x] Order items list (in cart)
-- [x] Quantity controls (+ / - / input)
+- [x] Quantity controls (+ / - / input) - Compact layout with counter in middle
 - [x] Item removal
-- [x] Real-time calculations (subtotal, total - GST pending)
+- [x] Real-time calculations (subtotal, discount, CGST, SGST, Service Tax, total)
+- [x] Counter input width optimized for 3+ digits
+- [x] Default number input spinners hidden (custom +/- buttons used)
+- [x] Sound notifications for cart actions (add, update, delete)
 - [ ] Draft order auto-save (pending)
 - [ ] Load existing orders (pending)
 
 ### Phase 5: Customer Management ✅ COMPLETE
-- [x] Quick add customer form (name + mobile)
-- [x] Customer search (debounced, dropdown results)
+- [x] Quick add customer form (name + mobile) - Modal popup
+- [x] Customer search (debounced, dropdown results) - Hidden by default, shown on "Search" button click
 - [x] Customer selection
 - [x] Customer display (with type badge)
-- [x] Walk-in customer option
+- [x] Walk-in customer option - Default selection when no customer selected
+- [x] Compact customer section design
 - [x] API integration
 
 ### Phase 6: Billing & Payment 🟡 PARTIAL
-- [x] Order summary (subtotal, total - GST calculation pending)
-- [ ] GST calculation (item-wise/bill-wise - pending)
-- [x] Payment method selection (UI complete)
-- [x] Split payment toggle (UI complete)
+- [x] Order summary (subtotal, discount, CGST, SGST, Service Tax, total)
+- [x] GST/Tax calculation (CGST, SGST, Service Tax - bill-wise on subtotal after discount)
+- [x] Discount field (percentage or amount toggle)
+- [x] Rounding display (shows original amount, rounding difference, rounded total)
+- [x] Round Number setting integration (enabled/disabled from restaurant settings)
+- [x] All numbers display in `.00` format
+- [x] Payment method selection (icon buttons: Cash, UPI, Card)
+- [x] Amount received input (editable for all payment methods)
+- [x] "Full" button (auto-fills total amount for all methods)
+- [x] Change/Remaining display (shows change for cash, remaining for any method)
+- [x] Payment notes field (optional textarea)
 - [ ] Print bill functionality (pending)
 - [ ] Payment processing (pending - backend API needed)
 
@@ -550,8 +564,8 @@ The POS (Point of Sale) Panel is the core billing interface for restaurant opera
 - ✅ Popular items section at the top (with star icon)
 - ✅ Horizontal product card layout:
   - Image (50x50px square) on left
-  - Name and price in middle section
-  - Add button on right
+  - Name and price in middle section (flex: 1 for maximum space)
+  - Animated floating + button (hidden by default, appears on hover)
 - ✅ Fixed-width cards: `calc(31.00% - 4px)` (3 columns per row)
 - ✅ Wrapping grid layout (flex-wrap)
 - ✅ Search functionality (debounced, frontend-only)
@@ -559,17 +573,33 @@ The POS (Point of Sale) Panel is the core billing interface for restaurant opera
 - ✅ Veg/Non-Veg indicators (V/NV badges)
 - ✅ Add to cart functionality
 - ✅ Compact design (~60px card height)
-- ✅ Hover effects and visual feedback
+- ✅ Enhanced hover effects (background color, border color, transform, box shadow)
+- ✅ Long item names with tooltip on hover
+- ✅ Animated + button (opacity and scale transition on hover)
 
 #### 4. **Billing Cart Panel Component**
-- ✅ Order items list with quantity controls
+- ✅ Order items list with quantity controls (compact single-row layout)
+- ✅ Quantity counter in middle of item row (optimized width for 3+ digits)
+- ✅ Default number input spinners hidden (CSS-based)
+- ✅ Sound notifications for cart actions (add item, change quantity, remove item)
 - ✅ Customer section:
-  - Quick add customer (name + mobile)
-  - Search existing customers
-  - Walk-in customer option
-- ✅ Order summary with totals
-- ✅ Payment method selection
-- ✅ Split payment toggle
+  - Walk-in customer as default (when no customer selected)
+  - Quick add customer modal (name + mobile)
+  - Search existing customers (hidden by default, shown on "Search" button)
+  - Compact design
+- ✅ Order summary with totals:
+  - Subtotal
+  - Discount (percentage or amount)
+  - CGST, SGST, Service Tax breakdown
+  - Rounding display (when enabled)
+  - Total (rounded if setting enabled)
+- ✅ Discount field (toggle between percentage and amount)
+- ✅ Payment method selection (icon buttons: Cash, UPI, Card)
+- ✅ Amount received input (editable for all payment methods)
+- ✅ "Full" button (auto-fills total for all methods)
+- ✅ Change/Remaining display (dynamic based on payment method and amount)
+- ✅ Payment notes field (optional textarea)
+- ✅ All monetary values display in `.00` format
 - ✅ Action buttons (Print, Save Draft, Process Payment)
 
 #### 5. **Backend API Enhancements**
@@ -606,11 +636,12 @@ The POS (Point of Sale) Panel is the core billing interface for restaurant opera
 - ⏳ Draft order auto-save (every 30 seconds)
 - ⏳ Manual save draft functionality
 
-#### 2. **GST Calculation**
-- ⏳ Item-wise GST calculation
-- ⏳ Bill-wise GST calculation
-- ⏳ Integration with restaurant settings (GST percentage, calculation method)
-- ⏳ Real-time GST updates in order summary
+#### 2. **GST/Tax Calculation** ✅ COMPLETE
+- ✅ CGST, SGST, and Service Tax calculation (bill-wise on subtotal after discount)
+- ✅ Integration with restaurant settings (CGST %, SGST %, Service Tax %, Round Number enable)
+- ✅ Real-time tax updates in order summary
+- ✅ Rounding display (original amount, rounding difference, rounded total)
+- ✅ All monetary values display in `.00` format
 
 #### 3. **Bill/Order Management**
 - ⏳ Create bill API integration
@@ -675,10 +706,22 @@ The POS (Point of Sale) Panel is the core billing interface for restaurant opera
 ---
 
 **Last Updated**: January 2025  
-**Version**: 1.2.0 (Products Panel Enhanced - Horizontal Cards & Combined API)  
-**Status**: In Development - Frontend UI Complete, Backend APIs Pending
+**Version**: 1.4.0 (UI Enhancements, GST/Tax Calculation, Rounding, Payment Section)  
+**Status**: In Development - Frontend UI Enhanced, Backend APIs Pending
 
-### Recent Updates (v1.2.0)
+### Recent Updates (v1.4.0)
+- ✅ Products Panel: Long item names with tooltip, animated floating + button on hover
+- ✅ Billing Cart: Compact design, counter in middle row, walk-in customer default
+- ✅ Customer Management: Quick add modal, search hidden by default
+- ✅ GST/Tax Calculation: CGST, SGST, Service Tax (bill-wise on subtotal after discount)
+- ✅ Discount Field: Percentage or amount toggle for entire bill
+- ✅ Rounding Feature: Configurable rounding with display of original amount and difference
+- ✅ Payment Section: Icon buttons, editable amount input, "Full" button, change/remaining display, payment notes
+- ✅ Number Formatting: All monetary values display in `.00` format
+- ✅ Sound Notifications: Audio feedback for cart actions (add, update, delete)
+- ✅ UI Polish: Hidden number input spinners, optimized counter width, enhanced hover effects
+
+### Previous Updates (v1.2.0)
 - ✅ Enhanced Products Panel with expandable categories
 - ✅ Added Popular items section at top
 - ✅ Implemented horizontal product card layout (Image | Name/Price | Button)

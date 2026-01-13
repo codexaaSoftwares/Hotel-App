@@ -323,7 +323,7 @@ System configuration settings (key-value store).
 - Email settings: `smtp_host`, `smtp_port`, `smtp_username`, `smtp_password`, `from_address`, `from_name`
 - Business Information: `business_email`, `business_phone`, `business_website`
 - App Settings: `web_url`
-- **Restaurant Settings** (group: 'GST Settings'): `default_gst_percentage`, `gst_calculation_method`
+- **Restaurant Settings** (group: 'GST Settings'): `cgst_percentage`, `sgst_percentage`, `service_tax_percentage`, `round_number_enabled`
 - **Restaurant Settings** (group: 'Invoice Settings'): `invoice_prefix`, `invoice_business_name`, `invoice_business_address`, `invoice_contact_phone`, `invoice_contact_email`, `invoice_footer_text`, `invoice_other_text`
 - **Restaurant Settings** (group: 'Thermal Printer'): `printer_name`, `printer_ip`, `printer_port`, `paper_width`, `enabled`
 
@@ -432,7 +432,6 @@ Food items/menu items for restaurant.
 | `name` | varchar(255) | UNIQUE, NOT NULL | Item name |
 | `description` | text | NULLABLE | Item description |
 | `price` | decimal(10,2) | NOT NULL | Item price |
-| `gst_percentage` | decimal(5,2) | NULLABLE | GST percentage (0-100) |
 | `is_veg` | boolean | DEFAULT true | Vegetarian flag |
 | `status` | enum | DEFAULT 'active' | Status: 'active', 'inactive' |
 | `image` | varchar(255) | NULLABLE | Image file path (added via migration) |
@@ -457,7 +456,7 @@ Food items/menu items for restaurant.
 **Notes:**
 - Each item belongs to one category
 - Price stored as decimal(10,2) for precision
-- GST percentage optional (0-100 range)
+- **GST percentage removed** - GST/Tax calculation now handled at restaurant level (CGST, SGST, Service Tax)
 - `is_veg` boolean flag for vegetarian/non-vegetarian items
 - `image` field stores relative path to image file in `storage/app/public/food-items/`
 - `display_order` used for custom sorting within category (default: 0)
@@ -600,8 +599,7 @@ Individual items in a bill (order line items).
 | `item_name` | varchar(255) | NOT NULL | Item name (snapshot) |
 | `quantity` | int | NOT NULL | Quantity ordered |
 | `unit_price` | decimal(10,2) | NOT NULL | Unit price (snapshot) |
-| `gst_percentage` | decimal(5,2) | NULLABLE | GST percentage (snapshot) |
-| `gst_amount` | decimal(10,2) | DEFAULT 0.00 | GST amount for this item |
+| `gst_amount` | decimal(10,2) | DEFAULT 0.00 | GST amount for this item (calculated from restaurant settings) |
 | `total_price` | decimal(12,2) | NOT NULL | Total price (quantity × unit_price) |
 | `display_order` | int | DEFAULT 0 | Display order in bill |
 | `notes` | varchar(500) | NULLABLE | Item-specific notes |

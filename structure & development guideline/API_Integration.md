@@ -3968,8 +3968,8 @@ const handleSaveSettings = async (section, settingsData) => {
   "data": [
     {
       "id": 1,
-      "key": "default_gst_percentage",
-      "value": "5",
+      "key": "cgst_percentage",
+      "value": "2.5",
       "section": "GST Settings",
       "description": null,
       "created_at": "2025-01-20T00:00:00.000000Z",
@@ -3999,8 +3999,10 @@ const handleSaveSettings = async (section, settingsData) => {
   "success": true,
   "data": {
     "GST Settings": {
-      "default_gst_percentage": "5",
-      "gst_calculation_method": "bill_total"
+      "cgst_percentage": "2.5",
+      "sgst_percentage": "2.5",
+      "service_tax_percentage": "0",
+      "round_number_enabled": "false"
     },
     "Invoice Settings": {
       "invoice_prefix": "BILL",
@@ -4091,8 +4093,8 @@ const handleSaveSettings = async (section, settingsData) => {
 **Request Body**:
 ```json
 {
-  "key": "default_gst_percentage",
-  "value": "5",
+  "key": "cgst_percentage",
+  "value": "2.5",
   "section": "GST Settings",
   "type": "string"
 }
@@ -4290,7 +4292,6 @@ const handleSaveSettings = async (section, settingsData) => {
       "name": "Butter Chicken",
       "description": "Creamy butter chicken",
       "price": "250.00",
-      "gst_percentage": "5",
       "is_veg": false,
       "status": "active",
       "created_at": "2025-01-20T00:00:00.000000Z",
@@ -4335,7 +4336,6 @@ const handleSaveSettings = async (section, settingsData) => {
   "name": "Butter Chicken",
   "description": "Creamy butter chicken",
   "price": 250.00,
-  "gst_percentage": 5,
   "is_veg": false,
   "status": "active"
 }
@@ -4356,7 +4356,6 @@ const handleSaveSettings = async (section, settingsData) => {
   "name": "Butter Chicken",
   "description": "Creamy butter chicken",
   "price": 250.00,
-  "gst_percentage": 5,
   "is_veg": false,
   "status": "active",
   "display_order": 1
@@ -4498,12 +4497,11 @@ const handleSaveSettings = async (section, settingsData) => {
       "items": [
         {
           "id": 1,
-          "name": "Butter Chicken",
-          "description": "Creamy butter chicken",
-          "price": "250.00",
-          "gst_percentage": "5",
-          "is_veg": false,
-          "status": "active",
+      "name": "Butter Chicken",
+      "description": "Creamy butter chicken",
+      "price": "250.00",
+      "is_veg": false,
+      "status": "active",
           "image": "http://localhost:8000/admin/api/storage/food-items/food_item_1_1234567890_abc123.jpg",
           "display_order": 1,
           "category_name": "Main Course"
@@ -5097,7 +5095,8 @@ const Settings = () => {
 - ✅ **PaymentService** - Fully integrated in PaymentForm, TransactionsList (real database integration, PDF Export)
 - ✅ **ReportService** - Fully integrated in CompanyHealthReport (with PDF export)
 - ✅ **SettingsService** - Fully integrated in Settings page (Business Info, Invoice, Email Settings with test, App Settings with Web URL, Currency & Regional, S3 Settings)
-- ✅ **RestaurantSettingsService** - Fully integrated in RestaurantSettings page (GST Settings, Invoice Settings, Thermal Printer Settings)
+- ✅ **RestaurantSettingsService** - Fully integrated in RestaurantSettings page (CGST/SGST/Service Tax Settings, Invoice Settings, Thermal Printer Settings, Round Number enable)
+- ✅ **POS Panel** - Frontend UI complete (Tables Panel, Products Panel, Billing Cart Panel with GST/Tax calculation, discount, rounding, payment section)
 - ⏳ **FoodCategoryService** - Backend ready, frontend service to be created
 - ✅ **MenuService** - Fully integrated in MenuManagement.jsx (hierarchy, CRUD, image upload, item reordering)
 - ✅ **TableService** - Fully integrated in TablesList.jsx (CRUD, server-side pagination, filtering, searching)
@@ -5145,7 +5144,9 @@ const Settings = () => {
 - ✅ **Image Upload Endpoints** - `POST /api/food-items/{item}/upload-image` and `DELETE /api/food-items/{item}/image` for managing item images
 - ✅ **Item Reordering Endpoints** - `POST /api/food-items/{item}/move-up` and `POST /api/food-items/{item}/move-down` for changing item order within categories
 - ✅ **Restaurant Permissions** - Added `view_restaurant_settings`, `edit_restaurant_settings`, and all Food Category/Item permissions
-- ✅ **Data Storage** - Restaurant settings stored in `settings` table with groups: 'GST Settings', 'Invoice Settings', 'Thermal Printer'
+- ✅ **Data Storage** - Restaurant settings stored in `settings` table with groups: 'GST Settings' (CGST, SGST, Service Tax, Round Number), 'Invoice Settings', 'Thermal Printer'
+- ✅ **GST/Tax Migration** - Migrated from single `default_gst_percentage` to separate `cgst_percentage`, `sgst_percentage`, `service_tax_percentage`, and added `round_number_enabled` setting
+- ✅ **Food Items GST Removal** - Removed `gst_percentage` column from `food_items` table (GST now calculated at restaurant level)
 ✅ **Table Management APIs** - Fully implemented with CRUD operations, server-side pagination, filtering (status, is_active), searching (table_number, table_name), returns all records in data field with pagination metadata
 ✅ **Table Permissions** - Added `view_table`, `create_table`, `edit_table`, `delete_table` permissions
 ✅ **Table Seeder** - Created TableSeeder with 15 sample table records
