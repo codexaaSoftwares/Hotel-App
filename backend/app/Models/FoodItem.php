@@ -19,7 +19,6 @@ class FoodItem extends Model
         'name',
         'food_category_id',
         'price',
-        'gst_percentage',
         'food_type',
         'status',
         'description',
@@ -35,7 +34,6 @@ class FoodItem extends Model
      */
     protected $casts = [
         'price' => 'decimal:2',
-        'gst_percentage' => 'decimal:2',
         'food_type' => 'string',
         'status' => 'string',
         'display_order' => 'integer',

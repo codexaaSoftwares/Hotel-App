@@ -40,7 +40,6 @@ class FoodItemResource extends JsonResource
                 ];
             }),
             'price' => (float) $this->price,
-            'gst_percentage' => (float) $this->gst_percentage,
             'food_type' => $this->food_type,
             'status' => $this->status,
             'description' => $this->description,

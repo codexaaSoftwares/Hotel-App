@@ -613,14 +613,6 @@ const MenuManagement = () => {
                                         <td style={{ width: '100px', padding: '4px 8px', textAlign: 'right', verticalAlign: 'middle' }}>
                                           <span className="fw-bold text-primary">{formatPrice(item.price)}</span>
                                         </td>
-                                        {/* GST */}
-                                        <td style={{ width: '80px', padding: '4px 8px', textAlign: 'center', verticalAlign: 'middle' }}>
-                                          {item.gst_percentage ? (
-                                            <span className="text-muted">{item.gst_percentage}%</span>
-                                          ) : (
-                                            <span className="text-muted">-</span>
-                                          )}
-                                        </td>
                                         {/* Actions */}
                                         <td className="text-end align-middle" style={{ width: '100px', padding: '4px 8px' }}>
                                           <div className="d-flex gap-1 justify-content-end">

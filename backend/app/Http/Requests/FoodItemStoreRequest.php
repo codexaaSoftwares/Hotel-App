@@ -28,7 +28,6 @@ class FoodItemStoreRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'food_category_id' => ['required', 'integer', 'exists:food_categories,id'],
             'price' => ['required', 'numeric', 'min:0', 'max:999999.99'],
-            'gst_percentage' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'food_type' => ['nullable', 'in:veg,non_veg'],
             'status' => ['nullable', 'in:active,inactive'],
             'description' => ['nullable', 'string', 'max:1000'],
@@ -48,8 +47,6 @@ class FoodItemStoreRequest extends FormRequest
         $this->merge([
             'status' => $this->input('status', 'active'),
             'food_type' => $this->input('food_type', 'veg'),
-            // Don't set default for gst_percentage - allow null to use default GST from settings
-            'gst_percentage' => $this->input('gst_percentage') === '' ? null : $this->input('gst_percentage'),
             'is_popular' => $this->input('is_popular', false),
         ]);
     }

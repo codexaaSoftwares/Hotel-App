@@ -22,8 +22,10 @@ const RestaurantSettings = () => {
 
   const [settingsData, setSettingsData] = useState({
     gstSettings: {
-      default_gst_percentage: '5',
-      gst_calculation_method: 'bill_total'
+      cgst_percentage: '2.5',
+      sgst_percentage: '2.5',
+      service_tax_percentage: '0',
+      round_number_enabled: 'false'
     },
       invoiceSettings: {
         invoice_prefix: 'BILL',
@@ -107,10 +109,27 @@ const RestaurantSettings = () => {
     const validatePrinter = !section || section === 'thermalPrinter'
 
     // GST Settings validation
-    if (validateGST && settingsData.gstSettings.default_gst_percentage) {
-      const gstValue = parseFloat(settingsData.gstSettings.default_gst_percentage)
-      if (isNaN(gstValue) || gstValue < 0 || gstValue > 100) {
-        newErrors['gstSettings.default_gst_percentage'] = 'GST percentage must be between 0 and 100'
+    if (validateGST) {
+      // CGST validation
+      if (settingsData.gstSettings.cgst_percentage) {
+        const cgstValue = parseFloat(settingsData.gstSettings.cgst_percentage)
+        if (isNaN(cgstValue) || cgstValue < 0 || cgstValue > 100) {
+          newErrors['gstSettings.cgst_percentage'] = 'CGST percentage must be between 0 and 100'
+        }
+      }
+      // SGST validation
+      if (settingsData.gstSettings.sgst_percentage) {
+        const sgstValue = parseFloat(settingsData.gstSettings.sgst_percentage)
+        if (isNaN(sgstValue) || sgstValue < 0 || sgstValue > 100) {
+          newErrors['gstSettings.sgst_percentage'] = 'SGST percentage must be between 0 and 100'
+        }
+      }
+      // Service Tax validation
+      if (settingsData.gstSettings.service_tax_percentage) {
+        const serviceTaxValue = parseFloat(settingsData.gstSettings.service_tax_percentage)
+        if (isNaN(serviceTaxValue) || serviceTaxValue < 0 || serviceTaxValue > 100) {
+          newErrors['gstSettings.service_tax_percentage'] = 'Service Tax percentage must be between 0 and 100'
+        }
       }
     }
 
@@ -168,8 +187,9 @@ const RestaurantSettings = () => {
       if (field) {
         // Save single field
         const fieldMapping = {
-          'gstSettings.default_gst_percentage': { key: 'default_gst_percentage', section: 'GST Settings' },
-          'gstSettings.gst_calculation_method': { key: 'gst_calculation_method', section: 'GST Settings' },
+          'gstSettings.cgst_percentage': { key: 'cgst_percentage', section: 'GST Settings' },
+          'gstSettings.sgst_percentage': { key: 'sgst_percentage', section: 'GST Settings' },
+          'gstSettings.service_tax_percentage': { key: 'service_tax_percentage', section: 'GST Settings' },
           'invoiceSettings.invoice_prefix': { key: 'invoice_prefix', section: 'Invoice Settings' },
           'invoiceSettings.invoice_business_name': { key: 'invoice_business_name', section: 'Invoice Settings' },
           'invoiceSettings.invoice_business_address': { key: 'invoice_business_address', section: 'Invoice Settings' },
@@ -273,40 +293,75 @@ const RestaurantSettings = () => {
             <div className="mb-5">
               <div className="d-flex align-items-center mb-4 pb-3 border-bottom border-primary border-2">
                 <FontAwesomeIcon icon={faPercent} className="me-3 text-primary fs-4" />
-                <h4 className="mb-0 text-primary">GST Settings</h4>
+                <h4 className="mb-0 text-primary">GST & Tax Settings</h4>
               </div>
 
               <Form>
                 <FormRow>
                   <TextField
-                    id="default_gst_percentage"
-                    label="Default GST Percentage"
+                    id="cgst_percentage"
+                    label="CGST Percentage"
                     type="number"
                     min="0"
                     max="100"
-                    step="0.01"
-                    value={settingsData.gstSettings.default_gst_percentage}
-                    onChange={(e) => handleChange('gstSettings', 'default_gst_percentage', e.target.value)}
+                    step="0.1"
+                    value={settingsData.gstSettings.cgst_percentage}
+                    onChange={(e) => handleChange('gstSettings', 'cgst_percentage', e.target.value)}
                     disabled={isReadOnly}
-                    invalid={!!errors['gstSettings.default_gst_percentage']}
-                    feedback={errors['gstSettings.default_gst_percentage']}
-                    helpText="Default GST percentage applied to bills (0-100)"
+                    invalid={!!errors['gstSettings.cgst_percentage']}
+                    feedback={errors['gstSettings.cgst_percentage']}
+                    helpText="Central GST percentage (0-100)"
                     required
-                    col={6}
+                    col={4}
                   />
+                  <TextField
+                    id="sgst_percentage"
+                    label="SGST Percentage"
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="0.1"
+                    value={settingsData.gstSettings.sgst_percentage}
+                    onChange={(e) => handleChange('gstSettings', 'sgst_percentage', e.target.value)}
+                    disabled={isReadOnly}
+                    invalid={!!errors['gstSettings.sgst_percentage']}
+                    feedback={errors['gstSettings.sgst_percentage']}
+                    helpText="State GST percentage (0-100)"
+                    required
+                    col={4}
+                  />
+                  <TextField
+                    id="service_tax_percentage"
+                    label="Service Tax Percentage"
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="0.1"
+                    value={settingsData.gstSettings.service_tax_percentage}
+                    onChange={(e) => handleChange('gstSettings', 'service_tax_percentage', e.target.value)}
+                    disabled={isReadOnly}
+                    invalid={!!errors['gstSettings.service_tax_percentage']}
+                    feedback={errors['gstSettings.service_tax_percentage']}
+                    helpText="Service Tax percentage (can be 0)"
+                    required
+                    col={4}
+                  />
+                </FormRow>
+
+                <FormRow>
                   <SelectField
-                    id="gst_calculation_method"
-                    label="GST Calculation Method"
-                    value={settingsData.gstSettings.gst_calculation_method}
-                    onChange={(e) => handleChange('gstSettings', 'gst_calculation_method', e.target.value)}
+                    id="round_number_enabled"
+                    label="Round Number on Final Total"
+                    value={settingsData.gstSettings.round_number_enabled}
+                    onChange={(e) => handleChange('gstSettings', 'round_number_enabled', e.target.value)}
                     disabled={isReadOnly}
                     options={[
-                      { value: 'bill_total', label: 'Calculate on Bill Total' },
-                      { value: 'item_wise', label: 'Calculate Item-wise' },
+                      { value: 'true', label: 'Enabled' },
+                      { value: 'false', label: 'Disabled' },
                     ]}
-                    helpText="How GST should be calculated for bills"
+                    helpText="Round the final bill total to nearest whole number"
                     required
-                    col={6}
+                    col={12}
                   />
                 </FormRow>
 

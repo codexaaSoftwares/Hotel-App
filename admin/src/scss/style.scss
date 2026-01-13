@@ -414,6 +414,17 @@ textarea {
   }
 }
 
+// Hide number input spinners (use custom +/- buttons instead)
+.no-spinner {
+  -moz-appearance: textfield; /* Firefox */
+  
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none; /* Chrome, Safari, Edge */
+    margin: 0;
+  }
+}
+
 // Billing Cart Styles
 .billing-cart-panel {
   .list-group-item {

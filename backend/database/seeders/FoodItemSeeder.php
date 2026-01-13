@@ -88,7 +88,6 @@ class FoodItemSeeder extends Seeder
                 ],
                 [
                     'price' => $item['price'],
-                    'gst_percentage' => 0, // Default GST percentage
                     'food_type' => 'veg', // All items are vegetarian
                     'status' => 'active',
                     'display_order' => $item['display_order'],

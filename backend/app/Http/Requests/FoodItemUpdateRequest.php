@@ -28,7 +28,6 @@ class FoodItemUpdateRequest extends FormRequest
             'name' => ['sometimes', 'required', 'string', 'max:255'],
             'food_category_id' => ['sometimes', 'required', 'integer', 'exists:food_categories,id'],
             'price' => ['sometimes', 'required', 'numeric', 'min:0', 'max:999999.99'],
-            'gst_percentage' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'food_type' => ['nullable', 'in:veg,non_veg'],
             'status' => ['nullable', 'in:active,inactive'],
             'description' => ['nullable', 'string', 'max:1000'],
@@ -44,33 +43,5 @@ class FoodItemUpdateRequest extends FormRequest
      *
      * @return void
      */
-    protected function prepareForValidation()
-    {
-        // Convert empty string to null for gst_percentage
-        if ($this->has('gst_percentage') && ($this->input('gst_percentage') === '' || $this->input('gst_percentage') === null)) {
-            $this->merge([
-                'gst_percentage' => null,
-            ]);
-        }
-    }
-
-    /**
-     * Get validated data with null handling.
-     * If gst_percentage is null, exclude it from update so database keeps existing value.
-     *
-     * @return array
-     */
-    public function validated($key = null, $default = null)
-    {
-        $validated = parent::validated($key, $default);
-        
-        // If gst_percentage is null or empty, don't include it in update
-        // This allows the database to keep the existing value or use default
-        if (isset($validated['gst_percentage']) && ($validated['gst_percentage'] === null || $validated['gst_percentage'] === '')) {
-            unset($validated['gst_percentage']);
-        }
-        
-        return $validated;
-    }
 }
 

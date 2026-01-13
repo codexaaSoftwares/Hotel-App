@@ -141,8 +141,10 @@ class RestaurantSettingsService {
   transformSettingsToForm(apiData) {
     const defaultData = {
       gstSettings: {
-        default_gst_percentage: '5',
-        gst_calculation_method: 'bill_total' // 'bill_total' or 'item_wise'
+        cgst_percentage: '2.5',
+        sgst_percentage: '2.5',
+        service_tax_percentage: '0',
+        round_number_enabled: 'false'
       },
       invoiceSettings: {
         invoice_prefix: 'BILL',
@@ -172,13 +174,31 @@ class RestaurantSettingsService {
     // GST Settings
     if (apiData['GST Settings']) {
       const gstData = apiData['GST Settings']
-      if (gstData.hasOwnProperty('default_gst_percentage')) {
-        formData.gstSettings.default_gst_percentage = gstData.default_gst_percentage !== null && gstData.default_gst_percentage !== undefined 
-          ? String(gstData.default_gst_percentage) 
-          : ''
+      if (gstData.hasOwnProperty('cgst_percentage')) {
+        formData.gstSettings.cgst_percentage = gstData.cgst_percentage !== null && gstData.cgst_percentage !== undefined 
+          ? String(gstData.cgst_percentage) 
+          : '2.5'
       }
-      if (gstData.hasOwnProperty('gst_calculation_method')) {
-        formData.gstSettings.gst_calculation_method = gstData.gst_calculation_method || 'bill_total'
+      if (gstData.hasOwnProperty('sgst_percentage')) {
+        formData.gstSettings.sgst_percentage = gstData.sgst_percentage !== null && gstData.sgst_percentage !== undefined 
+          ? String(gstData.sgst_percentage) 
+          : '2.5'
+      }
+      if (gstData.hasOwnProperty('service_tax_percentage')) {
+        formData.gstSettings.service_tax_percentage = gstData.service_tax_percentage !== null && gstData.service_tax_percentage !== undefined 
+          ? String(gstData.service_tax_percentage) 
+          : '0'
+      }
+      if (gstData.hasOwnProperty('round_number_enabled')) {
+        formData.gstSettings.round_number_enabled = gstData.round_number_enabled !== null && gstData.round_number_enabled !== undefined 
+          ? String(gstData.round_number_enabled) 
+          : 'false'
+      }
+      // Legacy support: If old default_gst_percentage exists, split it into CGST and SGST
+      if (gstData.hasOwnProperty('default_gst_percentage') && !gstData.hasOwnProperty('cgst_percentage')) {
+        const oldGst = parseFloat(gstData.default_gst_percentage) || 5
+        formData.gstSettings.cgst_percentage = String(oldGst / 2)
+        formData.gstSettings.sgst_percentage = String(oldGst / 2)
       }
     }
 

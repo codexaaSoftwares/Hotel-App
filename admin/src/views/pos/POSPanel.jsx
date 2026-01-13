@@ -8,6 +8,8 @@ import BillingCartPanel from '../../components/pages/pos/BillingCartPanel'
 import { useToast } from '../../components'
 import { usePermissions } from '../../hooks'
 import { PERMISSIONS } from '../../constants/permissions'
+import { playTicSound } from '../../utils/soundUtils'
+import restaurantSettingsService from '../../services/restaurantSettingsService'
 
 const POSPanel = () => {
   const { error } = useToast()
@@ -22,7 +24,17 @@ const POSPanel = () => {
   const [cartItems, setCartItems] = useState([])
   const [selectedCustomer, setSelectedCustomer] = useState(null)
   const [paymentMethod, setPaymentMethod] = useState('cash')
-  const [isSplitPayment, setIsSplitPayment] = useState(false)
+  const [paidAmount, setPaidAmount] = useState(0)
+  const [discount, setDiscount] = useState({ type: 'amount', value: 0 }) // 'amount' or 'percentage'
+  const [paymentNotes, setPaymentNotes] = useState('')
+  
+  // Restaurant settings (GST & Tax)
+  const [gstSettings, setGstSettings] = useState({
+    cgstPercentage: 2.5, // Default 2.5%
+    sgstPercentage: 2.5, // Default 2.5%
+    serviceTaxPercentage: 0, // Default 0%
+    roundNumberEnabled: false, // Default false
+  })
 
   // Get current time
   const [currentTime, setCurrentTime] = useState(new Date())
@@ -34,6 +46,27 @@ const POSPanel = () => {
     }, 1000)
 
     return () => clearInterval(timer)
+  }, [])
+
+  // Load restaurant GST & Tax settings
+  useEffect(() => {
+    const loadGstSettings = async () => {
+      try {
+        const response = await restaurantSettingsService.getSettingsBySection('GST Settings')
+        if (response.success && response.data) {
+          setGstSettings({
+            cgstPercentage: parseFloat(response.data.cgst_percentage || 2.5),
+            sgstPercentage: parseFloat(response.data.sgst_percentage || 2.5),
+            serviceTaxPercentage: parseFloat(response.data.service_tax_percentage || 0),
+            roundNumberEnabled: response.data.round_number_enabled === 'true' || response.data.round_number_enabled === true,
+          })
+        }
+      } catch (err) {
+        console.error('Error loading GST settings:', err)
+        // Use defaults if loading fails
+      }
+    }
+    loadGstSettings()
   }, [])
 
   // Format time display
@@ -51,6 +84,8 @@ const POSPanel = () => {
     // TODO: Load existing orders for this table
     setCurrentOrder(null)
     setCartItems([])
+    setSelectedCustomer(null) // Reset to walk-in customer by default
+    setDiscount({ type: 'amount', value: 0 }) // Reset discount
   }
 
   // Handle product add to cart
@@ -72,13 +107,14 @@ const POSPanel = () => {
         item_name: product.name,
         quantity: 1,
         unit_price: parseFloat(product.price),
-        gst_percentage: product.gst_percentage ? parseFloat(product.gst_percentage) : null,
         total_price: parseFloat(product.price),
-        gst_amount: 0, // Will be calculated
         display_order: cartItems.length,
       }
       setCartItems([...cartItems, newItem])
     }
+    
+    // Play notification sound
+    playTicSound()
   }
 
   // Handle quantity change
@@ -100,11 +136,17 @@ const POSPanel = () => {
       return item
     })
     setCartItems(updatedItems)
+    
+    // Play notification sound
+    playTicSound()
   }
 
   // Handle remove item
   const handleRemoveItem = (itemId) => {
     setCartItems(cartItems.filter((item) => item.food_item_id !== itemId))
+    
+    // Play notification sound
+    playTicSound()
   }
 
   // Handle customer selection
@@ -117,28 +159,80 @@ const POSPanel = () => {
     setPaymentMethod(method)
   }
 
-  // Handle split payment toggle
-  const handleSplitPaymentToggle = (checked) => {
-    setIsSplitPayment(checked)
+  // Handle paid amount change
+  const handlePaidAmountChange = (amount) => {
+    setPaidAmount(amount)
   }
 
   // Calculate order totals
   const calculateTotals = () => {
     const subtotal = cartItems.reduce((sum, item) => sum + item.total_price, 0)
-    // TODO: Calculate GST based on restaurant settings (item-wise or bill-wise)
-    const gstAmount = 0 // Placeholder
-    const discount = 0 // Placeholder
-    const totalAmount = subtotal + gstAmount - discount
+    
+    // Calculate discount amount
+    let discountAmount = 0
+    if (discount.value > 0) {
+      if (discount.type === 'percentage') {
+        discountAmount = (subtotal * discount.value) / 100
+      } else {
+        discountAmount = discount.value
+      }
+      // Ensure discount doesn't exceed subtotal
+      discountAmount = Math.min(discountAmount, subtotal)
+    }
+    
+    // Calculate subtotal after discount
+    const subtotalAfterDiscount = subtotal - discountAmount
+    
+    // Calculate CGST, SGST, and Service Tax on bill total (after discount)
+    const cgstAmount = (subtotalAfterDiscount * gstSettings.cgstPercentage) / 100
+    const sgstAmount = (subtotalAfterDiscount * gstSettings.sgstPercentage) / 100
+    const serviceTaxAmount = (subtotalAfterDiscount * gstSettings.serviceTaxPercentage) / 100
+    
+    // Total tax amount
+    const totalTaxAmount = cgstAmount + sgstAmount + serviceTaxAmount
+    
+    // Calculate total amount
+    const originalTotalAmount = subtotalAfterDiscount + totalTaxAmount
+    let totalAmount = originalTotalAmount
+    let roundingAmount = 0
+
+    // Apply rounding if enabled
+    if (gstSettings.roundNumberEnabled) {
+      totalAmount = Math.round(originalTotalAmount)
+      roundingAmount = totalAmount - originalTotalAmount
+    }
 
     return {
       subtotal,
-      gstAmount,
-      discount,
+      discountAmount,
+      subtotalAfterDiscount,
+      cgstAmount,
+      sgstAmount,
+      serviceTaxAmount,
+      totalTaxAmount,
+      originalTotalAmount,
+      roundingAmount,
       totalAmount,
     }
   }
 
   const totals = calculateTotals()
+
+  // Reset paid amount when total changes or payment method changes
+  useEffect(() => {
+    // Auto-fill with total amount for all payment methods
+    setPaidAmount(totals.totalAmount)
+  }, [totals.totalAmount, cartItems.length, discount.value])
+
+  // Handle discount change
+  const handleDiscountChange = (type, value) => {
+    setDiscount({ type, value: parseFloat(value) || 0 })
+  }
+
+  // Handle payment notes change
+  const handlePaymentNotesChange = (notes) => {
+    setPaymentNotes(notes)
+  }
 
   if (!canAccessPOS) {
     return (
@@ -209,13 +303,18 @@ const POSPanel = () => {
             cartItems={cartItems}
             selectedCustomer={selectedCustomer}
             paymentMethod={paymentMethod}
-            isSplitPayment={isSplitPayment}
             totals={totals}
             onQuantityChange={handleQuantityChange}
             onRemoveItem={handleRemoveItem}
             onCustomerSelect={handleCustomerSelect}
             onPaymentMethodChange={handlePaymentMethodChange}
-            onSplitPaymentToggle={handleSplitPaymentToggle}
+            discount={discount}
+            onDiscountChange={handleDiscountChange}
+            gstSettings={gstSettings}
+            paidAmount={paidAmount}
+            onPaidAmountChange={handlePaidAmountChange}
+            paymentNotes={paymentNotes}
+            onPaymentNotesChange={handlePaymentNotesChange}
             onSaveDraft={() => {
               // TODO: Implement save draft
               console.log('Save draft')

@@ -11,7 +11,6 @@ const ItemForm = ({ show, onHide, item, categories = [], selectedCategory = null
     name: '',
     description: '',
     price: '',
-    gst_percentage: '',
     is_veg: true,
     status: 'active',
     image: '',
@@ -31,7 +30,6 @@ const ItemForm = ({ show, onHide, item, categories = [], selectedCategory = null
         name: item.name || '',
         description: item.description || '',
         price: item.price || '',
-        gst_percentage: item.gst_percentage || '',
         is_veg: item.is_veg !== undefined ? item.is_veg : true,
         status: item.status || 'active',
         image: item.image || '',
@@ -51,7 +49,6 @@ const ItemForm = ({ show, onHide, item, categories = [], selectedCategory = null
         name: '',
         description: '',
         price: '',
-        gst_percentage: '',
         is_veg: true,
         status: 'active',
         image: '',
@@ -89,9 +86,6 @@ const ItemForm = ({ show, onHide, item, categories = [], selectedCategory = null
     }
     if (!formData.price || parseFloat(formData.price) <= 0) {
       newErrors.price = 'Price must be greater than 0'
-    }
-    if (formData.gst_percentage && (parseFloat(formData.gst_percentage) < 0 || parseFloat(formData.gst_percentage) > 100)) {
-      newErrors.gst_percentage = 'GST percentage must be between 0 and 100'
     }
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -149,7 +143,6 @@ const ItemForm = ({ show, onHide, item, categories = [], selectedCategory = null
         ...formData,
         food_category_id: parseInt(formData.food_category_id),
         price: parseFloat(formData.price),
-        gst_percentage: formData.gst_percentage ? parseFloat(formData.gst_percentage) : null,
         display_order: parseInt(formData.display_order) || 0,
         is_popular: formData.is_popular || false,
         imageFile: imageFile, // Pass the file separately for upload
@@ -247,23 +240,7 @@ const ItemForm = ({ show, onHide, item, categories = [], selectedCategory = null
               required
               invalid={!!errors.price}
               feedback={errors.price}
-              col={6}
-            />
-            <TextField
-              id="gst_percentage"
-              label="GST Percentage (%)"
-              name="gst_percentage"
-              type="number"
-              value={formData.gst_percentage}
-              onChange={handleChange}
-              placeholder="5.00"
-              min="0"
-              max="100"
-              step="0.01"
-              invalid={!!errors.gst_percentage}
-              feedback={errors.gst_percentage}
-              helpText="Leave empty to use default GST"
-              col={6}
+              col={12}
             />
           </FormRow>
 
