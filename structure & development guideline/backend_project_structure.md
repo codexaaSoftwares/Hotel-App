@@ -533,33 +533,39 @@ backend/
 - **Status**: ✅ Fully implemented (Frontend + Backend)
 - **Seeder**: `TableSeeder` - Creates 15 sample table records
 
-### 16. **Bill Management Module** (Restaurant System)
-- **Location**: `app/Http/Controllers/API/BillController.php` (To be created)
+### 17. **Bill Management Module** (Restaurant System)
+- **Location**: `app/Http/Controllers/API/BillController.php`
 - **Routes**: `/api/bills/*`, `/api/bills/{bill}/process-payment`, `/api/bills/table/{tableId}`
 - **Features**:
   - List bills (paginated, sortable, searchable, filterable)
   - Get bill by ID
   - Create bill (draft or paid)
-  - Update bill
-  - Delete bill (soft delete)
+  - Update bill (prevents duplicate items, handles soft-deleted items)
+  - Delete bill (soft delete, prevents deleting paid bills)
   - Get bills by table (for loading existing orders)
   - Process payment (cash/upi/card/wallet)
-  - Bill number auto-generation (#BILL001 format)
+  - Bill number auto-generation (`#BILL{ID}` format, e.g., #BILL10)
   - Bill status management (draft → pending → paid)
   - Payment status calculation (pending/partial/paid)
-- **Model**: `Bill` (with soft deletes, relationships to Table, Customer, WalletTransaction)
+  - Table status automatic updates (occupied/available based on active bills)
+- **Model**: `Bill` (with soft deletes, relationships to Table, Customer, WalletTransaction, BillItem, Creator)
 - **Related Model**: `BillItem` (bill items with food_item relationship)
-- **Request Validation**: `BillStoreRequest`, `BillUpdateRequest` (To be created)
-- **API Resource**: `BillResource`, `BillItemResource` (To be created)
+- **Request Validation**: `BillStoreRequest`, `BillUpdateRequest`, `ProcessPaymentRequest`
+- **API Resource**: `BillResource`, `BillItemResource`
 - **Payment Logic**:
   - **Cash/UPI/Card**: Updates bill status to 'paid', payment_status to 'paid' (no wallet transaction)
-  - **Wallet**: Updates bill status to 'pending', payment_status to 'pending', creates wallet transaction (debit)
+  - **Wallet**: Updates bill status to 'paid', payment_status to 'paid', creates wallet transaction (debit)
 - **Permissions**: `view_bill`, `create_bill`, `edit_bill`, `delete_bill`, `bill_payment`
-- **Status**: ⏳ Backend APIs pending (Frontend logic ready)
+- **Status**: ✅ Fully implemented (Frontend + Backend)
 - **Database**: 
-  - `bills` table (migration exists)
+  - `bills` table (migration exists, bill_number nullable for auto-generation)
   - `bill_items` table (migration exists)
   - `wallet_transactions` table (for wallet payments)
+- **Table Status Management**: 
+  - `updateTableStatus()` helper method updates table status based on active bills
+  - Table set to 'occupied' when bill created (draft/pending)
+  - Table set to 'available' when payment processed (if no other active bills)
+  - Table status updates on bill update/delete
 
 ### 17. **Customer Management Module**
 - **Location**: `app/Http/Controllers/API/CustomerController.php`
@@ -1254,25 +1260,26 @@ php artisan serve
 ---
 
 **Last Updated**: January 2025
-**Version**: 1.6.0 (Bill Management Module - Frontend Ready, Backend Pending)
+**Version**: 1.7.0 (Bill Management Module - Fully Implemented)
 
 ## 🔄 Recent Updates
-- ⏳ **Bill Management Module** - Frontend implementation complete, backend APIs pending
-  - Frontend POS Panel payment processing logic ready
-  - Payment methods: Cash, UPI, Card, Wallet
-  - Save Draft functionality (manual + auto-save on cart changes)
-  - Print Bill functionality (print-friendly HTML template)
-  - Payment processing logic:
-    - Cash/UPI/Card: Creates bill only (no wallet transaction)
-    - Wallet: Creates bill + wallet transaction (debit)
-  - Backend APIs to be created:
-    - `POST /api/bills` - Create bill
-    - `GET /api/bills` - List bills
-    - `GET /api/bills/{bill}` - Get bill details
-    - `PUT /api/bills/{bill}` - Update bill
-    - `DELETE /api/bills/{bill}` - Delete bill
-    - `GET /api/bills/table/{tableId}` - Get bills for table
-    - `POST /api/bills/{bill}/process-payment` - Process payment
+- ✅ **Bill Management Module** - Fully implemented (Frontend + Backend)
+  - ✅ `POST /api/bills` - Create bill (with auto-generated bill number `#BILL{ID}`)
+  - ✅ `GET /api/bills` - List bills (with pagination, filtering, searching)
+  - ✅ `GET /api/bills/{bill}` - Get bill details
+  - ✅ `PUT /api/bills/{bill}` - Update bill (prevents duplicate items, handles soft-deleted items)
+  - ✅ `DELETE /api/bills/{bill}` - Delete bill (soft delete, prevents deleting paid bills)
+  - ✅ `GET /api/bills/table/{tableId}` - Get bills for table
+  - ✅ `POST /api/bills/{bill}/process-payment` - Process payment
+    - Cash/UPI/Card: Updates bill status to 'paid' (no wallet transaction)
+    - Wallet: Creates wallet transaction (debit) and marks bill as 'paid'
+  - ✅ Table status automatic updates (occupied/available based on active bills)
+  - ✅ Bill number auto-generation: `#BILL{ID}` format
+  - ✅ Bill number field made nullable to support auto-generation after creation
+- ✅ **Customer Financial Data Refactoring**:
+  - Removed calculated fields: `total_bills`, `total_amount`, `paid_amount`, `remaining_amount`
+  - Added Laravel accessors: `totalCredits`, `totalDebits`, `remaining` (calculated from wallet transactions)
+  - Migration created to remove redundant columns
 - ✅ Financial Management module fully implemented
 - ✅ Financial categories and transactions tables migrations created
 - ✅ Financial permissions added and seeded

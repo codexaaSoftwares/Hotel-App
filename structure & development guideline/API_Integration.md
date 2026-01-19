@@ -4753,7 +4753,7 @@ const handleSaveSettings = async (section, settingsData) => {
 ### 1. **POST /api/bills**
 **Description**: New bill create करने के लिए (draft or paid)
 
-**Backend Controller**: `BillController@store` (To be created)
+**Backend Controller**: `BillController@store`
 
 **Request Body**:
 ```json
@@ -4828,7 +4828,7 @@ const handleSaveSettings = async (section, settingsData) => {
 ### 2. **GET /api/bills**
 **Description**: Bills की list fetch करने के लिए (paginated, sortable, filterable)
 
-**Backend Controller**: `BillController@index` (To be created)
+**Backend Controller**: `BillController@index`
 
 **Query Parameters**:
 - `page` - Page number (default: 1)
@@ -4854,7 +4854,7 @@ const handleSaveSettings = async (section, settingsData) => {
 ### 3. **GET /api/bills/{bill}**
 **Description**: Specific bill की details fetch करने के लिए
 
-**Backend Controller**: `BillController@show` (To be created)
+**Backend Controller**: `BillController@show`
 
 **Permission Required**: `view_bill`
 
@@ -4867,7 +4867,7 @@ const handleSaveSettings = async (section, settingsData) => {
 ### 4. **PUT /api/bills/{bill}**
 **Description**: Existing bill update करने के लिए
 
-**Backend Controller**: `BillController@update` (To be created)
+**Backend Controller**: `BillController@update`
 
 **Permission Required**: `edit_bill`
 
@@ -4882,7 +4882,7 @@ const handleSaveSettings = async (section, settingsData) => {
 ### 5. **DELETE /api/bills/{bill}**
 **Description**: Bill delete करने के लिए (soft delete)
 
-**Backend Controller**: `BillController@destroy` (To be created)
+**Backend Controller**: `BillController@destroy`
 
 **Permission Required**: `delete_bill`
 
@@ -4895,7 +4895,7 @@ const handleSaveSettings = async (section, settingsData) => {
 ### 6. **GET /api/bills/table/{tableId}**
 **Description**: Specific table के bills fetch करने के लिए (for loading existing orders)
 
-**Backend Controller**: `BillController@getByTable` (To be created)
+**Backend Controller**: `BillController@getByTable`
 
 **Query Parameters**:
 - `status` - Filter by status (optional, default: all)
@@ -4914,7 +4914,7 @@ const handleSaveSettings = async (section, settingsData) => {
 ### 7. **POST /api/bills/{bill}/process-payment**
 **Description**: Bill payment process करने के लिए
 
-**Backend Controller**: `BillController@processPayment` (To be created)
+**Backend Controller**: `BillController@processPayment`
 
 **Request Body**:
 ```json
@@ -5311,8 +5311,8 @@ const Settings = () => {
 - ✅ **ReportService** - Fully integrated in CompanyHealthReport (with PDF export)
 - ✅ **SettingsService** - Fully integrated in Settings page (Business Info, Invoice, Email Settings with test, App Settings with Web URL, Currency & Regional, S3 Settings)
 - ✅ **RestaurantSettingsService** - Fully integrated in RestaurantSettings page (CGST/SGST/Service Tax Settings, Invoice Settings, Thermal Printer Settings, Round Number enable)
-- ✅ **POS Panel** - Frontend UI complete (Tables Panel, Products Panel, Billing Cart Panel with GST/Tax calculation, discount, rounding, payment section, Save Draft, Print Bill, Process Payment)
-- ⏳ **BillService** - To be created when backend APIs are ready
+- ✅ **POS Panel** - Fully implemented (Tables Panel, Products Panel, Billing Cart Panel with GST/Tax calculation, discount, rounding, payment section, Save Draft, Print Bill, Process Payment)
+- ✅ **BillService** - Fully integrated in POSPanel.jsx (create, update, process payment, get by table)
 - ⏳ **FoodCategoryService** - Backend ready, frontend service to be created
 - ✅ **MenuService** - Fully integrated in MenuManagement.jsx (hierarchy, CRUD, image upload, item reordering)
 - ✅ **TableService** - Fully integrated in TablesList.jsx (CRUD, server-side pagination, filtering, searching)
@@ -5335,22 +5335,22 @@ const Settings = () => {
 **Last Updated**: January 2025
 
 ## 🔄 Recent Updates
-- ⏳ **Bill Management APIs** - Frontend implementation complete, backend APIs pending
-  - Frontend POS Panel payment processing logic ready
-  - Payment methods: Cash, UPI, Card, Wallet
-  - Save Draft functionality (manual + auto-save on cart changes)
-  - Print Bill functionality (print-friendly HTML template)
-  - Payment processing logic:
-    - Cash/UPI/Card: Creates bill only (no wallet transaction)
-    - Wallet: Creates bill + wallet transaction (debit)
-  - Backend APIs documented (to be implemented):
-    - `POST /api/bills` - Create bill
-    - `GET /api/bills` - List bills
-    - `GET /api/bills/{bill}` - Get bill details
-    - `PUT /api/bills/{bill}` - Update bill
-    - `DELETE /api/bills/{bill}` - Delete bill
-    - `GET /api/bills/table/{tableId}` - Get bills for table
-    - `POST /api/bills/{bill}/process-payment` - Process payment
+- ✅ **Bill Management APIs** - Fully implemented (Frontend + Backend)
+  - ✅ `POST /api/bills` - Create bill (with auto-generated bill number `#BILL{ID}`)
+  - ✅ `GET /api/bills` - List bills (with pagination, filtering, searching)
+  - ✅ `GET /api/bills/{bill}` - Get bill details
+  - ✅ `PUT /api/bills/{bill}` - Update bill (prevents duplicate items, handles soft-deleted items)
+  - ✅ `DELETE /api/bills/{bill}` - Delete bill (soft delete, prevents deleting paid bills)
+  - ✅ `GET /api/bills/table/{tableId}` - Get bills for table
+  - ✅ `POST /api/bills/{bill}/process-payment` - Process payment
+    - Cash/UPI/Card: Updates bill status to 'paid' (no wallet transaction)
+    - Wallet: Creates wallet transaction (debit) and marks bill as 'paid'
+  - ✅ Payment confirmation and success dialogs
+  - ✅ Sound notifications (success/error sounds)
+  - ✅ Table status automatic updates (occupied/available based on active bills)
+  - ✅ Event-based auto-save (saves draft when cart changes, 1-second debounce)
+  - ✅ Manual save draft functionality
+  - ✅ Print bill functionality (print-friendly HTML template)
 - ✅ **Wallet Transaction Management APIs** - Fully implemented with Customer Ledger endpoint
   - `GET /api/customers/{customer}/wallet-transactions` - Customer ledger with totals calculation
   - Backend calculates totals from all transactions (totalDebit, totalCredit, remainingAmount)

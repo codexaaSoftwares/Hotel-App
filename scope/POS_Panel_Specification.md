@@ -724,16 +724,46 @@ The POS (Point of Sale) Panel is the core billing interface for restaurant opera
   - Returns: `{ categories: [...], popular_items: [...] }`
   - Frontend service: `getPOSMenu()` function
 - ✅ Customer API: Fully integrated (search + quick add)
-- ⏳ Bills API: Pending (needs backend implementation)
-- ⏳ Payment API: Pending (needs backend implementation)
+- ✅ Bills API: Fully integrated
+  - `POST /api/bills` - Create bill
+  - `GET /api/bills` - List bills
+  - `GET /api/bills/{bill}` - Get bill details
+  - `PUT /api/bills/{bill}` - Update bill
+  - `DELETE /api/bills/{bill}` - Delete bill
+  - `GET /api/bills/table/{tableId}` - Get bills for table
+  - Frontend service: `billService.js` fully implemented
+- ✅ Payment API: Fully integrated
+  - `POST /api/bills/{bill}/process-payment` - Process payment
+  - Supports Cash, UPI, Card, and Wallet payment methods
+  - Frontend service: `billService.processPayment()` fully implemented
 
 ---
 
 **Last Updated**: January 2025  
-**Version**: 1.5.0 (Payment Processing Implementation - Frontend Complete)  
-**Status**: In Development - Frontend Payment Processing Complete, Backend APIs Pending
+**Version**: 1.6.0 (Payment Processing Implementation - Fully Complete)  
+**Status**: ✅ Fully Implemented - Frontend + Backend Complete
 
-### Recent Updates (v1.5.0)
+### Recent Updates (v1.6.0)
+- ✅ **Backend API Integration**: All bill management APIs fully implemented
+  - Bill creation/update with auto-generated bill number (`#BILL{ID}`)
+  - Payment processing API with wallet transaction support
+  - Table status automatic updates (occupied/available)
+- ✅ **Payment Processing Enhancements**:
+  - Payment confirmation dialog before processing
+  - Payment success dialog with bill details
+  - Sound notifications: Success sound for successful payment, error sound for failures
+  - Cash/UPI/Card: Updates bill status to 'paid' (no wallet transaction)
+  - Wallet: Creates wallet transaction (debit) and marks bill as 'paid'
+- ✅ **Bill Number Generation**: Changed to `#BILL{ID}` format (e.g., #BILL10)
+- ✅ **POS Header Enhancement**: Displays bill_number, total amount, and selected customer info dynamically
+- ✅ **Table Status Management**: Automatic table status updates
+  - Table set to 'occupied' when bill created (draft/pending)
+  - Table set to 'available' when payment processed (if no other active bills)
+- ✅ **Bill Update Logic**: Prevents duplicate items when updating quantities
+  - Updates existing items instead of creating duplicates
+  - Handles soft-deleted items properly
+
+### Previous Updates (v1.5.0)
 - ✅ **Payment Method Selection**: Added Wallet option (only for selected customers)
 - ✅ **Wallet Payment**: 
   - Auto-generates payment notes if blank
@@ -742,14 +772,14 @@ The POS (Point of Sale) Panel is the core billing interface for restaurant opera
 - ✅ **Save Draft Functionality**:
   - Manual save via "Save Draft" button
   - Auto-save on cart changes (event-based, 1-second debounce)
-  - Stores draft locally (ready for backend API integration)
+  - Fully integrated with backend API
 - ✅ **Print Bill Functionality**:
   - Print-friendly HTML template
   - Includes bill details, items, totals, GST breakdown
   - Can print before or after payment
 - ✅ **Process Payment Logic**:
-  - Cash/UPI/Card: Creates bill only (no wallet transaction)
-  - Wallet: Creates bill + wallet transaction (debit)
+  - Cash/UPI/Card: Updates bill status to 'paid' (no wallet transaction)
+  - Wallet: Creates wallet transaction (debit) and marks bill as 'paid'
   - Payment validation (full payment for walk-in, customer required for wallet)
 - ✅ **Unified Process Payment Button**: Single button for all payment methods (text/icon changes based on method)
 

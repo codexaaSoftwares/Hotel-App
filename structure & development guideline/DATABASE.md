@@ -518,10 +518,6 @@ Restaurant customers (walk-in and registered).
 | `state` | varchar(100) | NULLABLE | State/Province |
 | `pincode` | varchar(10) | NULLABLE | PIN/ZIP code |
 | `customer_type` | enum | DEFAULT 'regular' | Type: 'regular', 'credit' (Udhar) |
-| `total_bills` | int | DEFAULT 0 | Total number of bills (calculated) |
-| `total_amount` | decimal(12,2) | DEFAULT 0.00 | Total bill amount (calculated) |
-| `paid_amount` | decimal(12,2) | DEFAULT 0.00 | Total paid amount (calculated) |
-| `remaining_amount` | decimal(12,2) | DEFAULT 0.00 | Remaining balance (calculated) |
 | `status` | enum | DEFAULT 'active' | Status: 'active', 'inactive' |
 | `notes` | text | NULLABLE | Additional notes |
 | `created_at` | timestamp | NULLABLE | Creation timestamp |
@@ -541,6 +537,10 @@ Restaurant customers (walk-in and registered).
 
 **Soft Deletes:** Yes
 
+**Notes:**
+- Financial data (totalCredits, totalDebits, remaining) calculated on-the-fly from wallet transactions using Laravel accessors
+- Removed calculated fields: `total_bills`, `total_amount`, `paid_amount`, `remaining_amount` (migration: `2026_01_19_000001_remove_calculated_fields_from_customers_table`)
+
 ---
 
 ### 23. `bills`
@@ -549,7 +549,7 @@ Restaurant bills/orders (main order header).
 | Column | Type | Constraints | Description |
 |--------|------|-------------|-------------|
 | `id` | bigint unsigned | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
-| `bill_number` | varchar(50) | UNIQUE, NOT NULL | Bill number (e.g., #BILL001, auto-generated) |
+| `bill_number` | varchar(50) | UNIQUE, NULLABLE | Bill number (e.g., #BILL{ID}, auto-generated after creation) |
 | `table_id` | bigint unsigned | FOREIGN KEY, NULLABLE | Table reference (nullable for takeaway) |
 | `customer_id` | bigint unsigned | FOREIGN KEY, NULLABLE | Customer reference (nullable for walk-in) |
 | `bill_date` | datetime | NOT NULL | Bill date and time |
@@ -618,6 +618,10 @@ Individual items in a bill (order line items).
 - INDEX (`created_at`)
 
 **Soft Deletes:** Yes
+
+**Notes:**
+- `bill_number` is nullable and auto-generated after bill creation using format `#BILL{ID}` (e.g., #BILL10)
+- Migration: `2026_01_19_125803_make_bill_number_nullable_in_bills_table`
 
 ---
 
@@ -1143,6 +1147,12 @@ With proper indexes, expect these query times:
 - `create_bill_items_table` (2025_01_22_000003) - Creates bill_items table for individual items in bills (with snapshot pricing for historical accuracy)
 - `create_wallet_transactions_table` (2025_01_22_000004) - Creates wallet_transactions table for customer wallet transactions (credit/debit records for payments, refunds, and adjustments)
 
+### Customer Financial Data Refactoring (2026-01-19)
+- `remove_calculated_fields_from_customers_table` (2026_01_19_000001) - Removes redundant calculated fields (total_bills, total_amount, paid_amount, remaining_amount) from customers table. Financial data now calculated on-the-fly from wallet transactions using Laravel accessors.
+
+### Bill Number Auto-Generation (2026-01-19)
+- `make_bill_number_nullable_in_bills_table` (2026_01_19_125803) - Makes bill_number nullable to support auto-generation after bill creation. Bill number format: `#BILL{ID}` (e.g., #BILL10)
+
 ---
 
 ## Summary Statistics
@@ -1164,15 +1174,21 @@ With proper indexes, expect these query times:
 ---
 
 *Last Updated: January 2025*  
-*Database Version: 1.6* (POS Panel Payment Processing - Frontend Ready)
+*Database Version: 1.7* (POS Panel Payment Processing - Complete Implementation)
 
 ## 🔄 Recent Updates
 - ✅ **Bills & Bill Items Tables** - Fully implemented (migrations, models, relationships)
 - ✅ **Wallet Transactions Table** - Fully implemented with bill_id nullable for flexibility
-- ✅ **POS Panel Payment Processing** - Frontend implementation complete
+- ✅ **POS Panel Payment Processing** - Fully implemented (Frontend + Backend)
   - Payment methods: Cash, UPI, Card, Wallet
-  - Save Draft functionality (manual + auto-save on cart changes)
+  - Save Draft functionality (manual + event-based auto-save on cart changes)
   - Print Bill functionality
-  - Payment processing logic ready (pending backend API integration)
-- ⏳ **Backend Bill APIs** - Pending implementation
+  - Payment processing API fully integrated
+  - Bill number auto-generation: `#BILL{ID}` format
+  - Table status automatic updates (occupied/available based on active bills)
+- ✅ **Customer Financial Data Refactoring**:
+  - Removed calculated fields: `total_bills`, `total_amount`, `paid_amount`, `remaining_amount`
+  - Financial data now calculated on-the-fly from wallet transactions using Laravel accessors
+  - Migration created to remove redundant columns
+- ✅ **Bill Number Field**: Made nullable to support auto-generation after bill creation
 
