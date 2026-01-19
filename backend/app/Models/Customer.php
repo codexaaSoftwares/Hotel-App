@@ -25,13 +25,15 @@ class Customer extends Model
         'state',
         'pincode',
         'customer_type',
-        'total_bills',
-        'total_amount',
-        'paid_amount',
-        'remaining_amount',
         'status',
         'notes',
     ];
+
+    /**
+     * The attributes that should be appended to the model's array form.
+     * These are calculated from wallet transactions.
+     */
+    protected $appends = ['total_credits', 'total_debits', 'remaining'];
 
     /**
      * The attributes that should be cast.
@@ -39,10 +41,6 @@ class Customer extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'total_bills' => 'integer',
-        'total_amount' => 'decimal:2',
-        'paid_amount' => 'decimal:2',
-        'remaining_amount' => 'decimal:2',
         'deleted_at' => 'datetime',
     ];
 
@@ -84,6 +82,35 @@ class Customer extends Model
     public function walletTransactions()
     {
         return $this->hasMany(WalletTransaction::class);
+    }
+
+    /**
+     * Get total credits (calculated from wallet transactions).
+     */
+    public function getTotalCreditsAttribute()
+    {
+        return (float) $this->walletTransactions()
+            ->where('transaction_type', 'credit')
+            ->sum('amount');
+    }
+
+    /**
+     * Get total debits (calculated from wallet transactions).
+     */
+    public function getTotalDebitsAttribute()
+    {
+        return (float) $this->walletTransactions()
+            ->where('transaction_type', 'debit')
+            ->sum('amount');
+    }
+
+    /**
+     * Get remaining balance (calculated from wallet transactions).
+     * Remaining = Total Credits - Total Debits
+     */
+    public function getRemainingAttribute()
+    {
+        return $this->total_credits - $this->total_debits;
     }
 
     /**

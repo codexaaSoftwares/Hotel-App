@@ -67,11 +67,38 @@ class Bill extends Model
     }
 
     /**
+     * Get the bill items for the bill.
+     */
+    public function billItems()
+    {
+        return $this->hasMany(BillItem::class)->orderBy('display_order', 'asc');
+    }
+
+    /**
      * Get the wallet transactions for the bill.
      */
     public function walletTransactions()
     {
         return $this->hasMany(WalletTransaction::class);
+    }
+
+    /**
+     * Get the user who created the bill.
+     */
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Generate a unique bill number based on bill ID.
+     *
+     * @param int $billId The bill ID
+     * @return string
+     */
+    public static function generateBillNumber($billId)
+    {
+        return '#BILL' . $billId;
     }
 }
 

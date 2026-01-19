@@ -332,7 +332,19 @@ const CustomersList = () => {
         if (!customer) return <span className="text-muted">—</span>
         return (
           <div>
-            <div className="fw-semibold">{customer.name || 'N/A'}</div>
+            <div className="d-flex align-items-center gap-2 flex-wrap">
+              <span className="fw-semibold">{customer.name || 'N/A'}</span>
+              <Badge bg={getCustomerTypeColor(customer.customerType)} style={{ fontSize: '10px' }}>
+                {customer.customerType === 'credit' ? (
+                  <>
+                    <FontAwesomeIcon icon={faCreditCard} className="me-1" />
+                    Credit
+                  </>
+                ) : (
+                  'Regular'
+                )}
+              </Badge>
+            </div>
             {customer.mobile && (
               <small className="text-muted">
                 <FontAwesomeIcon icon={faUser} className="me-1" />
@@ -364,42 +376,32 @@ const CustomersList = () => {
       },
     },
     {
-      key: 'customerType',
-      label: 'Type',
+      key: 'creditsDebits',
+      label: 'Credits / Debits',
       render: (value, customer) => {
         if (!customer) return <span className="text-muted">—</span>
+        const credits = parseFloat(customer.totalCredits || 0)
+        const debits = parseFloat(customer.totalDebits || 0)
         return (
-          <Badge bg={getCustomerTypeColor(customer.customerType)}>
-            {customer.customerType === 'credit' ? (
-              <>
-                <FontAwesomeIcon icon={faCreditCard} className="me-1" />
-                Credit
-              </>
-            ) : (
-              'Regular'
-            )}
-          </Badge>
+          <div>
+            <div className="text-success fw-semibold">
+              ₹{credits.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+            </div>
+            <div className="text-danger" style={{ fontSize: '12px' }}>
+              ₹{debits.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+            </div>
+          </div>
         )
       },
     },
     {
-      key: 'totalAmount',
-      label: 'Total Amount',
+      key: 'remaining',
+      label: 'Remaining Amount',
       render: (value, customer) => {
         if (!customer) return <span className="text-muted">—</span>
+        const amount = parseFloat(customer.remaining || 0)
         return (
-          <span className="fw-semibold">₹{parseFloat(customer.totalAmount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
-        )
-      },
-    },
-    {
-      key: 'remainingAmount',
-      label: 'Balance',
-      render: (value, customer) => {
-        if (!customer) return <span className="text-muted">—</span>
-        const amount = parseFloat(customer.remainingAmount || 0)
-        return (
-          <span className={amount > 0 ? 'text-danger fw-semibold' : 'text-success'}>
+          <span className={amount >= 0 ? 'text-success fw-semibold' : 'text-danger fw-semibold'}>
             ₹{amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
           </span>
         )

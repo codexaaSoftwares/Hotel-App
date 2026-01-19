@@ -187,15 +187,8 @@ class WalletTransactionController extends Controller
 
         $transaction = WalletTransaction::create($validated);
 
-        // Update customer paid_amount and remaining_amount
-        $customer = Customer::findOrFail($validated['customer_id']);
-        if ($validated['transaction_type'] === 'credit') {
-            $customer->increment('paid_amount', $validated['amount']);
-        } else {
-            $customer->decrement('paid_amount', $validated['amount']);
-        }
-        $customer->remaining_amount = $customer->total_amount - $customer->paid_amount;
-        $customer->save();
+        // Note: Customer total_bills, total_amount, paid_amount, remaining_amount are now
+        // calculated from bills relationship via accessors, so no manual updates needed
 
         return response()->json([
             'success' => true,
@@ -228,28 +221,11 @@ class WalletTransactionController extends Controller
         $oldType = $transaction->transaction_type;
         $customer = $transaction->customer;
 
-        // Revert old transaction impact
-        if ($oldType === 'credit') {
-            $customer->decrement('paid_amount', $oldAmount);
-        } else {
-            $customer->increment('paid_amount', $oldAmount);
-        }
-
         $validated = $request->validated();
         $transaction->update($validated);
 
-        // Apply new transaction impact
-        $newAmount = $validated['amount'] ?? $transaction->amount;
-        $newType = $validated['transaction_type'] ?? $transaction->transaction_type;
-
-        if ($newType === 'credit') {
-            $customer->increment('paid_amount', $newAmount);
-        } else {
-            $customer->decrement('paid_amount', $newAmount);
-        }
-
-        $customer->remaining_amount = $customer->total_amount - $customer->paid_amount;
-        $customer->save();
+        // Note: Customer total_bills, total_amount, paid_amount, remaining_amount are now
+        // calculated from bills relationship via accessors, so no manual updates needed
 
         return response()->json([
             'success' => true,
@@ -266,17 +242,10 @@ class WalletTransactionController extends Controller
         $transaction = WalletTransaction::findOrFail($id);
         $customer = $transaction->customer;
 
-        // Revert transaction impact
-        if ($transaction->transaction_type === 'credit') {
-            $customer->decrement('paid_amount', $transaction->amount);
-        } else {
-            $customer->increment('paid_amount', $transaction->amount);
-        }
-
-        $customer->remaining_amount = $customer->total_amount - $customer->paid_amount;
-        $customer->save();
-
         $transaction->delete();
+
+        // Note: Customer total_bills, total_amount, paid_amount, remaining_amount are now
+        // calculated from bills relationship via accessors, so no manual updates needed
 
         return response()->json([
             'success' => true,

@@ -10,6 +10,7 @@ import {
   faPlus,
   faEdit,
   faTrash,
+  faDownload,
 } from '@fortawesome/free-solid-svg-icons'
 import { Table, FormModal } from '../../../components'
 import WalletTransactionForm from './WalletTransactionForm'
@@ -48,6 +49,7 @@ const CustomerLedgerModal = ({ show, onHide, customerId, customer: initialCustom
   const [transactionToDelete, setTransactionToDelete] = useState(null)
   const [addLoading, setAddLoading] = useState(false)
   const [editLoading, setEditLoading] = useState(false)
+  const [exportLoading, setExportLoading] = useState(false)
 
   const debouncedSearch = useDebounce(searchTerm, 500)
 
@@ -306,6 +308,51 @@ const CustomerLedgerModal = ({ show, onHide, customerId, customer: initialCustom
     }
   }
 
+  const handleExportLedger = async () => {
+    if (!customerId || !customer) {
+      error('Customer information is required for export.')
+      return
+    }
+
+    try {
+      setExportLoading(true)
+      
+      // Prepare export parameters (same as current filters)
+      const params = {
+        search: debouncedSearch || undefined,
+        transaction_type: transactionTypeFilter || undefined,
+        sort_by: sortState.sortBy,
+        sort_direction: sortState.sortDirection,
+      }
+
+      // TODO: Call export API when backend is ready
+      // const response = await walletTransactionService.exportCustomerLedger(customerId, params)
+      // if (response.success) {
+      //   // Download the file
+      //   const blob = new Blob([response.data], { type: 'application/pdf' })
+      //   const url = window.URL.createObjectURL(blob)
+      //   const link = document.createElement('a')
+      //   link.href = url
+      //   link.download = `Customer_Ledger_${customer.name}_${new Date().toISOString().split('T')[0]}.pdf`
+      //   document.body.appendChild(link)
+      //   link.click()
+      //   document.body.removeChild(link)
+      //   window.URL.revokeObjectURL(url)
+      //   success('Ledger exported successfully.')
+      // } else {
+      //   error(response.message || 'Failed to export ledger.')
+      // }
+
+      // Temporary message until API is ready
+      error('Export functionality will be available soon. API is pending.')
+    } catch (err) {
+      console.error('Error exporting ledger:', err)
+      error('Failed to export ledger. Please try again.')
+    } finally {
+      setExportLoading(false)
+    }
+  }
+
   const columns = [
     {
       key: 'transactionDate',
@@ -335,26 +382,28 @@ const CustomerLedgerModal = ({ show, onHide, customerId, customer: initialCustom
         if (!transaction) return <span className="text-muted">—</span>
         return (
           <div>
-            {transaction.paymentMethod && (
-              <div className="mb-1">
-                <Badge bg="secondary" className="me-2">
+            <div className="mb-1 d-flex align-items-center gap-2 flex-wrap">
+              {/* Transaction Type - Always shown */}
+              <Badge bg={getTransactionTypeColor(transaction.transactionType)}>
+                {transaction.transactionType === 'credit' ? (
+                  <>
+                    <FontAwesomeIcon icon={faArrowUp} className="me-1" />
+                    Credit
+                  </>
+                ) : (
+                  <>
+                    <FontAwesomeIcon icon={faArrowDown} className="me-1" />
+                    Debit
+                  </>
+                )}
+              </Badge>
+              {/* Payment Method - Only shown if exists */}
+              {transaction.paymentMethod && (
+                <Badge bg="secondary">
                   {getPaymentMethodLabel(transaction.paymentMethod)}
                 </Badge>
-                <Badge bg={getTransactionTypeColor(transaction.transactionType)}>
-                  {transaction.transactionType === 'credit' ? (
-                    <>
-                      <FontAwesomeIcon icon={faArrowUp} className="me-1" />
-                      Credit
-                    </>
-                  ) : (
-                    <>
-                      <FontAwesomeIcon icon={faArrowDown} className="me-1" />
-                      Debit
-                    </>
-                  )}
-                </Badge>
-              </div>
-            )}
+              )}
+            </div>
             {transaction.description && (
               <div className="text-dark mb-1">{transaction.description}</div>
             )}
@@ -363,7 +412,7 @@ const CustomerLedgerModal = ({ show, onHide, customerId, customer: initialCustom
                 <strong>Ref:</strong> {transaction.referenceNumber}
               </small>
             )}
-            {!transaction.description && !transaction.referenceNumber && (
+            {!transaction.description && !transaction.referenceNumber && !transaction.paymentMethod && (
               <span className="text-muted">—</span>
             )}
           </div>
@@ -498,12 +547,25 @@ const CustomerLedgerModal = ({ show, onHide, customerId, customer: initialCustom
                 )}
               </div>
             </Modal.Title>
-            {hasPermission(PERMISSIONS.WALLET_TRANSACTION_CREATE) && customer && (
-              <Button variant="primary" size="sm" onClick={() => setShowAddModal(true)}>
-                <FontAwesomeIcon icon={faPlus} className="me-2" />
-                Add Transaction
-              </Button>
-            )}
+            <div className="d-flex gap-2">
+              {customer && (
+                <Button
+                  variant="outline-success"
+                  size="sm"
+                  onClick={handleExportLedger}
+                  disabled={exportLoading}
+                >
+                  <FontAwesomeIcon icon={faDownload} className="me-2" />
+                  {exportLoading ? 'Exporting...' : 'Export Ledger'}
+                </Button>
+              )}
+              {hasPermission(PERMISSIONS.WALLET_TRANSACTION_CREATE) && customer && (
+                <Button variant="primary" size="sm" onClick={() => setShowAddModal(true)}>
+                  <FontAwesomeIcon icon={faPlus} className="me-2" />
+                  Add Transaction
+                </Button>
+              )}
+            </div>
           </div>
         </Modal.Header>
       <Modal.Body style={{ maxHeight: 'calc(100vh - 150px)', overflowY: 'auto', padding: '1.5rem' }}>
@@ -537,9 +599,9 @@ const CustomerLedgerModal = ({ show, onHide, customerId, customer: initialCustom
             {/* Customer Summary Cards - Calculated from Backend */}
             <Row className="mb-4">
               <Col md={4}>
-                <Card className="border-0 shadow-sm">
-                  <Card.Body>
-                    <div className="d-flex align-items-center">
+                <Card className="border-0 shadow-sm h-100">
+                  <Card.Body className="d-flex flex-column h-100">
+                    <div className="d-flex align-items-center flex-grow-1">
                       <div className="flex-grow-1">
                         <div className="text-muted small mb-1">Total Debit Amount So Far</div>
                         <div className="h4 mb-0 fw-bold text-danger">
@@ -554,9 +616,9 @@ const CustomerLedgerModal = ({ show, onHide, customerId, customer: initialCustom
                 </Card>
               </Col>
               <Col md={4}>
-                <Card className="border-0 shadow-sm">
-                  <Card.Body>
-                    <div className="d-flex align-items-center">
+                <Card className="border-0 shadow-sm h-100">
+                  <Card.Body className="d-flex flex-column h-100">
+                    <div className="d-flex align-items-center flex-grow-1">
                       <div className="flex-grow-1">
                         <div className="text-muted small mb-1">Total Credit Amount So Far</div>
                         <div className="h4 mb-0 fw-bold text-success">
@@ -571,9 +633,9 @@ const CustomerLedgerModal = ({ show, onHide, customerId, customer: initialCustom
                 </Card>
               </Col>
               <Col md={4}>
-                <Card className="border-0 shadow-sm">
-                  <Card.Body>
-                    <div className="d-flex align-items-center">
+                <Card className="border-0 shadow-sm h-100">
+                  <Card.Body className="d-flex flex-column h-100">
+                    <div className="d-flex align-items-center flex-grow-1">
                       <div className="flex-grow-1">
                         <div className="text-muted small mb-1">Remaining Amount</div>
                         <div

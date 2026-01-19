@@ -14,6 +14,7 @@ use App\Http\Controllers\API\FoodItemController;
 use App\Http\Controllers\API\TableController;
 use App\Http\Controllers\API\CustomerController;
 use App\Http\Controllers\API\WalletTransactionController;
+use App\Http\Controllers\API\BillController;
 
 /*
 |--------------------------------------------------------------------------
@@ -108,6 +109,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/customers/{customer}', [CustomerController::class, 'show'])->middleware('permission:view_customer');
     Route::put('/customers/{customer}', [CustomerController::class, 'update'])->middleware('permission:edit_customer');
     Route::delete('/customers/{customer}', [CustomerController::class, 'destroy'])->middleware('permission:delete_customer');
+
+    // Bill Management
+    Route::get('/bills', [BillController::class, 'index'])->middleware('permission:view_bill');
+    Route::post('/bills', [BillController::class, 'store'])->middleware('permission:create_bill');
+    Route::get('/bills/{bill}', [BillController::class, 'show'])->middleware('permission:view_bill');
+    Route::put('/bills/{bill}', [BillController::class, 'update'])->middleware('permission:edit_bill');
+    Route::delete('/bills/{bill}', [BillController::class, 'destroy'])->middleware('permission:delete_bill');
+    Route::get('/bills/table/{tableId}', [BillController::class, 'getByTable'])->middleware('permission:view_bill');
+    Route::post('/bills/{bill}/process-payment', [BillController::class, 'processPayment'])->middleware('permission:bill_payment');
 
     // Wallet Transaction Management
     Route::get('/wallet-transactions', [WalletTransactionController::class, 'index'])->middleware('permission:view_wallet_transaction');

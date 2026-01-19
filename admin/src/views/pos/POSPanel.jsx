@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react'
-import { Container, Row, Col } from 'react-bootstrap'
+import { Container, Row, Col, Modal, Button } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faClock, faTable, faReceipt } from '@fortawesome/free-solid-svg-icons'
+import { faClock, faTable, faReceipt, faCheckCircle, faInfoCircle, faUser } from '@fortawesome/free-solid-svg-icons'
 import TablesPanel from '../../components/pages/pos/TablesPanel'
 import ProductsPanel from '../../components/pages/pos/ProductsPanel'
 import BillingCartPanel from '../../components/pages/pos/BillingCartPanel'
 import { useToast } from '../../components'
 import { usePermissions } from '../../hooks'
 import { PERMISSIONS } from '../../constants/permissions'
-import { playTicSound } from '../../utils/soundUtils'
+import { playTicSound, playSuccessSound, playErrorSound } from '../../utils/soundUtils'
 import restaurantSettingsService from '../../services/restaurantSettingsService'
 import walletTransactionService from '../../services/walletTransactionService'
+import billService from '../../services/billService'
 import { useAuth } from '../../context/AuthContext'
 
 const POSPanel = () => {
@@ -41,6 +42,12 @@ const POSPanel = () => {
 
   // Get current time
   const [currentTime, setCurrentTime] = useState(new Date())
+
+  // Payment confirmation and success dialogs
+  const [showPaymentConfirm, setShowPaymentConfirm] = useState(false)
+  const [showPaymentSuccess, setShowPaymentSuccess] = useState(false)
+  const [paymentSuccessData, setPaymentSuccessData] = useState(null)
+  const [processingPayment, setProcessingPayment] = useState(false)
 
   useEffect(() => {
     // Update time every second
@@ -82,13 +89,43 @@ const POSPanel = () => {
   }
 
   // Handle table selection
-  const handleTableSelect = (table) => {
+  const handleTableSelect = async (table) => {
     setCurrentTable(table)
-    // TODO: Load existing orders for this table
     setCurrentOrder(null)
     setCartItems([])
     setSelectedCustomer(null) // Reset to walk-in customer by default
     setDiscount({ type: 'amount', value: 0 }) // Reset discount
+
+    // Load existing orders for this table
+    try {
+      const response = await billService.getBillsByTable(table.id, { include_draft: true })
+      if (response.success && response.data && response.data.length > 0) {
+        // Load the most recent draft/pending bill
+        const latestBill = response.data[0]
+        setCurrentOrder(latestBill)
+        
+        // Load bill items into cart
+        if (latestBill.items && latestBill.items.length > 0) {
+          const cartItemsFromBill = latestBill.items.map((item) => ({
+            food_item_id: item.foodItemId,
+            item_name: item.itemName,
+            quantity: item.quantity,
+            unit_price: item.unitPrice,
+            total_price: item.totalPrice,
+            display_order: item.displayOrder || 0,
+          }))
+          setCartItems(cartItemsFromBill)
+        }
+        
+        // Load customer if exists
+        if (latestBill.customerId) {
+          setSelectedCustomer(latestBill.customer || { id: latestBill.customerId })
+        }
+      }
+    } catch (err) {
+      console.error('Error loading table orders:', err)
+      // Silent fail - continue with new order
+    }
   }
 
   // Handle product add to cart
@@ -292,37 +329,26 @@ const POSPanel = () => {
         })),
       }
 
-      // TODO: Save draft via API when backend is ready
-      // if (currentOrder?.id) {
-      //   // Update existing draft
-      //   const response = await billService.updateBill(currentOrder.id, billData)
-      //   if (response.success) {
-      //     setCurrentOrder(response.data)
-      //     success('Draft updated successfully!')
-      //   } else {
-      //     error(response.message || 'Failed to update draft')
-      //   }
-      // } else {
-      //   // Create new draft
-      //   const response = await billService.createBill(billData)
-      //   if (response.success) {
-      //     setCurrentOrder(response.data)
-      //     success('Draft saved successfully!')
-      //   } else {
-      //     error(response.message || 'Failed to save draft')
-      //   }
-      // }
-
-      // For now, just show success message
-      success('Draft saved successfully! (Bill API integration pending)')
-      
-      // Store draft locally for now
-      const draftOrder = {
-        id: currentOrder?.id || `draft-${Date.now()}`,
-        ...billData,
-        updated_at: new Date().toISOString(),
+      // Save draft via API
+      if (currentOrder?.id && !currentOrder.id.toString().startsWith('draft-')) {
+        // Update existing draft
+        const response = await billService.updateBill(currentOrder.id, billData)
+        if (response.success) {
+          setCurrentOrder(response.data)
+          success('Draft updated successfully!')
+        } else {
+          error(response.message || 'Failed to update draft')
+        }
+      } else {
+        // Create new draft
+        const response = await billService.createBill(billData)
+        if (response.success) {
+          setCurrentOrder(response.data)
+          success('Draft saved successfully!')
+        } else {
+          error(response.message || 'Failed to save draft')
+        }
       }
-      setCurrentOrder(draftOrder)
     } catch (err) {
       console.error('Error saving draft:', err)
       error('Failed to save draft. Please try again.')
@@ -364,23 +390,15 @@ const POSPanel = () => {
           })),
         }
 
-        // TODO: Auto-save draft via API when backend is ready
-        // if (currentOrder?.id) {
-        //   await billService.updateBill(currentOrder.id, billData)
-        // } else {
-        //   const response = await billService.createBill(billData)
-        //   if (response.success) {
-        //     setCurrentOrder(response.data)
-        //   }
-        // }
-
-        // Store draft locally for now
-        const draftOrder = {
-          id: currentOrder?.id || `draft-${Date.now()}`,
-          ...billData,
-          updated_at: new Date().toISOString(),
+        // Auto-save draft via API
+        if (currentOrder?.id && !currentOrder.id.toString().startsWith('draft-')) {
+          await billService.updateBill(currentOrder.id, billData)
+        } else {
+          const response = await billService.createBill(billData)
+          if (response.success) {
+            setCurrentOrder(response.data)
+          }
         }
-        setCurrentOrder(draftOrder)
         
         // Silent auto-save (no notification)
         console.log('Draft auto-saved')
@@ -586,8 +604,8 @@ const POSPanel = () => {
     }, 250)
   }
 
-  // Handle process payment
-  const handleProcessPayment = async () => {
+  // Handle process payment - Show confirmation dialog first
+  const handleProcessPayment = () => {
     // Validation
     if (!currentTable) {
       error('Please select a table first')
@@ -613,21 +631,31 @@ const POSPanel = () => {
       }
     }
 
+    // Show confirmation dialog
+    setShowPaymentConfirm(true)
+  }
+
+  // Confirm and process payment
+  const confirmProcessPayment = async () => {
+    setShowPaymentConfirm(false)
+    setProcessingPayment(true)
+
     try {
       // Prepare bill data (common for both wallet and regular payments)
+      // Always create as 'draft' first, then processPayment will update the status
       const billData = {
         table_id: currentTable.id,
         customer_id: selectedCustomer?.id || null,
         bill_date: new Date().toISOString(),
-        status: paymentMethod === 'wallet' ? 'pending' : 'paid',
-        payment_status: paymentMethod === 'wallet' ? 'pending' : 'paid',
+        status: 'draft',
+        payment_status: 'pending',
         subtotal: totals.subtotal,
         gst_amount: totals.totalTaxAmount,
         discount: totals.discountAmount,
         total_amount: totals.totalAmount,
-        paid_amount: paymentMethod === 'wallet' ? 0 : paidAmount,
-        remaining_amount: paymentMethod === 'wallet' ? totals.totalAmount : 0,
-        payment_method: paymentMethod === 'wallet' ? null : paymentMethod,
+        paid_amount: 0,
+        remaining_amount: totals.totalAmount,
+        payment_method: null, // Will be set by processPayment
         gst_calculation_method: 'bill_wise',
         notes: paymentNotes || null,
         created_by: user?.id || null,
@@ -641,13 +669,31 @@ const POSPanel = () => {
         })),
       }
 
-      // TODO: Create bill via API when backend is ready
-      // const billResponse = await billService.createBill(billData)
-      // if (!billResponse.success) {
-      //   error(billResponse.message || 'Failed to create bill')
-      //   return
-      // }
-      // const createdBill = billResponse.data
+      let billResponse
+      let createdBill
+
+      // Check if we have an existing draft bill - use PUT to update, otherwise POST to create
+      if (currentOrder?.id && !currentOrder.id.toString().startsWith('draft-')) {
+        // Update existing bill using PUT API
+        billResponse = await billService.updateBill(currentOrder.id, billData)
+        if (!billResponse.success) {
+          playErrorSound()
+          error(billResponse.message || 'Failed to update bill')
+          setProcessingPayment(false)
+          return
+        }
+        createdBill = billResponse.data
+      } else {
+        // Create new bill using POST API
+        billResponse = await billService.createBill(billData)
+        if (!billResponse.success) {
+          playErrorSound()
+          error(billResponse.message || 'Failed to create bill')
+          setProcessingPayment(false)
+          return
+        }
+        createdBill = billResponse.data
+      }
 
       if (paymentMethod === 'wallet') {
         // Auto-generate payment notes if blank
@@ -658,23 +704,31 @@ const POSPanel = () => {
           finalNotes = `Bill sent to wallet - ${customerName} (${tableName})`
         }
 
-        // Create wallet transaction (debit) - bill added to customer wallet
-        const walletData = {
-          customer_id: selectedCustomer.id,
-          bill_id: null, // Will be linked when bill API is ready: createdBill.id
-          transaction_type: 'debit',
+        // Process wallet payment via API (creates wallet transaction and updates bill)
+        const paymentData = {
+          payment_type: 'debit',
           amount: totals.totalAmount,
           payment_method: 'wallet',
-          transaction_date: new Date().toISOString(),
-          description: `Bill for Table ${currentTable.name || currentTable.table_number || currentTable.id} - ${finalNotes}`,
-          reference_number: null,
-          created_by: user?.id || null,
+          payment_notes: finalNotes,
+          is_wallet_payment: true,
         }
 
-        const walletResponse = await walletTransactionService.createWalletTransaction(walletData)
+        const paymentResponse = await billService.processPayment(createdBill.id, paymentData)
 
-        if (walletResponse.success) {
-          success(`Bill sent to customer wallet successfully! Amount: ₹${totals.totalAmount.toFixed(2)}`)
+        if (paymentResponse.success) {
+          // Play success sound
+          playSuccessSound()
+          
+          // Show success dialog
+          setPaymentSuccessData({
+            billNumber: paymentResponse.data.billNumber,
+            amount: totals.totalAmount,
+            paymentMethod: 'Wallet',
+            customer: selectedCustomer?.name || 'Walk-in',
+            table: currentTable.name || currentTable.table_number || `Table ${currentTable.id}`,
+            message: 'Bill sent to customer wallet successfully!',
+          })
+          setShowPaymentSuccess(true)
           
           // Reset cart and form
           setCartItems([])
@@ -685,32 +739,55 @@ const POSPanel = () => {
           setPaymentMethod('cash')
           setCurrentOrder(null)
         } else {
-          error(walletResponse.message || 'Failed to send bill to wallet')
+          playErrorSound()
+          error(paymentResponse.message || 'Failed to send bill to wallet')
         }
       } else {
-        // Regular payment (cash/upi/card) - Only create bill, NO wallet transaction
-        // TODO: Create bill via API when backend is ready
-        // const billResponse = await billService.createBill(billData)
-        // if (!billResponse.success) {
-        //   error(billResponse.message || 'Failed to create bill')
-        //   return
-        // }
+        // Regular payment (cash/upi/card) - Process payment via API
+        const paymentData = {
+          payment_type: 'credit',
+          amount: paidAmount,
+          payment_method: paymentMethod,
+          payment_notes: paymentNotes || null,
+          is_wallet_payment: false,
+        }
 
-        // For now, just show success (bill creation will be handled by backend API)
-        success(`Payment processed successfully! Amount: ₹${paidAmount.toFixed(2)}`)
-        
-        // Reset cart and form
-        setCartItems([])
-        setSelectedCustomer(null)
-        setDiscount({ type: 'amount', value: 0 })
-        setPaymentNotes('')
-        setPaidAmount(0)
-        setPaymentMethod('cash')
-        setCurrentOrder(null)
+        const paymentResponse = await billService.processPayment(createdBill.id, paymentData)
+
+        if (paymentResponse.success) {
+          // Play success sound
+          playSuccessSound()
+          
+          // Show success dialog
+          setPaymentSuccessData({
+            billNumber: paymentResponse.data.billNumber,
+            amount: paidAmount,
+            paymentMethod: paymentMethod.charAt(0).toUpperCase() + paymentMethod.slice(1),
+            customer: selectedCustomer?.name || 'Walk-in',
+            table: currentTable.name || currentTable.table_number || `Table ${currentTable.id}`,
+            message: 'Payment processed successfully!',
+          })
+          setShowPaymentSuccess(true)
+          
+          // Reset cart and form
+          setCartItems([])
+          setSelectedCustomer(null)
+          setDiscount({ type: 'amount', value: 0 })
+          setPaymentNotes('')
+          setPaidAmount(0)
+          setPaymentMethod('cash')
+          setCurrentOrder(null)
+        } else {
+          playErrorSound()
+          error(paymentResponse.message || 'Failed to process payment')
+        }
       }
     } catch (err) {
       console.error('Error processing payment:', err)
+      playErrorSound()
       error('An unexpected error occurred. Please try again.')
+    } finally {
+      setProcessingPayment(false)
     }
   }
 
@@ -730,7 +807,7 @@ const POSPanel = () => {
       {/* POS Panel Header */}
       <div className="pos-header bg-white border-bottom shadow-sm p-3">
         <Row className="align-items-center">
-          <Col xs={12} md={4}>
+          <Col xs={12} md={3}>
             <div className="d-flex align-items-center">
               <FontAwesomeIcon icon={faTable} className="me-2 text-primary" />
               <span className="fw-semibold me-2">Table:</span>
@@ -740,18 +817,38 @@ const POSPanel = () => {
             </div>
           </Col>
           <Col xs={12} md={4} className="text-center">
-            {currentOrder && (
-              <div className="d-flex align-items-center justify-content-center">
+            <div className="d-flex align-items-center justify-content-center flex-wrap gap-3">
+              <div className="d-flex align-items-center">
                 <FontAwesomeIcon icon={faReceipt} className="me-2 text-primary" />
-                <span className="fw-semibold me-2">Order #:</span>
-                <span className="text-primary">{currentOrder.bill_number || 'New Order'}</span>
+                <span className="fw-semibold me-2">Bill #:</span>
+                <span className="text-primary">
+                  {currentOrder?.billNumber || currentOrder?.bill_number || 'New Order'}
+                </span>
               </div>
-            )}
+              {cartItems.length > 0 && (
+                <div className="d-flex align-items-center">
+                  <span className="fw-semibold me-2">Total:</span>
+                  <span className="text-success fw-bold">₹{totals.totalAmount.toFixed(2)}</span>
+                </div>
+              )}
+            </div>
           </Col>
-          <Col xs={12} md={4} className="text-end">
-            <div className="d-flex align-items-center justify-content-end">
-              <FontAwesomeIcon icon={faClock} className="me-2 text-primary" />
-              <span className="fw-semibold">{formatTime(currentTime)}</span>
+          <Col xs={12} md={5} className="text-end">
+            <div className="d-flex align-items-center justify-content-end flex-wrap gap-3">
+              {selectedCustomer && (
+                <div className="d-flex align-items-center">
+                  <FontAwesomeIcon icon={faUser} className="me-2 text-primary" />
+                  <span className="fw-semibold me-2">Customer:</span>
+                  <span className="text-primary">{selectedCustomer.name || 'N/A'}</span>
+                  {selectedCustomer.mobile && (
+                    <span className="text-muted ms-2">({selectedCustomer.mobile})</span>
+                  )}
+                </div>
+              )}
+              <div className="d-flex align-items-center">
+                <FontAwesomeIcon icon={faClock} className="me-2 text-primary" />
+                <span className="fw-semibold">{formatTime(currentTime)}</span>
+              </div>
             </div>
           </Col>
         </Row>
@@ -801,6 +898,94 @@ const POSPanel = () => {
           />
         </Col>
       </Row>
+
+      {/* Payment Confirmation Dialog */}
+      <Modal show={showPaymentConfirm} onHide={() => setShowPaymentConfirm(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            <FontAwesomeIcon icon={faInfoCircle} className="me-2 text-warning" />
+            Confirm Payment
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="mb-3">
+            <p className="mb-2"><strong>Payment Details:</strong></p>
+            <div className="ps-3">
+              <p className="mb-1"><strong>Table:</strong> {currentTable?.name || currentTable?.table_number || `Table ${currentTable?.id}`}</p>
+              <p className="mb-1"><strong>Customer:</strong> {selectedCustomer?.name || 'Walk-in'}</p>
+              <p className="mb-1"><strong>Payment Method:</strong> {paymentMethod.charAt(0).toUpperCase() + paymentMethod.slice(1)}</p>
+              <p className="mb-1"><strong>Total Amount:</strong> ₹{totals.totalAmount.toFixed(2)}</p>
+              {paymentMethod !== 'wallet' && (
+                <p className="mb-1"><strong>Amount Paid:</strong> ₹{paidAmount.toFixed(2)}</p>
+              )}
+              {paymentMethod !== 'wallet' && paidAmount > totals.totalAmount && (
+                <p className="mb-1 text-success"><strong>Change:</strong> ₹{(paidAmount - totals.totalAmount).toFixed(2)}</p>
+              )}
+            </div>
+          </div>
+          {paymentMethod === 'wallet' ? (
+            <div className="alert alert-info mb-0">
+              <small>This bill will be sent to the customer's wallet. The customer can pay later.</small>
+            </div>
+          ) : (
+            <div className="alert alert-warning mb-0">
+              <small>Are you sure you want to process this payment? This action cannot be undone.</small>
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowPaymentConfirm(false)} disabled={processingPayment}>
+            Cancel
+          </Button>
+          <Button 
+            variant="primary" 
+            onClick={confirmProcessPayment} 
+            disabled={processingPayment}
+            style={{ backgroundColor: '#0d9488', borderColor: '#0d9488' }}
+          >
+            {processingPayment ? 'Processing...' : 'Confirm & Process Payment'}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Payment Success Dialog */}
+      <Modal show={showPaymentSuccess} onHide={() => setShowPaymentSuccess(false)} centered>
+        <Modal.Header closeButton className="bg-success text-white">
+          <Modal.Title>
+            <FontAwesomeIcon icon={faCheckCircle} className="me-2" />
+            Payment Successful
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {paymentSuccessData && (
+            <div>
+              <div className="text-center mb-4">
+                <FontAwesomeIcon icon={faCheckCircle} size="3x" className="text-success mb-3" />
+                <h5 className="text-success mb-2">{paymentSuccessData.message}</h5>
+              </div>
+              <div className="border rounded p-3 bg-light">
+                <p className="mb-2"><strong>Bill Number:</strong> {paymentSuccessData.billNumber}</p>
+                <p className="mb-2"><strong>Table:</strong> {paymentSuccessData.table}</p>
+                <p className="mb-2"><strong>Customer:</strong> {paymentSuccessData.customer}</p>
+                <p className="mb-2"><strong>Payment Method:</strong> {paymentSuccessData.paymentMethod}</p>
+                <p className="mb-0"><strong>Amount:</strong> ₹{paymentSuccessData.amount.toFixed(2)}</p>
+              </div>
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button 
+            variant="success" 
+            onClick={() => {
+              setShowPaymentSuccess(false)
+              setPaymentSuccessData(null)
+            }}
+            style={{ width: '100%' }}
+          >
+            OK
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   )
 }

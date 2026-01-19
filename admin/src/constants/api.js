@@ -137,6 +137,19 @@ export const API_ENDPOINTS = {
     UPDATE: (id) => `/wallet-transactions/${id}`,
     DELETE: (id) => `/wallet-transactions/${id}`,
     GET_BY_CUSTOMER: (customerId) => `/customers/${customerId}/wallet-transactions`,
+    EXPORT_CUSTOMER_LEDGER: (customerId) => `/customers/${customerId}/wallet-transactions/export`,
+  },
+
+  // Bill Management
+  BILLS: {
+    BASE: '/bills',
+    LIST: '/bills',
+    CREATE: '/bills',
+    GET_BY_ID: (id) => `/bills/${id}`,
+    UPDATE: (id) => `/bills/${id}`,
+    DELETE: (id) => `/bills/${id}`,
+    GET_BY_TABLE: (tableId) => `/bills/table/${tableId}`,
+    PROCESS_PAYMENT: (id) => `/bills/${id}/process-payment`,
   },
 
   // Reports

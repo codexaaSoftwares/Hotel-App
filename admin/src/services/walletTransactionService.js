@@ -143,6 +143,32 @@ class WalletTransactionService {
       throw error
     }
   }
+
+  /**
+   * Export customer ledger (PDF/Excel)
+   * @param {number} customerId - Customer ID
+   * @param {object} params - Export parameters (search, filters, etc.)
+   * @param {string} format - Export format ('pdf' or 'excel'), defaults to 'pdf'
+   */
+  async exportCustomerLedger(customerId, params = {}, format = 'pdf') {
+    try {
+      const response = await apiClient.get(
+        API_ENDPOINTS.WALLET_TRANSACTIONS.EXPORT_CUSTOMER_LEDGER(customerId),
+        {
+          params: { ...params, format },
+          responseType: 'blob', // Important for file downloads
+        }
+      )
+      return {
+        success: true,
+        data: response.data, // Blob data
+        message: 'Ledger exported successfully.',
+      }
+    } catch (error) {
+      console.error('Error exporting customer ledger:', error)
+      throw error
+    }
+  }
 }
 
 export default new WalletTransactionService()
