@@ -22,6 +22,48 @@ class BillController extends Controller
     use PaginatesResults;
 
     /**
+     * Update table status based on active bills.
+     * Sets table to 'occupied' if it has active bills, 'available' if not.
+     *
+     * @param int|null $tableId
+     * @return void
+     */
+    private function updateTableStatus($tableId)
+    {
+        if (!$tableId) {
+            return; // No table associated
+        }
+
+        $table = Table::find($tableId);
+        if (!$table) {
+            return; // Table not found
+        }
+
+        // Skip if table is in maintenance or cleaning
+        if (in_array($table->status, ['maintenance', 'cleaning'])) {
+            return; // Don't change status for maintenance/cleaning tables
+        }
+
+        // Check if table has any active bills (draft or pending)
+        $activeBillsCount = Bill::where('table_id', $tableId)
+            ->whereIn('status', ['draft', 'pending'])
+            ->count();
+
+        // Update table status
+        if ($activeBillsCount > 0) {
+            // Table has active bills, set to occupied
+            if ($table->status !== 'occupied') {
+                $table->update(['status' => 'occupied']);
+            }
+        } else {
+            // No active bills, set to available (only if currently occupied)
+            if ($table->status === 'occupied') {
+                $table->update(['status' => 'available']);
+            }
+        }
+    }
+
+    /**
      * Display a listing of bills.
      */
     public function index(Request $request)
@@ -127,6 +169,11 @@ class BillController extends Controller
                 $item['bill_id'] = $bill->id;
                 $item['display_order'] = $item['display_order'] ?? $index;
                 BillItem::create($item);
+            }
+
+            // Update table status to 'occupied' if bill is draft/pending
+            if (in_array($bill->status, ['draft', 'pending']) && $bill->table_id) {
+                $this->updateTableStatus($bill->table_id);
             }
 
             DB::commit();
@@ -242,6 +289,28 @@ class BillController extends Controller
                 }
             }
 
+            // Update table status if bill status or table_id changed
+            $oldTableId = $bill->getOriginal('table_id');
+            $newTableId = $bill->table_id;
+            $oldStatus = $bill->getOriginal('status');
+            $newStatus = $bill->status;
+
+            // If table changed, update both old and new table status
+            if ($oldTableId != $newTableId) {
+                if ($oldTableId) {
+                    $this->updateTableStatus($oldTableId);
+                }
+                if ($newTableId) {
+                    $this->updateTableStatus($newTableId);
+                }
+            } elseif ($newTableId) {
+                // Table didn't change, but status might have
+                // Update table status if bill status changed to/from draft/pending
+                if ($oldStatus !== $newStatus) {
+                    $this->updateTableStatus($newTableId);
+                }
+            }
+
             DB::commit();
 
             $bill->load(['table', 'customer', 'billItems', 'creator']);
@@ -275,7 +344,14 @@ class BillController extends Controller
         }
 
         try {
+            $tableId = $bill->table_id;
+            
             $bill->delete();
+
+            // Update table status (bill deleted, table should become available if no other active bills)
+            if ($tableId) {
+                $this->updateTableStatus($tableId);
+            }
 
             return response()->json([
                 'success' => true,
@@ -421,6 +497,11 @@ class BillController extends Controller
                     'payment_method' => $paymentMethod,
                     'notes' => $validated['payment_notes'] ?? $bill->notes,
                 ]);
+            }
+
+            // Update table status (bill is now paid, table should become available if no other active bills)
+            if ($bill->table_id) {
+                $this->updateTableStatus($bill->table_id);
             }
 
             DB::commit();
