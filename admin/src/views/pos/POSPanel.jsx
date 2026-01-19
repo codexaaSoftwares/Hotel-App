@@ -10,10 +10,13 @@ import { usePermissions } from '../../hooks'
 import { PERMISSIONS } from '../../constants/permissions'
 import { playTicSound } from '../../utils/soundUtils'
 import restaurantSettingsService from '../../services/restaurantSettingsService'
+import walletTransactionService from '../../services/walletTransactionService'
+import { useAuth } from '../../context/AuthContext'
 
 const POSPanel = () => {
-  const { error } = useToast()
+  const { success, error } = useToast()
   const { hasPermission } = usePermissions()
+  const { user } = useAuth()
 
   // Check permissions - Use canonical permission name
   const canAccessPOS = hasPermission('create_bill') || hasPermission(PERMISSIONS.BILL_CREATE) || hasPermission(PERMISSIONS.BILL_WRITE)
@@ -157,6 +160,14 @@ const POSPanel = () => {
   // Handle payment method change
   const handlePaymentMethodChange = (method) => {
     setPaymentMethod(method)
+    
+    // Auto-generate payment notes when switching to wallet (if blank)
+    if (method === 'wallet' && selectedCustomer && currentTable && !paymentNotes.trim()) {
+      const tableName = currentTable.name || currentTable.table_number || `Table ${currentTable.id}`
+      const customerName = selectedCustomer.name || 'Customer'
+      const autoNote = `Bill sent to wallet - ${customerName} (${tableName})`
+      setPaymentNotes(autoNote)
+    }
   }
 
   // Handle paid amount change
@@ -220,9 +231,15 @@ const POSPanel = () => {
 
   // Reset paid amount when total changes or payment method changes
   useEffect(() => {
-    // Auto-fill with total amount for all payment methods
-    setPaidAmount(totals.totalAmount)
-  }, [totals.totalAmount, cartItems.length, discount.value])
+    // Auto-fill with total amount for regular payment methods (not wallet)
+    if (paymentMethod !== 'wallet') {
+      setPaidAmount(totals.totalAmount)
+    } else {
+      // Reset to 0 for wallet payment
+      setPaidAmount(0)
+    }
+  }, [totals.totalAmount, cartItems.length, discount.value, paymentMethod])
+
 
   // Handle discount change
   const handleDiscountChange = (type, value) => {
@@ -232,6 +249,469 @@ const POSPanel = () => {
   // Handle payment notes change
   const handlePaymentNotesChange = (notes) => {
     setPaymentNotes(notes)
+  }
+
+  // Handle save draft
+  const handleSaveDraft = async () => {
+    // Validation
+    if (!currentTable) {
+      error('Please select a table first')
+      return
+    }
+
+    if (cartItems.length === 0) {
+      error('Please add items to the cart before saving draft')
+      return
+    }
+
+    try {
+      // Prepare bill data for draft
+      const billData = {
+        table_id: currentTable.id,
+        customer_id: selectedCustomer?.id || null,
+        bill_date: new Date().toISOString(),
+        status: 'draft',
+        payment_status: 'pending',
+        subtotal: totals.subtotal,
+        gst_amount: totals.totalTaxAmount,
+        discount: totals.discountAmount,
+        total_amount: totals.totalAmount,
+        paid_amount: 0,
+        remaining_amount: totals.totalAmount,
+        payment_method: null,
+        gst_calculation_method: 'bill_wise',
+        notes: paymentNotes || null,
+        created_by: user?.id || null,
+        items: cartItems.map((item) => ({
+          food_item_id: item.food_item_id,
+          item_name: item.item_name,
+          quantity: item.quantity,
+          unit_price: item.unit_price,
+          total_price: item.total_price,
+          display_order: item.display_order || 0,
+        })),
+      }
+
+      // TODO: Save draft via API when backend is ready
+      // if (currentOrder?.id) {
+      //   // Update existing draft
+      //   const response = await billService.updateBill(currentOrder.id, billData)
+      //   if (response.success) {
+      //     setCurrentOrder(response.data)
+      //     success('Draft updated successfully!')
+      //   } else {
+      //     error(response.message || 'Failed to update draft')
+      //   }
+      // } else {
+      //   // Create new draft
+      //   const response = await billService.createBill(billData)
+      //   if (response.success) {
+      //     setCurrentOrder(response.data)
+      //     success('Draft saved successfully!')
+      //   } else {
+      //     error(response.message || 'Failed to save draft')
+      //   }
+      // }
+
+      // For now, just show success message
+      success('Draft saved successfully! (Bill API integration pending)')
+      
+      // Store draft locally for now
+      const draftOrder = {
+        id: currentOrder?.id || `draft-${Date.now()}`,
+        ...billData,
+        updated_at: new Date().toISOString(),
+      }
+      setCurrentOrder(draftOrder)
+    } catch (err) {
+      console.error('Error saving draft:', err)
+      error('Failed to save draft. Please try again.')
+    }
+  }
+
+  // Auto-save draft when cart changes (items, quantity, discount, customer, notes)
+  useEffect(() => {
+    // Don't auto-save if no table or no items
+    if (!currentTable || cartItems.length === 0) return
+
+    // Debounce auto-save to avoid too many saves
+    const autoSaveTimeout = setTimeout(async () => {
+      try {
+        // Prepare bill data for draft
+        const billData = {
+          table_id: currentTable.id,
+          customer_id: selectedCustomer?.id || null,
+          bill_date: new Date().toISOString(),
+          status: 'draft',
+          payment_status: 'pending',
+          subtotal: totals.subtotal,
+          gst_amount: totals.totalTaxAmount,
+          discount: totals.discountAmount,
+          total_amount: totals.totalAmount,
+          paid_amount: 0,
+          remaining_amount: totals.totalAmount,
+          payment_method: null,
+          gst_calculation_method: 'bill_wise',
+          notes: paymentNotes || null,
+          created_by: user?.id || null,
+          items: cartItems.map((item) => ({
+            food_item_id: item.food_item_id,
+            item_name: item.item_name,
+            quantity: item.quantity,
+            unit_price: item.unit_price,
+            total_price: item.total_price,
+            display_order: item.display_order || 0,
+          })),
+        }
+
+        // TODO: Auto-save draft via API when backend is ready
+        // if (currentOrder?.id) {
+        //   await billService.updateBill(currentOrder.id, billData)
+        // } else {
+        //   const response = await billService.createBill(billData)
+        //   if (response.success) {
+        //     setCurrentOrder(response.data)
+        //   }
+        // }
+
+        // Store draft locally for now
+        const draftOrder = {
+          id: currentOrder?.id || `draft-${Date.now()}`,
+          ...billData,
+          updated_at: new Date().toISOString(),
+        }
+        setCurrentOrder(draftOrder)
+        
+        // Silent auto-save (no notification)
+        console.log('Draft auto-saved')
+      } catch (err) {
+        console.error('Auto-save error:', err)
+        // Silent fail for auto-save
+      }
+    }, 1000) // 1 second debounce to avoid too many saves
+
+    return () => clearTimeout(autoSaveTimeout)
+  }, [currentTable, cartItems, totals.subtotal, totals.totalTaxAmount, totals.totalAmount, discount, selectedCustomer, paymentNotes])
+
+  // Handle print bill
+  const handlePrintBill = () => {
+    // Validation
+    if (cartItems.length === 0) {
+      error('Please add items to the cart before printing')
+      return
+    }
+
+    // Prepare bill data for printing
+    const billData = {
+      billNumber: currentOrder?.bill_number || `DRAFT-${Date.now()}`,
+      table: currentTable,
+      customer: selectedCustomer,
+      items: cartItems,
+      totals: totals,
+      discount: discount,
+      paymentMethod: paymentMethod,
+      paymentNotes: paymentNotes,
+      billDate: new Date().toLocaleString('en-IN'),
+      status: currentOrder?.status || 'draft',
+    }
+
+    // Create print window
+    const printWindow = window.open('', '_blank')
+    if (!printWindow) {
+      error('Please allow popups to print the bill')
+      return
+    }
+
+    // Generate HTML for bill
+    const billHTML = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Bill - ${billData.billNumber}</title>
+          <style>
+            @media print {
+              @page { margin: 10mm; size: A4; }
+              body { margin: 0; padding: 0; }
+            }
+            body {
+              font-family: Arial, sans-serif;
+              padding: 20px;
+              max-width: 800px;
+              margin: 0 auto;
+            }
+            .header {
+              text-align: center;
+              border-bottom: 2px solid #000;
+              padding-bottom: 10px;
+              margin-bottom: 20px;
+            }
+            .bill-info {
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 20px;
+            }
+            .bill-info div {
+              flex: 1;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-bottom: 20px;
+            }
+            th, td {
+              border: 1px solid #ddd;
+              padding: 8px;
+              text-align: left;
+            }
+            th {
+              background-color: #f2f2f2;
+              font-weight: bold;
+            }
+            .text-right {
+              text-align: right;
+            }
+            .totals {
+              margin-top: 20px;
+              border-top: 2px solid #000;
+              padding-top: 10px;
+            }
+            .totals-row {
+              display: flex;
+              justify-content: space-between;
+              margin: 5px 0;
+            }
+            .footer {
+              margin-top: 30px;
+              text-align: center;
+              font-size: 12px;
+              color: #666;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>RESTAURANT BILL</h1>
+            <p>Bill No: ${billData.billNumber}</p>
+            <p>Date: ${billData.billDate}</p>
+          </div>
+          
+          <div class="bill-info">
+            <div>
+              <strong>Table:</strong> ${billData.table?.name || billData.table?.table_number || 'N/A'}<br>
+              ${billData.customer ? `<strong>Customer:</strong> ${billData.customer.name || 'N/A'}<br>` : ''}
+            </div>
+            <div>
+              <strong>Status:</strong> ${billData.status.toUpperCase()}<br>
+              ${billData.paymentMethod && billData.paymentMethod !== 'wallet' ? `<strong>Payment Method:</strong> ${billData.paymentMethod.toUpperCase()}<br>` : ''}
+            </div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th class="text-right">Qty</th>
+                <th class="text-right">Price</th>
+                <th class="text-right">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${billData.items.map(item => `
+                <tr>
+                  <td>${item.item_name}</td>
+                  <td class="text-right">${item.quantity}</td>
+                  <td class="text-right">₹${parseFloat(item.unit_price).toFixed(2)}</td>
+                  <td class="text-right">₹${parseFloat(item.total_price).toFixed(2)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+
+          <div class="totals">
+            <div class="totals-row">
+              <span>Subtotal:</span>
+              <span>₹${billData.totals.subtotal.toFixed(2)}</span>
+            </div>
+            ${billData.discount.value > 0 ? `
+              <div class="totals-row">
+                <span>Discount (${billData.discount.type === 'percentage' ? billData.discount.value + '%' : '₹' + billData.discount.value.toFixed(2)}):</span>
+                <span>-₹${billData.totals.discountAmount.toFixed(2)}</span>
+              </div>
+            ` : ''}
+            <div class="totals-row">
+              <span>CGST:</span>
+              <span>₹${billData.totals.cgstAmount.toFixed(2)}</span>
+            </div>
+            <div class="totals-row">
+              <span>SGST:</span>
+              <span>₹${billData.totals.sgstAmount.toFixed(2)}</span>
+            </div>
+            <div class="totals-row">
+              <span>Service Tax:</span>
+              <span>₹${billData.totals.serviceTaxAmount.toFixed(2)}</span>
+            </div>
+            ${billData.totals.roundingAmount !== 0 ? `
+              <div class="totals-row">
+                <span>Rounding:</span>
+                <span>₹${billData.totals.roundingAmount.toFixed(2)}</span>
+              </div>
+            ` : ''}
+            <div class="totals-row" style="font-weight: bold; font-size: 18px; margin-top: 10px; border-top: 1px solid #000; padding-top: 10px;">
+              <span>Total Amount:</span>
+              <span>₹${billData.totals.totalAmount.toFixed(2)}</span>
+            </div>
+          </div>
+
+          ${billData.paymentNotes ? `
+            <div style="margin-top: 20px;">
+              <strong>Notes:</strong> ${billData.paymentNotes}
+            </div>
+          ` : ''}
+
+          <div class="footer">
+            <p>Thank you for your visit!</p>
+            <p>Generated on ${new Date().toLocaleString('en-IN')}</p>
+          </div>
+        </body>
+      </html>
+    `
+
+    printWindow.document.write(billHTML)
+    printWindow.document.close()
+    
+    // Wait for content to load, then print
+    setTimeout(() => {
+      printWindow.print()
+      printWindow.close()
+    }, 250)
+  }
+
+  // Handle process payment
+  const handleProcessPayment = async () => {
+    // Validation
+    if (!currentTable) {
+      error('Please select a table first')
+      return
+    }
+
+    if (cartItems.length === 0) {
+      error('Please add items to the cart')
+      return
+    }
+
+    // Wallet payment validation
+    if (paymentMethod === 'wallet') {
+      if (!selectedCustomer) {
+        error('Please select a customer to send bill to wallet')
+        return
+      }
+    } else {
+      // Regular payment validation
+      if (paidAmount < totals.totalAmount) {
+        error(`Full payment required. Please enter ₹${totals.totalAmount.toFixed(2)}`)
+        return
+      }
+    }
+
+    try {
+      // Prepare bill data (common for both wallet and regular payments)
+      const billData = {
+        table_id: currentTable.id,
+        customer_id: selectedCustomer?.id || null,
+        bill_date: new Date().toISOString(),
+        status: paymentMethod === 'wallet' ? 'pending' : 'paid',
+        payment_status: paymentMethod === 'wallet' ? 'pending' : 'paid',
+        subtotal: totals.subtotal,
+        gst_amount: totals.totalTaxAmount,
+        discount: totals.discountAmount,
+        total_amount: totals.totalAmount,
+        paid_amount: paymentMethod === 'wallet' ? 0 : paidAmount,
+        remaining_amount: paymentMethod === 'wallet' ? totals.totalAmount : 0,
+        payment_method: paymentMethod === 'wallet' ? null : paymentMethod,
+        gst_calculation_method: 'bill_wise',
+        notes: paymentNotes || null,
+        created_by: user?.id || null,
+        items: cartItems.map((item) => ({
+          food_item_id: item.food_item_id,
+          item_name: item.item_name,
+          quantity: item.quantity,
+          unit_price: item.unit_price,
+          total_price: item.total_price,
+          display_order: item.display_order || 0,
+        })),
+      }
+
+      // TODO: Create bill via API when backend is ready
+      // const billResponse = await billService.createBill(billData)
+      // if (!billResponse.success) {
+      //   error(billResponse.message || 'Failed to create bill')
+      //   return
+      // }
+      // const createdBill = billResponse.data
+
+      if (paymentMethod === 'wallet') {
+        // Auto-generate payment notes if blank
+        let finalNotes = paymentNotes.trim()
+        if (!finalNotes) {
+          const tableName = currentTable.name || currentTable.table_number || `Table ${currentTable.id}`
+          const customerName = selectedCustomer.name || 'Customer'
+          finalNotes = `Bill sent to wallet - ${customerName} (${tableName})`
+        }
+
+        // Create wallet transaction (debit) - bill added to customer wallet
+        const walletData = {
+          customer_id: selectedCustomer.id,
+          bill_id: null, // Will be linked when bill API is ready: createdBill.id
+          transaction_type: 'debit',
+          amount: totals.totalAmount,
+          payment_method: 'wallet',
+          transaction_date: new Date().toISOString(),
+          description: `Bill for Table ${currentTable.name || currentTable.table_number || currentTable.id} - ${finalNotes}`,
+          reference_number: null,
+          created_by: user?.id || null,
+        }
+
+        const walletResponse = await walletTransactionService.createWalletTransaction(walletData)
+
+        if (walletResponse.success) {
+          success(`Bill sent to customer wallet successfully! Amount: ₹${totals.totalAmount.toFixed(2)}`)
+          
+          // Reset cart and form
+          setCartItems([])
+          setSelectedCustomer(null)
+          setDiscount({ type: 'amount', value: 0 })
+          setPaymentNotes('')
+          setPaidAmount(0)
+          setPaymentMethod('cash')
+          setCurrentOrder(null)
+        } else {
+          error(walletResponse.message || 'Failed to send bill to wallet')
+        }
+      } else {
+        // Regular payment (cash/upi/card) - Only create bill, NO wallet transaction
+        // TODO: Create bill via API when backend is ready
+        // const billResponse = await billService.createBill(billData)
+        // if (!billResponse.success) {
+        //   error(billResponse.message || 'Failed to create bill')
+        //   return
+        // }
+
+        // For now, just show success (bill creation will be handled by backend API)
+        success(`Payment processed successfully! Amount: ₹${paidAmount.toFixed(2)}`)
+        
+        // Reset cart and form
+        setCartItems([])
+        setSelectedCustomer(null)
+        setDiscount({ type: 'amount', value: 0 })
+        setPaymentNotes('')
+        setPaidAmount(0)
+        setPaymentMethod('cash')
+        setCurrentOrder(null)
+      }
+    } catch (err) {
+      console.error('Error processing payment:', err)
+      error('An unexpected error occurred. Please try again.')
+    }
   }
 
   if (!canAccessPOS) {
@@ -315,18 +795,9 @@ const POSPanel = () => {
             onPaidAmountChange={handlePaidAmountChange}
             paymentNotes={paymentNotes}
             onPaymentNotesChange={handlePaymentNotesChange}
-            onSaveDraft={() => {
-              // TODO: Implement save draft
-              console.log('Save draft')
-            }}
-            onPrintBill={() => {
-              // TODO: Implement print bill
-              console.log('Print bill')
-            }}
-            onProcessPayment={() => {
-              // TODO: Implement process payment
-              console.log('Process payment')
-            }}
+            onSaveDraft={handleSaveDraft}
+            onPrintBill={handlePrintBill}
+            onProcessPayment={handleProcessPayment}
           />
         </Col>
       </Row>

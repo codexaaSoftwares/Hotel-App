@@ -529,7 +529,7 @@ const BillingCartPanel = ({
               <label className="form-label" style={{ fontSize: '11px', fontWeight: '600', color: '#6c757d' }}>
                 Payment Method
               </label>
-              <div className="d-flex gap-1">
+              <div className="d-flex gap-1 flex-wrap">
                 <Button
                   variant={paymentMethod === 'cash' ? 'primary' : 'outline-secondary'}
                   size="sm"
@@ -575,47 +575,76 @@ const BillingCartPanel = ({
                   <FontAwesomeIcon icon={faCreditCard} className="me-1" style={{ fontSize: '9px' }} />
                   Card
                 </Button>
+                {/* Wallet Option - Only for selected customers */}
+                {selectedCustomer && (
+                  <Button
+                    variant={paymentMethod === 'wallet' ? 'warning' : 'outline-warning'}
+                    size="sm"
+                    onClick={() => onPaymentMethodChange('wallet')}
+                    className="flex-fill"
+                    style={{
+                      fontSize: '10px',
+                      height: '32px',
+                      backgroundColor: paymentMethod === 'wallet' ? '#ffc107' : '',
+                      borderColor: paymentMethod === 'wallet' ? '#ffc107' : '',
+                      color: paymentMethod === 'wallet' ? '#000' : '',
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faWallet} className="me-1" style={{ fontSize: '9px' }} />
+                    Wallet
+                  </Button>
+                )}
               </div>
+              {paymentMethod === 'wallet' && (
+                <div className="alert alert-warning py-1 px-2 mt-2 mb-0" style={{ fontSize: '10px' }}>
+                  <small>
+                    <FontAwesomeIcon icon={faWallet} className="me-1" style={{ fontSize: '9px' }} />
+                    Bill will be sent to customer wallet (₹{totals.totalAmount.toFixed(2)})
+                  </small>
+                </div>
+              )}
             </div>
 
-            {/* Payment Amount Input */}
-            <div className="mb-2">
-              <label className="form-label" style={{ fontSize: '11px', fontWeight: '600', color: '#6c757d' }}>
-                Amount Received (₹)
-              </label>
-              <InputGroup size="sm">
-                <InputGroup.Text style={{ backgroundColor: '#f8f9fa', fontSize: '11px' }}>
-                  <FontAwesomeIcon icon={faRupeeSign} style={{ fontSize: '9px' }} />
-                </InputGroup.Text>
-                <Form.Control
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={paidAmount > 0 ? paidAmount : ''}
-                  onChange={(e) => onPaidAmountChange(parseFloat(e.target.value) || 0)}
-                  placeholder={totals.totalAmount.toFixed(2)}
-                  style={{ fontSize: '11px', height: '32px' }}
-                />
-                <Button
-                  variant="outline-secondary"
-                  size="sm"
-                  onClick={() => onPaidAmountChange(totals.totalAmount)}
-                  style={{ fontSize: '10px' }}
-                >
-                  Full
-                </Button>
-              </InputGroup>
-              {paymentMethod === 'cash' && paidAmount > totals.totalAmount && (
-                <div className="mt-1 text-success" style={{ fontSize: '10px' }}>
-                  Change: ₹{(paidAmount - totals.totalAmount).toFixed(2)}
-                </div>
-              )}
-              {paidAmount < totals.totalAmount && paidAmount > 0 && (
-                <div className="mt-1 text-warning" style={{ fontSize: '10px' }}>
-                  Remaining: ₹{(totals.totalAmount - paidAmount).toFixed(2)}
-                </div>
-              )}
-            </div>
+            {/* Payment Amount Input - Hidden for Wallet */}
+            {paymentMethod !== 'wallet' && (
+              <div className="mb-2">
+                <label className="form-label" style={{ fontSize: '11px', fontWeight: '600', color: '#6c757d' }}>
+                  Amount Received (₹)
+                </label>
+                <InputGroup size="sm">
+                  <InputGroup.Text style={{ backgroundColor: '#f8f9fa', fontSize: '11px' }}>
+                    <FontAwesomeIcon icon={faRupeeSign} style={{ fontSize: '9px' }} />
+                  </InputGroup.Text>
+                  <Form.Control
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={paidAmount > 0 ? paidAmount : ''}
+                    onChange={(e) => onPaidAmountChange(parseFloat(e.target.value) || 0)}
+                    placeholder={totals.totalAmount.toFixed(2)}
+                    style={{ fontSize: '11px', height: '32px' }}
+                  />
+                  <Button
+                    variant="outline-secondary"
+                    size="sm"
+                    onClick={() => onPaidAmountChange(totals.totalAmount)}
+                    style={{ fontSize: '10px' }}
+                  >
+                    Full
+                  </Button>
+                </InputGroup>
+                {paymentMethod === 'cash' && paidAmount > totals.totalAmount && (
+                  <div className="mt-1 text-success" style={{ fontSize: '10px' }}>
+                    Change: ₹{(paidAmount - totals.totalAmount).toFixed(2)}
+                  </div>
+                )}
+                {paidAmount < totals.totalAmount && paidAmount > 0 && (
+                  <div className="mt-1 text-warning" style={{ fontSize: '10px' }}>
+                    Remaining: ₹{(totals.totalAmount - paidAmount).toFixed(2)}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Payment Notes */}
             <div className="mb-2">
@@ -655,20 +684,32 @@ const BillingCartPanel = ({
               Save Draft
             </Button>
               <Button
-                variant="primary"
+                variant={paymentMethod === 'wallet' ? 'warning' : 'primary'}
                 size="sm"
                 onClick={onProcessPayment}
-                disabled={cartItems.length === 0 || paidAmount < totals.totalAmount}
+                disabled={
+                  cartItems.length === 0 || 
+                  (paymentMethod !== 'wallet' && paidAmount < totals.totalAmount)
+                }
                 style={{
                   fontSize: '12px',
                   height: '36px',
-                  backgroundColor: '#0d9488',
-                  borderColor: '#0d9488',
+                  backgroundColor: paymentMethod === 'wallet' ? '#ffc107' : '#0d9488',
+                  borderColor: paymentMethod === 'wallet' ? '#ffc107' : '#0d9488',
                   fontWeight: '600',
+                  color: paymentMethod === 'wallet' ? '#000' : '#fff',
                 }}
               >
-                <FontAwesomeIcon icon={faCreditCard} className="me-1" style={{ fontSize: '11px' }} />
-                Process Payment {paidAmount > 0 && paidAmount < totals.totalAmount && `(₹${paidAmount.toFixed(2)})`}
+                <FontAwesomeIcon 
+                  icon={paymentMethod === 'wallet' ? faWallet : faCreditCard} 
+                  className="me-1" 
+                  style={{ fontSize: '11px' }} 
+                />
+                Process Payment
+                {paymentMethod === 'wallet' 
+                  ? ` (₹${totals.totalAmount.toFixed(2)})`
+                  : ` (₹${paidAmount > 0 ? paidAmount.toFixed(2) : totals.totalAmount.toFixed(2)})`
+                }
             </Button>
             </div>
           </div>

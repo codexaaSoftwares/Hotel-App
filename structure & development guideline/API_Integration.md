@@ -4748,6 +4748,221 @@ const handleSaveSettings = async (section, settingsData) => {
 
 ---
 
+## 💰 Bill Management APIs (Restaurant System)
+
+### 1. **POST /api/bills**
+**Description**: New bill create करने के लिए (draft or paid)
+
+**Backend Controller**: `BillController@store` (To be created)
+
+**Request Body**:
+```json
+{
+  "table_id": 1,
+  "customer_id": 1,
+  "bill_date": "2025-01-22T10:30:00.000Z",
+  "status": "draft",
+  "payment_status": "pending",
+  "subtotal": 500.00,
+  "gst_amount": 50.00,
+  "discount": 0.00,
+  "total_amount": 550.00,
+  "paid_amount": 0.00,
+  "remaining_amount": 550.00,
+  "payment_method": null,
+  "gst_calculation_method": "bill_wise",
+  "notes": "Bill notes",
+  "items": [
+    {
+      "food_item_id": 1,
+      "item_name": "Butter Chicken",
+      "quantity": 2,
+      "unit_price": 250.00,
+      "total_price": 500.00,
+      "display_order": 0
+    }
+  ]
+}
+```
+
+**Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "billNumber": "#BILL001",
+    "tableId": 1,
+    "customerId": 1,
+    "billDate": "2025-01-22T10:30:00.000Z",
+    "status": "draft",
+    "paymentStatus": "pending",
+    "subtotal": 500.00,
+    "gstAmount": 50.00,
+    "discount": 0.00,
+    "totalAmount": 550.00,
+    "paidAmount": 0.00,
+    "remainingAmount": 550.00,
+    "paymentMethod": null,
+    "createdAt": "2025-01-22T10:30:00.000Z"
+  },
+  "message": "Bill created successfully."
+}
+```
+
+**Permission Required**: `create_bill`
+
+**Frontend Integration**:
+- **Service**: `src/services/billService.js` (To be created)
+- **Method**: `billService.createBill(billData)`
+- **Used In**: 
+  - `src/views/pos/POSPanel.jsx` - Save Draft and Process Payment
+
+**Note**: 
+- Bill number (#BILL001) automatically generated
+- Status can be 'draft', 'pending', 'paid', 'cancelled'
+- Payment status can be 'pending', 'partial', 'paid'
+
+---
+
+### 2. **GET /api/bills**
+**Description**: Bills की list fetch करने के लिए (paginated, sortable, filterable)
+
+**Backend Controller**: `BillController@index` (To be created)
+
+**Query Parameters**:
+- `page` - Page number (default: 1)
+- `limit` - Items per page (default: 20, max: 100)
+- `search` - Search term (bill_number, customer name, table name)
+- `status` - Filter by status (draft, pending, paid, cancelled)
+- `payment_status` - Filter by payment status (pending, partial, paid)
+- `table_id` - Filter by table
+- `customer_id` - Filter by customer
+- `start_date` - Filter from date
+- `end_date` - Filter to date
+- `sort_by` - Sort column
+- `sort_direction` - Sort direction
+
+**Permission Required**: `view_bill`
+
+**Frontend Integration**:
+- **Service**: `src/services/billService.js` (To be created)
+- **Method**: `billService.getBills(params)`
+
+---
+
+### 3. **GET /api/bills/{bill}**
+**Description**: Specific bill की details fetch करने के लिए
+
+**Backend Controller**: `BillController@show` (To be created)
+
+**Permission Required**: `view_bill`
+
+**Frontend Integration**:
+- **Service**: `src/services/billService.js` (To be created)
+- **Method**: `billService.getBillById(id)`
+
+---
+
+### 4. **PUT /api/bills/{bill}**
+**Description**: Existing bill update करने के लिए
+
+**Backend Controller**: `BillController@update` (To be created)
+
+**Permission Required**: `edit_bill`
+
+**Frontend Integration**:
+- **Service**: `src/services/billService.js` (To be created)
+- **Method**: `billService.updateBill(id, billData)`
+- **Used In**: 
+  - `src/views/pos/POSPanel.jsx` - Auto-save draft updates
+
+---
+
+### 5. **DELETE /api/bills/{bill}**
+**Description**: Bill delete करने के लिए (soft delete)
+
+**Backend Controller**: `BillController@destroy` (To be created)
+
+**Permission Required**: `delete_bill`
+
+**Frontend Integration**:
+- **Service**: `src/services/billService.js` (To be created)
+- **Method**: `billService.deleteBill(id)`
+
+---
+
+### 6. **GET /api/bills/table/{tableId}**
+**Description**: Specific table के bills fetch करने के लिए (for loading existing orders)
+
+**Backend Controller**: `BillController@getByTable` (To be created)
+
+**Query Parameters**:
+- `status` - Filter by status (optional, default: all)
+- `include_draft` - Include draft bills (default: true)
+
+**Permission Required**: `view_bill`
+
+**Frontend Integration**:
+- **Service**: `src/services/billService.js` (To be created)
+- **Method**: `billService.getBillsByTable(tableId, params)`
+- **Used In**: 
+  - `src/views/pos/POSPanel.jsx` - Load existing orders when table is selected
+
+---
+
+### 7. **POST /api/bills/{bill}/process-payment**
+**Description**: Bill payment process करने के लिए
+
+**Backend Controller**: `BillController@processPayment` (To be created)
+
+**Request Body**:
+```json
+{
+  "payment_type": "credit",
+  "amount": 550.00,
+  "payment_method": "cash",
+  "transaction_date": "2025-01-22T10:30:00.000Z",
+  "description": "Full payment for bill",
+  "customer_id": 1
+}
+```
+
+**Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "billNumber": "#BILL001",
+    "status": "paid",
+    "paymentStatus": "paid",
+    "paidAmount": 550.00,
+    "remainingAmount": 0.00
+  },
+  "message": "Payment processed successfully."
+}
+```
+
+**Permission Required**: `bill_payment`
+
+**Frontend Integration**:
+- **Service**: `src/services/billService.js` (To be created)
+- **Method**: `billService.processPayment(billId, paymentData)`
+- **Used In**: 
+  - `src/views/pos/POSPanel.jsx` - Process Payment button
+
+**Payment Logic**:
+- **Cash/UPI/Card**: Updates bill status to 'paid', payment_status to 'paid'
+- **Wallet**: Updates bill status to 'pending', payment_status to 'pending', and creates wallet transaction (debit)
+
+**Note**: 
+- For wallet payments, creates debit wallet transaction linked to bill
+- For regular payments, only updates bill (no wallet transaction)
+- Customer stats automatically update after payment
+
+---
+
 ## 📱 App Settings
 
 ### App Settings Section
@@ -5096,7 +5311,8 @@ const Settings = () => {
 - ✅ **ReportService** - Fully integrated in CompanyHealthReport (with PDF export)
 - ✅ **SettingsService** - Fully integrated in Settings page (Business Info, Invoice, Email Settings with test, App Settings with Web URL, Currency & Regional, S3 Settings)
 - ✅ **RestaurantSettingsService** - Fully integrated in RestaurantSettings page (CGST/SGST/Service Tax Settings, Invoice Settings, Thermal Printer Settings, Round Number enable)
-- ✅ **POS Panel** - Frontend UI complete (Tables Panel, Products Panel, Billing Cart Panel with GST/Tax calculation, discount, rounding, payment section)
+- ✅ **POS Panel** - Frontend UI complete (Tables Panel, Products Panel, Billing Cart Panel with GST/Tax calculation, discount, rounding, payment section, Save Draft, Print Bill, Process Payment)
+- ⏳ **BillService** - To be created when backend APIs are ready
 - ⏳ **FoodCategoryService** - Backend ready, frontend service to be created
 - ✅ **MenuService** - Fully integrated in MenuManagement.jsx (hierarchy, CRUD, image upload, item reordering)
 - ✅ **TableService** - Fully integrated in TablesList.jsx (CRUD, server-side pagination, filtering, searching)
@@ -5119,6 +5335,22 @@ const Settings = () => {
 **Last Updated**: January 2025
 
 ## 🔄 Recent Updates
+- ⏳ **Bill Management APIs** - Frontend implementation complete, backend APIs pending
+  - Frontend POS Panel payment processing logic ready
+  - Payment methods: Cash, UPI, Card, Wallet
+  - Save Draft functionality (manual + auto-save on cart changes)
+  - Print Bill functionality (print-friendly HTML template)
+  - Payment processing logic:
+    - Cash/UPI/Card: Creates bill only (no wallet transaction)
+    - Wallet: Creates bill + wallet transaction (debit)
+  - Backend APIs documented (to be implemented):
+    - `POST /api/bills` - Create bill
+    - `GET /api/bills` - List bills
+    - `GET /api/bills/{bill}` - Get bill details
+    - `PUT /api/bills/{bill}` - Update bill
+    - `DELETE /api/bills/{bill}` - Delete bill
+    - `GET /api/bills/table/{tableId}` - Get bills for table
+    - `POST /api/bills/{bill}/process-payment` - Process payment
 - ✅ **Wallet Transaction Management APIs** - Fully implemented with Customer Ledger endpoint
   - `GET /api/customers/{customer}/wallet-transactions` - Customer ledger with totals calculation
   - Backend calculates totals from all transactions (totalDebit, totalCredit, remainingAmount)

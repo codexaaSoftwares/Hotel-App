@@ -1149,6 +1149,12 @@ With proper indexes, expect these query times:
 
 - **Total Tables:** 26
 - **Core Business Tables:** 16 (users, branches, customers, bills, bill_items, wallet_transactions, financial_categories, financial_transactions, food_categories, food_items, tables)
+- **Bill Management:** 
+  - `bills` table supports draft, pending, paid, cancelled statuses
+  - `bills.payment_method` supports 'cash', 'upi', 'card', 'split' (wallet handled via wallet_transactions)
+  - `bills.table_id` is nullable (supports takeaway orders, future room allocation)
+  - `bills.customer_id` is nullable (supports walk-in customers)
+  - `wallet_transactions.bill_id` is nullable (supports standalone wallet transactions)
 - **Auth/Authorization Tables:** 4 (roles, permissions, user_role, role_permission)
 - **System Tables:** 6 (settings, emails, password_resets, failed_jobs, personal_access_tokens)
 - **Tables with Soft Deletes:** 13 (branches, customers, bills, bill_items, wallet_transactions, financial_categories, financial_transactions, food_categories, food_items, tables)
@@ -1158,5 +1164,15 @@ With proper indexes, expect these query times:
 ---
 
 *Last Updated: January 2025*  
-*Database Version: 1.5* (Bills & Customers Tables Added)
+*Database Version: 1.6* (POS Panel Payment Processing - Frontend Ready)
+
+## 🔄 Recent Updates
+- ✅ **Bills & Bill Items Tables** - Fully implemented (migrations, models, relationships)
+- ✅ **Wallet Transactions Table** - Fully implemented with bill_id nullable for flexibility
+- ✅ **POS Panel Payment Processing** - Frontend implementation complete
+  - Payment methods: Cash, UPI, Card, Wallet
+  - Save Draft functionality (manual + auto-save on cart changes)
+  - Print Bill functionality
+  - Payment processing logic ready (pending backend API integration)
+- ⏳ **Backend Bill APIs** - Pending implementation
 

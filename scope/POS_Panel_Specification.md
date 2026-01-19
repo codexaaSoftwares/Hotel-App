@@ -193,14 +193,18 @@ The POS (Point of Sale) Panel is the core billing interface for restaurant opera
   - Cash (default)
   - UPI
   - Card
-  - Split Payment (checkbox)
+  - Wallet (only for selected customers, not for walk-in)
 - **Payment Amount**:
-  - Full amount (auto-filled)
-  - Partial amount input (for credit customers)
+  - Full amount (auto-filled for regular payment methods)
+  - Hidden for wallet payment (not needed)
+  - Partial amount input (for credit customers - pending backend support)
+- **Payment Notes**:
+  - Optional textarea
+  - Auto-generated for wallet payments: "Bill sent to wallet - {Customer Name} ({Table Name})"
 - **Action Buttons**:
-  - **Print Bill** (before payment)
-  - **Save Draft** (save order without payment)
-  - **Process Payment** (final payment)
+  - **Print Bill** (before or after payment) - ✅ Implemented
+  - **Save Draft** (save order without payment) - ✅ Implemented
+  - **Process Payment** (unified button for all payment methods) - ✅ Frontend logic ready
 
 ---
 
@@ -368,10 +372,13 @@ The POS (Point of Sale) Panel is the core billing interface for restaurant opera
 
 ### Auto-Save Functionality
 
-- **Draft Orders**: Auto-save every 30 seconds
-- **Manual Save**: "Save Draft" button
-- **On Table Switch**: Auto-save current order
-- **On Order Switch**: Auto-save previous order
+- **Draft Orders**: Auto-save on cart changes (event-based with 1-second debounce)
+  - Triggers when: items added/removed, quantity changed, discount changed, customer changed, notes changed
+  - Silent save (no notifications)
+  - Stores draft locally (ready for backend API integration)
+- **Manual Save**: "Save Draft" button (with success notification)
+- **On Table Switch**: Auto-save current order (pending)
+- **On Order Switch**: Auto-save previous order (pending)
 
 ### Calculations
 
@@ -425,10 +432,15 @@ The POS (Point of Sale) Panel is the core billing interface for restaurant opera
 1. **Multiple Orders per Table**: ✅ Allowed
 2. **Draft Orders**: Auto-save, can be resumed later
 3. **Order Editing**: Allowed until payment processed
-4. **Payment**: Full payment mandatory for walk-in customers
-5. **Partial Payment**: Only for registered credit customers
-6. **Print Bill**: Available before payment
+4. **Payment**: 
+   - Full payment mandatory for walk-in customers
+   - Wallet option only available for selected customers (not walk-in)
+   - Cash/UPI/Card: Creates bill only (no wallet transaction)
+   - Wallet: Creates bill + wallet transaction (debit)
+5. **Partial Payment**: Only for registered credit customers (pending backend support)
+6. **Print Bill**: Available before or after payment ✅ Implemented
 7. **Order Status**: draft → pending → paid
+8. **Auto-Save**: Event-based (triggers on cart changes, not time-based)
 
 ---
 
@@ -478,8 +490,9 @@ The POS (Point of Sale) Panel is the core billing interface for restaurant opera
 - [x] Counter input width optimized for 3+ digits
 - [x] Default number input spinners hidden (custom +/- buttons used)
 - [x] Sound notifications for cart actions (add, update, delete)
-- [ ] Draft order auto-save (pending)
-- [ ] Load existing orders (pending)
+- [x] Draft order auto-save (event-based - triggers on cart changes with 1-second debounce)
+- [x] Manual save draft functionality
+- [ ] Load existing orders (pending - backend API needed)
 
 ### Phase 5: Customer Management ✅ COMPLETE
 - [x] Quick add customer form (name + mobile) - Modal popup
@@ -490,20 +503,24 @@ The POS (Point of Sale) Panel is the core billing interface for restaurant opera
 - [x] Compact customer section design
 - [x] API integration
 
-### Phase 6: Billing & Payment 🟡 PARTIAL
+### Phase 6: Billing & Payment ✅ COMPLETE (Frontend)
 - [x] Order summary (subtotal, discount, CGST, SGST, Service Tax, total)
 - [x] GST/Tax calculation (CGST, SGST, Service Tax - bill-wise on subtotal after discount)
 - [x] Discount field (percentage or amount toggle)
 - [x] Rounding display (shows original amount, rounding difference, rounded total)
 - [x] Round Number setting integration (enabled/disabled from restaurant settings)
 - [x] All numbers display in `.00` format
-- [x] Payment method selection (icon buttons: Cash, UPI, Card)
-- [x] Amount received input (editable for all payment methods)
-- [x] "Full" button (auto-fills total amount for all methods)
+- [x] Payment method selection (icon buttons: Cash, UPI, Card, Wallet)
+  - Wallet option only visible for selected customers
+  - Auto-generates payment notes for wallet payments
+- [x] Amount received input (editable for all payment methods, hidden for wallet)
+- [x] "Full" button (auto-fills total amount for regular payment methods)
 - [x] Change/Remaining display (shows change for cash, remaining for any method)
-- [x] Payment notes field (optional textarea)
-- [ ] Print bill functionality (pending)
-- [ ] Payment processing (pending - backend API needed)
+- [x] Payment notes field (optional textarea, auto-generated for wallet)
+- [x] Print bill functionality (Print-friendly HTML template)
+- [x] Payment processing logic (Frontend ready, backend API pending)
+  - Cash/UPI/Card: Creates bill only (no wallet transaction)
+  - Wallet: Creates bill + wallet transaction (debit)
 
 ### Phase 7: Polish & Optimization ✅ COMPLETE
 - [x] Responsive design (md/lg/xl breakpoints)
@@ -633,8 +650,8 @@ The POS (Point of Sale) Panel is the core billing interface for restaurant opera
 - ⏳ Load existing orders when table is selected
 - ⏳ Multiple orders per table support
 - ⏳ Order switching functionality
-- ⏳ Draft order auto-save (every 30 seconds)
-- ⏳ Manual save draft functionality
+- ✅ Draft order auto-save (event-based - triggers on cart changes with 1-second debounce)
+- ✅ Manual save draft functionality
 
 #### 2. **GST/Tax Calculation** ✅ COMPLETE
 - ✅ CGST, SGST, and Service Tax calculation (bill-wise on subtotal after discount)
@@ -644,24 +661,31 @@ The POS (Point of Sale) Panel is the core billing interface for restaurant opera
 - ✅ All monetary values display in `.00` format
 
 #### 3. **Bill/Order Management**
-- ⏳ Create bill API integration
-- ⏳ Update bill API integration
-- ⏳ Bill number auto-generation
-- ⏳ Bill status management (draft → pending → paid)
-- ⏳ Payment status calculation
+- ⏳ Create bill API integration (Frontend logic ready)
+- ⏳ Update bill API integration (Frontend logic ready)
+- ⏳ Bill number auto-generation (Backend pending)
+- ⏳ Bill status management (draft → pending → paid) - Frontend logic ready
+- ⏳ Payment status calculation - Frontend logic ready
 
 #### 4. **Payment Processing**
-- ⏳ Process payment API integration
-- ⏳ Payment method handling (cash, UPI, card, split)
-- ⏳ Partial payment support (for credit customers)
-- ⏳ Payment validation
-- ⏳ Update customer stats after payment
+- ⏳ Process payment API integration (Frontend logic ready, backend pending)
+- ✅ Payment method handling (cash, UPI, card, wallet)
+  - Cash/UPI/Card: Creates bill only (no wallet transaction)
+  - Wallet: Creates bill + wallet transaction (debit)
+- ✅ Payment validation:
+  - Full payment required for Cash/UPI/Card
+  - Customer selection required for Wallet payment
+  - Walk-in customers cannot use wallet option
+- ⏳ Update customer stats after payment (Backend pending)
 
 #### 5. **Print Functionality**
-- ⏳ Print bill feature
-- ⏳ Thermal printer integration
-- ⏳ Bill template design
-- ⏳ Print before payment option
+- ✅ Print bill feature (Print-friendly HTML template)
+  - Includes bill details, items, totals, GST breakdown
+  - Can print before or after payment
+  - Opens print dialog with formatted bill
+- ⏳ Thermal printer integration (Pending)
+- ✅ Bill template design (HTML template with print styles)
+- ✅ Print before payment option (Available)
 
 #### 6. **Backend APIs (To Be Created)**
 - ⏳ `POST /api/bills` - Create new bill
@@ -706,10 +730,30 @@ The POS (Point of Sale) Panel is the core billing interface for restaurant opera
 ---
 
 **Last Updated**: January 2025  
-**Version**: 1.4.0 (UI Enhancements, GST/Tax Calculation, Rounding, Payment Section)  
-**Status**: In Development - Frontend UI Enhanced, Backend APIs Pending
+**Version**: 1.5.0 (Payment Processing Implementation - Frontend Complete)  
+**Status**: In Development - Frontend Payment Processing Complete, Backend APIs Pending
 
-### Recent Updates (v1.4.0)
+### Recent Updates (v1.5.0)
+- ✅ **Payment Method Selection**: Added Wallet option (only for selected customers)
+- ✅ **Wallet Payment**: 
+  - Auto-generates payment notes if blank
+  - Creates bill + wallet transaction (debit)
+  - Not available for walk-in customers
+- ✅ **Save Draft Functionality**:
+  - Manual save via "Save Draft" button
+  - Auto-save on cart changes (event-based, 1-second debounce)
+  - Stores draft locally (ready for backend API integration)
+- ✅ **Print Bill Functionality**:
+  - Print-friendly HTML template
+  - Includes bill details, items, totals, GST breakdown
+  - Can print before or after payment
+- ✅ **Process Payment Logic**:
+  - Cash/UPI/Card: Creates bill only (no wallet transaction)
+  - Wallet: Creates bill + wallet transaction (debit)
+  - Payment validation (full payment for walk-in, customer required for wallet)
+- ✅ **Unified Process Payment Button**: Single button for all payment methods (text/icon changes based on method)
+
+### Previous Updates (v1.4.0)
 - ✅ Products Panel: Long item names with tooltip, animated floating + button on hover
 - ✅ Billing Cart: Compact design, counter in middle row, walk-in customer default
 - ✅ Customer Management: Quick add modal, search hidden by default

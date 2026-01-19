@@ -533,7 +533,35 @@ backend/
 - **Status**: ✅ Fully implemented (Frontend + Backend)
 - **Seeder**: `TableSeeder` - Creates 15 sample table records
 
-### 16. **Customer Management Module**
+### 16. **Bill Management Module** (Restaurant System)
+- **Location**: `app/Http/Controllers/API/BillController.php` (To be created)
+- **Routes**: `/api/bills/*`, `/api/bills/{bill}/process-payment`, `/api/bills/table/{tableId}`
+- **Features**:
+  - List bills (paginated, sortable, searchable, filterable)
+  - Get bill by ID
+  - Create bill (draft or paid)
+  - Update bill
+  - Delete bill (soft delete)
+  - Get bills by table (for loading existing orders)
+  - Process payment (cash/upi/card/wallet)
+  - Bill number auto-generation (#BILL001 format)
+  - Bill status management (draft → pending → paid)
+  - Payment status calculation (pending/partial/paid)
+- **Model**: `Bill` (with soft deletes, relationships to Table, Customer, WalletTransaction)
+- **Related Model**: `BillItem` (bill items with food_item relationship)
+- **Request Validation**: `BillStoreRequest`, `BillUpdateRequest` (To be created)
+- **API Resource**: `BillResource`, `BillItemResource` (To be created)
+- **Payment Logic**:
+  - **Cash/UPI/Card**: Updates bill status to 'paid', payment_status to 'paid' (no wallet transaction)
+  - **Wallet**: Updates bill status to 'pending', payment_status to 'pending', creates wallet transaction (debit)
+- **Permissions**: `view_bill`, `create_bill`, `edit_bill`, `delete_bill`, `bill_payment`
+- **Status**: ⏳ Backend APIs pending (Frontend logic ready)
+- **Database**: 
+  - `bills` table (migration exists)
+  - `bill_items` table (migration exists)
+  - `wallet_transactions` table (for wallet payments)
+
+### 17. **Customer Management Module**
 - **Location**: `app/Http/Controllers/API/CustomerController.php`
 - **Routes**: `/api/customers/*`
 - **Features**:
@@ -1226,9 +1254,25 @@ php artisan serve
 ---
 
 **Last Updated**: January 2025
-**Version**: 1.5.0 (Customer Management Module Added)
+**Version**: 1.6.0 (Bill Management Module - Frontend Ready, Backend Pending)
 
 ## 🔄 Recent Updates
+- ⏳ **Bill Management Module** - Frontend implementation complete, backend APIs pending
+  - Frontend POS Panel payment processing logic ready
+  - Payment methods: Cash, UPI, Card, Wallet
+  - Save Draft functionality (manual + auto-save on cart changes)
+  - Print Bill functionality (print-friendly HTML template)
+  - Payment processing logic:
+    - Cash/UPI/Card: Creates bill only (no wallet transaction)
+    - Wallet: Creates bill + wallet transaction (debit)
+  - Backend APIs to be created:
+    - `POST /api/bills` - Create bill
+    - `GET /api/bills` - List bills
+    - `GET /api/bills/{bill}` - Get bill details
+    - `PUT /api/bills/{bill}` - Update bill
+    - `DELETE /api/bills/{bill}` - Delete bill
+    - `GET /api/bills/table/{tableId}` - Get bills for table
+    - `POST /api/bills/{bill}/process-payment` - Process payment
 - ✅ Financial Management module fully implemented
 - ✅ Financial categories and transactions tables migrations created
 - ✅ Financial permissions added and seeded

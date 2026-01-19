@@ -897,11 +897,18 @@ const MyComponent = () => {
   - ✅ Frontend UI complete (Tables Panel, Products Panel, Billing Cart Panel)
   - ✅ Product selection with animated hover effects
   - ✅ Customer management (walk-in default, quick add modal, search)
-  - ✅ GST/Tax calculation (CGST, SGST, Service Tax)
+  - ✅ GST/Tax calculation (CGST, SGST, Service Tax) - bill-wise on subtotal after discount
   - ✅ Discount field (percentage/amount toggle)
-  - ✅ Rounding feature with display
-  - ✅ Payment section enhancements
-  - ✅ Sound notifications
+  - ✅ Rounding feature with display (configurable via restaurant settings)
+  - ✅ Payment method selection (Cash, UPI, Card, Wallet)
+  - ✅ Wallet payment option (only for selected customers, auto-generates payment notes)
+  - ✅ Save Draft functionality (manual + auto-save on cart changes)
+  - ✅ Print Bill functionality (print-friendly HTML template)
+  - ✅ Process Payment logic (ready, pending backend API integration)
+  - ✅ Payment processing logic:
+    - Cash/UPI/Card: Creates bill only (no wallet transaction)
+    - Wallet: Creates bill + wallet transaction (debit)
+  - ✅ Sound notifications for cart actions
   - ⏳ Backend APIs pending (bills CRUD, payment processing)
 
 ### 🔴 Needs Implementation (Phase 1 - Restaurant Management)
