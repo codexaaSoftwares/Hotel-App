@@ -96,6 +96,10 @@ Branch/location information for multi-location photo studios.
 
 **Soft Deletes:** Yes
 
+**Runtime Behaviour:**
+- Although the table supports soft deletes, the current Bill API uses **hard delete** semantics for non‑paid bills via `BillController@destroy` (force delete).
+- Paid bills cannot be deleted via API.
+
 ---
 
 ### 3. `financial_categories`

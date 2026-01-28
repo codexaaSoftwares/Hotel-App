@@ -541,7 +541,7 @@ backend/
   - Get bill by ID
   - Create bill (draft or paid)
   - Update bill (prevents duplicate items, handles soft-deleted items)
-  - Delete bill (soft delete, prevents deleting paid bills)
+  - Delete bill (hard delete for non-paid bills, prevents deleting paid bills)
   - Get bills by table (for loading existing orders)
   - Process payment (cash/upi/card/wallet)
   - Bill number auto-generation (`#BILL{ID}` format, e.g., #BILL10)

@@ -4880,9 +4880,14 @@ const handleSaveSettings = async (section, settingsData) => {
 ---
 
 ### 5. **DELETE /api/bills/{bill}**
-**Description**: Bill delete करने के लिए (soft delete)
+**Description**: Bill delete करने के लिए (hard delete for non-paid bills)
 
 **Backend Controller**: `BillController@destroy`
+
+**Details**:
+- Paid bills (`status = 'paid'`) cannot be deleted (422 error).
+- Deletes the bill record and all related `bill_items` (via `ON DELETE CASCADE`).
+- Any related `wallet_transactions` remain for audit, but their `bill_id` is set to `null`.
 
 **Permission Required**: `delete_bill`
 

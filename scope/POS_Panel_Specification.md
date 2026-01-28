@@ -458,9 +458,8 @@ The POS (Point of Sale) Panel is the core billing interface for restaurant opera
 - [x] Table status indicators (colored dots)
 - [x] Table selection logic
 - [x] Visual enhancements (borders, shadows, hover effects)
-- [x] Active orders count display
-- [x] Total amount display for active bills
 - [x] API integration with bill information
+- [x] POS table list auto-refresh on bill create/update/delete/payment (keeps statuses in sync)
 - [ ] Multiple orders per table support (UI ready, backend pending)
 - [ ] Order switching functionality (pending)
 
@@ -747,7 +746,8 @@ The POS (Point of Sale) Panel is the core billing interface for restaurant opera
 - ✅ **Backend API Integration**: All bill management APIs fully implemented
   - Bill creation/update with auto-generated bill number (`#BILL{ID}`)
   - Payment processing API with wallet transaction support
-  - Table status automatic updates (occupied/available)
+  - Bill delete API implemented as hard delete for non-paid bills (paid bills protected)
+  - Table status automatic updates (occupied/available), POS table list auto-refreshes after bill operations
 - ✅ **Payment Processing Enhancements**:
   - Payment confirmation dialog before processing
   - Payment success dialog with bill details
