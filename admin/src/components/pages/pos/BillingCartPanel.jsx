@@ -46,6 +46,10 @@ const BillingCartPanel = ({
   onProcessPayment,
   onDeleteBill,
   deletingBill = false,
+  tableBills = [],
+  currentBillId = null,
+  onBillSelect,
+  onAddNewBill,
 }) => {
   const { success, error } = useToast()
   const [customerSearchTerm, setCustomerSearchTerm] = useState('')
@@ -137,13 +141,54 @@ const BillingCartPanel = ({
 
   return (
     <>
-    <div className="billing-cart-panel h-100 d-flex flex-column">
-        {/* Panel Header - Compact */}
+      <div className="billing-cart-panel h-100 d-flex flex-column">
+        {/* Panel Header - Compact with Bill Switcher */}
         <div className="p-2 border-bottom bg-white">
-          <h6 className="mb-0 fw-semibold" style={{ fontSize: '14px', color: '#0d9488' }}>
-            Billing Cart
-          </h6>
-      </div>
+          <div className="d-flex flex-column">
+            <div className="d-flex align-items-center justify-content-between mb-1">
+              <h6 className="mb-0 fw-semibold" style={{ fontSize: '14px', color: '#0d9488' }}>
+                Billing Cart
+              </h6>
+            </div>
+            <div className="d-flex align-items-center flex-wrap gap-1">
+              {tableBills.map((bill) => {
+                const isActive = bill.id === currentBillId
+                const billNumber = bill.billNumber || bill.bill_number || `#BILL${bill.id}`
+                const billTotalRaw = bill.totalAmount ?? bill.total_amount
+                const billTotal = Number(billTotalRaw || 0)
+
+                return (
+                  <Button
+                    key={bill.id}
+                    variant={isActive ? 'primary' : 'outline-secondary'}
+                    size="sm"
+                    className="px-2 py-0"
+                    style={{
+                      fontSize: '10px',
+                      backgroundColor: isActive ? '#0d9488' : undefined,
+                      borderColor: isActive ? '#0d9488' : undefined,
+                    }}
+                    onClick={() => onBillSelect && onBillSelect(bill.id)}
+                  >
+                    <span className="fw-semibold">{billNumber}</span>
+                    <span className="ms-1 text-nowrap">₹{billTotal.toFixed(2)}</span>
+                  </Button>
+                )
+              })}
+              {currentTable && onAddNewBill && (
+                <Button
+                  variant="outline-success"
+                  size="sm"
+                  className="px-2 py-0"
+                  style={{ fontSize: '10px' }}
+                  onClick={onAddNewBill}
+                >
+                  + Add New
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
 
       {/* Scrollable Content */}
       <div className="flex-grow-1 overflow-auto">

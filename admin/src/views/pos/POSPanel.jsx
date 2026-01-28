@@ -25,6 +25,8 @@ const POSPanel = () => {
   // State management
   const [currentTable, setCurrentTable] = useState(null)
   const [currentOrder, setCurrentOrder] = useState(null)
+  const [tableBills, setTableBills] = useState([]) // All active (non-paid) bills for current table
+  const [currentBillId, setCurrentBillId] = useState(null) // Currently selected bill id for table
   const [cartItems, setCartItems] = useState([])
   const [selectedCustomer, setSelectedCustomer] = useState(null)
   const [paymentMethod, setPaymentMethod] = useState('cash')
@@ -96,44 +98,145 @@ const POSPanel = () => {
     })
   }
 
+  // Helper: reset current bill/cart/customer/payment state (used when no active bills)
+  const resetBillState = () => {
+    setCurrentOrder(null)
+    setCurrentBillId(null)
+    setCartItems([])
+    setSelectedCustomer(null)
+    setDiscount({ type: 'amount', value: 0 })
+    setPaymentNotes('')
+    setPaidAmount(0)
+    setPaymentMethod('cash')
+  }
+
+  // Helper: load a bill object from API into local POS state
+  const loadBillIntoState = (bill) => {
+    if (!bill) {
+      resetBillState()
+      return
+    }
+
+    setCurrentOrder(bill)
+    setCurrentBillId(bill.id)
+
+    // Load bill items into cart (API uses camelCase in resources)
+    if (bill.items && bill.items.length > 0) {
+      const cartItemsFromBill = bill.items.map((item) => ({
+        food_item_id: item.foodItemId ?? item.food_item_id,
+        item_name: item.itemName ?? item.item_name,
+        quantity: item.quantity,
+        unit_price: item.unitPrice ?? item.unit_price,
+        total_price: item.totalPrice ?? item.total_price,
+        display_order: item.displayOrder ?? item.display_order ?? 0,
+      }))
+      setCartItems(cartItemsFromBill)
+    } else {
+      setCartItems([])
+    }
+
+    // Load customer if exists
+    if (bill.customer || bill.customerId || bill.customer_id) {
+      setSelectedCustomer(
+        bill.customer || { id: bill.customerId ?? bill.customer_id }
+      )
+    } else {
+      setSelectedCustomer(null)
+    }
+
+    // Load discount from bill (we only know absolute amount, so use amount mode)
+    const discountAmount = bill.discount ?? bill.discountAmount ?? bill.discount_amount ?? 0
+    if (discountAmount > 0) {
+      setDiscount({ type: 'amount', value: parseFloat(discountAmount) })
+    } else {
+      setDiscount({ type: 'amount', value: 0 })
+    }
+
+    // Reset payment-specific fields; they'll be re-computed based on totals & method
+    setPaymentNotes(bill.notes || '')
+    setPaymentMethod('cash')
+  }
+
+  // Helper: ensure a bill is present in tableBills list (append if new, update if existing)
+  const upsertTableBill = (bill, makeActive = false) => {
+    if (!bill || !bill.id) return
+
+    setTableBills((prev) => {
+      const index = prev.findIndex((b) => b.id === bill.id)
+      if (index === -1) {
+        // Append to keep original ordering stable
+        return [...prev, bill]
+      }
+
+      const next = [...prev]
+      next[index] = { ...next[index], ...bill }
+      return next
+    })
+
+    if (makeActive) {
+      setCurrentBillId(bill.id)
+    }
+  }
+
   // Handle table selection
   const handleTableSelect = async (table) => {
     setCurrentTable(table)
-    setCurrentOrder(null)
-    setCartItems([])
-    setSelectedCustomer(null) // Reset to walk-in customer by default
-    setDiscount({ type: 'amount', value: 0 }) // Reset discount
+    setTableBills([])
+    resetBillState()
 
-    // Load existing orders for this table
+    // Load existing (non-paid) bills for this table
     try {
       const response = await billService.getBillsByTable(table.id, { include_draft: true })
-      if (response.success && response.data && response.data.length > 0) {
-        // Load the most recent draft/pending bill
-        const latestBill = response.data[0]
-        setCurrentOrder(latestBill)
-        
-        // Load bill items into cart
-        if (latestBill.items && latestBill.items.length > 0) {
-          const cartItemsFromBill = latestBill.items.map((item) => ({
-            food_item_id: item.foodItemId,
-            item_name: item.itemName,
-            quantity: item.quantity,
-            unit_price: item.unitPrice,
-            total_price: item.totalPrice,
-            display_order: item.displayOrder || 0,
-          }))
-          setCartItems(cartItemsFromBill)
-        }
-        
-        // Load customer if exists
-        if (latestBill.customerId) {
-          setSelectedCustomer(latestBill.customer || { id: latestBill.customerId })
-        }
+      const bills = Array.isArray(response.data) ? response.data : []
+
+      // Keep only non-paid, non-cancelled bills for switching
+      const openBills = bills.filter(
+        (bill) => bill.status !== 'paid' && bill.status !== 'cancelled'
+      )
+
+      setTableBills(openBills)
+
+      if (openBills.length > 0) {
+        // For now, pick the first bill returned (API is expected to return latest first)
+        loadBillIntoState(openBills[0])
       }
     } catch (err) {
       console.error('Error loading table orders:', err)
       // Silent fail - continue with new order
     }
+  }
+
+  // Handle switching between multiple bills for the same table
+  const handleBillSelect = (billId) => {
+    if (!billId || billId === currentBillId) return
+
+    const bill = tableBills.find((b) => b.id === billId)
+    if (bill) {
+      loadBillIntoState(bill)
+    }
+  }
+
+  // Handle creating a new (empty) bill for current table
+  const handleAddNewBillForCurrentTable = () => {
+    if (!currentTable) {
+      error('Please select a table first')
+      return
+    }
+
+    // Clear current cart & form – actual bill record will be created on first auto-save/save draft
+    resetBillState()
+
+    // Use a temporary draft id so autosave can detect "new bill" and create it via API
+    const draftBill = {
+      id: `draft-${Date.now()}`,
+      tableId: currentTable.id,
+      status: 'draft',
+      payment_status: 'pending',
+      items: [],
+    }
+
+    setCurrentOrder(draftBill)
+    setCurrentBillId(draftBill.id)
   }
 
   // Handle product add to cart
@@ -224,13 +327,7 @@ const POSPanel = () => {
   const handleDeleteBill = async () => {
     // If there is no current saved bill, just clear the local cart state
     if (!currentOrder?.id || currentOrder.id.toString().startsWith('draft-')) {
-      setCartItems([])
-      setSelectedCustomer(null)
-      setDiscount({ type: 'amount', value: 0 })
-      setPaymentNotes('')
-      setPaidAmount(0)
-      setPaymentMethod('cash')
-      setCurrentOrder(null)
+      resetBillState()
       success('Bill cleared successfully.')
       return
     }
@@ -250,14 +347,18 @@ const POSPanel = () => {
         playSuccessSound()
         success(response.message || 'Bill deleted successfully.')
 
-        // Reset cart and form state
-        setCartItems([])
-        setSelectedCustomer(null)
-        setDiscount({ type: 'amount', value: 0 })
-        setPaymentNotes('')
-        setPaidAmount(0)
-        setPaymentMethod('cash')
-        setCurrentOrder(null)
+        // Remove deleted bill from local list and switch to another if available
+        setTableBills((prev) => {
+          const remaining = prev.filter((bill) => bill.id !== currentOrder.id)
+          if (remaining.length > 0) {
+            // Load first remaining bill
+            loadBillIntoState(remaining[0])
+          } else {
+            resetBillState()
+          }
+          return remaining
+        })
+
         // Bill deleted, refresh tables to reflect status change
         refreshTables()
       } else {
@@ -396,6 +497,7 @@ const POSPanel = () => {
         const response = await billService.updateBill(currentOrder.id, billData)
         if (response.success) {
           setCurrentOrder(response.data)
+          upsertTableBill(response.data, true)
           success('Draft updated successfully!')
         } else {
           error(response.message || 'Failed to update draft')
@@ -405,6 +507,7 @@ const POSPanel = () => {
         const response = await billService.createBill(billData)
         if (response.success) {
           setCurrentOrder(response.data)
+          upsertTableBill(response.data, true)
           success('Draft saved successfully!')
           // New bill created, refresh tables list to reflect status change
           refreshTables()
@@ -455,11 +558,16 @@ const POSPanel = () => {
 
         // Auto-save draft via API
         if (currentOrder?.id && !currentOrder.id.toString().startsWith('draft-')) {
-          await billService.updateBill(currentOrder.id, billData)
+          const response = await billService.updateBill(currentOrder.id, billData)
+          if (response.success) {
+            setCurrentOrder(response.data)
+            upsertTableBill(response.data, true)
+          }
         } else {
           const response = await billService.createBill(billData)
           if (response.success) {
             setCurrentOrder(response.data)
+            upsertTableBill(response.data, true)
             // First time bill created via auto-save, refresh tables
             refreshTables()
           }
@@ -758,6 +866,9 @@ const POSPanel = () => {
           return
         }
         createdBill = billResponse.data
+
+        // New bill created – ensure it is available in tableBills for switching
+        upsertTableBill(createdBill, true)
       }
 
       if (paymentMethod === 'wallet') {
@@ -795,14 +906,16 @@ const POSPanel = () => {
           })
           setShowPaymentSuccess(true)
           
-          // Reset cart and form
-          setCartItems([])
-          setSelectedCustomer(null)
-          setDiscount({ type: 'amount', value: 0 })
-          setPaymentNotes('')
-          setPaidAmount(0)
-          setPaymentMethod('cash')
-          setCurrentOrder(null)
+          // Remove paid bill from local list and reset state (or load next one)
+          setTableBills((prev) => {
+            const remaining = prev.filter((bill) => bill.id !== createdBill.id)
+            if (remaining.length > 0) {
+              loadBillIntoState(remaining[0])
+            } else {
+              resetBillState()
+            }
+            return remaining
+          })
           // Payment processed via wallet, refresh tables (table may become available)
           refreshTables()
         } else {
@@ -836,14 +949,16 @@ const POSPanel = () => {
           })
           setShowPaymentSuccess(true)
           
-          // Reset cart and form
-          setCartItems([])
-          setSelectedCustomer(null)
-          setDiscount({ type: 'amount', value: 0 })
-          setPaymentNotes('')
-          setPaidAmount(0)
-          setPaymentMethod('cash')
-          setCurrentOrder(null)
+          // Remove paid bill from local list and reset state (or load next one)
+          setTableBills((prev) => {
+            const remaining = prev.filter((bill) => bill.id !== createdBill.id)
+            if (remaining.length > 0) {
+              loadBillIntoState(remaining[0])
+            } else {
+              resetBillState()
+            }
+            return remaining
+          })
           // Payment processed, refresh tables (table may become available)
           refreshTables()
         } else {
@@ -967,6 +1082,10 @@ const POSPanel = () => {
             onProcessPayment={handleProcessPayment}
             onDeleteBill={handleDeleteBill}
             deletingBill={deletingBill}
+            tableBills={tableBills}
+            currentBillId={currentBillId}
+            onBillSelect={handleBillSelect}
+            onAddNewBill={handleAddNewBillForCurrentTable}
           />
         </Col>
       </Row>
