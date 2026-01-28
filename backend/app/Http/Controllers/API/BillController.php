@@ -331,7 +331,11 @@ class BillController extends Controller
     }
 
     /**
-     * Remove the specified bill (soft delete).
+     * Remove the specified bill (hard delete).
+     *
+     * This is intentionally a hard delete (force delete) so that drafts or
+     * in-progress bills created from the POS Panel can be completely removed
+     * when a bill is cancelled. Paid bills are still protected.
      */
     public function destroy(Bill $bill)
     {
@@ -344,20 +348,29 @@ class BillController extends Controller
         }
 
         try {
+            DB::beginTransaction();
+
             $tableId = $bill->table_id;
-            
-            $bill->delete();
+
+            // Hard delete the bill. Related bill_items will be removed via
+            // ON DELETE CASCADE and wallet_transactions will have bill_id
+            // set to null as per foreign key configuration.
+            $bill->forceDelete();
 
             // Update table status (bill deleted, table should become available if no other active bills)
             if ($tableId) {
                 $this->updateTableStatus($tableId);
             }
 
+            DB::commit();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Bill deleted successfully.',
             ]);
         } catch (\Exception $e) {
+            DB::rollBack();
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to delete bill: ' . $e->getMessage(),

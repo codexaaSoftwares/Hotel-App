@@ -44,6 +44,8 @@ const BillingCartPanel = ({
   onSaveDraft,
   onPrintBill,
   onProcessPayment,
+  onDeleteBill,
+  deletingBill = false,
 }) => {
   const { success, error } = useToast()
   const [customerSearchTerm, setCustomerSearchTerm] = useState('')
@@ -682,7 +684,17 @@ const BillingCartPanel = ({
               >
                 <FontAwesomeIcon icon={faSave} className="me-1" style={{ fontSize: '10px' }} />
               Save Draft
-            </Button>
+              </Button>
+              <Button
+                variant="outline-danger"
+                size="sm"
+                onClick={onDeleteBill}
+                disabled={(!currentOrder && cartItems.length === 0) || deletingBill}
+                style={{ fontSize: '11px', height: '32px' }}
+              >
+                <FontAwesomeIcon icon={faTrash} className="me-1" style={{ fontSize: '10px' }} />
+                {deletingBill ? 'Deleting Bill...' : 'Delete Bill'}
+              </Button>
               <Button
                 variant={paymentMethod === 'wallet' ? 'warning' : 'primary'}
                 size="sm"

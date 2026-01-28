@@ -5,14 +5,14 @@ import { faCircle } from '@fortawesome/free-solid-svg-icons'
 import tableService from '../../../services/tableService'
 import { useToast } from '../../../components'
 
-const TablesPanel = ({ currentTable, onTableSelect }) => {
+const TablesPanel = ({ currentTable, onTableSelect, refreshKey }) => {
   const { error } = useToast()
   const [tables, setTables] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     loadTables()
-  }, [])
+  }, [refreshKey])
 
   const loadTables = async () => {
     setLoading(true)
@@ -131,26 +131,6 @@ const TablesPanel = ({ currentTable, onTableSelect }) => {
                   )}
                 </div>
 
-                {/* Active Orders Badge */}
-                {table.active_orders_count > 0 && (
-                  <Badge
-                    bg={isSelected ? 'light' : 'info'}
-                    text={isSelected ? 'dark' : 'white'}
-                    style={{ fontSize: '10px', minWidth: '20px' }}
-                  >
-                    {table.active_orders_count}
-                  </Badge>
-                )}
-
-                {/* Total Amount (if has active orders) */}
-                {table.active_bills_total > 0 && (
-                  <span
-                    className={`ms-2 fw-semibold ${isSelected ? 'text-dark' : 'text-primary'}`}
-                    style={{ fontSize: '11px' }}
-                  >
-                    ₹{parseFloat(table.active_bills_total).toFixed(0)}
-                  </span>
-                )}
               </div>
             </div>
           )

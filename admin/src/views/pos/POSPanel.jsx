@@ -48,6 +48,14 @@ const POSPanel = () => {
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false)
   const [paymentSuccessData, setPaymentSuccessData] = useState(null)
   const [processingPayment, setProcessingPayment] = useState(false)
+  const [deletingBill, setDeletingBill] = useState(false)
+
+  // Trigger table list reload when bills change (created/deleted/completed)
+  const [tablesRefreshKey, setTablesRefreshKey] = useState(0)
+
+  const refreshTables = () => {
+    setTablesRefreshKey((prev) => prev + 1)
+  }
 
   useEffect(() => {
     // Update time every second
@@ -212,6 +220,59 @@ const POSPanel = () => {
     setPaidAmount(amount)
   }
 
+  // Handle delete/cancel bill
+  const handleDeleteBill = async () => {
+    // If there is no current saved bill, just clear the local cart state
+    if (!currentOrder?.id || currentOrder.id.toString().startsWith('draft-')) {
+      setCartItems([])
+      setSelectedCustomer(null)
+      setDiscount({ type: 'amount', value: 0 })
+      setPaymentNotes('')
+      setPaidAmount(0)
+      setPaymentMethod('cash')
+      setCurrentOrder(null)
+      success('Bill cleared successfully.')
+      return
+    }
+
+    // Confirm with user before deleting
+    // eslint-disable-next-line no-alert
+    const confirmed = window.confirm('Are you sure you want to delete this bill? This action cannot be undone.')
+    if (!confirmed) {
+      return
+    }
+
+    try {
+      setDeletingBill(true)
+      const response = await billService.deleteBill(currentOrder.id)
+
+      if (response.success) {
+        playSuccessSound()
+        success(response.message || 'Bill deleted successfully.')
+
+        // Reset cart and form state
+        setCartItems([])
+        setSelectedCustomer(null)
+        setDiscount({ type: 'amount', value: 0 })
+        setPaymentNotes('')
+        setPaidAmount(0)
+        setPaymentMethod('cash')
+        setCurrentOrder(null)
+        // Bill deleted, refresh tables to reflect status change
+        refreshTables()
+      } else {
+        playErrorSound()
+        error(response.message || 'Failed to delete bill.')
+      }
+    } catch (err) {
+      console.error('Error deleting bill:', err)
+      playErrorSound()
+      error('Failed to delete bill. Please try again.')
+    } finally {
+      setDeletingBill(false)
+    }
+  }
+
   // Calculate order totals
   const calculateTotals = () => {
     const subtotal = cartItems.reduce((sum, item) => sum + item.total_price, 0)
@@ -345,6 +406,8 @@ const POSPanel = () => {
         if (response.success) {
           setCurrentOrder(response.data)
           success('Draft saved successfully!')
+          // New bill created, refresh tables list to reflect status change
+          refreshTables()
         } else {
           error(response.message || 'Failed to save draft')
         }
@@ -397,6 +460,8 @@ const POSPanel = () => {
           const response = await billService.createBill(billData)
           if (response.success) {
             setCurrentOrder(response.data)
+            // First time bill created via auto-save, refresh tables
+            refreshTables()
           }
         }
         
@@ -738,6 +803,8 @@ const POSPanel = () => {
           setPaidAmount(0)
           setPaymentMethod('cash')
           setCurrentOrder(null)
+          // Payment processed via wallet, refresh tables (table may become available)
+          refreshTables()
         } else {
           playErrorSound()
           error(paymentResponse.message || 'Failed to send bill to wallet')
@@ -777,6 +844,8 @@ const POSPanel = () => {
           setPaidAmount(0)
           setPaymentMethod('cash')
           setCurrentOrder(null)
+          // Payment processed, refresh tables (table may become available)
+          refreshTables()
         } else {
           playErrorSound()
           error(paymentResponse.message || 'Failed to process payment')
@@ -861,6 +930,7 @@ const POSPanel = () => {
           <TablesPanel
             currentTable={currentTable}
             onTableSelect={handleTableSelect}
+            refreshKey={tablesRefreshKey}
           />
         </Col>
 
@@ -895,6 +965,8 @@ const POSPanel = () => {
             onSaveDraft={handleSaveDraft}
             onPrintBill={handlePrintBill}
             onProcessPayment={handleProcessPayment}
+            onDeleteBill={handleDeleteBill}
+            deletingBill={deletingBill}
           />
         </Col>
       </Row>
