@@ -156,23 +156,42 @@ const ProductsPanel = ({ onAddToCart, currentTable }) => {
 
   return (
     <div className="products-panel h-100 d-flex flex-column">
-      {/* Panel Header - Compact */}
+      {/* Panel Header - Compact, Products + Search in one row */}
       <div className="p-2 border-bottom bg-white">
-        <h6 className="mb-2 fw-semibold" style={{ fontSize: '14px' }}>Products</h6>
-
-        {/* Search Bar */}
-        <InputGroup size="sm">
-          <InputGroup.Text style={{ fontSize: '12px' }}>
-            <FontAwesomeIcon icon={faSearch} style={{ fontSize: '11px' }} />
-          </InputGroup.Text>
-          <Form.Control
-            type="text"
-            placeholder="Search products..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ fontSize: '12px' }}
-          />
-        </InputGroup>
+        <div className="d-flex align-items-center gap-2">
+          <h6 className="mb-0 fw-semibold flex-shrink-0" style={{ fontSize: '14px' }}>
+            Products
+          </h6>
+          <div className="flex-grow-1 d-flex justify-content-end">
+            <InputGroup size="sm">
+              <InputGroup.Text
+                style={{
+                  fontSize: '11px',
+                  padding: '2px 6px',
+                  height: '28px',
+                  borderTopRightRadius: 0,
+                  borderBottomRightRadius: 0,
+                }}
+              >
+                <FontAwesomeIcon icon={faSearch} style={{ fontSize: '10px' }} />
+              </InputGroup.Text>
+              <Form.Control
+                type="text"
+                placeholder="Search products..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{
+                  fontSize: '11px',
+                  height: '28px',
+                  padding: '2px 8px',
+                  maxWidth: '220px',
+                  borderTopLeftRadius: 0,
+                  borderBottomLeftRadius: 0,
+                }}
+              />
+            </InputGroup>
+          </div>
+        </div>
       </div>
 
       {/* Categories with Expandable Items */}
