@@ -453,15 +453,15 @@ The POS (Point of Sale) Panel is the core billing interface for restaurant opera
 - [x] Create Products Panel component (category tabs + product grid)
 - [x] Create Billing Cart component (order items + customer + payment)
 
-### Phase 2: Table Management 🟡 PARTIAL
+### Phase 2: Table Management ✅ COMPLETE
 - [x] Table list display (compact row-based layout)
 - [x] Table status indicators (colored dots)
 - [x] Table selection logic
 - [x] Visual enhancements (borders, shadows, hover effects)
 - [x] API integration with bill information
 - [x] POS table list auto-refresh on bill create/update/delete/payment (keeps statuses in sync)
-- [ ] Multiple orders per table support (UI ready, backend pending)
-- [ ] Order switching functionality (pending)
+- [x] Multiple orders per table support (Frontend + Backend fully implemented)
+- [x] Order switching functionality (bill switcher in Billing Cart header)
 
 ### Phase 3: Product Selection ✅ COMPLETE
 - [x] Expandable category sections (accordion style)
@@ -481,7 +481,7 @@ The POS (Point of Sale) Panel is the core billing interface for restaurant opera
 - [x] Animated floating + button (hidden by default, appears on hover)
 - [x] Enhanced hover effects (background, border, transform, shadow)
 
-### Phase 4: Order Management 🟡 PARTIAL
+### Phase 4: Order Management ✅ COMPLETE
 - [x] Order items list (in cart)
 - [x] Quantity controls (+ / - / input) - Compact layout with counter in middle
 - [x] Item removal
@@ -491,7 +491,7 @@ The POS (Point of Sale) Panel is the core billing interface for restaurant opera
 - [x] Sound notifications for cart actions (add, update, delete)
 - [x] Draft order auto-save (event-based - triggers on cart changes with 1-second debounce)
 - [x] Manual save draft functionality
-- [ ] Load existing orders (pending - backend API needed)
+- [x] Load existing orders for selected table (via `GET /api/bills/table/{tableId}`)
 
 ### Phase 5: Customer Management ✅ COMPLETE
 - [x] Quick add customer form (name + mobile) - Modal popup
@@ -643,12 +643,12 @@ The POS (Point of Sale) Panel is the core billing interface for restaurant opera
   - Staff: Limited bill permissions (view, create, edit, payment)
 - ✅ Permission alias mappings added to `authService.js`
 
-### 🟡 In Progress / Pending
+### 🟢 POS State Management & Order Handling (Now Complete)
 
 #### 1. **State Management & Order Handling**
-- ⏳ Load existing orders when table is selected
-- ⏳ Multiple orders per table support
-- ⏳ Order switching functionality
+- ✅ Load existing orders when table is selected (`GET /api/bills/table/{tableId}` in `POSPanel.jsx`)
+- ✅ Multiple orders per table support (multiple active bills per table)
+- ✅ Order switching functionality (bill switcher chips in Billing Cart header)
 - ✅ Draft order auto-save (event-based - triggers on cart changes with 1-second debounce)
 - ✅ Manual save draft functionality
 
@@ -660,14 +660,14 @@ The POS (Point of Sale) Panel is the core billing interface for restaurant opera
 - ✅ All monetary values display in `.00` format
 
 #### 3. **Bill/Order Management**
-- ⏳ Create bill API integration (Frontend logic ready)
-- ⏳ Update bill API integration (Frontend logic ready)
-- ⏳ Bill number auto-generation (Backend pending)
-- ⏳ Bill status management (draft → pending → paid) - Frontend logic ready
-- ⏳ Payment status calculation - Frontend logic ready
+- ✅ Create bill API integration
+- ✅ Update bill API integration
+- ✅ Bill number auto-generation (`#BILL{ID}` format, backend implemented)
+- ✅ Bill status management (draft → pending → paid)
+- ✅ Payment status calculation (pending/partial/paid)
 
 #### 4. **Payment Processing**
-- ⏳ Process payment API integration (Frontend logic ready, backend pending)
+- ✅ Process payment API integration (Frontend + Backend fully implemented)
 - ✅ Payment method handling (cash, UPI, card, wallet)
   - Cash/UPI/Card: Creates bill only (no wallet transaction)
   - Wallet: Creates bill + wallet transaction (debit)
@@ -675,7 +675,7 @@ The POS (Point of Sale) Panel is the core billing interface for restaurant opera
   - Full payment required for Cash/UPI/Card
   - Customer selection required for Wallet payment
   - Walk-in customers cannot use wallet option
-- ⏳ Update customer stats after payment (Backend pending)
+-- ✅ Customer wallet/balance stats updated via wallet transactions after payment
 
 #### 5. **Print Functionality**
 - ✅ Print bill feature (Print-friendly HTML template)
@@ -686,14 +686,14 @@ The POS (Point of Sale) Panel is the core billing interface for restaurant opera
 - ✅ Bill template design (HTML template with print styles)
 - ✅ Print before payment option (Available)
 
-#### 6. **Backend APIs (To Be Created)**
-- ⏳ `POST /api/bills` - Create new bill
-- ⏳ `GET /api/bills` - List bills (with filters)
-- ⏳ `GET /api/bills/{bill}` - Get bill details
-- ⏳ `PUT /api/bills/{bill}` - Update bill
-- ⏳ `DELETE /api/bills/{bill}` - Delete bill
-- ⏳ `GET /api/bills/table/{tableId}` - Get bills for table
-- ⏳ `POST /api/bills/{bill}/process-payment` - Process payment
+#### 6. **Bill Management APIs (Implemented)**
+- ✅ `POST /api/bills` - Create new bill
+- ✅ `GET /api/bills` - List bills (with filters)
+- ✅ `GET /api/bills/{bill}` - Get bill details
+- ✅ `PUT /api/bills/{bill}` - Update bill
+- ✅ `DELETE /api/bills/{bill}` - Delete bill
+- ✅ `GET /api/bills/table/{tableId}` - Get bills for table (used for loading existing orders and multiple active bills per table)
+- ✅ `POST /api/bills/{bill}/process-payment` - Process payment (cash, UPI, card, wallet)
 
 ### 📝 Technical Notes
 
