@@ -35,6 +35,10 @@ const routesConfig = [
   { path: '/restaurant/tables', name: 'Table Management' },
   { path: '/restaurant/settings', name: 'Restaurant Settings' },
   
+  // POS Routes
+  { path: '/pos/panel', name: 'POS Panel' },
+  { path: '/pos/bills', name: 'Bills Management' },
+  
   // Auth Routes
   { path: '/login', name: 'Login' },
   { path: '/forgot-password', name: 'Forgot Password' },

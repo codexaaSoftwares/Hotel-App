@@ -26,6 +26,7 @@ const CustomersList = React.lazy(() => import('../../views/customers/CustomersLi
 
 // POS Panel Components
 const POSPanel = React.lazy(() => import('../../views/pos/POSPanel'))
+const BillsList = React.lazy(() => import('../../views/pos/BillsList'))
 
 
 import PermissionRoute from './PermissionRoute'
@@ -131,6 +132,14 @@ const AppContent = () => {
             element={
               <PermissionRoute requiredPermission="create_bill" showAccessDenied>
                 <POSPanel />
+              </PermissionRoute>
+            }
+          />
+          <Route
+            path="/pos/bills"
+            element={
+              <PermissionRoute requiredPermission="view_bill" showAccessDenied>
+                <BillsList />
               </PermissionRoute>
             }
           />
