@@ -157,14 +157,6 @@ class BillController extends Controller
                 $validated['remaining_amount'] = $validated['total_amount'] - ($validated['paid_amount'] ?? 0);
             }
 
-            // Calculate gst_amount from separate fields if not provided (backward compatibility)
-            if (!isset($validated['gst_amount']) || $validated['gst_amount'] === null) {
-                $cgst = $validated['cgst_amount'] ?? 0;
-                $sgst = $validated['sgst_amount'] ?? 0;
-                $serviceTax = $validated['service_tax_amount'] ?? 0;
-                $validated['gst_amount'] = $cgst + $sgst + $serviceTax;
-            }
-
             // Ensure separate GST fields have default values
             $validated['cgst_amount'] = $validated['cgst_amount'] ?? 0;
             $validated['sgst_amount'] = $validated['sgst_amount'] ?? 0;
@@ -251,13 +243,11 @@ class BillController extends Controller
                 $validated['remaining_amount'] = $totalAmount - $paidAmount;
             }
 
-            // Calculate gst_amount from separate fields if separate fields are provided but gst_amount is not
-            if ((isset($validated['cgst_amount']) || isset($validated['sgst_amount']) || isset($validated['service_tax_amount'])) 
-                && !isset($validated['gst_amount'])) {
-                $cgst = $validated['cgst_amount'] ?? $bill->cgst_amount ?? 0;
-                $sgst = $validated['sgst_amount'] ?? $bill->sgst_amount ?? 0;
-                $serviceTax = $validated['service_tax_amount'] ?? $bill->service_tax_amount ?? 0;
-                $validated['gst_amount'] = $cgst + $sgst + $serviceTax;
+            // Ensure separate GST fields have default values if updating
+            if (isset($validated['cgst_amount']) || isset($validated['sgst_amount']) || isset($validated['service_tax_amount'])) {
+                $validated['cgst_amount'] = $validated['cgst_amount'] ?? $bill->cgst_amount ?? 0;
+                $validated['sgst_amount'] = $validated['sgst_amount'] ?? $bill->sgst_amount ?? 0;
+                $validated['service_tax_amount'] = $validated['service_tax_amount'] ?? $bill->service_tax_amount ?? 0;
             }
 
             // Update bill

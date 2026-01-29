@@ -42,7 +42,7 @@ class BillResource extends JsonResource
             'status' => $this->status,
             'paymentStatus' => $this->payment_status,
             'subtotal' => (float) $this->subtotal,
-            'gstAmount' => (float) $this->gst_amount,
+            'gstAmount' => (float) ($this->gst_amount ?? 0),
             'cgstAmount' => (float) $this->cgst_amount,
             'sgstAmount' => (float) $this->sgst_amount,
             'serviceTaxAmount' => (float) $this->service_tax_amount,
