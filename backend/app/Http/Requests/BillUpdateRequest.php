@@ -31,7 +31,10 @@ class BillUpdateRequest extends FormRequest
             'status' => ['nullable', 'in:draft,pending,paid,cancelled'],
             'payment_status' => ['nullable', 'in:pending,partial,paid'],
             'subtotal' => ['sometimes', 'numeric', 'min:0'],
-            'gst_amount' => ['sometimes', 'numeric', 'min:0'],
+            'gst_amount' => ['nullable', 'numeric', 'min:0'], // Keep for backward compatibility, will be calculated if not provided
+            'cgst_amount' => ['nullable', 'numeric', 'min:0'],
+            'sgst_amount' => ['nullable', 'numeric', 'min:0'],
+            'service_tax_amount' => ['nullable', 'numeric', 'min:0'],
             'discount' => ['nullable', 'numeric', 'min:0'],
             'total_amount' => ['sometimes', 'numeric', 'min:0'],
             'paid_amount' => ['nullable', 'numeric', 'min:0'],

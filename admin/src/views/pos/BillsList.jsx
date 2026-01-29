@@ -960,20 +960,44 @@ const BillsList = () => {
               {/* Bill Summary */}
               <div className="mb-4 pb-3 border-bottom">
                 <h5 className="mb-3">Bill Summary</h5>
+              <Row className="mb-2">
+                <Col md={6}>
+                  <div className="d-flex justify-content-between mb-2">
+                    <span>Subtotal:</span>
+                    <strong>₹{parseFloat(billDetails.subtotal || 0).toFixed(2)}</strong>
+                  </div>
+                </Col>
+                <Col md={6}>
+                  <div className="d-flex justify-content-between mb-2">
+                    <span>Total GST:</span>
+                    <strong>₹{parseFloat(billDetails.gstAmount || billDetails.gst_amount || 0).toFixed(2)}</strong>
+                  </div>
+                </Col>
+              </Row>
+              {(parseFloat(billDetails.cgstAmount || billDetails.cgst_amount || 0) > 0 ||
+                parseFloat(billDetails.sgstAmount || billDetails.sgst_amount || 0) > 0 ||
+                parseFloat(billDetails.serviceTaxAmount || billDetails.service_tax_amount || 0) > 0) && (
                 <Row className="mb-2">
-                  <Col md={6}>
+                  <Col md={4}>
                     <div className="d-flex justify-content-between mb-2">
-                      <span>Subtotal:</span>
-                      <strong>₹{parseFloat(billDetails.subtotal || 0).toFixed(2)}</strong>
+                      <span className="text-muted small">CGST:</span>
+                      <span className="small">₹{parseFloat(billDetails.cgstAmount || billDetails.cgst_amount || 0).toFixed(2)}</span>
                     </div>
                   </Col>
-                  <Col md={6}>
+                  <Col md={4}>
                     <div className="d-flex justify-content-between mb-2">
-                      <span>GST Amount:</span>
-                      <strong>₹{parseFloat(billDetails.gstAmount || billDetails.gst_amount || 0).toFixed(2)}</strong>
+                      <span className="text-muted small">SGST:</span>
+                      <span className="small">₹{parseFloat(billDetails.sgstAmount || billDetails.sgst_amount || 0).toFixed(2)}</span>
+                    </div>
+                  </Col>
+                  <Col md={4}>
+                    <div className="d-flex justify-content-between mb-2">
+                      <span className="text-muted small">Service Tax:</span>
+                      <span className="small">₹{parseFloat(billDetails.serviceTaxAmount || billDetails.service_tax_amount || 0).toFixed(2)}</span>
                     </div>
                   </Col>
                 </Row>
+              )}
                 {parseFloat(billDetails.discount || 0) > 0 && (
                   <Row className="mb-2">
                     <Col md={6}>
