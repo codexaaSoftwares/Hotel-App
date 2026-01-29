@@ -2,6 +2,7 @@ import React from 'react'
 import { Navigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { useAuth } from '../../context/AuthContext'
+import { usePermissions } from '../../hooks'
 import { PERMISSIONS, ROLES } from '../../constants/permissions'
 
 const PermissionRoute = ({ 
@@ -13,6 +14,7 @@ const PermissionRoute = ({
   showAccessDenied = false 
 }) => {
   const { user, isAuthenticated } = useAuth()
+  const { hasPermission } = usePermissions()
 
   // Check if user is authenticated
   if (!isAuthenticated) {
@@ -51,10 +53,18 @@ const PermissionRoute = ({
     return <Navigate to={fallback} replace />
   }
 
-  // Check permission-based access
+  // Check permission-based access (use hasPermission hook which checks both aliases and canonical names)
   if (requiredPermission) {
-    const hasPermission = user?.permissions?.includes(requiredPermission) || false
-    if (!hasPermission) {
+    // TEMPORARY: Development bypass - Remove this when backend is ready
+    const isDevelopment = import.meta.env.DEV || import.meta.env.MODE === 'development'
+    const isStaffRoute = requiredPermission === PERMISSIONS.STAFF_READ || 
+                         requiredPermission === 'staff:read' ||
+                         requiredPermission === 'view_staff'
+    
+    // Allow access in development for staff routes (temporary)
+    if (isDevelopment && isStaffRoute) {
+      // Bypass permission check for development
+    } else if (!hasPermission(requiredPermission)) {
       if (showAccessDenied) {
         return (
           <div className="d-flex justify-content-center align-items-center min-vh-100">

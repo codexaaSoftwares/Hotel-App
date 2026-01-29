@@ -24,6 +24,9 @@ const BranchesList = React.lazy(() => import('../../views/branches/BranchesList'
 // Customer Management Components
 const CustomersList = React.lazy(() => import('../../views/customers/CustomersList'))
 
+// Staff Management Components
+const StaffList = React.lazy(() => import('../../views/staff/StaffList'))
+
 // POS Panel Components
 const POSPanel = React.lazy(() => import('../../views/pos/POSPanel'))
 const BillsList = React.lazy(() => import('../../views/pos/BillsList'))
@@ -125,6 +128,18 @@ const AppContent = () => {
           />
           <Route path="/customers/create" element={<Navigate to="/customers" replace />} />
           <Route path="/customers/edit/:id" element={<Navigate to="/customers" replace />} />
+          
+          {/* Staff Management Routes */}
+          <Route
+            path="/staff"
+            element={
+              <PermissionRoute requiredPermission={PERMISSIONS.STAFF_READ} showAccessDenied>
+                <StaffList />
+              </PermissionRoute>
+            }
+          />
+          <Route path="/staff/create" element={<Navigate to="/staff" replace />} />
+          <Route path="/staff/edit/:id" element={<Navigate to="/staff" replace />} />
           
           {/* POS Panel Routes */}
           <Route

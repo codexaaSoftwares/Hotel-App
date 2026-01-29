@@ -24,7 +24,7 @@ trait PaginatesResults
         array $defaultSort = []
     ): array {
         $page = max((int) $request->input('page', 1), 1);
-        $limit = (int) $request->input('limit', 20);
+        $limit = (int) $request->input('limit', 25);
         $limit = min(max($limit, 1), 100);
 
         $requestedSort = $request->input('sort_by');

@@ -15,6 +15,8 @@ use App\Http\Controllers\API\TableController;
 use App\Http\Controllers\API\CustomerController;
 use App\Http\Controllers\API\WalletTransactionController;
 use App\Http\Controllers\API\BillController;
+use App\Http\Controllers\API\StaffController;
+use App\Http\Controllers\API\SalaryPaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -128,6 +130,21 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // Customer-specific wallet transactions (Customer Ledger)
     Route::get('/customers/{customer}/wallet-transactions', [WalletTransactionController::class, 'getByCustomer'])->middleware('permission:view_customer_ledger');
+
+    // Staff Management
+    Route::get('/staff', [StaffController::class, 'index'])->middleware('permission:view_staff');
+    Route::post('/staff', [StaffController::class, 'store'])->middleware('permission:create_staff');
+    Route::get('/staff/{staff}', [StaffController::class, 'show'])->middleware('permission:view_staff');
+    Route::put('/staff/{staff}', [StaffController::class, 'update'])->middleware('permission:edit_staff');
+    Route::delete('/staff/{staff}', [StaffController::class, 'destroy'])->middleware('permission:delete_staff');
+
+    // Salary Payment Management
+    Route::get('/salary-payments', [SalaryPaymentController::class, 'index'])->middleware('permission:view_salary_payment');
+    Route::post('/salary-payments', [SalaryPaymentController::class, 'store'])->middleware('permission:create_salary_payment');
+    Route::get('/salary-payments/{salaryPayment}', [SalaryPaymentController::class, 'show'])->middleware('permission:view_salary_payment');
+    Route::put('/salary-payments/{salaryPayment}', [SalaryPaymentController::class, 'update'])->middleware('permission:edit_salary_payment');
+    Route::delete('/salary-payments/{salaryPayment}', [SalaryPaymentController::class, 'destroy'])->middleware('permission:delete_salary_payment');
+    Route::get('/staff/{staff}/salary-payments', [SalaryPaymentController::class, 'getByStaff'])->middleware('permission:view_salary_payment');
 
     // Restaurant Settings Management
     Route::prefix('restaurant-settings')->middleware('permission:view_restaurant_settings')->group(function () {

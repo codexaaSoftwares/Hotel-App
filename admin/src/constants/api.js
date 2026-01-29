@@ -161,6 +161,27 @@ export const API_ENDPOINTS = {
     STAFF: '/reports/staff',
     EXPORT: (type) => `/reports/${type}/export`,
   },
+
+  // Staff Management
+  STAFF: {
+    BASE: '/staff',
+    LIST: '/staff',
+    CREATE: '/staff',
+    GET_BY_ID: (id) => `/staff/${id}`,
+    UPDATE: (id) => `/staff/${id}`,
+    DELETE: (id) => `/staff/${id}`,
+  },
+
+  // Salary Payments
+  SALARY_PAYMENTS: {
+    BASE: '/salary-payments',
+    LIST: '/salary-payments',
+    CREATE: '/salary-payments',
+    GET_BY_ID: (id) => `/salary-payments/${id}`,
+    UPDATE: (id) => `/salary-payments/${id}`,
+    DELETE: (id) => `/salary-payments/${id}`,
+    GET_BY_STAFF: (staffId) => `/staff/${staffId}/salary-payments`,
+  },
 }
 
 // HTTP Methods

@@ -92,6 +92,18 @@ class PermissionsTableSeeder extends Seeder
             ['name' => 'view_pending_bill', 'description' => 'View pending bills', 'module' => 'bills', 'submodule' => 'pending', 'type' => 'read'],
             ['name' => 'create_pending_bill', 'description' => 'Create pending bills', 'module' => 'bills', 'submodule' => 'pending', 'type' => 'write'],
 
+            // Staff Management
+            ['name' => 'view_staff', 'description' => 'View staff', 'module' => 'staff', 'submodule' => 'management', 'type' => 'read'],
+            ['name' => 'create_staff', 'description' => 'Create staff', 'module' => 'staff', 'submodule' => 'management', 'type' => 'write'],
+            ['name' => 'edit_staff', 'description' => 'Edit staff', 'module' => 'staff', 'submodule' => 'management', 'type' => 'write'],
+            ['name' => 'delete_staff', 'description' => 'Delete staff', 'module' => 'staff', 'submodule' => 'management', 'type' => 'delete'],
+
+            // Salary Payment Management
+            ['name' => 'view_salary_payment', 'description' => 'View salary payments', 'module' => 'staff', 'submodule' => 'salary_payments', 'type' => 'read'],
+            ['name' => 'create_salary_payment', 'description' => 'Create salary payments', 'module' => 'staff', 'submodule' => 'salary_payments', 'type' => 'write'],
+            ['name' => 'edit_salary_payment', 'description' => 'Edit salary payments', 'module' => 'staff', 'submodule' => 'salary_payments', 'type' => 'write'],
+            ['name' => 'delete_salary_payment', 'description' => 'Delete salary payments', 'module' => 'staff', 'submodule' => 'salary_payments', 'type' => 'delete'],
+
             // Special Permissions
             ['name' => 'special_export_data', 'description' => 'Export data to Excel/PDF', 'module' => 'special', 'submodule' => 'special', 'type' => 'special'],
             ['name' => 'special_import_data', 'description' => 'Import data from Excel/CSV', 'module' => 'special', 'submodule' => 'special', 'type' => 'special'],

@@ -70,6 +70,17 @@ const PERMISSION_ALIAS_MAP = {
   view_pending_bill: ['pending_bill:read'],
   create_pending_bill: ['pending_bill:write'],
   
+  // Staff Management
+  view_staff: ['staff:read'],
+  create_staff: ['staff:write'],
+  edit_staff: ['staff:write'],
+  delete_staff: ['staff:delete'],
+  view_salary_payment: ['salary:read'],
+  create_salary_payment: ['salary:write'],
+  edit_salary_payment: ['salary:write'],
+  delete_salary_payment: ['salary:delete'],
+  staff_salary_report: ['staff_salary_report:read'],
+  
   // Dashboard
   view_dashboard: ['dashboard:read'],
   
