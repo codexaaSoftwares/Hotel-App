@@ -592,6 +592,48 @@ backend/
 - **Seeder**: `CustomerSeeder` - Creates 10 sample customer records
 - **Note**: Customer code auto-generated via model observer before creation
 
+### 18. **Staff Management Module**
+- **Location**: `app/Http/Controllers/API/StaffController.php`
+- **Routes**: `/api/staff/*`
+- **Features**:
+  - List staff (paginated, sortable, searchable, filterable)
+  - Get staff by ID
+  - Create staff
+  - Update staff
+  - Delete staff (soft delete)
+  - Search by name, mobile, department
+  - Filter by status (active, inactive)
+  - Server-side pagination, filtering, and searching
+  - Default page size: 25
+- **Model**: `Staff` (with soft deletes, relationships: salaryPayments, accessor: staffCode as `STF{id}`)
+- **Request Validation**: `StaffStoreRequest`, `StaffUpdateRequest`
+- **API Resource**: `StaffResource` (camelCase format, includes staffCode)
+- **Permissions**: `view_staff`, `create_staff`, `edit_staff`, `delete_staff`
+- **Status**: ✅ Fully implemented (Frontend + Backend)
+- **Database**: `staff` table with fields: name, mobile, department (text), salary_type (monthly/other), salary_amount, joining_date, address (textarea), document_info, status
+
+### 19. **Salary Payment Management Module**
+- **Location**: `app/Http/Controllers/API/SalaryPaymentController.php`
+- **Routes**: `/api/salary-payments/*`, `/api/staff/{staff}/salary-payments`
+- **Features**:
+  - List salary payments (paginated, sortable, searchable, filterable)
+  - Get salary payment by ID
+  - Create salary payment (with month and year)
+  - Update salary payment
+  - Delete salary payment (soft delete)
+  - Get salary payments by staff member
+  - Search by staff name or mobile
+  - Filter by month and year
+  - Server-side pagination, filtering, and searching
+  - Default page size: 25
+- **Model**: `SalaryPayment` (with soft deletes, relationships: staff, creator, casts: payment_date, paid_amount, month, year)
+- **Request Validation**: `SalaryPaymentStoreRequest`, `SalaryPaymentUpdateRequest`
+- **API Resource**: `SalaryPaymentResource` (camelCase format, includes staff relationship, month, year)
+- **Permissions**: `view_salary_payment`, `create_salary_payment`, `edit_salary_payment`, `delete_salary_payment`, `staff_salary_report`
+- **Status**: ✅ Fully implemented (Frontend + Backend)
+- **Database**: `salary_payments` table with fields: staff_id, paid_amount, payment_date, payment_method, reference_number, notes, month, year, created_by
+- **Note**: `payable_amount` field removed from database and all related code
+
 ---
 
 ## 🏗️ Architecture Patterns
@@ -1265,6 +1307,25 @@ php artisan serve
 **Version**: 1.7.0 (Bill Management Module - Fully Implemented)
 
 ## 🔄 Recent Updates
+- ✅ **Staff Management Module** - Fully implemented (Frontend + Backend)
+  - ✅ `GET /api/staff` - List staff (paginated, sortable, searchable, filterable)
+  - ✅ `POST /api/staff` - Create staff
+  - ✅ `GET /api/staff/{staff}` - Get staff by ID
+  - ✅ `PUT /api/staff/{staff}` - Update staff
+  - ✅ `DELETE /api/staff/{staff}` - Delete staff (soft delete)
+  - ✅ Staff code auto-generated: `STF{ID}` format
+  - ✅ Default page size: 25
+- ✅ **Salary Payment Management Module** - Fully implemented (Frontend + Backend)
+  - ✅ `GET /api/salary-payments` - List salary payments (with search, month, year filters)
+  - ✅ `GET /api/staff/{staff}/salary-payments` - Get salary payments by staff
+  - ✅ `POST /api/salary-payments` - Create salary payment (with month and year)
+  - ✅ `PUT /api/salary-payments/{salaryPayment}` - Update salary payment
+  - ✅ `DELETE /api/salary-payments/{salaryPayment}` - Delete salary payment (soft delete)
+  - ✅ Default page size: 25
+  - ✅ `payable_amount` field removed from database and all related code
+- ✅ **Database Migrations**: Created `staff` and `salary_payments` tables
+- ✅ **Permissions**: All staff and salary payment permissions added and seeded
+- ✅ **Default Pagination Limit**: Updated from 20 to 25 in PaginatesResults trait
 - ✅ **Bill Management Module** - Fully implemented (Frontend + Backend)
   - ✅ `POST /api/bills` - Create bill (with auto-generated bill number `#BILL{ID}`)
   - ✅ `GET /api/bills` - List bills (with pagination, filtering, searching)

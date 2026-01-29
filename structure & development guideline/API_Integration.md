@@ -4748,6 +4748,372 @@ const handleSaveSettings = async (section, settingsData) => {
 
 ---
 
+## 👨‍💼 Staff Management APIs (Restaurant System)
+
+### 1. **GET /api/staff**
+**Description**: Staff members की list fetch करने के लिए (paginated, sortable, searchable, filterable)
+
+**Backend Controller**: `StaffController@index`
+
+**Query Parameters**:
+- `page` - Page number (default: 1)
+- `limit` - Items per page (default: 25, max: 100)
+- `search` - Search term (name, mobile, department में search)
+- `status` - Filter by status (active/inactive)
+- `sort_by` - Sort column (name, mobile, created_at)
+- `sort_direction` - Sort direction (asc/desc)
+
+**Response**:
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "John Doe",
+      "mobile": "9876543210",
+      "department": "Kitchen",
+      "salaryType": "monthly",
+      "salaryAmount": "25000.00",
+      "joiningDate": "2024-01-15",
+      "address": "123 Main Street",
+      "documentInfo": "Aadhar: 1234 5678 9012",
+      "status": "active",
+      "staffCode": "STF1",
+      "created_at": "2024-01-15T00:00:00.000000Z"
+    }
+  ],
+  "meta": {
+    "total": 50,
+    "page": 1,
+    "limit": 25,
+    "totalPages": 2,
+    "hasNext": true,
+    "hasPrev": false,
+    "sortBy": "created_at",
+    "sortDirection": "desc"
+  }
+}
+```
+
+**Permission Required**: `view_staff`
+
+**Frontend Integration**:
+- **Service**: `src/services/staffService.js`
+- **Method**: `staffService.getStaff(params)`
+- **Used In**: `src/views/staff/StaffList.jsx` - Staff list page में table data load करने के लिए
+
+---
+
+### 2. **GET /api/staff/{staff}**
+**Description**: Specific staff member की details fetch करने के लिए
+
+**Backend Controller**: `StaffController@show`
+
+**Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "name": "John Doe",
+    "mobile": "9876543210",
+    "department": "Kitchen",
+    "salaryType": "monthly",
+    "salaryAmount": "25000.00",
+    "joiningDate": "2024-01-15",
+    "address": "123 Main Street",
+    "documentInfo": "Aadhar: 1234 5678 9012",
+    "status": "active",
+    "staffCode": "STF1",
+    "created_at": "2024-01-15T00:00:00.000000Z"
+  }
+}
+```
+
+**Permission Required**: `view_staff`
+
+**Frontend Integration**:
+- **Service**: `src/services/staffService.js`
+- **Method**: `staffService.getStaffById(id)`
+- **Used In**: `src/components/pages/staff/StaffForm.jsx` - Edit form में staff data load करने के लिए
+
+---
+
+### 3. **POST /api/staff**
+**Description**: New staff member create करने के लिए
+
+**Backend Controller**: `StaffController@store`
+
+**Request Body**:
+```json
+{
+  "name": "John Doe",
+  "mobile": "9876543210",
+  "department": "Kitchen",
+  "salaryType": "monthly",
+  "salaryAmount": "25000.00",
+  "joiningDate": "2024-01-15",
+  "address": "123 Main Street",
+  "documentInfo": "Aadhar: 1234 5678 9012",
+  "status": "active"
+}
+```
+
+**Response**:
+```json
+{
+  "success": true,
+  "message": "Staff created successfully.",
+  "data": {
+    "id": 1,
+    "name": "John Doe",
+    "staffCode": "STF1",
+    ...
+  }
+}
+```
+
+**Permission Required**: `create_staff`
+
+**Frontend Integration**:
+- **Service**: `src/services/staffService.js`
+- **Method**: `staffService.createStaff(data)`
+- **Used In**: `src/components/pages/staff/StaffForm.jsx` - Create form submit पर
+
+---
+
+### 4. **PUT /api/staff/{staff}**
+**Description**: Staff member update करने के लिए
+
+**Backend Controller**: `StaffController@update`
+
+**Request Body**: Same as POST (all fields optional except required ones)
+
+**Response**:
+```json
+{
+  "success": true,
+  "message": "Staff updated successfully.",
+  "data": {
+    "id": 1,
+    "name": "John Doe Updated",
+    "staffCode": "STF1",
+    ...
+  }
+}
+```
+
+**Permission Required**: `edit_staff`
+
+**Frontend Integration**:
+- **Service**: `src/services/staffService.js`
+- **Method**: `staffService.updateStaff(id, data)`
+- **Used In**: `src/components/pages/staff/StaffForm.jsx` - Edit form submit पर
+
+---
+
+### 5. **DELETE /api/staff/{staff}**
+**Description**: Staff member delete करने के लिए (soft delete)
+
+**Backend Controller**: `StaffController@destroy`
+
+**Response**:
+```json
+{
+  "success": true,
+  "message": "Staff deleted successfully."
+}
+```
+
+**Permission Required**: `delete_staff`
+
+**Frontend Integration**:
+- **Service**: `src/services/staffService.js`
+- **Method**: `staffService.deleteStaff(id)`
+- **Used In**: `src/views/staff/StaffList.jsx` - Delete button click पर
+
+---
+
+## 💰 Salary Payment Management APIs (Restaurant System)
+
+### 1. **GET /api/salary-payments**
+**Description**: Salary payments की list fetch करने के लिए (paginated, sortable, searchable, filterable)
+
+**Backend Controller**: `SalaryPaymentController@index`
+
+**Query Parameters**:
+- `page` - Page number (default: 1)
+- `limit` - Items per page (default: 25, max: 100)
+- `search` - Search term (staff name, mobile में search)
+- `month` - Filter by month (1-12)
+- `year` - Filter by year
+- `sort_by` - Sort column (payment_date, paid_amount, created_at)
+- `sort_direction` - Sort direction (asc/desc)
+
+**Response**:
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "staffId": 1,
+      "staff": {
+        "id": 1,
+        "name": "John Doe",
+        "mobile": "9876543210",
+        "staffCode": "STF1"
+      },
+      "paidAmount": "25000.00",
+      "paymentDate": "2024-01-31",
+      "paymentMethod": "cash",
+      "referenceNumber": "REF001",
+      "notes": "January salary",
+      "month": 1,
+      "year": 2024,
+      "createdBy": 1,
+      "created_at": "2024-01-31T00:00:00.000000Z"
+    }
+  ],
+  "meta": {
+    "total": 100,
+    "page": 1,
+    "limit": 25,
+    "totalPages": 4,
+    "hasNext": true,
+    "hasPrev": false,
+    "sortBy": "payment_date",
+    "sortDirection": "desc"
+  }
+}
+```
+
+**Permission Required**: `view_salary_payment`
+
+**Frontend Integration**:
+- **Service**: `src/services/staffService.js`
+- **Method**: `staffService.getSalaryPayments(params)`
+- **Used In**: `src/components/pages/staff/SalaryReportModal.jsx` - Salary payments report modal में data load करने के लिए
+
+---
+
+### 2. **GET /api/staff/{staff}/salary-payments**
+**Description**: Specific staff member के salary payments fetch करने के लिए
+
+**Backend Controller**: `SalaryPaymentController@getByStaff`
+
+**Query Parameters**:
+- `page` - Page number (default: 1)
+- `limit` - Items per page (default: 25, max: 100)
+- `start_date` - Filter by start date
+- `end_date` - Filter by end date
+- `sort_by` - Sort column (payment_date, paid_amount, created_at)
+- `sort_direction` - Sort direction (asc/desc)
+
+**Response**: Same format as GET /api/salary-payments
+
+**Permission Required**: `view_salary_payment`
+
+**Frontend Integration**:
+- **Service**: `src/services/staffService.js`
+- **Method**: `staffService.getSalaryPaymentsByStaff(staffId, params)`
+- **Used In**: `src/components/pages/staff/SalaryReportModal.jsx` - Staff-specific salary report
+
+---
+
+### 3. **POST /api/salary-payments**
+**Description**: New salary payment create करने के लिए
+
+**Backend Controller**: `SalaryPaymentController@store`
+
+**Request Body**:
+```json
+{
+  "staffId": 1,
+  "paidAmount": "25000.00",
+  "paymentDate": "2024-01-31",
+  "paymentMethod": "cash",
+  "referenceNumber": "REF001",
+  "notes": "January salary",
+  "month": 1,
+  "year": 2024
+}
+```
+
+**Response**:
+```json
+{
+  "success": true,
+  "message": "Salary payment created successfully.",
+  "data": {
+    "id": 1,
+    "staffId": 1,
+    "staff": {...},
+    "paidAmount": "25000.00",
+    "month": 1,
+    "year": 2024,
+    ...
+  }
+}
+```
+
+**Permission Required**: `create_salary_payment`
+
+**Frontend Integration**:
+- **Service**: `src/services/staffService.js`
+- **Method**: `staffService.createSalaryPayment(data)`
+- **Used In**: `src/components/pages/staff/SalaryPaymentModal.jsx` - Pay Salary form submit पर
+
+---
+
+### 4. **PUT /api/salary-payments/{salaryPayment}**
+**Description**: Salary payment update करने के लिए
+
+**Backend Controller**: `SalaryPaymentController@update`
+
+**Request Body**: Same as POST (all fields optional except required ones)
+
+**Response**:
+```json
+{
+  "success": true,
+  "message": "Salary payment updated successfully.",
+  "data": {...}
+}
+```
+
+**Permission Required**: `edit_salary_payment`
+
+**Frontend Integration**:
+- **Service**: `src/services/staffService.js`
+- **Method**: `staffService.updateSalaryPayment(id, data)`
+- **Used In**: `src/components/pages/staff/SalaryPaymentModal.jsx` - Edit payment form submit पर
+
+---
+
+### 5. **DELETE /api/salary-payments/{salaryPayment}**
+**Description**: Salary payment delete करने के लिए (soft delete)
+
+**Backend Controller**: `SalaryPaymentController@destroy`
+
+**Response**:
+```json
+{
+  "success": true,
+  "message": "Salary payment deleted successfully."
+}
+```
+
+**Permission Required**: `delete_salary_payment`
+
+**Frontend Integration**:
+- **Service**: `src/services/staffService.js`
+- **Method**: `staffService.deleteSalaryPayment(id)`
+- **Used In**: `src/components/pages/staff/SalaryReportModal.jsx` - Delete payment button click पर
+
+---
+
 ## 💰 Bill Management APIs (Restaurant System)
 
 ### 1. **POST /api/bills**
@@ -5294,6 +5660,8 @@ const Settings = () => {
 ✅ Branch Management (CRUD operations + Server-side pagination/filtering/searching)
 ✅ Package Management (CRUD operations + Server-side pagination/filtering/searching)
 ✅ Customer Management (CRUD operations + Status Update + Stats Recalculation + Server-side pagination/filtering/searching + PDF Export)
+✅ Staff Management (CRUD operations + Server-side pagination/filtering/searching)
+✅ Salary Payment Management (CRUD operations + Month/Year filtering + Server-side pagination/filtering/searching)
 ✅ Order Management (CRUD operations + Multi-package support + Status/Payment Update + Server-side pagination/filtering/searching + PDF Export + **Important Links CRUD**)
 ✅ Payment Management (CRUD operations + Auto order status update + Customer stats update + PDF Export)
 ✅ Financial Management (Transactions CRUD + Categories CRUD + Statistics + Server-side pagination/filtering/searching)
@@ -5344,8 +5712,33 @@ const Settings = () => {
 ---
 
 **Last Updated**: January 2025
+**Version**: 1.5.0 (Staff Management Implementation)
 
 ## 🔄 Recent Updates
+
+### Version 1.5.0 - Staff Management Implementation
+- ✅ **Staff Management APIs** - Fully implemented (Frontend + Backend)
+  - ✅ `GET /api/staff` - List staff (paginated, sortable, searchable, filterable)
+  - ✅ `POST /api/staff` - Create staff
+  - ✅ `GET /api/staff/{staff}` - Get staff by ID
+  - ✅ `PUT /api/staff/{staff}` - Update staff
+  - ✅ `DELETE /api/staff/{staff}` - Delete staff (soft delete)
+  - ✅ Staff code auto-generated: `STF{ID}` format (e.g., STF1, STF2)
+  - ✅ Default page size: 25
+- ✅ **Salary Payment Management APIs** - Fully implemented (Frontend + Backend)
+  - ✅ `GET /api/salary-payments` - List salary payments (with search, month, year filters)
+  - ✅ `GET /api/staff/{staff}/salary-payments` - Get salary payments by staff
+  - ✅ `POST /api/salary-payments` - Create salary payment (with month and year)
+  - ✅ `PUT /api/salary-payments/{salaryPayment}` - Update salary payment
+  - ✅ `DELETE /api/salary-payments/{salaryPayment}` - Delete salary payment (soft delete)
+  - ✅ Default page size: 25
+  - ✅ `payable_amount` field removed (only `paid_amount` stored)
+- ✅ **Database Tables**: `staff` and `salary_payments` tables created
+- ✅ **Permissions**: All staff and salary payment permissions added and seeded
+- ✅ **Frontend Integration**: StaffList, StaffForm, SalaryPaymentModal, SalaryReportModal components fully implemented
+- ✅ **Service Layer**: staffService.js with complete API integration (all mock data removed)
+
+### Previous Updates
 - ✅ **Bill Management APIs** - Fully implemented (Frontend + Backend)
   - ✅ `POST /api/bills` - Create bill (with auto-generated bill number `#BILL{ID}`)
   - ✅ `GET /api/bills` - List bills (with pagination, filtering, searching)

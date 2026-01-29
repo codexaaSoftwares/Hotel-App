@@ -677,7 +677,79 @@ Customer wallet transactions (credit/debit records for payments and adjustments)
 
 ---
 
-### 26. `personal_access_tokens`
+### 26. `staff`
+Restaurant staff members.
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| `id` | bigint unsigned | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
+| `name` | varchar(255) | NOT NULL | Staff name |
+| `mobile` | varchar(20) | NULLABLE | Mobile number |
+| `department` | varchar(255) | NULLABLE | Department (text field) |
+| `salary_type` | enum | DEFAULT 'monthly' | Salary type: 'monthly', 'other' |
+| `salary_amount` | decimal(10,2) | NULLABLE | Salary amount |
+| `joining_date` | date | NULLABLE | Joining date |
+| `address` | text | NULLABLE | Staff address |
+| `document_info` | text | NULLABLE | Document information |
+| `status` | enum | DEFAULT 'active' | Status: 'active', 'inactive' |
+| `created_at` | timestamp | NULLABLE | Creation timestamp |
+| `updated_at` | timestamp | NULLABLE | Last update timestamp |
+| `deleted_at` | timestamp | NULLABLE | Soft delete timestamp |
+
+**Indexes:**
+- PRIMARY KEY (`id`)
+- INDEX (`status`)
+- INDEX (`created_at`)
+
+**Soft Deletes:** Yes
+
+**Notes:**
+- Staff code generated as accessor: `STF{id}` (e.g., STF1, STF2)
+- Department is a text field (not a dropdown)
+- Salary type options: 'monthly' or 'other'
+
+---
+
+### 27. `salary_payments`
+Staff salary payment records.
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| `id` | bigint unsigned | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
+| `staff_id` | bigint unsigned | FOREIGN KEY, NOT NULL | Staff reference |
+| `paid_amount` | decimal(10,2) | NOT NULL | Paid amount |
+| `payment_date` | date | NOT NULL | Payment date |
+| `payment_method` | enum | NULLABLE | Payment method: 'cash', 'upi', 'card', 'bank_transfer' |
+| `reference_number` | varchar(255) | NULLABLE | Reference number |
+| `notes` | text | NULLABLE | Payment notes |
+| `month` | tinyInteger | NULLABLE | Payment month (1-12) |
+| `year` | year | NULLABLE | Payment year |
+| `created_by` | bigint unsigned | FOREIGN KEY, NULLABLE | User who created the payment |
+| `created_at` | timestamp | NULLABLE | Creation timestamp |
+| `updated_at` | timestamp | NULLABLE | Last update timestamp |
+| `deleted_at` | timestamp | NULLABLE | Soft delete timestamp |
+
+**Foreign Keys:**
+- `staff_id` → `staff.id` (ON DELETE RESTRICT)
+- `created_by` → `users.id` (ON DELETE SET NULL)
+
+**Indexes:**
+- PRIMARY KEY (`id`)
+- INDEX (`staff_id`)
+- INDEX (`payment_date`)
+- INDEX (`month`, `year`) - Composite index
+- INDEX (`created_at`)
+
+**Soft Deletes:** Yes
+
+**Notes:**
+- `payable_amount` field removed (not needed, only `paid_amount` is stored)
+- Month and year fields added for filtering and reporting
+- Composite index on `[month, year]` for efficient filtering
+
+---
+
+### 28. `personal_access_tokens`
 Laravel Sanctum authentication tokens.
 
 | Column | Type | Constraints | Description |
@@ -736,6 +808,12 @@ bills
 
 food_items
   └── bill_items (one-to-many)
+
+staff
+  └── salary_payments (one-to-many)
+
+users
+  └── salary_payments (one-to-many, created_by)
 ```
 
 ### Detailed Relationships
@@ -793,6 +871,14 @@ food_items
 13. **User ↔ WalletTransaction** (One-to-Many)
     - A user can create many wallet transactions
     - A wallet transaction is created by one user (nullable)
+
+11. **Staff ↔ SalaryPayment** (One-to-Many)
+    - A staff member can have many salary payments
+    - A salary payment belongs to one staff member
+
+12. **User ↔ SalaryPayment** (One-to-Many)
+    - A user can create many salary payments
+    - A salary payment is created by one user (nullable)
 
 ---
 
@@ -864,6 +950,8 @@ food_items
 | `wallet_transactions` | `customer_id` | `customers.id` | RESTRICT | Cannot delete customer with transactions |
 | `wallet_transactions` | `bill_id` | `bills.id` | SET NULL | Bill deletion doesn't delete transactions |
 | `wallet_transactions` | `created_by` | `users.id` | SET NULL | User deletion doesn't delete transactions |
+| `salary_payments` | `staff_id` | `staff.id` | RESTRICT | Cannot delete staff with salary payments |
+| `salary_payments` | `created_by` | `users.id` | SET NULL | User deletion doesn't delete salary payments |
 | `user_role` | `user_id` | `users.id` | CASCADE | User deletion removes role assignments |
 | `user_role` | `role_id` | `roles.id` | CASCADE | Role deletion removes user assignments |
 | `role_permission` | `role_id` | `roles.id` | CASCADE | Role deletion removes permissions |
@@ -1154,6 +1242,12 @@ With proper indexes, expect these query times:
 - `create_bill_items_table` (2025_01_22_000003) - Creates bill_items table for individual items in bills (with snapshot pricing for historical accuracy)
 - `create_wallet_transactions_table` (2025_01_22_000004) - Creates wallet_transactions table for customer wallet transactions (credit/debit records for payments, refunds, and adjustments)
 
+### Staff Management (2026-01-29)
+- `create_staff_table` (2026_01_29_121459) - Creates staff table for restaurant staff management (name, mobile, department, salary_type, salary_amount, joining_date, address, document_info, status)
+- `create_salary_payments_table` (2026_01_29_121509) - Creates salary_payments table for staff salary payment records (staff_id, paid_amount, payment_date, payment_method, reference_number, notes, created_by)
+- `add_month_year_to_salary_payments_table` (2026_01_29_134428) - Adds month and year columns to salary_payments table for filtering and reporting
+- `remove_payable_amount_from_salary_payments_table` (2026_01_29_135523) - Removes payable_amount column from salary_payments table (only paid_amount is needed)
+
 ### Customer Financial Data Refactoring (2026-01-19)
 - `remove_calculated_fields_from_customers_table` (2026_01_19_000001) - Removes redundant calculated fields (total_bills, total_amount, paid_amount, remaining_amount) from customers table. Financial data now calculated on-the-fly from wallet transactions using Laravel accessors.
 
@@ -1164,8 +1258,8 @@ With proper indexes, expect these query times:
 
 ## Summary Statistics
 
-- **Total Tables:** 26
-- **Core Business Tables:** 16 (users, branches, customers, bills, bill_items, wallet_transactions, financial_categories, financial_transactions, food_categories, food_items, tables)
+- **Total Tables:** 28
+- **Core Business Tables:** 18 (users, branches, customers, bills, bill_items, wallet_transactions, financial_categories, financial_transactions, food_categories, food_items, tables, staff, salary_payments)
 - **Bill Management:** 
   - `bills` table supports draft, pending, paid, cancelled statuses
   - `bills.payment_method` supports 'cash', 'upi', 'card', 'split' (wallet handled via wallet_transactions)
@@ -1174,16 +1268,23 @@ With proper indexes, expect these query times:
   - `wallet_transactions.bill_id` is nullable (supports standalone wallet transactions)
 - **Auth/Authorization Tables:** 4 (roles, permissions, user_role, role_permission)
 - **System Tables:** 6 (settings, emails, password_resets, failed_jobs, personal_access_tokens)
-- **Tables with Soft Deletes:** 13 (branches, customers, bills, bill_items, wallet_transactions, financial_categories, financial_transactions, food_categories, food_items, tables)
+- **Tables with Soft Deletes:** 15 (branches, customers, bills, bill_items, wallet_transactions, financial_categories, financial_transactions, food_categories, food_items, tables, staff, salary_payments)
 - **Tables with Foreign Keys:** 19
 - **Pivot Tables:** 2 (user_role, role_permission)
 
 ---
 
 *Last Updated: January 2025*  
-*Database Version: 1.7* (POS Panel Payment Processing - Complete Implementation)
+*Database Version: 1.8* (Staff Management - Complete Implementation)
 
 ## 🔄 Recent Updates
+- ✅ **Staff Management Tables** - Fully implemented (migrations, models, relationships)
+  - ✅ `staff` table created with fields: name, mobile, department (text), salary_type (monthly/other), salary_amount, joining_date, address (textarea), document_info, status
+  - ✅ `salary_payments` table created with fields: staff_id, paid_amount, payment_date, payment_method, reference_number, notes, month, year, created_by
+  - ✅ `payable_amount` field removed from salary_payments table
+  - ✅ Month and year columns added for filtering and reporting
+  - ✅ Composite index on `[month, year]` for efficient filtering
+  - ✅ Staff code accessor: `STF{ID}` format
 - ✅ **Bills & Bill Items Tables** - Fully implemented (migrations, models, relationships)
 - ✅ **Wallet Transactions Table** - Fully implemented with bill_id nullable for flexibility
 - ✅ **POS Panel Payment Processing** - Fully implemented (Frontend + Backend)
