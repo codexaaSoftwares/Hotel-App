@@ -4764,7 +4764,10 @@ const handleSaveSettings = async (section, settingsData) => {
   "status": "draft",
   "payment_status": "pending",
   "subtotal": 500.00,
-  "gst_amount": 50.00,
+  "gst_amount": 0.00,
+  "cgst_amount": 45.00,
+  "sgst_amount": 45.00,
+  "service_tax_amount": 0.00,
   "discount": 0.00,
   "total_amount": 550.00,
   "paid_amount": 0.00,
@@ -4798,7 +4801,10 @@ const handleSaveSettings = async (section, settingsData) => {
     "status": "draft",
     "paymentStatus": "pending",
     "subtotal": 500.00,
-    "gstAmount": 50.00,
+    "gstAmount": 0.00,
+    "cgstAmount": 45.00,
+    "sgstAmount": 45.00,
+    "serviceTaxAmount": 0.00,
     "discount": 0.00,
     "totalAmount": 550.00,
     "paidAmount": 0.00,
@@ -4834,8 +4840,8 @@ const handleSaveSettings = async (section, settingsData) => {
 - `page` - Page number (default: 1)
 - `limit` - Items per page (default: 20, max: 100)
 - `search` - Search term (bill_number, customer name, table name)
-- `status` - Filter by status (draft, pending, paid, cancelled)
 - `payment_status` - Filter by payment status (pending, partial, paid)
+- `payment_method` - Filter by payment method ('cash', 'upi', 'card', 'split', 'wallet', or 'null' for wallet transactions)
 - `table_id` - Filter by table
 - `customer_id` - Filter by customer
 - `start_date` - Filter from date
@@ -5343,6 +5349,8 @@ const Settings = () => {
 - ✅ **Bill Management APIs** - Fully implemented (Frontend + Backend)
   - ✅ `POST /api/bills` - Create bill (with auto-generated bill number `#BILL{ID}`)
   - ✅ `GET /api/bills` - List bills (with pagination, filtering, searching)
+    - Filters: `payment_status`, `payment_method` (including 'null' for wallet transactions), `table_id`, `customer_id`, `start_date`, `end_date`
+    - Search: bill_number, customer name, table name
   - ✅ `GET /api/bills/{bill}` - Get bill details
   - ✅ `PUT /api/bills/{bill}` - Update bill (prevents duplicate items, handles soft-deleted items)
   - ✅ `DELETE /api/bills/{bill}` - Delete bill (soft delete, prevents deleting paid bills)
@@ -5350,6 +5358,9 @@ const Settings = () => {
   - ✅ `POST /api/bills/{bill}/process-payment` - Process payment
     - Cash/UPI/Card: Updates bill status to 'paid' (no wallet transaction)
     - Wallet: Creates wallet transaction (debit) and marks bill as 'paid'
+  - ✅ **GST Fields**: Separate fields for `cgst_amount`, `sgst_amount`, `service_tax_amount`
+    - `gst_amount` field kept for backward compatibility (defaults to 0)
+    - Frontend sends individual GST amounts, backend stores separately
   - ✅ Payment confirmation and success dialogs
   - ✅ Sound notifications (success/error sounds)
   - ✅ Table status automatic updates (occupied/available based on active bills)

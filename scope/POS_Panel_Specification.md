@@ -37,11 +37,18 @@ The POS (Point of Sale) Panel is the core billing interface for restaurant opera
 
 ### 5. **Billing & Payment**
 - Real-time bill calculation
-- GST breakdown display
+- GST breakdown display (CGST, SGST, Service Tax - separate fields)
 - Print bill before payment
 - Multiple payment methods
 - Split payment support
 - Partial payment (for credit customers)
+
+### 6. **Bills Management** ✅ Implemented
+- Bills listing page with comprehensive filters
+- Statistics cards (Total, Pending, Paid, Today Revenue)
+- Payment Status and Payment Method filtering
+- Bill View Modal with improved UI (items table + summary on right)
+- Separate GST fields storage (CGST, SGST, Service Tax)
 
 ---
 
@@ -739,10 +746,34 @@ The POS (Point of Sale) Panel is the core billing interface for restaurant opera
 ---
 
 **Last Updated**: January 2025  
-**Version**: 1.6.0 (Payment Processing Implementation - Fully Complete)  
+**Version**: 1.7.0 (Bills Management Implementation - Fully Complete)  
 **Status**: ✅ Fully Implemented - Frontend + Backend Complete
 
-### Recent Updates (v1.6.0)
+### Recent Updates (v1.7.0)
+- ✅ **Bills Management Page**: Fully implemented with comprehensive features
+  - Bills listing with server-side pagination, filtering, and searching
+  - Statistics cards (Total Bills, Pending, Paid, Today Revenue)
+  - Filters: Payment Status, Payment Method, Table, Customer, Date Range
+  - Search by Bill Number, Customer Name, Table Name
+  - Removed Order Status filter (simplified filtering)
+- ✅ **Bill View Modal Component**: Separate reusable component (BillViewModal.jsx)
+  - Large modal view (xl size, fullscreen on mobile) matching CustomerLedgerModal pattern
+  - Improved UI: Items table on left, Bill Summary on right side
+  - Removed GST column from items table (GST shown in summary only)
+  - Bill summary displays: Subtotal, CGST, SGST, Service Tax (individual breakdown), Discount, Total
+  - Payment information: Payment Status and Payment Method badges
+  - Handles null payment_method (displays "Wallet" for wallet transactions)
+- ✅ **Payment Method Enhancements**:
+  - Payment column shows both Payment Status and Payment Method badges
+  - Payment Method filter added (Cash, UPI, Card, Split, Wallet, Wallet (Null))
+  - Backend supports filtering by payment_method (including null values for wallet)
+- ✅ **GST Fields Separation**:
+  - Separate fields: `cgst_amount`, `sgst_amount`, `service_tax_amount` in bills table
+  - `gst_amount` field kept for backward compatibility (defaults to 0)
+  - Frontend sends individual GST amounts, backend stores separately
+  - Bill summary shows individual GST breakdown in View Details modal
+
+### Previous Updates (v1.6.0)
 - ✅ **Backend API Integration**: All bill management APIs fully implemented
   - Bill creation/update with auto-generated bill number (`#BILL{ID}`)
   - Payment processing API with wallet transaction support

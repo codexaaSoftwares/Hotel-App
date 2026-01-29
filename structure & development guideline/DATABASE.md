@@ -560,7 +560,10 @@ Restaurant bills/orders (main order header).
 | `status` | enum | DEFAULT 'draft' | Status: 'draft', 'pending', 'paid', 'cancelled' |
 | `payment_status` | enum | DEFAULT 'pending' | Payment status: 'pending', 'partial', 'paid' |
 | `subtotal` | decimal(12,2) | DEFAULT 0.00 | Subtotal (sum of all items) |
-| `gst_amount` | decimal(12,2) | DEFAULT 0.00 | Total GST amount |
+| `gst_amount` | decimal(12,2) | DEFAULT 0.00 | Total GST amount (kept for backward compatibility, defaults to 0) |
+| `cgst_amount` | decimal(12,2) | DEFAULT 0.00 | CGST amount (Central GST) |
+| `sgst_amount` | decimal(12,2) | DEFAULT 0.00 | SGST amount (State GST) |
+| `service_tax_amount` | decimal(12,2) | DEFAULT 0.00 | Service Tax amount |
 | `discount` | decimal(12,2) | DEFAULT 0.00 | Discount amount |
 | `total_amount` | decimal(12,2) | DEFAULT 0.00 | Grand total |
 | `paid_amount` | decimal(12,2) | DEFAULT 0.00 | Total paid amount |

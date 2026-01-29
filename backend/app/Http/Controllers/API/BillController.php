@@ -95,6 +95,17 @@ class BillController extends Controller
             $query->where('payment_status', $paymentStatus);
         }
 
+        // Payment method filter
+        if ($request->has('payment_method')) {
+            $paymentMethod = $request->input('payment_method');
+            if ($paymentMethod === null || $paymentMethod === 'null') {
+                // Filter for null payment_method (wallet transactions)
+                $query->whereNull('payment_method');
+            } else {
+                $query->where('payment_method', $paymentMethod);
+            }
+        }
+
         // Table filter
         if ($tableId = $request->input('table_id')) {
             $query->where('table_id', $tableId);

@@ -538,6 +538,8 @@ backend/
 - **Routes**: `/api/bills/*`, `/api/bills/{bill}/process-payment`, `/api/bills/table/{tableId}`
 - **Features**:
   - List bills (paginated, sortable, searchable, filterable)
+    - Filters: `payment_status`, `payment_method` (including 'null' for wallet transactions), `table_id`, `customer_id`, `start_date`, `end_date`
+    - Search: bill_number, customer name, table name
   - Get bill by ID
   - Create bill (draft or paid)
   - Update bill (prevents duplicate items, handles soft-deleted items)
@@ -1266,6 +1268,8 @@ php artisan serve
 - ✅ **Bill Management Module** - Fully implemented (Frontend + Backend)
   - ✅ `POST /api/bills` - Create bill (with auto-generated bill number `#BILL{ID}`)
   - ✅ `GET /api/bills` - List bills (with pagination, filtering, searching)
+    - Filters: `payment_status`, `payment_method` (including 'null' for wallet transactions), `table_id`, `customer_id`, `start_date`, `end_date`
+    - Search: bill_number, customer name, table name
   - ✅ `GET /api/bills/{bill}` - Get bill details
   - ✅ `PUT /api/bills/{bill}` - Update bill (prevents duplicate items, handles soft-deleted items)
   - ✅ `DELETE /api/bills/{bill}` - Delete bill (soft delete, prevents deleting paid bills)
@@ -1276,6 +1280,10 @@ php artisan serve
   - ✅ Table status automatic updates (occupied/available based on active bills)
   - ✅ Bill number auto-generation: `#BILL{ID}` format
   - ✅ Bill number field made nullable to support auto-generation after creation
+  - ✅ **GST Fields Separation**: Separate fields for `cgst_amount`, `sgst_amount`, `service_tax_amount`
+    - `gst_amount` field kept for backward compatibility (defaults to 0)
+    - Frontend sends individual GST amounts, backend stores separately
+  - ✅ **Payment Method Filtering**: Backend supports filtering by `payment_method` (including null values for wallet transactions)
 - ✅ **Customer Financial Data Refactoring**:
   - Removed calculated fields: `total_bills`, `total_amount`, `paid_amount`, `remaining_amount`
   - Added Laravel accessors: `totalCredits`, `totalDebits`, `remaining` (calculated from wallet transactions)

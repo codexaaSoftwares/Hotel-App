@@ -22,6 +22,7 @@ import customerService from '../../services/customerService'
 import { useToast } from '../../components'
 import { usePermissions, useDebounce } from '../../hooks'
 import { PERMISSIONS } from '../../constants/permissions'
+import BillViewModal from '../../components/pages/pos/BillViewModal'
 
 const BillsList = () => {
   const navigate = useNavigate()
@@ -32,8 +33,8 @@ const BillsList = () => {
   const [meta, setMeta] = useState(null)
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState('')
   const [paymentStatusFilter, setPaymentStatusFilter] = useState('')
+  const [paymentMethodFilter, setPaymentMethodFilter] = useState('')
   const [tableFilter, setTableFilter] = useState('')
   const [customerFilter, setCustomerFilter] = useState('')
   const [startDate, setStartDate] = useState('')
@@ -49,9 +50,8 @@ const BillsList = () => {
   // Modals
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [showDetailsModal, setShowDetailsModal] = useState(false)
+  const [selectedBillId, setSelectedBillId] = useState(null)
   const [billToDelete, setBillToDelete] = useState(null)
-  const [billDetails, setBillDetails] = useState(null)
-  const [detailsLoading, setDetailsLoading] = useState(false)
 
   // Filter dropdowns data
   const [tables, setTables] = useState([])
@@ -101,8 +101,8 @@ const BillsList = () => {
         page: currentPage,
         limit: pageSize,
         search: searchValue || undefined,
-        status: statusFilter || undefined,
         payment_status: paymentStatusFilter || undefined,
+        payment_method: paymentMethodFilter || undefined,
         table_id: tableFilter || undefined,
         customer_id: customerFilter || undefined,
         start_date: startDate || undefined,
@@ -131,8 +131,8 @@ const BillsList = () => {
     currentPage,
     pageSize,
     debouncedSearch,
-    statusFilter,
     paymentStatusFilter,
+    paymentMethodFilter,
     tableFilter,
     customerFilter,
     startDate,
@@ -166,8 +166,8 @@ const BillsList = () => {
 
   const handleClearFilters = () => {
     setSearchTerm('')
-    setStatusFilter('')
     setPaymentStatusFilter('')
+    setPaymentMethodFilter('')
     setTableFilter('')
     setCustomerFilter('')
     setStartDate('')
@@ -175,24 +175,9 @@ const BillsList = () => {
     setCurrentPage(1)
   }
 
-  const handleViewDetails = async (bill) => {
-    setBillDetails(null)
+  const handleViewDetails = (bill) => {
+    setSelectedBillId(bill.id)
     setShowDetailsModal(true)
-    setDetailsLoading(true)
-
-    try {
-      const response = await billService.getBillById(bill.id)
-      if (response.success) {
-        setBillDetails(response.data)
-      } else {
-        error(response.message || 'Failed to load bill details.')
-      }
-    } catch (err) {
-      console.error('Error loading bill details:', err)
-      error('Failed to load bill details. Please try again.')
-    } finally {
-      setDetailsLoading(false)
-    }
   }
 
   const handlePrintBill = (bill) => {
@@ -442,7 +427,26 @@ const BillsList = () => {
       render: (value, bill) => {
         if (!bill) return <span className="text-muted">—</span>
         const paymentStatus = bill.paymentStatus || bill.payment_status
-        return <Badge bg={getPaymentStatusColor(paymentStatus)}>{paymentStatus || 'N/A'}</Badge>
+        const paymentMethod = bill.paymentMethod || bill.payment_method
+        
+        // If payment method is null, it might be a wallet transaction
+        // Show "Wallet" for null payment_method when status is paid or partial
+        const displayMethod = paymentMethod 
+          ? paymentMethod.charAt(0).toUpperCase() + paymentMethod.slice(1)
+          : (paymentStatus === 'paid' || paymentStatus === 'partial') ? 'Wallet' : null
+        
+        return (
+          <div>
+            <Badge bg={getPaymentStatusColor(paymentStatus)} className="me-1">
+              {paymentStatus || 'N/A'}
+            </Badge>
+            {displayMethod && (
+              <Badge bg="info" className="ms-1">
+                {displayMethod}
+              </Badge>
+            )}
+          </div>
+        )
       },
     },
     {
@@ -588,26 +592,6 @@ const BillsList = () => {
                 </Col>
                 <Col xs={12} md={2}>
                   <SelectField
-                    id="statusFilter"
-                    label="Status"
-                    value={statusFilter}
-                    onChange={(e) => {
-                      setStatusFilter(e.target.value)
-                      setCurrentPage(1)
-                    }}
-                    options={[
-                      { value: '', label: 'All Status' },
-                      { value: 'draft', label: 'Draft' },
-                      { value: 'pending', label: 'Pending' },
-                      { value: 'paid', label: 'Paid' },
-                      { value: 'cancelled', label: 'Cancelled' },
-                    ]}
-                    col={12}
-                    showLabel={false}
-                  />
-                </Col>
-                <Col xs={12} md={2}>
-                  <SelectField
                     id="paymentStatusFilter"
                     label="Payment Status"
                     value={paymentStatusFilter}
@@ -620,6 +604,28 @@ const BillsList = () => {
                       { value: 'pending', label: 'Pending' },
                       { value: 'partial', label: 'Partial' },
                       { value: 'paid', label: 'Paid' },
+                    ]}
+                    col={12}
+                    showLabel={false}
+                  />
+                </Col>
+                <Col xs={12} md={2}>
+                  <SelectField
+                    id="paymentMethodFilter"
+                    label="Payment Method"
+                    value={paymentMethodFilter}
+                    onChange={(e) => {
+                      setPaymentMethodFilter(e.target.value)
+                      setCurrentPage(1)
+                    }}
+                    options={[
+                      { value: '', label: 'All Methods' },
+                      { value: 'cash', label: 'Cash' },
+                      { value: 'upi', label: 'UPI' },
+                      { value: 'card', label: 'Card' },
+                      { value: 'split', label: 'Split' },
+                      { value: 'wallet', label: 'Wallet' },
+                      { value: 'null', label: 'Wallet (Null)' },
                     ]}
                     col={12}
                     showLabel={false}
@@ -727,7 +733,7 @@ const BillsList = () => {
                 hover
                 pagination={true}
                 sortable={true}
-                sortableColumns={['billNumber', 'billDate', 'status', 'paymentStatus', 'totalAmount']}
+                sortableColumns={['billNumber', 'billDate', 'paymentStatus', 'totalAmount']}
                 serverSide={true}
                 meta={meta}
                 onPageChange={(page) => setCurrentPage(page)}
@@ -772,320 +778,16 @@ const BillsList = () => {
         </Modal.Footer>
       </Modal>
 
-      {/* Bill Details Modal */}
-      <Modal show={showDetailsModal} onHide={() => setShowDetailsModal(false)} size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>
-            <FontAwesomeIcon icon={faReceipt} className="me-2" />
-            Bill Details
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body style={{ maxHeight: '70vh', overflowY: 'auto' }}>
-          {detailsLoading ? (
-            <div className="text-center py-4">
-              <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </div>
-            </div>
-          ) : billDetails ? (
-            <div>
-              {/* Bill Information */}
-              <div className="mb-4 pb-3 border-bottom">
-                <h5 className="mb-3">Bill Information</h5>
-                <Row className="mb-2">
-                  <Col md={6}>
-                    <div className="mb-2">
-                      <strong>Bill Number:</strong>
-                      <div className="text-primary fw-semibold">
-                        {billDetails.billNumber || billDetails.bill_number || `#BILL${billDetails.id}`}
-                      </div>
-                    </div>
-                  </Col>
-                  <Col md={6}>
-                    <div className="mb-2">
-                      <strong>Date & Time:</strong>
-                      <div>
-                        {new Date(billDetails.billDate || billDetails.bill_date).toLocaleString('en-IN', {
-                          day: '2-digit',
-                          month: 'short',
-                          year: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
-                      </div>
-                    </div>
-                  </Col>
-                </Row>
-                <Row className="mb-2">
-                  <Col md={6}>
-                    <div className="mb-2">
-                      <strong>Status:</strong>
-                      <div>
-                        <Badge bg={getStatusColor(billDetails.status)} className="fs-6">
-                          {billDetails.status?.toUpperCase() || 'N/A'}
-                        </Badge>
-                      </div>
-                    </div>
-                  </Col>
-                  <Col md={6}>
-                    <div className="mb-2">
-                      <strong>Payment Status:</strong>
-                      <div>
-                        <Badge bg={getPaymentStatusColor(billDetails.paymentStatus || billDetails.payment_status)} className="fs-6">
-                          {(billDetails.paymentStatus || billDetails.payment_status)?.toUpperCase() || 'N/A'}
-                        </Badge>
-                      </div>
-                    </div>
-                  </Col>
-                </Row>
-              </div>
-
-              {/* Table & Customer Information */}
-              <div className="mb-4 pb-3 border-bottom">
-                <h5 className="mb-3">Table & Customer</h5>
-                <Row className="mb-2">
-                  <Col md={6}>
-                    <div className="mb-2">
-                      <strong>Table:</strong>
-                      <div>
-                        {billDetails.table ? (
-                          <>
-                            <FontAwesomeIcon icon={faTable} className="me-1 text-muted" />
-                            {billDetails.table.tableNumber || billDetails.table.table_number || 'N/A'}
-                            {billDetails.table.tableName && (
-                              <span className="text-muted ms-1">({billDetails.table.tableName})</span>
-                            )}
-                            {billDetails.table.capacity && (
-                              <small className="text-muted ms-1">- {billDetails.table.capacity} seats</small>
-                            )}
-                          </>
-                        ) : (
-                          <Badge bg="secondary">Takeaway</Badge>
-                        )}
-                      </div>
-                    </div>
-                  </Col>
-                  <Col md={6}>
-                    <div className="mb-2">
-                      <strong>Customer:</strong>
-                      <div>
-                        {billDetails.customer ? (
-                          <>
-                            <FontAwesomeIcon icon={faUser} className="me-1 text-muted" />
-                            {billDetails.customer.name || 'N/A'}
-                            {billDetails.customer.customerCode && (
-                              <Badge bg="info" className="ms-2">{billDetails.customer.customerCode}</Badge>
-                            )}
-                            {billDetails.customer.customerType && (
-                              <Badge bg={billDetails.customer.customerType === 'credit' ? 'warning' : 'success'} className="ms-1">
-                                {billDetails.customer.customerType === 'credit' ? 'Credit' : 'Regular'}
-                              </Badge>
-                            )}
-                            {billDetails.customer.mobile && (
-                              <div className="text-muted small mt-1">
-                                <FontAwesomeIcon icon={faUser} className="me-1" />
-                                {billDetails.customer.mobile}
-                              </div>
-                            )}
-                            {billDetails.customer.email && (
-                              <div className="text-muted small">
-                                {billDetails.customer.email}
-                              </div>
-                            )}
-                          </>
-                        ) : (
-                          <Badge bg="secondary">Walk-in Customer</Badge>
-                        )}
-                      </div>
-                    </div>
-                  </Col>
-                </Row>
-              </div>
-
-              {/* Bill Items */}
-              {(billDetails.items || billDetails.billItems) && (billDetails.items || billDetails.billItems).length > 0 && (
-                <div className="mb-4 pb-3 border-bottom">
-                  <h5 className="mb-3">Items ({(billDetails.items || billDetails.billItems).length})</h5>
-                  <div className="table-responsive">
-                    <table className="table table-sm table-bordered">
-                      <thead className="table-light">
-                        <tr>
-                          <th style={{ width: '5%' }}>#</th>
-                          <th>Item Name</th>
-                          <th className="text-end" style={{ width: '10%' }}>Qty</th>
-                          <th className="text-end" style={{ width: '15%' }}>Unit Price</th>
-                          <th className="text-end" style={{ width: '15%' }}>GST</th>
-                          <th className="text-end" style={{ width: '15%' }}>Total</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {(billDetails.items || billDetails.billItems || []).map((item, idx) => (
-                          <tr key={item.id || idx}>
-                            <td>{idx + 1}</td>
-                            <td>
-                              {item.itemName || item.item_name}
-                              {item.notes && (
-                                <div className="text-muted small mt-1">
-                                  <em>Note: {item.notes}</em>
-                                </div>
-                              )}
-                            </td>
-                            <td className="text-end">{item.quantity}</td>
-                            <td className="text-end">
-                              ₹{parseFloat(item.unitPrice || item.unit_price || 0).toFixed(2)}
-                            </td>
-                            <td className="text-end">
-                              {item.gstAmount > 0 ? (
-                                <>
-                                  ₹{parseFloat(item.gstAmount || item.gst_amount || 0).toFixed(2)}
-                                  {item.gstPercentage && (
-                                    <small className="text-muted d-block">({item.gstPercentage}%)</small>
-                                  )}
-                                </>
-                              ) : (
-                                <span className="text-muted">—</span>
-                              )}
-                            </td>
-                            <td className="text-end fw-semibold">
-                              ₹{parseFloat(item.totalPrice || item.total_price || 0).toFixed(2)}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
-
-              {/* Bill Summary */}
-              <div className="mb-4 pb-3 border-bottom">
-                <h5 className="mb-3">Bill Summary</h5>
-              <Row className="mb-2">
-                <Col md={6}>
-                  <div className="d-flex justify-content-between mb-2">
-                    <span>Subtotal:</span>
-                    <strong>₹{parseFloat(billDetails.subtotal || 0).toFixed(2)}</strong>
-                  </div>
-                </Col>
-                <Col md={6}>
-                  <div className="d-flex justify-content-between mb-2">
-                    <span>Total GST:</span>
-                    <strong>₹{parseFloat(billDetails.gstAmount || billDetails.gst_amount || 0).toFixed(2)}</strong>
-                  </div>
-                </Col>
-              </Row>
-              {(parseFloat(billDetails.cgstAmount || billDetails.cgst_amount || 0) > 0 ||
-                parseFloat(billDetails.sgstAmount || billDetails.sgst_amount || 0) > 0 ||
-                parseFloat(billDetails.serviceTaxAmount || billDetails.service_tax_amount || 0) > 0) && (
-                <Row className="mb-2">
-                  <Col md={4}>
-                    <div className="d-flex justify-content-between mb-2">
-                      <span className="text-muted small">CGST:</span>
-                      <span className="small">₹{parseFloat(billDetails.cgstAmount || billDetails.cgst_amount || 0).toFixed(2)}</span>
-                    </div>
-                  </Col>
-                  <Col md={4}>
-                    <div className="d-flex justify-content-between mb-2">
-                      <span className="text-muted small">SGST:</span>
-                      <span className="small">₹{parseFloat(billDetails.sgstAmount || billDetails.sgst_amount || 0).toFixed(2)}</span>
-                    </div>
-                  </Col>
-                  <Col md={4}>
-                    <div className="d-flex justify-content-between mb-2">
-                      <span className="text-muted small">Service Tax:</span>
-                      <span className="small">₹{parseFloat(billDetails.serviceTaxAmount || billDetails.service_tax_amount || 0).toFixed(2)}</span>
-                    </div>
-                  </Col>
-                </Row>
-              )}
-                {parseFloat(billDetails.discount || 0) > 0 && (
-                  <Row className="mb-2">
-                    <Col md={6}>
-                      <div className="d-flex justify-content-between mb-2">
-                        <span className="text-danger">Discount:</span>
-                        <strong className="text-danger">- ₹{parseFloat(billDetails.discount || 0).toFixed(2)}</strong>
-                      </div>
-                    </Col>
-                  </Row>
-                )}
-                <Row className="mb-2">
-                  <Col md={12}>
-                    <div className="d-flex justify-content-between p-2 bg-light rounded">
-                      <span className="fs-5 fw-bold">Total Amount:</span>
-                      <span className="fs-5 fw-bold text-primary">
-                        ₹{parseFloat(billDetails.totalAmount || billDetails.total_amount || 0).toFixed(2)}
-                      </span>
-                    </div>
-                  </Col>
-                </Row>
-                {(parseFloat(billDetails.paidAmount || billDetails.paid_amount || 0) > 0 ||
-                  parseFloat(billDetails.remainingAmount || billDetails.remaining_amount || 0) > 0) && (
-                  <Row className="mt-3">
-                    <Col md={6}>
-                      <div className="d-flex justify-content-between mb-2">
-                        <span>Paid Amount:</span>
-                        <strong className="text-success">
-                          ₹{parseFloat(billDetails.paidAmount || billDetails.paid_amount || 0).toFixed(2)}
-                        </strong>
-                      </div>
-                    </Col>
-                    <Col md={6}>
-                      <div className="d-flex justify-content-between mb-2">
-                        <span>Remaining Amount:</span>
-                        <strong className={parseFloat(billDetails.remainingAmount || billDetails.remaining_amount || 0) > 0 ? 'text-danger' : 'text-success'}>
-                          ₹{parseFloat(billDetails.remainingAmount || billDetails.remaining_amount || 0).toFixed(2)}
-                        </strong>
-                      </div>
-                    </Col>
-                  </Row>
-                )}
-              </div>
-
-              {/* Payment Information */}
-              {(billDetails.paymentMethod || billDetails.notes || billDetails.creator) && (
-                <div className="mb-3">
-                  <h5 className="mb-3">Additional Information</h5>
-                  {billDetails.paymentMethod && (
-                    <div className="mb-2">
-                      <strong>Payment Method:</strong>
-                      <Badge bg="info" className="ms-2">
-                        {billDetails.paymentMethod.toUpperCase()}
-                      </Badge>
-                    </div>
-                  )}
-                  {billDetails.notes && (
-                    <div className="mb-2">
-                      <strong>Notes:</strong>
-                      <div className="text-muted mt-1">{billDetails.notes}</div>
-                    </div>
-                  )}
-                  {billDetails.creator && (
-                    <div className="mb-2">
-                      <strong>Created By:</strong>
-                      <div className="text-muted mt-1">
-                        {billDetails.creator.name || billDetails.creator.email || 'N/A'}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          ) : (
-            <p className="text-muted">No details available.</p>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDetailsModal(false)}>
-            Close
-          </Button>
-          {billDetails && (
-            <Button variant="primary" onClick={() => handlePrintBill(billDetails)}>
-              <FontAwesomeIcon icon={faPrint} className="me-2" />
-              Print Bill
-            </Button>
-          )}
-        </Modal.Footer>
-      </Modal>
+      {/* Bill View Modal */}
+      <BillViewModal
+        show={showDetailsModal}
+        onHide={() => {
+          setShowDetailsModal(false)
+          setSelectedBillId(null)
+        }}
+        billId={selectedBillId}
+        onPrint={handlePrintBill}
+      />
     </Container>
   )
 }

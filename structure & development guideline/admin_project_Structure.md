@@ -914,8 +914,24 @@ const MyComponent = () => {
   - ✅ POS header displays bill_number, total, and customer info dynamically
   - ✅ Table status automatic updates (occupied/available based on active bills)
 
+### ✅ Bills Management (Fully Implemented)
+- ✅ Bills Listing page (`BillsList.jsx`) with server-side pagination, filtering, and searching
+- ✅ Statistics cards (Total Bills, Pending, Paid, Today Revenue)
+- ✅ Filters: Payment Status, Payment Method, Table, Customer, Date Range
+- ✅ Search by Bill Number, Customer Name, Table Name
+- ✅ Bill View Modal component (`BillViewModal.jsx`) - Separate reusable component
+  - Large modal view (xl size, fullscreen on mobile) matching CustomerLedgerModal pattern
+  - Improved UI: Items table on left, Bill Summary on right side
+  - Removed GST column from items table (GST shown in summary only)
+  - Bill summary displays: Subtotal, CGST, SGST, Service Tax, Discount, Total
+  - Payment information: Payment Status and Payment Method badges
+  - Handles null payment_method (displays "Wallet" for wallet transactions)
+- ✅ Action buttons: View Details, Print Bill, Delete (for draft/pending bills)
+- ✅ Print bill functionality (print-friendly HTML template)
+- ✅ Separate GST fields: CGST, SGST, Service Tax stored individually in database
+- ✅ Payment Method filter and display in Payment column
+
 ### 🔴 Needs Implementation (Phase 1 - Restaurant Management)
-- Bills Management (Unified bills page with filters)
 - Staff Management (Staff, Salary Payments)
 - Expense Management (Expense Categories, Expense Records)
 - Restaurant Reports (Sales, Expense, GST, Customer, Staff reports)
