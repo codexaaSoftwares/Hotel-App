@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
-import { Container, Row, Col, Button, Badge, Card, Form, InputGroup } from 'react-bootstrap'
+import { Container, Row, Col, Button, Badge, Card, Form, InputGroup, Modal } from 'react-bootstrap'
 import { SelectField } from '../../components/common/FormFields'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -14,7 +14,7 @@ import {
   faWallet,
   faFileAlt,
 } from '@fortawesome/free-solid-svg-icons'
-import { Table, Modal, FormModal } from '../../components'
+import { Table, FormModal } from '../../components'
 import StaffForm from '../../components/pages/staff/StaffForm'
 import SalaryPaymentModal from '../../components/pages/staff/SalaryPaymentModal'
 import SalaryReportModal from '../../components/pages/staff/SalaryReportModal'
@@ -50,6 +50,7 @@ const StaffList = () => {
   const [addLoading, setAddLoading] = useState(false)
   const [editLoading, setEditLoading] = useState(false)
   const [salaryLoading, setSalaryLoading] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState(false)
 
   const addFormRef = useRef()
   const editFormRef = useRef()
@@ -200,6 +201,10 @@ const StaffList = () => {
   }
 
   const handleDelete = (staffMember) => {
+    if (!staffMember || !staffMember.id) {
+      error && error('Invalid staff member selected.')
+      return
+    }
     setStaffToDelete(staffMember)
     setShowDeleteModal(true)
   }
@@ -307,6 +312,7 @@ const StaffList = () => {
   const handleDeleteConfirm = async () => {
     if (!staffToDelete) return
 
+    setDeleteLoading(true)
     try {
       const response = await staffService.deleteStaff(staffToDelete.id)
       if (response.success) {
@@ -320,6 +326,8 @@ const StaffList = () => {
     } catch (err) {
       console.error('Error deleting staff:', err)
       error && error('Failed to delete staff. Please try again.')
+    } finally {
+      setDeleteLoading(false)
     }
   }
 
@@ -415,7 +423,15 @@ const StaffList = () => {
               </Button>
             )}
             {canDeleteStaff && (
-              <Button variant="danger" size="sm" onClick={() => handleDelete(staffMember)} title="Delete">
+              <Button 
+                variant="danger" 
+                size="sm" 
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleDelete(staffMember)
+                }} 
+                title="Delete"
+              >
                 <FontAwesomeIcon icon={faTrash} />
               </Button>
             )}
@@ -551,19 +567,46 @@ const StaffList = () => {
       <SalaryReportModal show={showSalaryReportModal} onHide={() => setShowSalaryReportModal(false)} />
 
       {/* Delete Confirmation Modal */}
-      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
-        <Modal.Header closeButton>
+      <Modal 
+        show={showDeleteModal} 
+        onHide={() => {
+          if (!deleteLoading) {
+            setShowDeleteModal(false)
+            setStaffToDelete(null)
+          }
+        }}
+        backdrop={deleteLoading ? 'static' : true}
+        keyboard={!deleteLoading}
+      >
+        <Modal.Header closeButton={!deleteLoading}>
           <Modal.Title>Confirm Delete</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Are you sure you want to delete staff member <strong>{staffToDelete?.name}</strong> ({staffToDelete?.staffCode})? This action cannot be undone.
+          {staffToDelete ? (
+            <>
+              Are you sure you want to delete staff member <strong>{staffToDelete.name}</strong> ({staffToDelete.staffCode})? This action cannot be undone.
+            </>
+          ) : (
+            'Loading...'
+          )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+          <Button 
+            variant="secondary" 
+            onClick={() => {
+              setShowDeleteModal(false)
+              setStaffToDelete(null)
+            }}
+            disabled={deleteLoading}
+          >
             Cancel
           </Button>
-          <Button variant="danger" onClick={handleDeleteConfirm}>
-            Delete
+          <Button 
+            variant="danger" 
+            onClick={handleDeleteConfirm}
+            disabled={deleteLoading || !staffToDelete}
+          >
+            {deleteLoading ? 'Deleting...' : 'Delete'}
           </Button>
         </Modal.Footer>
       </Modal>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Container, Row, Col, Button, Badge, Card, Form, InputGroup } from 'react-bootstrap'
+import { Container, Row, Col, Button, Badge, Card, Form, InputGroup, Modal } from 'react-bootstrap'
 import { SelectField } from '../../components/common/FormFields'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -15,7 +15,7 @@ import {
   faCreditCard,
   faWallet,
 } from '@fortawesome/free-solid-svg-icons'
-import { Table, Modal, FormModal } from '../../components'
+import { Table, FormModal } from '../../components'
 import CustomerForm from '../../components/pages/customers/CustomerForm'
 import CustomerLedgerModal from '../../components/pages/customers/CustomerLedgerModal'
 import customerService from '../../services/customerService'
@@ -51,6 +51,7 @@ const CustomersList = () => {
   const [customerToEdit, setCustomerToEdit] = useState(null)
   const [addLoading, setAddLoading] = useState(false)
   const [editLoading, setEditLoading] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState(false)
 
   const addFormRef = useRef()
   const editFormRef = useRef()
@@ -206,6 +207,10 @@ const CustomersList = () => {
   }
 
   const handleDelete = (customer) => {
+    if (!customer || !customer.id) {
+      error && error('Invalid customer selected.')
+      return
+    }
     setCustomerToDelete(customer)
     setShowDeleteModal(true)
   }
@@ -296,6 +301,7 @@ const CustomersList = () => {
   const handleDeleteConfirm = async () => {
     if (!customerToDelete) return
 
+    setDeleteLoading(true)
     try {
       const response = await customerService.deleteCustomer(customerToDelete.id)
       if (response.success) {
@@ -309,6 +315,8 @@ const CustomersList = () => {
     } catch (err) {
       console.error('Error deleting customer:', err)
       error && error('Failed to delete customer. Please try again.')
+    } finally {
+      setDeleteLoading(false)
     }
   }
 
@@ -449,7 +457,10 @@ const CustomersList = () => {
               <Button
                 variant="outline-danger"
                 size="sm"
-                onClick={() => handleDelete(customer)}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleDelete(customer)
+                }}
                 title="Delete customer"
               >
                 <FontAwesomeIcon icon={faTrash} />
@@ -660,22 +671,49 @@ const CustomersList = () => {
       </FormModal>
 
       {/* Delete Confirmation Modal */}
-      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
-        <Modal.Header closeButton>
+      <Modal 
+        show={showDeleteModal} 
+        onHide={() => {
+          if (!deleteLoading) {
+            setShowDeleteModal(false)
+            setCustomerToDelete(null)
+          }
+        }}
+        backdrop={deleteLoading ? 'static' : true}
+        keyboard={!deleteLoading}
+      >
+        <Modal.Header closeButton={!deleteLoading}>
           <Modal.Title>Delete Customer</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>
-            Are you sure you want to delete customer <strong>{customerToDelete?.name}</strong>?
-          </p>
-          <p className="text-danger small mb-0">This action cannot be undone.</p>
+          {customerToDelete ? (
+            <>
+              <p>
+                Are you sure you want to delete customer <strong>{customerToDelete.name}</strong> ({customerToDelete.customerCode})?
+              </p>
+              <p className="text-danger small mb-0">This action cannot be undone.</p>
+            </>
+          ) : (
+            'Loading...'
+          )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+          <Button 
+            variant="secondary" 
+            onClick={() => {
+              setShowDeleteModal(false)
+              setCustomerToDelete(null)
+            }}
+            disabled={deleteLoading}
+          >
             Cancel
           </Button>
-          <Button variant="danger" onClick={handleDeleteConfirm}>
-            Delete
+          <Button 
+            variant="danger" 
+            onClick={handleDeleteConfirm}
+            disabled={deleteLoading || !customerToDelete}
+          >
+            {deleteLoading ? 'Deleting...' : 'Delete'}
           </Button>
         </Modal.Footer>
       </Modal>
