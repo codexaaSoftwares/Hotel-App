@@ -18,7 +18,7 @@
 
 ## 📱 Project Overview
 
-**Hotel Management App Admin** is a modern React-based admin dashboard for managing hotel operations. It provides comprehensive features for managing branches, financial transactions, reports, users, roles, and system settings.
+**Hotel Management App Admin** is a modern React-based admin dashboard for managing hotel operations. It provides comprehensive features for managing branches, reports, users, roles, and system settings.
 
 **Note**: This is a multi-tenant/reseller application where client-specific content (business name, logo, branding) is dynamically loaded from the database settings. The current implementation supports "Teja Hotel" as a client, but the system is designed to support multiple clients with their own branding.
 
@@ -110,10 +110,6 @@ admin/
 │   │   │   │   └── PaymentForm.jsx
 │   │   │   ├── 📁 roles/            # Role management
 │   │   │   │   └── RoleForm.jsx
-│   │   │   ├── 📁 financial/         # Financial management
-│   │   │   │   ├── FinancialTransactionForm.jsx
-│   │   │   │   ├── FinancialTransactionDetailsModal.jsx
-│   │   │   │   └── FinancialCategoryForm.jsx
 │   │   │   ├── 📁 restaurant/       # Restaurant management
 │   │   │   │   ├── CategoryForm.jsx  # Food category form component
 │   │   │   │   ├── ItemForm.jsx      # Food item form component
@@ -122,6 +118,15 @@ admin/
 │   │   │   │   ├── CustomerForm.jsx  # Customer form component
 │   │   │   │   ├── CustomerLedgerModal.jsx # Customer ledger modal component
 │   │   │   │   └── WalletTransactionForm.jsx # Wallet transaction form component
+│   │   │   ├── 📁 staff/             # Staff management
+│   │   │   │   ├── StaffForm.jsx     # Staff form component
+│   │   │   │   ├── SalaryPaymentModal.jsx # Pay salary modal component
+│   │   │   │   └── SalaryReportModal.jsx # Salary payments report modal component
+│   │   │   ├── 📁 pos/               # POS Panel components
+│   │   │   │   ├── TablesPanel.jsx   # Tables selection panel
+│   │   │   │   ├── ProductsPanel.jsx # Products selection panel
+│   │   │   │   ├── BillingCartPanel.jsx # Billing cart panel
+│   │   │   │   └── BillViewModal.jsx # Bill view modal component
 │   │   │   └── 📁 users/            # User management
 │   │   │       ├── 📁 __tests__/     # User component tests
 │   │   │       │   └── ProfileForm.test.js
@@ -178,18 +183,23 @@ admin/
 │   │
 │   ├── 📁 services/                  # API service layer
 │   │   ├── authService.js            # Authentication API (login, logout, forgot/reset password)
+│   │   ├── billService.js            # Bill Management API
 │   │   ├── branchService.js          # Branch API
+│   │   ├── customerService.js        # Customer Management API
 │   │   ├── dashboardService.js       # Dashboard analytics (summary, trend, activities)
-│   │   ├── financialCategoryService.js # Financial categories API
-│   │   ├── financialTransactionService.js # Financial transactions API
+│   │   ├── menuService.js            # Menu Management API (food categories & items)
 │   │   ├── paymentService.js        # Payment API
 │   │   ├── permissionService.js      # Permission API
 │   │   ├── profileService.js         # Profile API (get/update profile, change password)
 │   │   ├── README.md
+│   │   ├── reportService.js          # Report API
+│   │   ├── restaurantSettingsService.js # Restaurant Settings API
 │   │   ├── roleService.js            # Role API
 │   │   ├── settingsService.js        # Settings API (email settings, test email, business info)
+│   │   ├── staffService.js           # Staff Management API
 │   │   ├── tableService.js           # Table Management API
-│   │   └── userService.js            # User API
+│   │   ├── userService.js            # User API
+│   │   └── walletTransactionService.js # Wallet Transaction API
 │   │
 │   ├── 📁 styles/                    # Additional styles
 │   │   └── auth.css                  # Authentication styles
@@ -217,14 +227,18 @@ admin/
 │   │   │   └── RolesList.jsx
 │   │   ├── 📁 settings/              # Settings views
 │   │   │   └── Settings.jsx
-│   │   ├── 📁 financial/             # Financial management views
-│   │   │   ├── FinancialTransactionsList.jsx
-│   │   │   └── FinancialCategoriesList.jsx
-│   │   ├── 📁 restaurant/        # Restaurant management views
-│   │   │   ├── MenuManagement.jsx # Food categories and items management
-│   │   │   ├── TablesList.jsx     # Table management list
-│   │   │   └── 📁 settings/        # Restaurant settings
+│   │   ├── 📁 restaurant/            # Restaurant management views
+│   │   │   ├── MenuManagement.jsx   # Food categories and items management
+│   │   │   ├── TablesList.jsx       # Table management list
+│   │   │   └── 📁 settings/          # Restaurant settings
 │   │   │       └── RestaurantSettings.jsx
+│   │   ├── 📁 customers/             # Customer management views
+│   │   │   └── CustomersList.jsx     # Customer list view
+│   │   ├── 📁 staff/                 # Staff management views
+│   │   │   └── StaffList.jsx         # Staff list view
+│   │   ├── 📁 pos/                   # POS Panel views
+│   │   │   ├── POSPanel.jsx          # Main POS interface
+│   │   │   └── BillsList.jsx         # Bills management list
 │   │   └── 📁 users/                 # User management views
 │   │       ├── Profile.jsx
 │   │       └── UsersList.jsx
@@ -369,24 +383,7 @@ admin/
   - Permission management
 - **Status**: ✅ Fully implemented with API integration
 
-### 8. **Financial Management**
-- **Location**: `src/views/financial/`, `src/services/financialService.js`, `src/services/financialCategoryService.js`
-- **Features**:
-  - Financial Transactions list (income & expense)
-  - Create/Edit/Delete financial transactions
-  - Transaction details modal
-  - Financial Categories list (unified for income & expense)
-  - Create/Edit/Delete financial categories
-  - Statistics cards (Total Income, Total Expenses, Total Records)
-  - Server-side pagination, filtering, and searching
-  - Date range filtering
-  - Transaction type filtering (income/expense)
-  - Category filtering
-  - Auto-generated transaction numbers (#INC001, #EXP001)
-  - Transaction type cannot be changed after creation
-- **Status**: ✅ Fully implemented with API integration + Server-side pagination/filtering
-
-### 9. **Settings Management**
+### 8. **Settings Management**
 - **Location**: `src/views/settings/`, `src/services/settingsService.js`
 - **Features**:
   - System settings
@@ -400,7 +397,7 @@ admin/
   - Global settings management
 - **Status**: ✅ Fully implemented with API integration
 
-### 10. **App Constants**
+### 9. **App Constants**
 - **Location**: `src/constants/app.js`
 - **Features**:
   - Centralized static content management
@@ -415,7 +412,7 @@ admin/
 - **Note**: Client-specific branding (business name, logo) is loaded dynamically from database settings
 - **Status**: ✅ Fully implemented
 
-### 11. **Restaurant Management Modules** (Phase 1 - In Development)
+### 10. **Restaurant Management Modules** (Phase 1 - In Development)
 - **Location**: `src/views/restaurant/`, `src/views/pos/`, `src/views/customers/`, `src/views/staff/`, `src/views/expenses/`
 - **Modules**:
   - **POS Panel**: Main POS interface with split-screen layout (Tables | Products | Billing Cart)
@@ -805,7 +802,7 @@ const userService = {
 - **App constants** in `constants/app.js` (app name, footer, brand info)
 - **Permission checks** in components and routes
 - **Backend permission mapping** via `authService`
-- **All pages protected** with proper permission checks (Reports, Financial Transactions, Financial Categories)
+- **All pages protected** with proper permission checks (Reports)
 
 **Permission Types:**
 - **Standard Permissions**: Follow pattern `{action}_{resource}` (e.g., `view_user`, `create_branch`, `edit_role`)
@@ -875,7 +872,6 @@ const MyComponent = () => {
 - Role & Permission Management
 - Settings Management (Business Info, Invoice, Email Settings with test, App Settings with Web URL, Currency & Regional)
 - Branch Management (CRUD operations)
-- Financial Management (Income & Expense transactions, Categories)
 - Payment Management
 - Report Management (Branch, Ledger, Sales, Staff reports)
 - Theme System (Dark/Light mode)
@@ -1175,11 +1171,10 @@ npm run lint
   - Debit = Customer owes money (bills/usage)
 
 ### Previous Updates
-- ✅ System cleanup: Removed Order Management, Customer Management, Package Management, Transaction Management, and Company Health Report modules
+- ✅ System cleanup: Removed Order Management, Customer Management, Package Management, Transaction Management, Financial Management, and Company Health Report modules
 - ✅ Dashboard simplified to empty placeholder (ready for future implementation)
-- ✅ Financial Management module retained (Income & Expense transactions)
 - ✅ Payment Management module retained
 - ✅ Report Management structure retained (Branch, Ledger, Sales, Staff reports)
-- ✅ All core infrastructure preserved (Auth, Users, Roles, Permissions, Settings, Financial)
+- ✅ All core infrastructure preserved (Auth, Users, Roles, Permissions, Settings)
 - ✅ Special Permissions system added with 9 special permissions (export, import, bulk operations, audit logs, backups, maintenance, etc.)
 - ✅ Permission system updated: Create/Edit/Delete permissions now checked independently (no shared alias fallback)
