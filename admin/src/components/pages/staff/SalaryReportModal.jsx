@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import { Modal, Row, Col, Button, Badge, Card, Form, InputGroup, Alert } from 'react-bootstrap'
 import { SelectField } from '../../../components/common/FormFields'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -9,8 +9,11 @@ import {
   faTimesCircle,
   faCheckCircle,
   faExclamationCircle,
+  faEdit,
+  faTrash,
 } from '@fortawesome/free-solid-svg-icons'
-import { Table } from '../../../components'
+import { Table, FormModal } from '../../../components'
+import SalaryPaymentModal from './SalaryPaymentModal'
 import staffService from '../../../services/staffService'
 import { useToast } from '../../../components'
 import { useDebounce } from '../../../hooks'
@@ -27,59 +30,62 @@ const SalaryReportModal = ({ show, onHide }) => {
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(25)
   const [sortState, setSortState] = useState({
-    columnKey: 'paymentDate',
-    sortBy: 'payment_date',
+    columnKey: 'createdAt',
+    sortBy: 'created_at',
     sortDirection: 'desc',
   })
   const [exportLoading, setExportLoading] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [salaryToEdit, setSalaryToEdit] = useState(null)
+  const [salaryToDelete, setSalaryToDelete] = useState(null)
+  const [editLoading, setEditLoading] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState(false)
 
   const debouncedSearch = useDebounce(searchTerm, 500)
 
   // Fetch salary payments
-  const fetchSalaryPayments = useMemo(
-    () => async () => {
-      if (!show) return
+  const fetchSalaryPayments = useCallback(async () => {
+    if (!show) return
 
-      try {
-        setLoading(true)
-        const params = {
-          page: currentPage,
-          limit: pageSize,
-          search: debouncedSearch || undefined,
-          month: monthFilter || undefined,
-          year: yearFilter || undefined,
-          sortBy: sortState.sortBy,
-          sortDirection: sortState.sortDirection,
-        }
-
-        const response = await staffService.getSalaryPayments(params)
-        if (response.success) {
-          setSalaryPayments(response.data || [])
-          setMeta(response.meta)
-        } else {
-          error(response.message || 'Failed to load salary payments.')
-          setSalaryPayments([])
-        }
-      } catch (err) {
-        console.error('Error fetching salary payments:', err)
-        error('Failed to load salary payments. Please try again.')
-        setSalaryPayments([])
-      } finally {
-        setLoading(false)
+    try {
+      setLoading(true)
+      const params = {
+        page: currentPage,
+        limit: pageSize,
+        search: debouncedSearch || undefined,
+        month: monthFilter || undefined,
+        year: yearFilter || undefined,
+        sortBy: sortState.sortBy,
+        sortDirection: sortState.sortDirection,
       }
-    },
-    [
-      show,
-      currentPage,
-      pageSize,
-      debouncedSearch,
-      monthFilter,
-      yearFilter,
-      sortState.sortBy,
-      sortState.sortDirection,
-      error,
-    ]
-  )
+
+      const response = await staffService.getSalaryPayments(params)
+      if (response.success) {
+        setSalaryPayments(response.data || [])
+        setMeta(response.meta)
+      } else {
+        error(response.message || 'Failed to load salary payments.')
+        setSalaryPayments([])
+      }
+    } catch (err) {
+      console.error('Error fetching salary payments:', err)
+      error('Failed to load salary payments. Please try again.')
+      setSalaryPayments([])
+    } finally {
+      setLoading(false)
+    }
+  }, [
+    show,
+    currentPage,
+    pageSize,
+    debouncedSearch,
+    monthFilter,
+    yearFilter,
+    sortState.sortBy,
+    sortState.sortDirection,
+    error,
+  ])
 
   useEffect(() => {
     if (show) {
@@ -166,6 +172,68 @@ const SalaryReportModal = ({ show, onHide }) => {
     }
   }
 
+  const handleEdit = (payment) => {
+    if (!payment || !payment.id) {
+      error('Invalid salary payment selected.')
+      return
+    }
+    setSalaryToEdit(payment)
+    setShowEditModal(true)
+  }
+
+  const handleEditSubmit = async (formData) => {
+    if (!salaryToEdit || !salaryToEdit.id) return
+
+    setEditLoading(true)
+    try {
+      const response = await staffService.updateSalaryPayment(salaryToEdit.id, formData)
+      if (response.success) {
+        success('Salary payment updated successfully')
+        setShowEditModal(false)
+        setSalaryToEdit(null)
+        fetchSalaryPayments()
+      } else {
+        error(response.message || 'Failed to update salary payment')
+      }
+    } catch (err) {
+      console.error('Error updating salary payment:', err)
+      error('An error occurred while updating salary payment')
+    } finally {
+      setEditLoading(false)
+    }
+  }
+
+  const handleDelete = (payment) => {
+    if (!payment || !payment.id) {
+      error('Invalid salary payment selected.')
+      return
+    }
+    setSalaryToDelete(payment)
+    setShowDeleteModal(true)
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (!salaryToDelete || !salaryToDelete.id) return
+
+    setDeleteLoading(true)
+    try {
+      const response = await staffService.deleteSalaryPayment(salaryToDelete.id)
+      if (response.success) {
+        success('Salary payment deleted successfully')
+        setShowDeleteModal(false)
+        setSalaryToDelete(null)
+        fetchSalaryPayments()
+      } else {
+        error(response.message || 'Failed to delete salary payment')
+      }
+    } catch (err) {
+      console.error('Error deleting salary payment:', err)
+      error('An error occurred while deleting salary payment')
+    } finally {
+      setDeleteLoading(false)
+    }
+  }
+
   const columns = [
     {
       key: 'staffInfo',
@@ -200,7 +268,6 @@ const SalaryReportModal = ({ show, onHide }) => {
     {
       key: 'paidAmount',
       label: 'Paid',
-      sortable: true,
       render: (value, payment) => {
         if (!payment) return <span className="text-muted">—</span>
         return (
@@ -211,12 +278,67 @@ const SalaryReportModal = ({ show, onHide }) => {
       },
     },
     {
-      key: 'paymentDate',
-      label: 'Payment Date',
-      sortable: true,
+      key: 'createdModified',
+      label: 'Created / Modified',
       render: (value, payment) => {
-        if (!payment || !payment.paymentDate) return <span className="text-muted">—</span>
-        return new Date(payment.paymentDate).toLocaleDateString('en-IN')
+        if (!payment) return <span className="text-muted">—</span>
+        
+        // Handle createdBy - check creator relationship first (from API), then createdBy object
+        const getCreatedByName = () => {
+          // First check if creator relationship is loaded (from API)
+          if (payment.creator && typeof payment.creator === 'object') {
+            return payment.creator.name || payment.creator.email || null
+          }
+          
+          // If createdBy is an object (with name/email) - fallback
+          if (payment.createdBy && typeof payment.createdBy === 'object' && payment.createdBy !== null) {
+            return payment.createdBy.name || payment.createdBy.email || null
+          }
+          
+          // If it's just an ID, we can't show the name
+          return null
+        }
+        
+        const createdByName = getCreatedByName()
+        const createdDate = payment.createdAt
+          ? new Date(payment.createdAt).toLocaleDateString('en-IN', {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric',
+            })
+          : null
+        const modifiedDate = payment.updatedAt && payment.updatedAt !== payment.createdAt
+          ? new Date(payment.updatedAt).toLocaleDateString('en-IN', {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric',
+            })
+          : null
+        
+        return (
+          <div>
+            {createdByName && (
+              <div className="small">
+                <span className="text-muted">By: </span>
+                <span className="fw-semibold">{createdByName}</span>
+              </div>
+            )}
+            {createdDate && (
+              <div className="small text-muted">
+                {createdDate}
+              </div>
+            )}
+            {modifiedDate && (
+              <div className="small text-muted mt-1">
+                <span className="text-muted">Modified: </span>
+                {modifiedDate}
+              </div>
+            )}
+            {!createdByName && !createdDate && (
+              <span className="text-muted small">—</span>
+            )}
+          </div>
+        )
       },
     },
     {
@@ -225,6 +347,39 @@ const SalaryReportModal = ({ show, onHide }) => {
       render: (value, payment) => {
         if (!payment) return <span className="text-muted">—</span>
         return getPaymentMethodBadge(payment.paymentMethod)
+      },
+    },
+    {
+      key: 'actions',
+      label: 'Actions',
+      render: (value, payment) => {
+        if (!payment) return <span className="text-muted">—</span>
+        return (
+          <div className="d-flex gap-2">
+            <Button
+              variant="outline-primary"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation()
+                handleEdit(payment)
+              }}
+              title="Edit salary payment"
+            >
+              <FontAwesomeIcon icon={faEdit} />
+            </Button>
+            <Button
+              variant="outline-danger"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation()
+                handleDelete(payment)
+              }}
+              title="Delete salary payment"
+            >
+              <FontAwesomeIcon icon={faTrash} />
+            </Button>
+          </div>
+        )
       },
     },
   ]
@@ -349,15 +504,19 @@ const SalaryReportModal = ({ show, onHide }) => {
           columns={columns}
           data={salaryPayments}
           loading={loading}
-          sortableColumns={['paidAmount', 'paymentDate']}
-          onSortChange={handleSortChange}
-          pagination={{
-            currentPage,
-            pageSize,
-            totalItems: meta?.total || 0,
-            onPageChange: handlePageChange,
-          }}
+          sortable={false}
+          sortableColumns={[]}
+          pagination={true}
           serverSide={true}
+          meta={meta}
+          currentPage={currentPage}
+          pageSize={pageSize}
+          totalItems={meta?.total || 0}
+          onPageChange={handlePageChange}
+          onPageSizeChange={(size) => {
+            setPageSize(size)
+            setCurrentPage(1)
+          }}
           emptyMessage="No salary payments found."
         />
       </Modal.Body>
@@ -366,6 +525,63 @@ const SalaryReportModal = ({ show, onHide }) => {
           Close
         </Button>
       </Modal.Footer>
+
+      {/* Edit Salary Payment Modal */}
+      {salaryToEdit && (
+        <SalaryPaymentModal
+          show={showEditModal}
+          onHide={() => {
+            setShowEditModal(false)
+            setSalaryToEdit(null)
+          }}
+          staff={salaryToEdit.staff}
+          salaryPayment={salaryToEdit}
+          mode="edit"
+          onSubmit={handleEditSubmit}
+          loading={editLoading}
+        />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        show={showDeleteModal}
+        onHide={() => !deleteLoading && setShowDeleteModal(false)}
+        backdrop={deleteLoading ? 'static' : true}
+        keyboard={!deleteLoading}
+      >
+        <Modal.Header closeButton={!deleteLoading}>
+          <Modal.Title>Delete Salary Payment</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {salaryToDelete ? (
+            <div>
+              <p>
+                Are you sure you want to delete the salary payment for{' '}
+                <strong>{salaryToDelete.staff?.name || 'this staff'}</strong>?
+              </p>
+              <p className="text-muted mb-0">
+                <small>
+                  Month: {getMonthName(salaryToDelete.month)} {salaryToDelete.year} | Amount:{' '}
+                  ₹{salaryToDelete.paidAmount?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}
+                </small>
+              </p>
+              <p className="text-danger mt-2 mb-0">
+                <small>This action cannot be undone.</small>
+              </p>
+            </div>
+          ) : (
+            'Loading...'
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)} disabled={deleteLoading}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleDeleteConfirm} disabled={deleteLoading || !salaryToDelete}>
+            {deleteLoading ? 'Deleting...' : 'Delete'}
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Modal>
   )
 }

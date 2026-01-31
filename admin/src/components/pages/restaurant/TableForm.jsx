@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useImperativeHandle, forwardRef } from 'react'
+import React, { useState, useEffect, useImperativeHandle, forwardRef, useCallback } from 'react'
 import { FormRow, TextField, SelectField } from '../../common/FormFields'
 import PropTypes from 'prop-types'
 
@@ -70,14 +70,45 @@ const TableForm = forwardRef(({
   }
 
   const handleSubmit = () => {
-    if (validateForm()) {
-      onSubmit(formData)
+    if (!validateForm()) {
+      return null
     }
+
+    const submitData = {
+      table_number: formData.table_number.trim(),
+      table_name: formData.table_name.trim() || null,
+      capacity: parseInt(formData.capacity),
+      status: formData.status,
+      is_active: formData.is_active,
+    }
+
+    return submitData
   }
 
-  // Expose handleSubmit to parent via ref
+  // Reset form to initial state
+  const resetForm = useCallback(() => {
+    setFormData({
+      table_number: '',
+      table_name: '',
+      capacity: 4,
+      status: 'available',
+      is_active: true
+    })
+    setErrors({})
+  }, [])
+
+  // Reset form when mode changes to create
+  useEffect(() => {
+    if (mode === 'create') {
+      resetForm()
+    }
+  }, [mode, resetForm])
+
+  // Expose submit method to parent via ref
   useImperativeHandle(ref, () => ({
-    handleSubmit
+    submit: handleSubmit,
+    setErrors: (newErrors) => setErrors(newErrors),
+    reset: resetForm,
   }))
 
   const statusOptions = [
@@ -92,53 +123,58 @@ const TableForm = forwardRef(({
     <div>
       <FormRow>
         <TextField
+          id="table_number"
           label="Table Number"
-          name="table_number"
           value={formData.table_number}
           onChange={(e) => handleChange('table_number', e.target.value)}
-          error={errors.table_number}
+          invalid={!!errors.table_number}
+          feedback={errors.table_number}
           required
           placeholder="e.g., T1, T2, Family-1"
           disabled={loading}
+          col={12}
         />
       </FormRow>
 
       <FormRow>
         <TextField
+          id="table_name"
           label="Table Name (Optional)"
-          name="table_name"
           value={formData.table_name}
           onChange={(e) => handleChange('table_name', e.target.value)}
-          error={errors.table_name}
+          invalid={!!errors.table_name}
+          feedback={errors.table_name}
           placeholder="e.g., Window Table, VIP Table"
           disabled={loading}
+          col={12}
         />
       </FormRow>
 
       <FormRow>
         <TextField
+          id="capacity"
           label="Capacity"
-          name="capacity"
           type="number"
           value={formData.capacity}
           onChange={(e) => handleChange('capacity', parseInt(e.target.value) || 1)}
-          error={errors.capacity}
+          invalid={!!errors.capacity}
+          feedback={errors.capacity}
           required
           min={1}
           max={50}
           disabled={loading}
+          col={6}
         />
-      </FormRow>
-
-      <FormRow>
         <SelectField
+          id="status"
           label="Status"
-          name="status"
           value={formData.status}
           onChange={(e) => handleChange('status', e.target.value)}
-          error={errors.status}
+          invalid={!!errors.status}
+          feedback={errors.status}
           options={statusOptions}
           disabled={loading}
+          col={6}
         />
       </FormRow>
 

@@ -57,6 +57,23 @@ const StaffList = () => {
 
   const debouncedSearch = useDebounce(searchTerm, 400)
 
+  // Calculate staff summary statistics
+  const staffSummary = useMemo(() => {
+    const visibleStaff = staff || []
+    const active = visibleStaff.filter((s) => s.status === 'active').length
+    const inactive = visibleStaff.filter((s) => s.status === 'inactive').length
+    const monthly = visibleStaff.filter((s) => s.salaryType === 'monthly').length
+    const other = visibleStaff.filter((s) => s.salaryType === 'other').length
+
+    return {
+      total: meta?.total ?? visibleStaff.length,
+      active,
+      inactive,
+      monthly,
+      other,
+    }
+  }, [staff, meta])
+
   // TEMPORARY: Development bypass - Remove this when backend is ready
   const isDevelopment = import.meta.env.DEV || import.meta.env.MODE === 'development'
   
@@ -409,11 +426,12 @@ const StaffList = () => {
           <div className="d-flex gap-2">
             {canPaySalary && (
               <Button
-                variant="success"
+                variant="outline-success"
                 size="sm"
                 onClick={() => handlePaySalary(staffMember)}
                 title="Pay Salary"
               >
+                <FontAwesomeIcon icon={faWallet} className="me-1" />
                 Pay Salary
               </Button>
             )}
@@ -443,19 +461,19 @@ const StaffList = () => {
 
 
   return (
-    <Container fluid className="py-4">
-      {/* Page Header */}
-      <Row className="mb-4">
+    <Container fluid>
+      <Row>
         <Col xs={12}>
-          <div className="d-flex align-items-center justify-content-between mb-4 pb-3 border-bottom">
+          {/* Page Header */}
+          <div className="d-flex align-items-center mb-4 pb-3 border-bottom">
             <div>
               <h2 className="mb-0 text-dark">
-                <FontAwesomeIcon icon={faUsers} className="me-2" />
+                <FontAwesomeIcon icon={faUsers} className="me-2 text-primary" />
                 Staff Management
               </h2>
-              <p className="text-muted mb-0">Manage restaurant staff and salary payments</p>
+              <p className="text-muted mb-0 mt-1">Manage restaurant staff and salary payments</p>
             </div>
-            <div className="d-flex gap-2">
+            <div className="ms-auto d-flex gap-2">
               {canViewSalaryReport && (
                 <Button variant="outline-primary" onClick={handleViewSalaryReport}>
                   <FontAwesomeIcon icon={faFileAlt} className="me-2" />
@@ -470,11 +488,65 @@ const StaffList = () => {
               )}
             </div>
           </div>
-        </Col>
-      </Row>
 
-      {/* Filters and Search */}
-      <Card className="mb-4 border-0 shadow-sm">
+          {/* Statistics Cards */}
+          <Row className="mb-4">
+            <Col xs={12} sm={6} md={3}>
+              <Card className="border-0 shadow-sm">
+                <Card.Body>
+                  <div className="d-flex align-items-center">
+                    <div className="flex-grow-1">
+                      <p className="text-muted mb-1 small">Total Staff</p>
+                      <h3 className="mb-0">{staffSummary.total}</h3>
+                    </div>
+                    <FontAwesomeIcon icon={faUsers} className="text-primary fs-2" />
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+            <Col xs={12} sm={6} md={3}>
+              <Card className="border-0 shadow-sm">
+                <Card.Body>
+                  <div className="d-flex align-items-center">
+                    <div className="flex-grow-1">
+                      <p className="text-muted mb-1 small">Active</p>
+                      <h3 className="mb-0 text-success">{staffSummary.active}</h3>
+                    </div>
+                    <FontAwesomeIcon icon={faUsers} className="text-success fs-2" />
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+            <Col xs={12} sm={6} md={3}>
+              <Card className="border-0 shadow-sm">
+                <Card.Body>
+                  <div className="d-flex align-items-center">
+                    <div className="flex-grow-1">
+                      <p className="text-muted mb-1 small">Inactive</p>
+                      <h3 className="mb-0 text-secondary">{staffSummary.inactive}</h3>
+                    </div>
+                    <FontAwesomeIcon icon={faUser} className="text-secondary fs-2" />
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+            <Col xs={12} sm={6} md={3}>
+              <Card className="border-0 shadow-sm">
+                <Card.Body>
+                  <div className="d-flex align-items-center">
+                    <div className="flex-grow-1">
+                      <p className="text-muted mb-1 small">Monthly Salary</p>
+                      <h3 className="mb-0 text-info">{staffSummary.monthly}</h3>
+                    </div>
+                    <FontAwesomeIcon icon={faWallet} className="text-info fs-2" />
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+
+          {/* Filters and Search */}
+          <Card className="border-0 shadow-sm mb-4">
         <Card.Body>
           <Row className="g-3">
             <Col md={10}>
@@ -512,13 +584,17 @@ const StaffList = () => {
             loading={loading}
             sortableColumns={['staffCode', 'name', 'department', 'status']}
             onSortChange={handleSortChange}
-            pagination={{
-              currentPage,
-              pageSize,
-              totalItems: meta?.total || 0,
-              onPageChange: handlePageChange,
-            }}
+            pagination={true}
             serverSide={true}
+            meta={meta}
+            currentPage={currentPage}
+            pageSize={pageSize}
+            totalItems={meta?.total || 0}
+            onPageChange={handlePageChange}
+            onPageSizeChange={(size) => {
+              setPageSize(size)
+              setCurrentPage(1)
+            }}
             emptyMessage="No staff found. Click 'Add Staff' to create a new staff member."
           />
         </Card.Body>
@@ -610,6 +686,8 @@ const StaffList = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+        </Col>
+      </Row>
     </Container>
   )
 }

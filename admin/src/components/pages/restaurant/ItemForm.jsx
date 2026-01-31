@@ -269,13 +269,20 @@ const ItemForm = ({ show, onHide, item, categories = [], selectedCategory = null
               </Form.Group>
             </div>
             <div className="col-md-6">
-              <Form.Group className="mb-3">
-                <Form.Label className="fw-semibold">Status</Form.Label>
-                <Form.Select name="status" value={formData.status} onChange={handleChange} className="border-2">
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                </Form.Select>
-              </Form.Group>
+              <SelectField
+                id="status"
+                label="Status"
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                options={[
+                  { value: 'active', label: 'Active' },
+                  { value: 'inactive', label: 'Inactive' },
+                ]}
+                invalid={!!errors.status}
+                feedback={errors.status}
+                col={12}
+              />
             </div>
           </div>
 

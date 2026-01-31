@@ -44,6 +44,7 @@ const TablesList = () => {
   const [tableToEdit, setTableToEdit] = useState(null)
   const [addLoading, setAddLoading] = useState(false)
   const [editLoading, setEditLoading] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState(false)
 
   const addFormRef = useRef()
   const editFormRef = useRef()
@@ -150,7 +151,28 @@ const TablesList = () => {
     }
   }
 
+  const transformErrors = (laravelErrors) => {
+    if (!laravelErrors || typeof laravelErrors !== 'object') {
+      return {}
+    }
+
+    const transformed = {}
+    Object.keys(laravelErrors).forEach((key) => {
+      const errorValue = laravelErrors[key]
+      if (Array.isArray(errorValue)) {
+        transformed[key] = errorValue[0] || ''
+      } else if (typeof errorValue === 'string') {
+        transformed[key] = errorValue
+      }
+    })
+    return transformed
+  }
+
   const handleDeleteTable = (table) => {
+    if (!table || !table.id) {
+      error('Invalid table selected.')
+      return
+    }
     if (!canDeleteTable) {
       error('You do not have permission to delete tables')
       return
@@ -160,6 +182,9 @@ const TablesList = () => {
   }
 
   const confirmDeleteTable = async () => {
+    if (!tableToDelete) return
+
+    setDeleteLoading(true)
     try {
       const response = await tableService.deleteTable(tableToDelete.id)
       if (response.success) {
@@ -173,6 +198,8 @@ const TablesList = () => {
     } catch (err) {
       console.error('Error deleting table:', err)
       error('An error occurred while deleting table')
+    } finally {
+      setDeleteLoading(false)
     }
   }
 
@@ -184,22 +211,28 @@ const TablesList = () => {
     setShowAddModal(true)
   }
 
-  const handleAddTableSubmit = () => {
-    if (addFormRef.current) {
-      addFormRef.current.handleSubmit()
-    }
-  }
+  const handleAddTableSubmit = async () => {
+    if (!addFormRef.current) return
 
-  const handleAddTableFormSubmit = async (formData) => {
+    const formData = addFormRef.current.submit()
+    if (!formData) return
+
+    setAddLoading(true)
     try {
-      setAddLoading(true)
       const response = await tableService.createTable(formData)
       if (response.success) {
         success('Table created successfully')
         setShowAddModal(false)
+        if (addFormRef.current) {
+          addFormRef.current.reset?.()
+        }
         await fetchTablesWithParams()
       } else {
         error(response.message || 'Failed to create table')
+        if (response.errors) {
+          const transformedErrors = transformErrors(response.errors)
+          addFormRef.current?.setErrors?.(transformedErrors)
+        }
       }
     } catch (err) {
       console.error('Error creating table:', err)
@@ -218,23 +251,29 @@ const TablesList = () => {
     setShowEditModal(true)
   }
 
-  const handleEditTableSubmit = () => {
-    if (editFormRef.current) {
-      editFormRef.current.handleSubmit()
-    }
-  }
+  const handleEditTableSubmit = async () => {
+    if (!editFormRef.current || !tableToEdit) return
 
-  const handleEditTableFormSubmit = async (formData) => {
+    const formData = editFormRef.current.submit()
+    if (!formData) return
+
+    setEditLoading(true)
     try {
-      setEditLoading(true)
       const response = await tableService.updateTable(tableToEdit.id, formData)
       if (response.success) {
         success('Table updated successfully')
         setShowEditModal(false)
         setTableToEdit(null)
+        if (editFormRef.current) {
+          editFormRef.current.reset?.()
+        }
         await fetchTablesWithParams()
       } else {
         error(response.message || 'Failed to update table')
+        if (response.errors) {
+          const transformedErrors = transformErrors(response.errors)
+          editFormRef.current?.setErrors?.(transformedErrors)
+        }
       }
     } catch (err) {
       console.error('Error updating table:', err)
@@ -338,7 +377,10 @@ const TablesList = () => {
             <Button
               variant="outline-danger"
               size="sm"
-              onClick={() => handleDeleteTable(table)}
+              onClick={(e) => {
+                e.stopPropagation()
+                handleDeleteTable(table)
+              }}
               title="Delete Table"
               style={{ minWidth: '32px', padding: '4px 8px' }}
             >
@@ -540,17 +582,22 @@ const TablesList = () => {
 
       <Modal
         visible={showDeleteModal}
-        onClose={() => setShowDeleteModal(false)}
+        onClose={() => !deleteLoading && setShowDeleteModal(false)}
         title="Delete Table"
         onConfirm={confirmDeleteTable}
-        confirmText="Delete"
+        confirmText={deleteLoading ? 'Deleting...' : 'Delete'}
         cancelText="Cancel"
         type="danger"
+        loading={deleteLoading}
+        maskClosable={!deleteLoading}
       >
-        <p>
-          Are you sure you want to delete table <strong>{tableToDelete?.table_number}</strong>?
-        </p>
-        <p className="text-muted">This action cannot be undone.</p>
+        {tableToDelete ? (
+          <p>
+            Are you sure you want to delete table <strong>{tableToDelete.table_number}</strong>? This action cannot be undone.
+          </p>
+        ) : (
+          'Loading...'
+        )}
       </Modal>
 
       <FormModal
@@ -566,9 +613,6 @@ const TablesList = () => {
         <TableForm
           ref={addFormRef}
           mode="create"
-          onSubmit={handleAddTableFormSubmit}
-          onCancel={() => setShowAddModal(false)}
-          loading={addLoading}
         />
       </FormModal>
 
@@ -589,12 +633,6 @@ const TablesList = () => {
           ref={editFormRef}
           mode="edit"
           tableData={tableToEdit}
-          onSubmit={handleEditTableFormSubmit}
-          onCancel={() => {
-            setShowEditModal(false)
-            setTableToEdit(null)
-          }}
-          loading={editLoading}
         />
       </FormModal>
     </Container>

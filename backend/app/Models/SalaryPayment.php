@@ -40,10 +40,11 @@ class SalaryPayment extends Model
 
     /**
      * Get the staff member that owns the salary payment.
+     * Includes soft-deleted staff to preserve historical salary payment records.
      */
     public function staff()
     {
-        return $this->belongsTo(Staff::class);
+        return $this->belongsTo(Staff::class)->withTrashed();
     }
 
     /**

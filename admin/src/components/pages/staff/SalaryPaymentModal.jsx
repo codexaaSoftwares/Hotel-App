@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faWallet } from '@fortawesome/free-solid-svg-icons'
 import PropTypes from 'prop-types'
 
-const SalaryPaymentModal = ({ show, onHide, staff, onSubmit, loading = false }) => {
+const SalaryPaymentModal = ({ show, onHide, staff, salaryPayment, mode = 'create', onSubmit, loading = false }) => {
   const [formData, setFormData] = useState({
     month: new Date().getMonth() + 1,
     year: new Date().getFullYear(),
@@ -16,9 +16,20 @@ const SalaryPaymentModal = ({ show, onHide, staff, onSubmit, loading = false }) 
   })
   const [errors, setErrors] = useState({})
 
-  // Reset form when modal opens
+  // Load salary payment data for edit mode
   useEffect(() => {
-    if (staff && show) {
+    if (mode === 'edit' && salaryPayment && show) {
+      setFormData({
+        month: salaryPayment.month || new Date().getMonth() + 1,
+        year: salaryPayment.year || new Date().getFullYear(),
+        paidAmount: salaryPayment.paidAmount || '',
+        paymentDate: salaryPayment.paymentDate
+          ? new Date(salaryPayment.paymentDate).toISOString().split('T')[0]
+          : new Date().toISOString().split('T')[0],
+        paymentMethod: salaryPayment.paymentMethod || 'cash',
+        notes: salaryPayment.notes || '',
+      })
+    } else if (mode === 'create' && staff && show) {
       setFormData({
         month: new Date().getMonth() + 1,
         year: new Date().getFullYear(),
@@ -28,7 +39,7 @@ const SalaryPaymentModal = ({ show, onHide, staff, onSubmit, loading = false }) 
         notes: '',
       })
     }
-  }, [staff, show])
+  }, [staff, salaryPayment, mode, show])
 
   // Reset form when modal closes
   useEffect(() => {
@@ -95,13 +106,17 @@ const SalaryPaymentModal = ({ show, onHide, staff, onSubmit, loading = false }) 
     }
 
     const paymentData = {
-      staffId: staff.id,
       month: parseInt(formData.month),
       year: parseInt(formData.year),
       paidAmount: parseFloat(formData.paidAmount),
       paymentDate: formData.paymentDate,
       paymentMethod: formData.paymentMethod,
       notes: formData.notes.trim() || null,
+    }
+
+    // Only include staffId for create mode
+    if (mode === 'create' && staff) {
+      paymentData.staffId = staff.id
     }
 
     onSubmit(paymentData)
@@ -133,16 +148,19 @@ const SalaryPaymentModal = ({ show, onHide, staff, onSubmit, loading = false }) 
       <Modal.Header closeButton>
         <Modal.Title>
           <FontAwesomeIcon icon={faWallet} className="me-2" />
-          Pay Salary - {staff?.name} ({staff?.staffCode})
+          {mode === 'edit' ? 'Edit Salary Payment' : `Pay Salary - ${staff?.name} (${staff?.staffCode})`}
         </Modal.Title>
       </Modal.Header>
       <Form onSubmit={handleSubmit}>
         <Modal.Body>
-          {staff && (
+          {(staff || (mode === 'edit' && salaryPayment?.staff)) && (
             <Alert variant="info" className="mb-3">
               <strong>Staff Details:</strong>
               <br />
-              Department: {staff.department} | Salary Type: {staff.salaryType === 'monthly' ? 'Monthly' : 'Other'} | Salary: ₹{staff.salaryAmount?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              {(() => {
+                const staffInfo = staff || salaryPayment?.staff
+                return `Department: ${staffInfo?.department || '—'} | Salary Type: ${staffInfo?.salaryType === 'monthly' ? 'Monthly' : 'Other'} | Salary: ₹${staffInfo?.salaryAmount?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}`
+              })()}
             </Alert>
           )}
 
@@ -229,7 +247,7 @@ const SalaryPaymentModal = ({ show, onHide, staff, onSubmit, loading = false }) 
             Cancel
           </button>
           <button type="submit" className="btn btn-primary" disabled={loading}>
-            {loading ? 'Processing...' : 'Record Payment'}
+            {loading ? 'Processing...' : mode === 'edit' ? 'Update Payment' : 'Record Payment'}
           </button>
         </Modal.Footer>
       </Form>
@@ -241,6 +259,8 @@ SalaryPaymentModal.propTypes = {
   show: PropTypes.bool.isRequired,
   onHide: PropTypes.func.isRequired,
   staff: PropTypes.object,
+  salaryPayment: PropTypes.object,
+  mode: PropTypes.oneOf(['create', 'edit']),
   onSubmit: PropTypes.func.isRequired,
   loading: PropTypes.bool,
 }

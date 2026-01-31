@@ -28,6 +28,13 @@ class SalaryPaymentResource extends JsonResource
             'referenceNumber' => $this->reference_number,
             'notes' => $this->notes,
             'createdBy' => $this->created_by,
+            'creator' => $this->whenLoaded('creator', function () {
+                return [
+                    'id' => $this->creator->id,
+                    'name' => $this->creator->name,
+                    'email' => $this->creator->email,
+                ];
+            }),
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
         ];

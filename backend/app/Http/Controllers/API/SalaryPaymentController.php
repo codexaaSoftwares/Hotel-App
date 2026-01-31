@@ -20,13 +20,14 @@ class SalaryPaymentController extends Controller
      */
     public function index(Request $request)
     {
-        $query = SalaryPayment::with('staff');
+        $query = SalaryPayment::with(['staff', 'creator']);
 
-        // Search functionality
+        // Search functionality - include soft-deleted staff
         if ($search = $request->input('search')) {
             $query->whereHas('staff', function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('mobile', 'like', "%{$search}%");
+                $q->withTrashed()
+                  ->where('name', 'like', "%{$search}%")
+                  ->orWhere('mobile', 'like', "%{$search}%");
             });
         }
 
@@ -43,8 +44,8 @@ class SalaryPaymentController extends Controller
         $pagination = $this->buildPaginator(
             $request,
             $query,
-            ['payment_date', 'paid_amount', 'created_at'],
-            ['column' => 'payment_date', 'direction' => 'desc']
+            ['created_at'],
+            ['column' => 'created_at', 'direction' => 'desc']
         );
 
         /** @var \Illuminate\Pagination\LengthAwarePaginator $paginator */
@@ -67,7 +68,7 @@ class SalaryPaymentController extends Controller
      */
     public function getByStaff(Staff $staff, Request $request)
     {
-        $query = $staff->salaryPayments()->with('staff');
+        $query = $staff->salaryPayments()->with(['staff', 'creator']);
 
         // Date range filter
         if ($startDate = $request->input('start_date')) {
@@ -77,11 +78,22 @@ class SalaryPaymentController extends Controller
             $query->where('payment_date', '<=', $endDate);
         }
 
+        // Handle custom sorting for month & year combined
+        $requestedSort = $request->input('sort_by');
+        $sortDirection = strtolower($request->input('sort_direction', 'desc'));
+        $sortDirection = $sortDirection === 'desc' ? 'desc' : 'asc';
+
+        if ($requestedSort === 'year_month') {
+            // Sort by year first, then by month
+            $query->orderBy('year', $sortDirection)
+                  ->orderBy('month', $sortDirection);
+        }
+
         $pagination = $this->buildPaginator(
             $request,
             $query,
-            ['payment_date', 'paid_amount', 'created_at'],
-            ['column' => 'payment_date', 'direction' => 'desc']
+            ['created_at'],
+            ['column' => 'created_at', 'direction' => 'desc']
         );
 
         /** @var \Illuminate\Pagination\LengthAwarePaginator $paginator */
@@ -106,7 +118,7 @@ class SalaryPaymentController extends Controller
     {
         $salaryPayment = SalaryPayment::create($request->validated());
 
-        return (new SalaryPaymentResource($salaryPayment->load('staff')))
+        return (new SalaryPaymentResource($salaryPayment->load(['staff', 'creator'])))
             ->additional([
                 'success' => true,
                 'message' => 'Salary payment created successfully.',
@@ -120,7 +132,7 @@ class SalaryPaymentController extends Controller
      */
     public function show(SalaryPayment $salaryPayment)
     {
-        return (new SalaryPaymentResource($salaryPayment->load('staff')))
+        return (new SalaryPaymentResource($salaryPayment->load(['staff', 'creator'])))
             ->additional([
                 'success' => true,
                 'message' => 'Salary payment retrieved successfully.',
@@ -134,7 +146,7 @@ class SalaryPaymentController extends Controller
     {
         $salaryPayment->update($request->validated());
 
-        return (new SalaryPaymentResource($salaryPayment->load('staff')))
+        return (new SalaryPaymentResource($salaryPayment->load(['staff', 'creator'])))
             ->additional([
                 'success' => true,
                 'message' => 'Salary payment updated successfully.',
