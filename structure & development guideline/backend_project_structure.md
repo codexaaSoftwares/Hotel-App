@@ -52,6 +52,8 @@ backend/
 │   │   │   │   ├── PermissionController.php
 │   │   │   │   ├── RestaurantSettingsController.php
 │   │   │   │   ├── RoleController.php
+│   │   │   │   ├── ExpenseCategoryController.php
+│   │   │   │   ├── ExpenseController.php
 │   │   │   │   ├── SalaryPaymentController.php
 │   │   │   │   ├── SettingController.php
 │   │   │   │   ├── StaffController.php
@@ -82,6 +84,10 @@ backend/
 │   │   │   ├── BranchUpdateRequest.php
 │   │   │   ├── CustomerStoreRequest.php
 │   │   │   ├── CustomerUpdateRequest.php
+│   │   │   ├── ExpenseCategoryStoreRequest.php
+│   │   │   ├── ExpenseCategoryUpdateRequest.php
+│   │   │   ├── ExpenseStoreRequest.php
+│   │   │   ├── ExpenseUpdateRequest.php
 │   │   │   ├── FoodCategoryStoreRequest.php
 │   │   │   ├── FoodCategoryUpdateRequest.php
 │   │   │   ├── FoodItemStoreRequest.php
@@ -101,6 +107,8 @@ backend/
 │   │       ├── BillResource.php
 │   │       ├── BranchResource.php
 │   │       ├── CustomerResource.php
+│   │       ├── ExpenseCategoryResource.php
+│   │       ├── ExpenseResource.php
 │   │       ├── FoodCategoryResource.php
 │   │       ├── FoodItemResource.php
 │   │       ├── SalaryPaymentResource.php
@@ -116,6 +124,8 @@ backend/
 │   │   ├── BillItem.php
 │   │   ├── Branch.php
 │   │   ├── Customer.php
+│   │   ├── Expense.php
+│   │   ├── ExpenseCategory.php
 │   │   ├── FoodCategory.php
 │   │   ├── FoodItem.php
 │   │   ├── Permission.php
@@ -184,7 +194,9 @@ backend/
 │   │   ├── 2026_01_29_121459_create_staff_table.php
 │   │   ├── 2026_01_29_121509_create_salary_payments_table.php
 │   │   ├── 2026_01_29_134428_add_month_year_to_salary_payments_table.php
-│   │   └── 2026_01_29_135523_remove_payable_amount_from_salary_payments_table.php
+│   │   ├── 2026_01_29_135523_remove_payable_amount_from_salary_payments_table.php
+│   │   ├── 2026_01_30_000001_create_expense_categories_table.php
+│   │   └── 2026_01_30_000002_create_expenses_table.php
 │   │
 │   └── 📁 seeders/                       # Database seeders
 │       ├── BranchSeeder.php
@@ -325,6 +337,12 @@ backend/
 ### 12. **Salary Payment Management Module**
 - **Location**: `app/Http/Controllers/API/SalaryPaymentController.php`
 - **Routes**: `/api/salary-payments/*`
+- **Status**: ✅ Fully implemented
+
+### 13. **Expense Management Module**
+- **Location**: `app/Http/Controllers/API/ExpenseCategoryController.php`, `ExpenseController.php`
+- **Routes**: `/api/expense-categories/*`, `/api/expenses/*`
+- **Permissions**: `view_expense_category`, `create_expense_category`, `edit_expense_category`, `delete_expense_category`, `view_expense`, `create_expense`, `edit_expense`, `delete_expense`
 - **Status**: ✅ Fully implemented
 
 ---

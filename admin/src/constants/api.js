@@ -182,6 +182,26 @@ export const API_ENDPOINTS = {
     DELETE: (id) => `/salary-payments/${id}`,
     GET_BY_STAFF: (staffId) => `/staff/${staffId}/salary-payments`,
   },
+
+  // Expense Category Management
+  EXPENSE_CATEGORIES: {
+    BASE: '/expense-categories',
+    LIST: '/expense-categories',
+    CREATE: '/expense-categories',
+    GET_BY_ID: (id) => `/expense-categories/${id}`,
+    UPDATE: (id) => `/expense-categories/${id}`,
+    DELETE: (id) => `/expense-categories/${id}`,
+  },
+
+  // Expense Management
+  EXPENSES: {
+    BASE: '/expenses',
+    LIST: '/expenses',
+    CREATE: '/expenses',
+    GET_BY_ID: (id) => `/expenses/${id}`,
+    UPDATE: (id) => `/expenses/${id}`,
+    DELETE: (id) => `/expenses/${id}`,
+  },
 }
 
 // HTTP Methods

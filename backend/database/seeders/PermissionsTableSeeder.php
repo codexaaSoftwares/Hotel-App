@@ -104,6 +104,18 @@ class PermissionsTableSeeder extends Seeder
             ['name' => 'edit_salary_payment', 'description' => 'Edit salary payments', 'module' => 'staff', 'submodule' => 'salary_payments', 'type' => 'write'],
             ['name' => 'delete_salary_payment', 'description' => 'Delete salary payments', 'module' => 'staff', 'submodule' => 'salary_payments', 'type' => 'delete'],
 
+            // Expense Category Management
+            ['name' => 'view_expense_category', 'description' => 'View expense categories', 'module' => 'expenses', 'submodule' => 'categories', 'type' => 'read'],
+            ['name' => 'create_expense_category', 'description' => 'Create expense categories', 'module' => 'expenses', 'submodule' => 'categories', 'type' => 'write'],
+            ['name' => 'edit_expense_category', 'description' => 'Edit expense categories', 'module' => 'expenses', 'submodule' => 'categories', 'type' => 'write'],
+            ['name' => 'delete_expense_category', 'description' => 'Delete expense categories', 'module' => 'expenses', 'submodule' => 'categories', 'type' => 'delete'],
+
+            // Expense Management
+            ['name' => 'view_expense', 'description' => 'View expenses', 'module' => 'expenses', 'submodule' => 'management', 'type' => 'read'],
+            ['name' => 'create_expense', 'description' => 'Create expenses', 'module' => 'expenses', 'submodule' => 'management', 'type' => 'write'],
+            ['name' => 'edit_expense', 'description' => 'Edit expenses', 'module' => 'expenses', 'submodule' => 'management', 'type' => 'write'],
+            ['name' => 'delete_expense', 'description' => 'Delete expenses', 'module' => 'expenses', 'submodule' => 'management', 'type' => 'delete'],
+
             // Special Permissions
             ['name' => 'special_export_data', 'description' => 'Export data to Excel/PDF', 'module' => 'special', 'submodule' => 'special', 'type' => 'special'],
             ['name' => 'special_import_data', 'description' => 'Import data from Excel/CSV', 'module' => 'special', 'submodule' => 'special', 'type' => 'special'],

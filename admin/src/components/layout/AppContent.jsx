@@ -31,6 +31,9 @@ const StaffList = React.lazy(() => import('../../views/staff/StaffList'))
 const POSPanel = React.lazy(() => import('../../views/pos/POSPanel'))
 const BillsList = React.lazy(() => import('../../views/pos/BillsList'))
 
+// Expense Management Components
+const ExpensesList = React.lazy(() => import('../../views/expenses/ExpensesList'))
+
 
 import PermissionRoute from './PermissionRoute'
 import { PERMISSIONS } from '../../constants/permissions'
@@ -158,6 +161,18 @@ const AppContent = () => {
               </PermissionRoute>
             }
           />
+          
+          {/* Expense Management Routes */}
+          <Route
+            path="/expenses"
+            element={
+              <PermissionRoute requiredPermission={PERMISSIONS.EXPENSE_READ} showAccessDenied>
+                <ExpensesList />
+              </PermissionRoute>
+            }
+          />
+          <Route path="/expenses/create" element={<Navigate to="/expenses" replace />} />
+          <Route path="/expenses/edit/:id" element={<Navigate to="/expenses" replace />} />
           
           {/* Report Routes */}
           {/* Report routes will be added here as needed */}

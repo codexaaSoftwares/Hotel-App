@@ -60,9 +60,14 @@ const PermissionRoute = ({
     const isStaffRoute = requiredPermission === PERMISSIONS.STAFF_READ || 
                          requiredPermission === 'staff:read' ||
                          requiredPermission === 'view_staff'
+    const isExpenseRoute = requiredPermission === PERMISSIONS.EXPENSE_READ || 
+                           requiredPermission === 'expense:read' ||
+                           requiredPermission === 'view_expense' ||
+                           requiredPermission === PERMISSIONS.EXPENSE_CATEGORY_READ ||
+                           requiredPermission === 'expense_category:read'
     
-    // Allow access in development for staff routes (temporary)
-    if (isDevelopment && isStaffRoute) {
+    // Allow access in development for staff and expense routes (temporary)
+    if (isDevelopment && (isStaffRoute || isExpenseRoute)) {
       // Bypass permission check for development
     } else if (!hasPermission(requiredPermission)) {
       if (showAccessDenied) {

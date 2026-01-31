@@ -17,6 +17,8 @@ use App\Http\Controllers\API\WalletTransactionController;
 use App\Http\Controllers\API\BillController;
 use App\Http\Controllers\API\StaffController;
 use App\Http\Controllers\API\SalaryPaymentController;
+use App\Http\Controllers\API\ExpenseCategoryController;
+use App\Http\Controllers\API\ExpenseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -145,6 +147,20 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/salary-payments/{salaryPayment}', [SalaryPaymentController::class, 'update'])->middleware('permission:edit_salary_payment');
     Route::delete('/salary-payments/{salaryPayment}', [SalaryPaymentController::class, 'destroy'])->middleware('permission:delete_salary_payment');
     Route::get('/staff/{staff}/salary-payments', [SalaryPaymentController::class, 'getByStaff'])->middleware('permission:view_salary_payment');
+
+    // Expense Category Management
+    Route::get('/expense-categories', [ExpenseCategoryController::class, 'index'])->middleware('permission:view_expense_category');
+    Route::post('/expense-categories', [ExpenseCategoryController::class, 'store'])->middleware('permission:create_expense_category');
+    Route::get('/expense-categories/{expenseCategory}', [ExpenseCategoryController::class, 'show'])->middleware('permission:view_expense_category');
+    Route::put('/expense-categories/{expenseCategory}', [ExpenseCategoryController::class, 'update'])->middleware('permission:edit_expense_category');
+    Route::delete('/expense-categories/{expenseCategory}', [ExpenseCategoryController::class, 'destroy'])->middleware('permission:delete_expense_category');
+
+    // Expense Management
+    Route::get('/expenses', [ExpenseController::class, 'index'])->middleware('permission:view_expense');
+    Route::post('/expenses', [ExpenseController::class, 'store'])->middleware('permission:create_expense');
+    Route::get('/expenses/{expense}', [ExpenseController::class, 'show'])->middleware('permission:view_expense');
+    Route::put('/expenses/{expense}', [ExpenseController::class, 'update'])->middleware('permission:edit_expense');
+    Route::delete('/expenses/{expense}', [ExpenseController::class, 'destroy'])->middleware('permission:delete_expense');
 
     // Restaurant Settings Management
     Route::prefix('restaurant-settings')->middleware('permission:view_restaurant_settings')->group(function () {

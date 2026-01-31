@@ -107,6 +107,9 @@ admin/
 │   │       │   ├── SalaryPaymentModal.jsx
 │   │       │   ├── SalaryReportModal.jsx
 │   │       │   └── StaffForm.jsx
+│   │       ├── 📁 expenses/
+│   │       │   ├── ExpenseForm.jsx
+│   │       │   └── ExpenseCategoryModal.jsx
 │   │       └── 📁 users/
 │   │           ├── 📁 __tests__/
 │   │           │   └── ProfileForm.test.js
@@ -134,7 +137,8 @@ admin/
 │   │   ├── staffService.js
 │   │   ├── tableService.js
 │   │   ├── userService.js
-│   │   └── walletTransactionService.js
+│   │   ├── walletTransactionService.js
+│   │   └── expenseService.js
 │   │
 │   ├── 📁 views/                       # Main view components
 │   │   ├── 📁 branches/
@@ -166,6 +170,8 @@ admin/
 │   │   │   └── Settings.jsx
 │   │   ├── 📁 staff/
 │   │   │   └── StaffList.jsx
+│   │   ├── 📁 expenses/
+│   │   │   └── ExpensesList.jsx
 │   │   └── 📁 users/
 │   │       ├── Profile.jsx
 │   │       └── UsersList.jsx
@@ -306,6 +312,12 @@ admin/
 
 ### 12. **Bills Management**
 - **Location**: `src/views/pos/BillsList.jsx`
+- **Status**: ✅ Fully implemented
+
+### 13. **Expense Management**
+- **Location**: `src/views/expenses/ExpensesList.jsx`
+- **Components**: `src/components/pages/expenses/ExpenseForm.jsx`, `src/components/pages/expenses/ExpenseCategoryModal.jsx`
+- **Service**: `src/services/expenseService.js`
 - **Status**: ✅ Fully implemented
 
 ---

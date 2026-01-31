@@ -469,7 +469,7 @@ const StaffList = () => {
             <div>
               <h2 className="mb-0 text-dark">
                 <FontAwesomeIcon icon={faUsers} className="me-2 text-primary" />
-                Staff Management
+                Staff & Salary Management
               </h2>
               <p className="text-muted mb-0 mt-1">Manage restaurant staff and salary payments</p>
             </div>

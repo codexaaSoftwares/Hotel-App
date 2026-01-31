@@ -33,8 +33,7 @@ This document tracks all modules and their implementation status in the Hotel Ma
 | Bills Management | ✅ | ✅ | ✅ | ✅ Complete |
 | Payment Management | ✅ | ✅ | ✅ | ✅ Complete |
 | Dashboard | ⏳ | ⏳ | ⏳ | ⏳ Pending |
-| Expense Categories | ⏳ | ⏳ | ⏳ | ⏳ Pending |
-| Expense Records | ⏳ | ⏳ | ⏳ | ⏳ Pending |
+| Expense Management | ✅ | ✅ | ✅ | ✅ Complete |
 | Reports | ⏳ | ⏳ | ⏳ | ⏳ Pending |
 
 ---
@@ -218,19 +217,20 @@ This document tracks all modules and their implementation status in the Hotel Ma
   - ⏳ Quick access to common actions
   - ⏳ Revenue charts (Daily/Monthly)
 
-### 18. **Expense Categories**
-- **Status**: ⏳ Pending
+### 18. **Expense Management**
+- **Status**: ✅ Complete
 - **Features**:
-  - ⏳ Category CRUD operations
-  - ⏳ Category status management
-
-### 19. **Expense Records**
-- **Status**: ⏳ Pending
-- **Features**:
-  - ⏳ Expense record CRUD operations
-  - ⏳ Payment mode (Cash/UPI/Bank)
-  - ⏳ Date, Amount, Description
-  - ⏳ Category linking
+  - ✅ Expense category CRUD operations
+  - ✅ Category status management (active/inactive)
+  - ✅ Expense record CRUD operations
+  - ✅ Payment method (Cash, UPI, Card, Bank)
+  - ✅ Date, Amount, Description fields
+  - ✅ Category linking
+  - ✅ Created by tracking
+  - ✅ Server-side pagination, sorting, searching, filtering
+  - ✅ Soft delete support
+  - ✅ Statistics cards (Total Expenses, This Month, Today)
+  - ✅ Single-page UI with category management modal
 
 ### 20. **Reports Module**
 - **Status**: ⏳ Pending
@@ -261,8 +261,8 @@ This document tracks all modules and their implementation status in the Hotel Ma
 
 ## 📊 Implementation Progress
 
-**Completed**: 16/20 modules (80%)  
-**Pending**: 4/20 modules (20%)
+**Completed**: 17/19 modules (89%)  
+**Pending**: 2/19 modules (11%)
 
 ### Completed Modules
 - Authentication, User Management, Role & Permission, Branch Management
@@ -271,11 +271,10 @@ This document tracks all modules and their implementation status in the Hotel Ma
 - Customer Management, Customer Ledger
 - Staff Management, Salary Payments
 - POS Panel, Bills Management, Payment Management
+- Expense Management
 
 ### Pending Modules
 - Dashboard
-- Expense Categories
-- Expense Records
 - Reports
 
 ---

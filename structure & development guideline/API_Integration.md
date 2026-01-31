@@ -23,7 +23,8 @@ This document maps frontend modules to their corresponding backend API endpoints
 7. [Customer Management APIs](#customer-management-apis)
 8. [Staff Management APIs](#staff-management-apis)
 9. [Bill Management APIs](#bill-management-apis)
-10. [Important Notes](#important-notes)
+10. [Expense Management APIs](#expense-management-apis)
+11. [Important Notes](#important-notes)
 
 ---
 
@@ -217,6 +218,29 @@ This document maps frontend modules to their corresponding backend API endpoints
 
 ---
 
+## Expense Management APIs
+
+### Frontend Integration
+- **Service**: `src/services/expenseService.js`
+- **Views**: `src/views/expenses/ExpensesList.jsx`
+- **Components**: `src/components/pages/expenses/ExpenseForm.jsx`, `src/components/pages/expenses/ExpenseCategoryModal.jsx`
+
+### Expense Category Endpoints
+- `GET /api/expense-categories` - List categories (paginated, sortable, searchable)
+- `GET /api/expense-categories/{expenseCategory}` - Get category by ID
+- `POST /api/expense-categories` - Create category
+- `PUT /api/expense-categories/{expenseCategory}` - Update category
+- `DELETE /api/expense-categories/{expenseCategory}` - Delete category (soft delete)
+
+### Expense Endpoints
+- `GET /api/expenses` - List expenses (paginated, sortable, searchable, filterable)
+- `GET /api/expenses/{expense}` - Get expense by ID
+- `POST /api/expenses` - Create expense
+- `PUT /api/expenses/{expense}` - Update expense
+- `DELETE /api/expenses/{expense}` - Delete expense (soft delete)
+
+---
+
 ## Important Notes
 
 ### API Response Format
@@ -262,6 +286,7 @@ All API responses follow this structure:
 The following resources support soft deletes:
 - Branches, Roles, Food Categories, Food Items, Tables
 - Customers, Staff, Salary Payments, Bills, Wallet Transactions
+- Expense Categories, Expenses
 
 ### Auto-Generated Codes
 - **Customer Code**: `#CUST001` format

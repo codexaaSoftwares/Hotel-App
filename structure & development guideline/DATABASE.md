@@ -288,12 +288,20 @@ Restaurant tables.
 - **Staff** → **SalaryPayment** (one-to-many)
 - **User** → **SalaryPayment** (one-to-many, as creator)
 
+### Expense Management
+- **ExpenseCategory** → **Expense** (one-to-many)
+- **User** → **Expense** (one-to-many, as creator)
+
+### Expense Management
+- **ExpenseCategory** → **Expense** (one-to-many)
+- **User** → **Expense** (one-to-many, as creator)
+
 ---
 
 ## Important Notes
 
 ### Soft Deletes
-Tables with soft deletes: `branches`, `roles`, `food_categories`, `food_items`, `tables`, `customers`, `staff`, `salary_payments`, `bills`, `wallet_transactions`
+Tables with soft deletes: `branches`, `roles`, `food_categories`, `food_items`, `tables`, `customers`, `staff`, `salary_payments`, `bills`, `wallet_transactions`, `expense_categories`, `expenses`
 
 ### Auto-Generated Codes
 - **Customer Code**: `#CUST001` format (generated before creation)

@@ -25,6 +25,12 @@ const routesConfig = [
   { path: '/customers/edit/:id', name: 'Edit Customer' },
   { path: '/customers/:id', name: 'Customer Details' },
   
+  // Staff & Salary Management Routes
+  { path: '/staff', name: 'Staff & Salary Management' },
+  { path: '/staff/create', name: 'Create Staff' },
+  { path: '/staff/edit/:id', name: 'Edit Staff' },
+  { path: '/staff/:id', name: 'Staff Details' },
+  
   // Account Routes
   { path: '/profile', name: 'Profile' },
   { path: '/profile/edit', name: 'Edit Profile' },
@@ -38,6 +44,11 @@ const routesConfig = [
   // POS Routes
   { path: '/pos/panel', name: 'POS Panel' },
   { path: '/pos/bills', name: 'Bills Management' },
+  
+  // Expense Management Routes
+  { path: '/expenses', name: 'Expense Management' },
+  { path: '/expenses/create', name: 'Create Expense' },
+  { path: '/expenses/edit/:id', name: 'Edit Expense' },
   
   // Auth Routes
   { path: '/login', name: 'Login' },
