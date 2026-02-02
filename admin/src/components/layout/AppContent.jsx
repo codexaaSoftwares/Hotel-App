@@ -36,6 +36,7 @@ const ExpensesList = React.lazy(() => import('../../views/expenses/ExpensesList'
 
 // Report Components
 const SalesReport = React.lazy(() => import('../../views/reports/SalesReport'))
+const ExpenseReport = React.lazy(() => import('../../views/reports/ExpenseReport'))
 
 
 import PermissionRoute from './PermissionRoute'
@@ -183,6 +184,14 @@ const AppContent = () => {
             element={
               <PermissionRoute requiredPermission={PERMISSIONS.SALES_REPORT_READ} showAccessDenied>
                 <SalesReport />
+              </PermissionRoute>
+            }
+          />
+          <Route
+            path="/reports/expenses"
+            element={
+              <PermissionRoute requiredPermission={PERMISSIONS.EXPENSE_REPORT_READ} showAccessDenied>
+                <ExpenseReport />
               </PermissionRoute>
             }
           />

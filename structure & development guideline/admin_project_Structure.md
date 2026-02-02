@@ -156,6 +156,7 @@ admin/
 │   │   │   └── POSPanel.jsx
 │   │   ├── 📁 reports/
 │   │   │   ├── BranchReport.jsx
+│   │   │   ├── ExpenseReport.jsx
 │   │   │   ├── LedgerReport.jsx
 │   │   │   ├── SalesReport.jsx
 │   │   │   └── StaffReport.jsx
@@ -319,6 +320,23 @@ admin/
 - **Components**: `src/components/pages/expenses/ExpenseForm.jsx`, `src/components/pages/expenses/ExpenseCategoryModal.jsx`
 - **Service**: `src/services/expenseService.js`
 - **Status**: ✅ Fully implemented
+
+### 14. **Reports Module**
+- **Location**: `src/views/reports/`
+- **Service**: `src/services/reportService.js`
+- **Status**: 🟡 Partially implemented
+  - ✅ Sales Report (`SalesReport.jsx`)
+  - ✅ Expense Report (`ExpenseReport.jsx`)
+  - ⏳ Customer Pending Report
+  - ⏳ GST Summary Report
+  - ⏳ Staff & Salary Report
+  - ⏳ Business Dashboard Report
+- **Features**:
+  - ✅ Date range filtering
+  - ✅ Multiple filter options (payment status, payment method, table, customer, category)
+  - ✅ Summary cards with key metrics
+  - ✅ Detailed data tables with sorting
+  - ✅ Export buttons (PDF/CSV - API implementation pending)
 
 ---
 
@@ -688,4 +706,4 @@ const userService = {
 ---
 
 **Last Updated**: January 2025  
-**Version**: 2.7.0
+**Version**: 2.8.0

@@ -10,7 +10,7 @@ This document defines all reports required for the Restaurant Management System 
 
 ## 📊 Reports List
 
-### 1. **Sales Report** ✅ (Priority: HIGH)
+### 1. **Sales Report** ✅ (Priority: HIGH) - **COMPLETED**
 **Purpose**: Track revenue and sales performance
 
 **Filters:**
@@ -46,12 +46,21 @@ This document defines all reports required for the Restaurant Management System 
   - By Table
 
 **Export Options:**
-- PDF Export ✅
-- CSV Export ✅
+- PDF Export ⏳ (Button added, API pending)
+- CSV Export ⏳ (Button added, API pending)
+
+**Implementation Status:**
+- ✅ Backend API endpoint (`/api/reports/sales`)
+- ✅ Frontend component (`SalesReport.jsx`)
+- ✅ Filters (Date Range, Payment Status, Payment Method, Table, Customer)
+- ✅ Summary Cards (Total Bills, Paid Bills, Pending Bills, Total Sales, Total Subtotal, Total Discount, Total CGST, Total SGST, Total Service Tax)
+- ✅ Data Table with sorting
+- ⏳ PDF Export API
+- ⏳ CSV Export API
 
 ---
 
-### 2. **Expense Report** ✅ (Priority: HIGH)
+### 2. **Expense Report** ✅ (Priority: HIGH) - **COMPLETED**
 **Purpose**: Track business expenses
 
 **Filters:**
@@ -78,8 +87,17 @@ This document defines all reports required for the Restaurant Management System 
   - By Payment Method
 
 **Export Options:**
-- PDF Export ✅
-- CSV Export ✅
+- PDF Export ⏳ (Button added, API pending)
+- CSV Export ⏳ (Button added, API pending)
+
+**Implementation Status:**
+- ✅ Backend API endpoint (`/api/reports/expenses`)
+- ✅ Frontend component (`ExpenseReport.jsx`)
+- ✅ Filters (Date Range, Expense Category, Payment Method)
+- ✅ Summary Cards (Total Expenses, This Month, Today, Average Daily Expense)
+- ✅ Data Table with sorting
+- ⏳ PDF Export API
+- ⏳ CSV Export API
 
 ---
 
@@ -219,12 +237,12 @@ This document defines all reports required for the Restaurant Management System 
 ## 🎯 Implementation Priority
 
 ### All Reports (Complete List)
-1. ✅ **Sales Report** - Essential for revenue tracking
-2. ✅ **Expense Report** - Essential for expense tracking
-3. ✅ **Customer Pending (Udhar) Report** - Important for credit management
-4. ✅ **GST Summary Report** - Important for tax compliance
-5. ✅ **Staff & Salary Report** - Important for payroll tracking
-6. ✅ **Restaurant Business Dashboard Report** - Comprehensive business overview
+1. ✅ **Sales Report** - Essential for revenue tracking - **COMPLETED**
+2. ✅ **Expense Report** - Essential for expense tracking - **COMPLETED**
+3. ⏳ **Customer Pending (Udhar) Report** - Important for credit management
+4. ⏳ **GST Summary Report** - Important for tax compliance
+5. ⏳ **Staff & Salary Report** - Important for payroll tracking
+6. ⏳ **Restaurant Business Dashboard Report** - Comprehensive business overview
 
 ---
 

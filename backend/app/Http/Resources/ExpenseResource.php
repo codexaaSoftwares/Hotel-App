@@ -22,7 +22,7 @@ class ExpenseResource extends JsonResource
             'expenseDate' => $this->expense_date?->format('Y-m-d'),
             'paymentMethod' => $this->payment_method,
             'description' => $this->description,
-            'createdBy' => $this->creator->name ?? null,
+            'createdBy' => $this->creator ? trim(($this->creator->first_name ?? '') . ' ' . ($this->creator->last_name ?? '')) : null,
             'createdAt' => $this->created_at?->toISOString(),
             'updatedAt' => $this->updated_at?->toISOString(),
         ];

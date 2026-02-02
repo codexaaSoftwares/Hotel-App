@@ -24,7 +24,8 @@ This document maps frontend modules to their corresponding backend API endpoints
 8. [Staff Management APIs](#staff-management-apis)
 9. [Bill Management APIs](#bill-management-apis)
 10. [Expense Management APIs](#expense-management-apis)
-11. [Important Notes](#important-notes)
+11. [Reports APIs](#reports-apis)
+12. [Important Notes](#important-notes)
 
 ---
 
@@ -241,6 +242,38 @@ This document maps frontend modules to their corresponding backend API endpoints
 
 ---
 
+## Reports APIs
+
+### Frontend Integration
+- **Service**: `src/services/reportService.js`
+- **Views**: `src/views/reports/SalesReport.jsx`, `src/views/reports/ExpenseReport.jsx`
+
+### Report Endpoints
+- `GET /api/reports/sales` - Sales Report (with filters: date range, payment status, payment method, table, customer)
+- `GET /api/reports/expenses` - Expense Report (with filters: date range, category, payment method)
+
+**Permissions:**
+- `sales_report:read` - Access to Sales Report
+- `expense_report:read` - Access to Expense Report
+
+**Response Format:**
+```json
+{
+  "success": true,
+  "data": {
+    "summary": {
+      "totalSalesAmount": 50000,
+      "totalBillsCount": 100,
+      "paidBillsCount": 80,
+      "pendingBillsCount": 20
+    },
+    "bills": [...]
+  }
+}
+```
+
+---
+
 ## Important Notes
 
 ### API Response Format
@@ -299,4 +332,5 @@ The following resources support soft deletes:
 
 ---
 
-**Last Updated**: January 2025
+**Last Updated**: January 2025  
+**Version**: 1.8.0

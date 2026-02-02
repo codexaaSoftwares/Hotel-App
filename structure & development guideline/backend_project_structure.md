@@ -54,6 +54,7 @@ backend/
 │   │   │   │   ├── RoleController.php
 │   │   │   │   ├── ExpenseCategoryController.php
 │   │   │   │   ├── ExpenseController.php
+│   │   │   │   ├── ReportController.php
 │   │   │   │   ├── SalaryPaymentController.php
 │   │   │   │   ├── SettingController.php
 │   │   │   │   ├── StaffController.php
@@ -345,6 +346,18 @@ backend/
 - **Permissions**: `view_expense_category`, `create_expense_category`, `edit_expense_category`, `delete_expense_category`, `view_expense`, `create_expense`, `edit_expense`, `delete_expense`
 - **Status**: ✅ Fully implemented
 
+### 14. **Reports Module**
+- **Location**: `app/Http/Controllers/API/ReportController.php`
+- **Routes**: `/api/reports/*`
+- **Permissions**: `sales_report:read`, `expense_report:read`, `gst_report:read`, `customer_pending_report:read`, `customer_ledger_report:read`, `staff_salary_report:read`, `business_dashboard:read`
+- **Status**: 🟡 Partially implemented
+  - ✅ Sales Report
+  - ✅ Expense Report
+  - ⏳ Customer Pending Report
+  - ⏳ GST Summary Report
+  - ⏳ Staff & Salary Report
+  - ⏳ Business Dashboard Report
+
 ---
 
 ## 📋 Development Guidelines
@@ -507,4 +520,4 @@ use App\Http\Controllers\Concerns\PaginatesResults;
 ---
 
 **Last Updated**: January 2025  
-**Version**: 1.7.0
+**Version**: 1.8.0

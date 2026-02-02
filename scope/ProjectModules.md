@@ -34,7 +34,7 @@ This document tracks all modules and their implementation status in the Hotel Ma
 | Payment Management | ✅ | ✅ | ✅ | ✅ Complete |
 | Dashboard | ⏳ | ⏳ | ⏳ | ⏳ Pending |
 | Expense Management | ✅ | ✅ | ✅ | ✅ Complete |
-| Reports | ⏳ | ⏳ | ⏳ | ⏳ Pending |
+| Reports | 🟡 | 🟡 | ✅ | 🟡 Partially Complete |
 
 ---
 
@@ -233,15 +233,26 @@ This document tracks all modules and their implementation status in the Hotel Ma
   - ✅ Single-page UI with category management modal
 
 ### 20. **Reports Module**
-- **Status**: ⏳ Pending
+- **Status**: 🟡 Partially Complete
 - **Report Types**:
-  - ⏳ Sales Report (Daily, Monthly, Yearly)
-  - ⏳ Expense Report (Daily, Monthly, Yearly)
-  - ⏳ GST Summary Report
+  - ✅ Sales Report - **COMPLETED**
+    - ✅ Backend API endpoint
+    - ✅ Frontend component with filters
+    - ✅ Summary cards (Total Bills, Paid Bills, Pending Bills, Total Sales, Subtotal, Discount, CGST, SGST, Service Tax)
+    - ✅ Data table with sorting
+    - ⏳ PDF Export API
+    - ⏳ CSV Export API
+  - ✅ Expense Report - **COMPLETED**
+    - ✅ Backend API endpoint
+    - ✅ Frontend component with filters
+    - ✅ Summary cards (Total Expenses, This Month, Today, Average Daily Expense)
+    - ✅ Data table with sorting
+    - ⏳ PDF Export API
+    - ⏳ CSV Export API
   - ⏳ Customer Pending (Udhar) Report
-  - ⏳ Customer Ledger Report
+  - ⏳ GST Summary Report
   - ⏳ Staff & Salary Report
-  - ⏳ Business Financial Dashboard
+  - ⏳ Restaurant Business Dashboard Report
 
 ---
 
@@ -262,7 +273,8 @@ This document tracks all modules and their implementation status in the Hotel Ma
 ## 📊 Implementation Progress
 
 **Completed**: 17/19 modules (89%)  
-**Pending**: 2/19 modules (11%)
+**Partially Complete**: 1/19 modules (5%)  
+**Pending**: 1/19 modules (5%)
 
 ### Completed Modules
 - Authentication, User Management, Role & Permission, Branch Management
@@ -273,9 +285,11 @@ This document tracks all modules and their implementation status in the Hotel Ma
 - POS Panel, Bills Management, Payment Management
 - Expense Management
 
+### Partially Complete Modules
+- Reports (Sales Report ✅, Expense Report ✅, 4 reports pending)
+
 ### Pending Modules
 - Dashboard
-- Reports
 
 ---
 
