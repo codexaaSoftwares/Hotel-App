@@ -64,6 +64,26 @@ class ReportService {
     }
   }
 
+  /**
+   * Get Customer Pending (Udhar) Report
+   * @param {Object} params - Report parameters
+   * @param {string} params.start_date - Optional start date (YYYY-MM-DD)
+   * @param {string} params.end_date - Optional end date (YYYY-MM-DD)
+   * @param {number} params.customer_id - Optional customer ID filter
+   * @param {string} params.status - Status filter (all, active, inactive)
+   */
+  async getCustomerPendingReport(params = {}) {
+    try {
+      const response = await apiClient.get('/reports/customer-pending', { params })
+      return {
+        success: true,
+        data: response.data?.data || response.data,
+      }
+    } catch (error) {
+      return handleApiError(error)
+    }
+  }
+
   async getLedgerReport(params = {}) {
     // Redirect to company health report
     return this.getCompanyHealthReport(params)

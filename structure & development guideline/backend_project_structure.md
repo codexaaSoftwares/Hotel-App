@@ -353,7 +353,7 @@ backend/
 - **Status**: 🟡 Partially implemented
   - ✅ Sales Report
   - ✅ Expense Report
-  - ⏳ Customer Pending Report
+  - ✅ Customer Pending Report
   - ⏳ GST Summary Report
   - ⏳ Staff & Salary Report
   - ⏳ Business Dashboard Report
@@ -520,4 +520,4 @@ use App\Http\Controllers\Concerns\PaginatesResults;
 ---
 
 **Last Updated**: January 2025  
-**Version**: 1.8.0
+**Version**: 1.9.0

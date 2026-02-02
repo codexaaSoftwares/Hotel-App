@@ -249,7 +249,14 @@ This document tracks all modules and their implementation status in the Hotel Ma
     - ✅ Data table with sorting
     - ⏳ PDF Export API
     - ⏳ CSV Export API
-  - ⏳ Customer Pending (Udhar) Report
+  - ✅ Customer Pending (Udhar) Report - **COMPLETED**
+    - ✅ Backend API endpoint
+    - ✅ Frontend component with filters
+    - ✅ Summary cards (Total Pending Amount, Total Customers with Pending, Average Pending per Customer)
+    - ✅ Data table with sorting
+    - ✅ Date range filter (optional)
+    - ⏳ PDF Export API
+    - ⏳ CSV Export API
   - ⏳ GST Summary Report
   - ⏳ Staff & Salary Report
   - ⏳ Restaurant Business Dashboard Report
@@ -286,7 +293,7 @@ This document tracks all modules and their implementation status in the Hotel Ma
 - Expense Management
 
 ### Partially Complete Modules
-- Reports (Sales Report ✅, Expense Report ✅, 4 reports pending)
+- Reports (Sales Report ✅, Expense Report ✅, Customer Pending Report ✅, 3 reports pending)
 
 ### Pending Modules
 - Dashboard

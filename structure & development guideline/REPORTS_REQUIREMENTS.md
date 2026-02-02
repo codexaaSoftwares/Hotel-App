@@ -101,10 +101,11 @@ This document defines all reports required for the Restaurant Management System 
 
 ---
 
-### 3. **Customer Pending (Udhar) Report** ✅ (Priority: MEDIUM)
+### 3. **Customer Pending (Udhar) Report** ✅ (Priority: MEDIUM) - **COMPLETED**
 **Purpose**: Track customers with pending/credit amounts
 
 **Filters:**
+- Date Range (Start Date, End Date) - Optional
 - Customer (Optional - filter by specific customer)
 - Status (All, Active, Inactive)
 
@@ -119,13 +120,22 @@ This document defines all reports required for the Restaurant Management System 
   - Mobile Number
   - Total Credit (from wallet transactions)
   - Total Debit (from wallet transactions)
-  - Remaining Balance (Credit - Debit)
+  - Pending Amount (Debit - Credit, shown as positive)
   - Last Transaction Date
   - Customer Status
 
 **Export Options:**
-- PDF Export ✅
-- CSV Export ✅
+- PDF Export ⏳ (Button added, API pending)
+- CSV Export ⏳ (Button added, API pending)
+
+**Implementation Status:**
+- ✅ Backend API endpoint (`/api/reports/customer-pending`)
+- ✅ Frontend component (`CustomerPendingReport.jsx`)
+- ✅ Filters (Date Range, Customer, Status)
+- ✅ Summary Cards (Total Pending Amount, Total Customers with Pending, Average Pending per Customer)
+- ✅ Data Table with sorting
+- ⏳ PDF Export API
+- ⏳ CSV Export API
 
 ---
 
@@ -239,7 +249,7 @@ This document defines all reports required for the Restaurant Management System 
 ### All Reports (Complete List)
 1. ✅ **Sales Report** - Essential for revenue tracking - **COMPLETED**
 2. ✅ **Expense Report** - Essential for expense tracking - **COMPLETED**
-3. ⏳ **Customer Pending (Udhar) Report** - Important for credit management
+3. ✅ **Customer Pending (Udhar) Report** - Important for credit management - **COMPLETED**
 4. ⏳ **GST Summary Report** - Important for tax compliance
 5. ⏳ **Staff & Salary Report** - Important for payroll tracking
 6. ⏳ **Restaurant Business Dashboard Report** - Comprehensive business overview

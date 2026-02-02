@@ -156,6 +156,7 @@ admin/
 │   │   │   └── POSPanel.jsx
 │   │   ├── 📁 reports/
 │   │   │   ├── BranchReport.jsx
+│   │   │   ├── CustomerPendingReport.jsx
 │   │   │   ├── ExpenseReport.jsx
 │   │   │   ├── LedgerReport.jsx
 │   │   │   ├── SalesReport.jsx
@@ -327,13 +328,13 @@ admin/
 - **Status**: 🟡 Partially implemented
   - ✅ Sales Report (`SalesReport.jsx`)
   - ✅ Expense Report (`ExpenseReport.jsx`)
-  - ⏳ Customer Pending Report
+  - ✅ Customer Pending Report (`CustomerPendingReport.jsx`)
   - ⏳ GST Summary Report
   - ⏳ Staff & Salary Report
   - ⏳ Business Dashboard Report
 - **Features**:
   - ✅ Date range filtering
-  - ✅ Multiple filter options (payment status, payment method, table, customer, category)
+  - ✅ Multiple filter options (payment status, payment method, table, customer, category, status)
   - ✅ Summary cards with key metrics
   - ✅ Detailed data tables with sorting
   - ✅ Export buttons (PDF/CSV - API implementation pending)
@@ -706,4 +707,4 @@ const userService = {
 ---
 
 **Last Updated**: January 2025  
-**Version**: 2.8.0
+**Version**: 2.9.0

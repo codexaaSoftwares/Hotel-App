@@ -183,6 +183,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Reports
     Route::get('/reports/sales', [ReportController::class, 'salesReport'])->middleware('permission:sales_report:read');
     Route::get('/reports/expenses', [ReportController::class, 'expenseReport'])->middleware('permission:expense_report:read');
+    Route::get('/reports/customer-pending', [ReportController::class, 'customerPendingReport'])->middleware('permission:customer_pending_report:read');
 
     // Settings
     Route::get('/settings', [SettingController::class, 'index'])->middleware('permission:view_setting');
