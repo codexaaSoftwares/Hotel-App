@@ -123,13 +123,6 @@ const _nav = [
       },
       {
         component: CNavItem,
-        name: 'GST Summary',
-        to: '/reports/gst',
-        icon: <CIcon icon={cilGraph} customClassName="nav-icon" />,
-        permission: PERMISSIONS.GST_REPORT_READ,
-      },
-      {
-        component: CNavItem,
         name: 'Customer Pending Report',
         to: '/reports/customer-pending',
         icon: <CIcon icon={cilGraph} customClassName="nav-icon" />,
@@ -137,10 +130,10 @@ const _nav = [
       },
       {
         component: CNavItem,
-        name: 'Customer Ledger Report',
-        to: '/reports/customer-ledger',
+        name: 'GST Summary',
+        to: '/reports/gst',
         icon: <CIcon icon={cilGraph} customClassName="nav-icon" />,
-        permission: PERMISSIONS.CUSTOMER_LEDGER_REPORT_READ,
+        permission: PERMISSIONS.GST_REPORT_READ,
       },
       {
         component: CNavItem,
