@@ -71,6 +71,15 @@ class RolePermissionSeeder extends Seeder
             'create_wallet_transaction',
             'edit_wallet_transaction',
             'delete_wallet_transaction',
+            // Reports
+            'view_report',
+            'sales_report:read',
+            'expense_report:read',
+            'gst_report:read',
+            'customer_pending_report:read',
+            'customer_ledger_report:read',
+            'staff_salary_report:read',
+            'business_dashboard:read',
         ];
 
         $staffPermissionNames = [

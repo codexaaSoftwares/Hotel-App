@@ -22,10 +22,26 @@ class ReportService {
     }
   }
 
-  // Legacy methods (kept for backward compatibility)
+  /**
+   * Get Sales Report
+   * @param {Object} params - Report parameters
+   * @param {string} params.start_date - Start date (YYYY-MM-DD)
+   * @param {string} params.end_date - End date (YYYY-MM-DD)
+   * @param {string} params.payment_status - Payment status filter (all, paid, pending, partial)
+   * @param {string} params.payment_method - Payment method filter (all, cash, upi, card, wallet)
+   * @param {number} params.table_id - Optional table ID filter
+   * @param {number} params.customer_id - Optional customer ID filter
+   */
   async getSalesReport(params = {}) {
-    // Redirect to company health report
-    return this.getCompanyHealthReport(params)
+    try {
+      const response = await apiClient.get('/reports/sales', { params })
+      return {
+        success: true,
+        data: response.data?.data || response.data,
+      }
+    } catch (error) {
+      return handleApiError(error)
+    }
   }
 
   async getLedgerReport(params = {}) {

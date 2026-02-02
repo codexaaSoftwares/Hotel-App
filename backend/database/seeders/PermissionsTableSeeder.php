@@ -45,6 +45,13 @@ class PermissionsTableSeeder extends Seeder
 
             // Report Management
             ['name' => 'view_report', 'description' => 'View reports', 'module' => 'reports', 'submodule' => 'management', 'type' => 'read'],
+            ['name' => 'sales_report:read', 'description' => 'View sales report', 'module' => 'reports', 'submodule' => 'sales', 'type' => 'read'],
+            ['name' => 'expense_report:read', 'description' => 'View expense report', 'module' => 'reports', 'submodule' => 'expenses', 'type' => 'read'],
+            ['name' => 'gst_report:read', 'description' => 'View GST summary report', 'module' => 'reports', 'submodule' => 'gst', 'type' => 'read'],
+            ['name' => 'customer_pending_report:read', 'description' => 'View customer pending report', 'module' => 'reports', 'submodule' => 'customer_pending', 'type' => 'read'],
+            ['name' => 'customer_ledger_report:read', 'description' => 'View customer ledger report', 'module' => 'reports', 'submodule' => 'customer_ledger', 'type' => 'read'],
+            ['name' => 'staff_salary_report:read', 'description' => 'View staff & salary report', 'module' => 'reports', 'submodule' => 'staff_salary', 'type' => 'read'],
+            ['name' => 'business_dashboard:read', 'description' => 'View business dashboard report', 'module' => 'reports', 'submodule' => 'business_dashboard', 'type' => 'read'],
 
             // Restaurant Settings Management
             ['name' => 'view_restaurant_settings', 'description' => 'View restaurant settings', 'module' => 'restaurant', 'submodule' => 'settings', 'type' => 'read'],

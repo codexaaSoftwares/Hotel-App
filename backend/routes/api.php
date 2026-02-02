@@ -19,6 +19,7 @@ use App\Http\Controllers\API\StaffController;
 use App\Http\Controllers\API\SalaryPaymentController;
 use App\Http\Controllers\API\ExpenseCategoryController;
 use App\Http\Controllers\API\ExpenseController;
+use App\Http\Controllers\API\ReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -180,7 +181,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/dashboard/summary', [DashboardController::class, 'summary'])->middleware('permission:view_dashboard');
 
     // Reports
-    // Report routes will be added here as needed
+    Route::get('/reports/sales', [ReportController::class, 'salesReport'])->middleware('permission:sales_report:read');
 
     // Settings
     Route::get('/settings', [SettingController::class, 'index'])->middleware('permission:view_setting');
