@@ -3,7 +3,7 @@
 ## Overview
 This document defines all reports required for the Restaurant Management System (Phase 1).
 
-**Total Reports**: 4  
+**Total Reports**: 5  
 **Export Formats**: PDF + CSV (both required for all reports)
 
 ---
@@ -185,6 +185,47 @@ This document defines all reports required for the Restaurant Management System 
 
 ---
 
+### 5. **Category-wise Item Sales Report** ✅ (Priority: MEDIUM) - **COMPLETED**
+**Purpose**: Identify top-selling items by category to understand sales performance
+
+**Filters:**
+- Date Range (Start Date, End Date)
+- Category (All, or specific category)
+- Item Status (All, Active, Inactive)
+
+**Data to Display:**
+- Summary Cards:
+  - Total Items Sold
+  - Total Revenue
+  - Total Bills Count
+  - Average Items per Bill
+  - Top Category (Category with highest revenue)
+  - Top Item (Item with highest revenue)
+- Detailed Table:
+  - Category (with color-coded badges)
+  - Item Name
+  - Price
+  - Quantity Sold
+  - Revenue
+  - Bills Count
+  - Avg Price
+- Sorting: By Quantity Sold (descending) by default
+
+**Export Options:**
+- PDF Export ⏳ (Button added, API pending)
+- CSV Export ⏳ (Button added, API pending)
+
+**Implementation Status:**
+- ✅ Backend API endpoint (`/api/reports/category-wise-items`)
+- ✅ Frontend component (`CategoryWiseItemReport.jsx`)
+- ✅ Filters (Date Range, Category, Item Status)
+- ✅ Summary Cards (Total Items Sold, Total Revenue, Total Bills, Average Items per Bill, Top Category, Top Item)
+- ✅ Data Table with sorting (simple flat table with category badges)
+- ⏳ PDF Export API
+- ⏳ CSV Export API
+
+---
+
 ## 🎯 Implementation Priority
 
 ### All Reports (Complete List)
@@ -192,6 +233,7 @@ This document defines all reports required for the Restaurant Management System 
 2. ✅ **Expense Report** - Essential for expense tracking - **COMPLETED**
 3. ✅ **Customer Pending (Udhar) Report** - Important for credit management - **COMPLETED**
 4. ✅ **Staff & Salary Report** - Important for payroll tracking - **COMPLETED**
+5. ✅ **Category-wise Item Sales Report** - Important for sales analysis - **COMPLETED**
 
 **Note:** GST Summary information is already available in the Sales Report, so a separate GST Summary Report is not needed.
 
@@ -220,6 +262,7 @@ This document defines all reports required for the Restaurant Management System 
 - **Expense Report**: `expenses` table (with `expense_categories`)
 - **Customer Pending Report**: `customers` + `wallet_transactions` tables
 - **Staff & Salary Report**: `staff` + `salary_payments` tables
+- **Category-wise Item Sales Report**: `bill_items` + `food_items` + `food_categories` tables
 
 ---
 

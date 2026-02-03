@@ -9,8 +9,11 @@ use App\Http\Resources\CustomerResource;
 use App\Http\Resources\ExpenseResource;
 use App\Http\Resources\SalaryPaymentResource;
 use App\Models\Bill;
+use App\Models\BillItem;
 use App\Models\Customer;
 use App\Models\Expense;
+use App\Models\FoodCategory;
+use App\Models\FoodItem;
 use App\Models\SalaryPayment;
 use App\Models\Staff;
 use App\Models\WalletTransaction;
@@ -385,6 +388,209 @@ class ReportController extends Controller
             'data' => [
                 'summary' => $summary,
                 'salaryPayments' => $salaryPaymentsData,
+            ],
+        ], 200);
+    }
+
+    /**
+     * Get Category-wise Item Sales Report
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function categoryWiseItemReport(Request $request)
+    {
+        // Build query for bill items with relationships
+        $query = BillItem::with(['foodItem.foodCategory', 'bill'])
+            ->whereHas('bill', function ($q) {
+                // Only include paid bills for accurate sales data
+                $q->where('payment_status', 'paid');
+            });
+
+        // Date range filter (required for reports)
+        if ($startDate = $request->input('start_date')) {
+            $query->whereHas('bill', function ($q) use ($startDate) {
+                $q->whereDate('bill_date', '>=', $startDate);
+            });
+        } else {
+            // Default to current month if no date provided
+            $query->whereHas('bill', function ($q) {
+                $q->whereMonth('bill_date', now()->month)
+                  ->whereYear('bill_date', now()->year);
+            });
+        }
+
+        if ($endDate = $request->input('end_date')) {
+            $query->whereHas('bill', function ($q) use ($endDate) {
+                $q->whereDate('bill_date', '<=', $endDate);
+            });
+        }
+
+        // Category filter
+        if ($categoryId = $request->input('category_id')) {
+            if ($categoryId !== 'all' && $categoryId !== '') {
+                $query->whereHas('foodItem', function ($q) use ($categoryId) {
+                    $q->where('food_category_id', $categoryId);
+                });
+            }
+        }
+
+        // Item status filter
+        if ($itemStatus = $request->input('item_status')) {
+            if ($itemStatus !== 'all' && $itemStatus !== '') {
+                $query->whereHas('foodItem', function ($q) use ($itemStatus) {
+                    $q->where('status', $itemStatus);
+                });
+            }
+        }
+
+        // Get all bill items
+        $billItems = $query->get();
+
+        // Group by category and item, then aggregate
+        $categoryData = [];
+        $totalItemsSold = 0;
+        $totalRevenue = 0;
+        $allBillIds = [];
+        $topCategory = null;
+        $topItem = null;
+        $maxCategoryRevenue = 0;
+        $maxItemRevenue = 0;
+
+        foreach ($billItems as $billItem) {
+            if (!$billItem->foodItem || !$billItem->foodItem->foodCategory) {
+                continue; // Skip if food item or category is missing
+            }
+
+            $category = $billItem->foodItem->foodCategory;
+            $item = $billItem->foodItem;
+            $categoryId = $category->id;
+            $itemId = $item->id;
+            $billId = $billItem->bill_id;
+
+            // Track all bill IDs
+            $allBillIds[] = $billId;
+
+            // Initialize category if not exists
+            if (!isset($categoryData[$categoryId])) {
+                $categoryData[$categoryId] = [
+                    'categoryId' => $category->id,
+                    'categoryName' => $category->name,
+                    'totalItemsSold' => 0,
+                    'totalRevenue' => 0,
+                    'billIds' => [],
+                    'items' => [],
+                ];
+            }
+
+            // Track unique bills per category
+            if (!in_array($billId, $categoryData[$categoryId]['billIds'])) {
+                $categoryData[$categoryId]['billIds'][] = $billId;
+            }
+
+            // Initialize item if not exists
+            if (!isset($categoryData[$categoryId]['items'][$itemId])) {
+                $categoryData[$categoryId]['items'][$itemId] = [
+                    'itemId' => $item->id,
+                    'itemName' => $item->name,
+                    'itemPrice' => (float) $item->price,
+                    'quantitySold' => 0,
+                    'revenue' => 0,
+                    'billIds' => [],
+                ];
+            }
+
+            // Track unique bills per item
+            if (!in_array($billId, $categoryData[$categoryId]['items'][$itemId]['billIds'])) {
+                $categoryData[$categoryId]['items'][$itemId]['billIds'][] = $billId;
+            }
+
+            // Aggregate data
+            $quantity = (int) $billItem->quantity;
+            $revenue = (float) $billItem->total_price;
+
+            $categoryData[$categoryId]['items'][$itemId]['quantitySold'] += $quantity;
+            $categoryData[$categoryId]['items'][$itemId]['revenue'] += $revenue;
+
+            $categoryData[$categoryId]['totalItemsSold'] += $quantity;
+            $categoryData[$categoryId]['totalRevenue'] += $revenue;
+
+            $totalItemsSold += $quantity;
+            $totalRevenue += $revenue;
+
+            // Track top item
+            if ($categoryData[$categoryId]['items'][$itemId]['revenue'] > $maxItemRevenue) {
+                $maxItemRevenue = $categoryData[$categoryId]['items'][$itemId]['revenue'];
+                $topItem = [
+                    'itemName' => $item->name,
+                    'categoryName' => $category->name,
+                    'revenue' => $categoryData[$categoryId]['items'][$itemId]['revenue'],
+                    'quantitySold' => $categoryData[$categoryId]['items'][$itemId]['quantitySold'],
+                ];
+            }
+        }
+
+        // Get unique bills count
+        $uniqueBills = array_unique($allBillIds);
+        $totalBillsCount = count($uniqueBills);
+
+        // Find top category
+        foreach ($categoryData as $cat) {
+            if ($cat['totalRevenue'] > $maxCategoryRevenue) {
+                $maxCategoryRevenue = $cat['totalRevenue'];
+                $topCategory = [
+                    'categoryName' => $cat['categoryName'],
+                    'revenue' => $cat['totalRevenue'],
+                    'itemsSold' => $cat['totalItemsSold'],
+                ];
+            }
+        }
+
+        // Flatten the data into a simple list of items with category info
+        $itemsList = [];
+        foreach ($categoryData as $category) {
+            $categoryName = $category['categoryName'];
+            $categoryId = $category['categoryId'];
+            
+            foreach ($category['items'] as $item) {
+                $itemsList[] = [
+                    'categoryId' => $categoryId,
+                    'categoryName' => $categoryName,
+                    'itemId' => $item['itemId'],
+                    'itemName' => $item['itemName'],
+                    'itemPrice' => $item['itemPrice'],
+                    'quantitySold' => $item['quantitySold'],
+                    'revenue' => $item['revenue'],
+                    'billsCount' => count($item['billIds']),
+                    'avgPrice' => $item['quantitySold'] > 0 
+                        ? $item['revenue'] / $item['quantitySold'] 
+                        : 0,
+                ];
+            }
+        }
+
+        // Sort by quantity sold (descending)
+        usort($itemsList, function ($a, $b) {
+            return $b['quantitySold'] <=> $a['quantitySold'];
+        });
+
+        // Calculate average items per bill
+        $averageItemsPerBill = $totalBillsCount > 0 ? $totalItemsSold / $totalBillsCount : 0;
+
+        $summary = [
+            'totalItemsSold' => $totalItemsSold,
+            'totalRevenue' => (float) $totalRevenue,
+            'totalBillsCount' => $totalBillsCount,
+            'averageItemsPerBill' => (float) $averageItemsPerBill,
+            'topCategory' => $topCategory,
+            'topItem' => $topItem,
+        ];
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'summary' => $summary,
+                'items' => $itemsList,
             ],
         ], 200);
     }

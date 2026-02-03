@@ -330,9 +330,10 @@ admin/
   - ✅ Expense Report (`ExpenseReport.jsx`)
   - ✅ Customer Pending Report (`CustomerPendingReport.jsx`)
   - ✅ Staff & Salary Report (`StaffSalaryReport.jsx`)
+  - ✅ Category-wise Item Sales Report (`CategoryWiseItemReport.jsx`)
 - **Features**:
   - ✅ Date range filtering
-  - ✅ Multiple filter options (payment status, payment method, table, customer, category, status)
+  - ✅ Multiple filter options (payment status, payment method, table, customer, category, status, month, year, staff, department)
   - ✅ Summary cards with key metrics
   - ✅ Detailed data tables with sorting
   - ✅ Export buttons (PDF/CSV - API implementation pending)

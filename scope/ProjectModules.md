@@ -265,6 +265,14 @@ This document tracks all modules and their implementation status in the Hotel Ma
     - ✅ Filters (Month, Year, Staff, Department)
     - ⏳ PDF Export API
     - ⏳ CSV Export API
+  - ✅ Category-wise Item Sales Report - **COMPLETED**
+    - ✅ Backend API endpoint
+    - ✅ Frontend component with filters
+    - ✅ Summary cards (Total Items Sold, Total Revenue, Total Bills, Average Items per Bill, Top Category, Top Item)
+    - ✅ Data table with sorting (Category, Item Name, Price, Quantity Sold, Revenue, Bills Count, Avg Price)
+    - ✅ Filters (Date Range, Category, Item Status)
+    - ⏳ PDF Export API
+    - ⏳ CSV Export API
 
 ---
 
@@ -297,7 +305,7 @@ This document tracks all modules and their implementation status in the Hotel Ma
 - Expense Management
 
 ### Partially Complete Modules
-- Reports (Sales Report ✅, Expense Report ✅, Customer Pending Report ✅, Staff & Salary Report ✅, PDF/CSV Export APIs pending)
+- Reports (Sales Report ✅, Expense Report ✅, Customer Pending Report ✅, Staff & Salary Report ✅, Category-wise Item Sales Report ✅, PDF/CSV Export APIs pending)
 
 ### Pending Modules
 - Dashboard

@@ -135,6 +135,13 @@ const _nav = [
         icon: <CIcon icon={cilGraph} customClassName="nav-icon" />,
         permission: PERMISSIONS.STAFF_SALARY_REPORT_READ,
       },
+      {
+        component: CNavItem,
+        name: 'Category-wise Items',
+        to: '/reports/category-wise-items',
+        icon: <CIcon icon={cilGraph} customClassName="nav-icon" />,
+        permission: PERMISSIONS.SALES_REPORT_READ,
+      },
     ],
   },
   {
