@@ -135,13 +135,6 @@ const _nav = [
         icon: <CIcon icon={cilGraph} customClassName="nav-icon" />,
         permission: PERMISSIONS.STAFF_SALARY_REPORT_READ,
       },
-      {
-        component: CNavItem,
-        name: 'Business Dashboard',
-        to: '/reports/business-dashboard',
-        icon: <CIcon icon={cilGraph} customClassName="nav-icon" />,
-        permission: PERMISSIONS.BUSINESS_DASHBOARD_READ,
-      },
     ],
   },
   {

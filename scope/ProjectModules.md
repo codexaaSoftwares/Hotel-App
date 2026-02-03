@@ -265,7 +265,6 @@ This document tracks all modules and their implementation status in the Hotel Ma
     - ✅ Filters (Month, Year, Staff, Department)
     - ⏳ PDF Export API
     - ⏳ CSV Export API
-  - ⏳ Restaurant Business Dashboard Report
 
 ---
 
@@ -285,9 +284,8 @@ This document tracks all modules and their implementation status in the Hotel Ma
 
 ## 📊 Implementation Progress
 
-**Completed**: 17/19 modules (89%)  
-**Partially Complete**: 1/19 modules (5%)  
-**Pending**: 1/19 modules (5%)
+**Completed**: 17/18 modules (94%)  
+**Partially Complete**: 1/18 modules (6%)
 
 ### Completed Modules
 - Authentication, User Management, Role & Permission, Branch Management
@@ -299,7 +297,7 @@ This document tracks all modules and their implementation status in the Hotel Ma
 - Expense Management
 
 ### Partially Complete Modules
-- Reports (Sales Report ✅, Expense Report ✅, Customer Pending Report ✅, 3 reports pending)
+- Reports (Sales Report ✅, Expense Report ✅, Customer Pending Report ✅, Staff & Salary Report ✅, PDF/CSV Export APIs pending)
 
 ### Pending Modules
 - Dashboard

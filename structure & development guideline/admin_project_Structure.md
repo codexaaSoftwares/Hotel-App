@@ -330,7 +330,6 @@ admin/
   - ✅ Expense Report (`ExpenseReport.jsx`)
   - ✅ Customer Pending Report (`CustomerPendingReport.jsx`)
   - ✅ Staff & Salary Report (`StaffSalaryReport.jsx`)
-  - ⏳ Business Dashboard Report
 - **Features**:
   - ✅ Date range filtering
   - ✅ Multiple filter options (payment status, payment method, table, customer, category, status)

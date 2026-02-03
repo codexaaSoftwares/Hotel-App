@@ -3,7 +3,7 @@
 ## Overview
 This document defines all reports required for the Restaurant Management System (Phase 1).
 
-**Total Reports**: 5  
+**Total Reports**: 4  
 **Export Formats**: PDF + CSV (both required for all reports)
 
 ---
@@ -185,41 +185,6 @@ This document defines all reports required for the Restaurant Management System 
 
 ---
 
-### 5. **Restaurant Business Dashboard Report** ✅ (Priority: MEDIUM)
-**Purpose**: Comprehensive business financial overview
-
-**Filters:**
-- Date Range (Start Date, End Date)
-
-**Data to Display:**
-- Summary Cards:
-  - Total Revenue (from bills)
-  - Total Expenses
-  - Net Profit (Revenue - Expenses)
-  - Profit Margin (%)
-  - Total Bills Count
-  - Total Expenses Count
-  - Average Daily Revenue
-  - Average Daily Expense
-- Financial Breakdown:
-  - Revenue by Payment Method (Cash, UPI, Card, Wallet)
-  - Expense by Category (Top categories)
-  - Daily Revenue vs Expense Chart (Line chart)
-  - Monthly Summary Table
-- Key Metrics:
-  - Total CGST Collected
-  - Total SGST Collected
-  - Total Service Tax Collected
-  - Total GST Amount
-  - Total Pending Bills Amount
-  - Total Pending Customers Count
-
-**Export Options:**
-- PDF Export ✅
-- CSV Export ✅
-
----
-
 ## 🎯 Implementation Priority
 
 ### All Reports (Complete List)
@@ -227,7 +192,6 @@ This document defines all reports required for the Restaurant Management System 
 2. ✅ **Expense Report** - Essential for expense tracking - **COMPLETED**
 3. ✅ **Customer Pending (Udhar) Report** - Important for credit management - **COMPLETED**
 4. ✅ **Staff & Salary Report** - Important for payroll tracking - **COMPLETED**
-5. ⏳ **Restaurant Business Dashboard Report** - Comprehensive business overview
 
 **Note:** GST Summary information is already available in the Sales Report, so a separate GST Summary Report is not needed.
 
@@ -256,7 +220,6 @@ This document defines all reports required for the Restaurant Management System 
 - **Expense Report**: `expenses` table (with `expense_categories`)
 - **Customer Pending Report**: `customers` + `wallet_transactions` tables
 - **Staff & Salary Report**: `staff` + `salary_payments` tables
-- **Restaurant Business Dashboard**: `bills` + `expenses` + `customers` + `wallet_transactions` tables
 
 ---
 
