@@ -39,7 +39,7 @@ class BillStoreRequest extends FormRequest
             'total_amount' => ['required', 'numeric', 'min:0'],
             'paid_amount' => ['nullable', 'numeric', 'min:0'],
             'remaining_amount' => ['nullable', 'numeric', 'min:0'],
-            'payment_method' => ['nullable', 'in:cash,upi,card,split'],
+            'payment_method' => ['nullable', 'in:cash,upi,card,split,wallet'],
             'gst_calculation_method' => ['nullable', 'in:item_wise,bill_wise'],
             'notes' => ['nullable', 'string'],
             'items' => ['required', 'array', 'min:1'],

@@ -58,11 +58,7 @@ class ReportController extends Controller
         if ($request->has('payment_method')) {
             $paymentMethod = $request->input('payment_method');
             if ($paymentMethod && $paymentMethod !== 'all') {
-                if ($paymentMethod === 'null') {
-                    $query->whereNull('payment_method');
-                } else {
-                    $query->where('payment_method', $paymentMethod);
-                }
+                $query->where('payment_method', $paymentMethod);
             }
         }
 

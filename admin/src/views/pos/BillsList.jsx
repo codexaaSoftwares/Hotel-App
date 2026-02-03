@@ -429,11 +429,10 @@ const BillsList = () => {
         const paymentStatus = bill.paymentStatus || bill.payment_status
         const paymentMethod = bill.paymentMethod || bill.payment_method
         
-        // If payment method is null, it might be a wallet transaction
-        // Show "Wallet" for null payment_method when status is paid or partial
+        // Display payment method (capitalize first letter)
         const displayMethod = paymentMethod 
           ? paymentMethod.charAt(0).toUpperCase() + paymentMethod.slice(1)
-          : (paymentStatus === 'paid' || paymentStatus === 'partial') ? 'Wallet' : null
+          : null
         
         return (
           <div>
@@ -625,7 +624,6 @@ const BillsList = () => {
                       { value: 'card', label: 'Card' },
                       { value: 'split', label: 'Split' },
                       { value: 'wallet', label: 'Wallet' },
-                      { value: 'null', label: 'Wallet (Null)' },
                     ]}
                     col={12}
                     showLabel={false}

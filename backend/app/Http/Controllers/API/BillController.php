@@ -96,14 +96,9 @@ class BillController extends Controller
         }
 
         // Payment method filter
-        if ($request->has('payment_method')) {
+        if ($request->has('payment_method') && $request->input('payment_method')) {
             $paymentMethod = $request->input('payment_method');
-            if ($paymentMethod === null || $paymentMethod === 'null') {
-                // Filter for null payment_method (wallet transactions)
-                $query->whereNull('payment_method');
-            } else {
-                $query->where('payment_method', $paymentMethod);
-            }
+            $query->where('payment_method', $paymentMethod);
         }
 
         // Table filter
@@ -491,13 +486,12 @@ class BillController extends Controller
                 }
 
                 // Create wallet transaction (debit)
-                // Note: payment_method is NULL for wallet transactions as 'wallet' is not a payment method
                 $walletTransaction = WalletTransaction::create([
                     'customer_id' => $bill->customer_id,
                     'bill_id' => $bill->id,
                     'transaction_type' => 'debit',
                     'amount' => $bill->total_amount,
-                    'payment_method' => null, // Wallet is not a payment method, it's a deferral mechanism
+                    'payment_method' => null, // Wallet transactions don't have payment_method
                     'transaction_date' => now(),
                     'description' => $validated['payment_notes'] ?? "Bill sent to wallet - {$bill->bill_number}",
                     'reference_number' => $validated['reference_number'] ?? null,
@@ -510,7 +504,7 @@ class BillController extends Controller
                     'payment_status' => 'paid',
                     'paid_amount' => $bill->total_amount,
                     'remaining_amount' => 0,
-                    'payment_method' => null, // Wallet payments don't have payment_method on bill
+                    'payment_method' => 'wallet', // Save 'wallet' as payment_method
                     'notes' => $validated['payment_notes'] ?? $bill->notes,
                 ]);
             } else {

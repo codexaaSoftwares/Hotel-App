@@ -194,12 +194,6 @@ class RestaurantSettingsService {
           ? String(gstData.round_number_enabled) 
           : 'false'
       }
-      // Legacy support: If old default_gst_percentage exists, split it into CGST and SGST
-      if (gstData.hasOwnProperty('default_gst_percentage') && !gstData.hasOwnProperty('cgst_percentage')) {
-        const oldGst = parseFloat(gstData.default_gst_percentage) || 5
-        formData.gstSettings.cgst_percentage = String(oldGst / 2)
-        formData.gstSettings.sgst_percentage = String(oldGst / 2)
-      }
     }
 
     // Invoice Settings

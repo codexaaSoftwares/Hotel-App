@@ -65,12 +65,7 @@ class BillService {
     if (params.status) query.status = params.status
     if (params.payment_status) query.payment_status = params.payment_status
     if (params.payment_method) {
-      // Handle null payment method (wallet transactions)
-      if (params.payment_method === 'null') {
-        query.payment_method = null
-      } else {
-        query.payment_method = params.payment_method
-      }
+      query.payment_method = params.payment_method
     }
     if (params.table_id) query.table_id = params.table_id
     if (params.customer_id) query.customer_id = params.customer_id
