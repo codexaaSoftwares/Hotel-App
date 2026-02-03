@@ -3,7 +3,7 @@
 ## Overview
 This document defines all reports required for the Restaurant Management System (Phase 1).
 
-**Total Reports**: 6  
+**Total Reports**: 5  
 **Export Formats**: PDF + CSV (both required for all reports)
 
 ---
@@ -139,45 +139,14 @@ This document defines all reports required for the Restaurant Management System 
 
 ---
 
-### 4. **GST Summary Report** ✅ (Priority: MEDIUM)
-**Purpose**: Tax compliance and GST summary
-
-**Filters:**
-- Date Range (Start Date, End Date)
-
-**Data to Display:**
-- Summary Cards:
-  - Total CGST Collected
-  - Total SGST Collected
-  - Total Service Tax Collected
-  - Total GST Amount (CGST + SGST + Service Tax)
-  - Total Taxable Amount (Subtotal - Discount)
-  - Total Bills Count
-- Detailed Table:
-  - Bill Number
-  - Bill Date
-  - Taxable Amount (Subtotal - Discount)
-  - CGST Amount
-  - SGST Amount
-  - Service Tax Amount
-  - Total Amount (including tax)
-- Grouping Options:
-  - By Date (Daily breakdown)
-
-**Export Options:**
-- PDF Export ✅
-- CSV Export ✅
-
----
-
-### 5. **Staff & Salary Report** ✅ (Priority: MEDIUM)
+### 4. **Staff & Salary Report** ✅ (Priority: MEDIUM) - **COMPLETED**
 **Purpose**: Track staff salary payments and payroll
 
 **Filters:**
-- Date Range (Start Date, End Date) - Based on payment_date
+- Month (All, or specific month)
+- Year (All, or specific year)
 - Staff (Optional - filter by specific staff)
 - Department (Optional - filter by department)
-- Month & Year (Optional - filter by specific month/year)
 
 **Data to Display:**
 - Summary Cards:
@@ -185,7 +154,6 @@ This document defines all reports required for the Restaurant Management System 
   - Total Staff Count
   - Total Payments Count
   - Average Salary per Staff
-  - This Month Salary Total
 - Detailed Table:
   - Payment Date
   - Staff Code (STF{ID})
@@ -194,7 +162,6 @@ This document defines all reports required for the Restaurant Management System 
   - Month & Year
   - Paid Amount
   - Payment Method
-  - Reference Number
   - Notes
   - Created By (User name)
 - Grouping Options:
@@ -204,12 +171,21 @@ This document defines all reports required for the Restaurant Management System 
   - By Month/Year
 
 **Export Options:**
-- PDF Export ✅
-- CSV Export ✅
+- PDF Export ⏳ (Button added, API pending)
+- CSV Export ⏳ (Button added, API pending)
+
+**Implementation Status:**
+- ✅ Backend API endpoint (`/api/reports/staff-salary`)
+- ✅ Frontend component (`StaffSalaryReport.jsx`)
+- ✅ Filters (Month, Year, Staff, Department)
+- ✅ Summary Cards (Total Salary Paid, Total Staff Count, Total Payments Count, Average Salary per Staff)
+- ✅ Data Table with sorting
+- ⏳ PDF Export API
+- ⏳ CSV Export API
 
 ---
 
-### 6. **Restaurant Business Dashboard Report** ✅ (Priority: MEDIUM)
+### 5. **Restaurant Business Dashboard Report** ✅ (Priority: MEDIUM)
 **Purpose**: Comprehensive business financial overview
 
 **Filters:**
@@ -250,9 +226,10 @@ This document defines all reports required for the Restaurant Management System 
 1. ✅ **Sales Report** - Essential for revenue tracking - **COMPLETED**
 2. ✅ **Expense Report** - Essential for expense tracking - **COMPLETED**
 3. ✅ **Customer Pending (Udhar) Report** - Important for credit management - **COMPLETED**
-4. ⏳ **GST Summary Report** - Important for tax compliance
-5. ⏳ **Staff & Salary Report** - Important for payroll tracking
-6. ⏳ **Restaurant Business Dashboard Report** - Comprehensive business overview
+4. ✅ **Staff & Salary Report** - Important for payroll tracking - **COMPLETED**
+5. ⏳ **Restaurant Business Dashboard Report** - Comprehensive business overview
+
+**Note:** GST Summary information is already available in the Sales Report, so a separate GST Summary Report is not needed.
 
 ---
 
@@ -278,7 +255,6 @@ This document defines all reports required for the Restaurant Management System 
 - **Sales Report**: `bills` table (with `bill_items` for details)
 - **Expense Report**: `expenses` table (with `expense_categories`)
 - **Customer Pending Report**: `customers` + `wallet_transactions` tables
-- **GST Summary Report**: `bills` table (CGST, SGST, Service Tax fields)
 - **Staff & Salary Report**: `staff` + `salary_payments` tables
 - **Restaurant Business Dashboard**: `bills` + `expenses` + `customers` + `wallet_transactions` tables
 

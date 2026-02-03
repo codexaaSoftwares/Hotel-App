@@ -246,17 +246,19 @@ This document maps frontend modules to their corresponding backend API endpoints
 
 ### Frontend Integration
 - **Service**: `src/services/reportService.js`
-- **Views**: `src/views/reports/SalesReport.jsx`, `src/views/reports/ExpenseReport.jsx`, `src/views/reports/CustomerPendingReport.jsx`
+- **Views**: `src/views/reports/SalesReport.jsx`, `src/views/reports/ExpenseReport.jsx`, `src/views/reports/CustomerPendingReport.jsx`, `src/views/reports/StaffSalaryReport.jsx`
 
 ### Report Endpoints
 - `GET /api/reports/sales` - Sales Report (with filters: date range, payment status, payment method, table, customer)
 - `GET /api/reports/expenses` - Expense Report (with filters: date range, category, payment method)
 - `GET /api/reports/customer-pending` - Customer Pending (Udhar) Report (with filters: date range, customer, status)
+- `GET /api/reports/staff-salary` - Staff & Salary Report (with filters: month, year, staff, department)
 
 **Permissions:**
 - `sales_report:read` - Access to Sales Report
 - `expense_report:read` - Access to Expense Report
 - `customer_pending_report:read` - Access to Customer Pending Report
+- `staff_salary_report:read` - Access to Staff & Salary Report
 
 **Response Format:**
 ```json

@@ -354,8 +354,7 @@ backend/
   - ✅ Sales Report
   - ✅ Expense Report
   - ✅ Customer Pending Report
-  - ⏳ GST Summary Report
-  - ⏳ Staff & Salary Report
+  - ✅ Staff & Salary Report
   - ⏳ Business Dashboard Report
 
 ---

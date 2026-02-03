@@ -84,6 +84,28 @@ class ReportService {
     }
   }
 
+  /**
+   * Get Staff & Salary Report
+   * @param {Object} params - Report parameters
+   * @param {string} params.start_date - Start date (YYYY-MM-DD)
+   * @param {string} params.end_date - End date (YYYY-MM-DD)
+   * @param {number} params.staff_id - Optional staff ID filter
+   * @param {string} params.department - Optional department filter
+   * @param {number} params.month - Optional month filter (1-12)
+   * @param {number} params.year - Optional year filter
+   */
+  async getStaffSalaryReport(params = {}) {
+    try {
+      const response = await apiClient.get('/reports/staff-salary', { params })
+      return {
+        success: true,
+        data: response.data?.data || response.data,
+      }
+    } catch (error) {
+      return handleApiError(error)
+    }
+  }
+
   async getLedgerReport(params = {}) {
     // Redirect to company health report
     return this.getCompanyHealthReport(params)
@@ -95,11 +117,8 @@ class ReportService {
   }
 
   async getStaffReport(params = {}) {
-    // Not implemented yet
-    return {
-      success: false,
-      message: 'Staff report not implemented',
-    }
+    // Redirect to staff salary report
+    return this.getStaffSalaryReport(params)
   }
 
   // Export report

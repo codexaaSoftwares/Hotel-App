@@ -329,8 +329,7 @@ admin/
   - ✅ Sales Report (`SalesReport.jsx`)
   - ✅ Expense Report (`ExpenseReport.jsx`)
   - ✅ Customer Pending Report (`CustomerPendingReport.jsx`)
-  - ⏳ GST Summary Report
-  - ⏳ Staff & Salary Report
+  - ✅ Staff & Salary Report (`StaffSalaryReport.jsx`)
   - ⏳ Business Dashboard Report
 - **Features**:
   - ✅ Date range filtering

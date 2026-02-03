@@ -130,13 +130,6 @@ const _nav = [
       },
       {
         component: CNavItem,
-        name: 'GST Summary',
-        to: '/reports/gst',
-        icon: <CIcon icon={cilGraph} customClassName="nav-icon" />,
-        permission: PERMISSIONS.GST_REPORT_READ,
-      },
-      {
-        component: CNavItem,
         name: 'Staff & Salary Report',
         to: '/reports/staff-salary',
         icon: <CIcon icon={cilGraph} customClassName="nav-icon" />,

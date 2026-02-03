@@ -257,8 +257,14 @@ This document tracks all modules and their implementation status in the Hotel Ma
     - ✅ Date range filter (optional)
     - ⏳ PDF Export API
     - ⏳ CSV Export API
-  - ⏳ GST Summary Report
-  - ⏳ Staff & Salary Report
+  - ✅ Staff & Salary Report - **COMPLETED**
+    - ✅ Backend API endpoint
+    - ✅ Frontend component with filters
+    - ✅ Summary cards (Total Salary Paid, Total Staff Count, Total Payments Count, Average Salary per Staff)
+    - ✅ Data table with sorting
+    - ✅ Filters (Month, Year, Staff, Department)
+    - ⏳ PDF Export API
+    - ⏳ CSV Export API
   - ⏳ Restaurant Business Dashboard Report
 
 ---

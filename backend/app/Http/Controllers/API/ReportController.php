@@ -7,9 +7,12 @@ use App\Http\Controllers\Concerns\PaginatesResults;
 use App\Http\Resources\BillResource;
 use App\Http\Resources\CustomerResource;
 use App\Http\Resources\ExpenseResource;
+use App\Http\Resources\SalaryPaymentResource;
 use App\Models\Bill;
 use App\Models\Customer;
 use App\Models\Expense;
+use App\Models\SalaryPayment;
+use App\Models\Staff;
 use App\Models\WalletTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -305,6 +308,83 @@ class ReportController extends Controller
             'data' => [
                 'summary' => $summary,
                 'customers' => $customersWithBalance->values()->all(),
+            ],
+        ], 200);
+    }
+
+    /**
+     * Get Staff & Salary Report
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function staffSalaryReport(Request $request)
+    {
+        $query = SalaryPayment::with(['staff', 'creator']);
+
+        // Staff filter
+        if ($staffId = $request->input('staff_id')) {
+            if ($staffId !== 'all' && $staffId !== '') {
+                $query->where('staff_id', $staffId);
+            }
+        }
+
+        // Department filter (through staff relationship)
+        if ($department = $request->input('department')) {
+            if ($department !== 'all' && $department !== '') {
+                $query->whereHas('staff', function ($q) use ($department) {
+                    $q->where('department', $department);
+                });
+            }
+        }
+
+        // Month filter
+        if ($month = $request->input('month')) {
+            if ($month !== 'all' && $month !== '') {
+                $query->where('month', $month);
+            }
+        }
+
+        // Year filter
+        if ($year = $request->input('year')) {
+            if ($year !== 'all' && $year !== '') {
+                $query->where('year', $year);
+            }
+        }
+
+        // Get all salary payments (no pagination for reports)
+        $salaryPayments = $query->orderBy('payment_date', 'desc')
+                              ->orderBy('created_at', 'desc')
+                              ->get();
+
+        // Calculate summary statistics
+        $totalSalaryPaid = (float) $salaryPayments->sum('paid_amount');
+        $totalPaymentsCount = $salaryPayments->count();
+        
+        // Get unique staff count
+        $uniqueStaffIds = $salaryPayments->pluck('staff_id')->unique();
+        $totalStaffCount = $uniqueStaffIds->count();
+        
+        // Calculate average salary per staff
+        $averageSalaryPerStaff = $totalStaffCount > 0 
+            ? $totalSalaryPaid / $totalStaffCount 
+            : 0;
+
+        $summary = [
+            'totalSalaryPaid' => $totalSalaryPaid,
+            'totalStaffCount' => $totalStaffCount,
+            'totalPaymentsCount' => $totalPaymentsCount,
+            'averageSalaryPerStaff' => (float) $averageSalaryPerStaff,
+        ];
+
+        // Transform salary payments to resource
+        $salaryPaymentsData = SalaryPaymentResource::collection($salaryPayments)->toArray($request);
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'summary' => $summary,
+                'salaryPayments' => $salaryPaymentsData,
             ],
         ], 200);
     }

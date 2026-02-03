@@ -27,14 +27,7 @@ class SalaryPaymentResource extends JsonResource
             'paymentMethod' => $this->payment_method,
             'referenceNumber' => $this->reference_number,
             'notes' => $this->notes,
-            'createdBy' => $this->created_by,
-            'creator' => $this->whenLoaded('creator', function () {
-                return [
-                    'id' => $this->creator->id,
-                    'name' => $this->creator->name,
-                    'email' => $this->creator->email,
-                ];
-            }),
+            'createdBy' => $this->creator ? trim(($this->creator->first_name ?? '') . ' ' . ($this->creator->last_name ?? '')) : null,
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
         ];
