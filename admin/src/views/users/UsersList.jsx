@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { Container, Row, Col, Button, Form, FormControl, InputGroup, Badge } from 'react-bootstrap'
+import { useNavigate } from 'react-router-dom'
 import { SelectField } from '../../components/common/FormFields'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus, faPencil, faTrash, faInfo, faMagnifyingGlass, faUsers } from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faPencil, faTrash, faInfo, faMagnifyingGlass, faUsers, faLock, faRefresh } from '@fortawesome/free-solid-svg-icons'
 import { useToast } from '../../components'
 import { useUserManagement, usePermissions, useRoleManagement, useDebounce } from '../../hooks'
 import { capitalize } from '../../utils'
@@ -42,6 +43,7 @@ const UsersList = () => {
   const editUserFormRef = useRef()
 
   const { success, error, warning } = useToast()
+  const navigate = useNavigate()
   const { users, meta, loading, fetchUsers, createUser, updateUser, deleteUser } = useUserManagement()
   const { roles, fetchRoles, loading: rolesLoading } = useRoleManagement()
   const { hasPermission, user: currentUser } = usePermissions()
@@ -74,6 +76,7 @@ const UsersList = () => {
   const canUpdateUser = hasPermission('edit_user')
   const canDeleteUser = hasPermission('delete_user')
   const canViewUser = hasPermission('view_user') || hasPermission(PERMISSIONS.USER_READ)
+  const canViewRoles = hasPermission('view_role') || hasPermission(PERMISSIONS.ROLE_READ)
 
   useEffect(() => {
     if (!canViewUser) {
@@ -399,7 +402,7 @@ const UsersList = () => {
         <div className="d-flex gap-2">
           {canViewUser && (
             <Button
-              variant="info"
+              variant="outline-info"
               size="sm"
               onClick={(e) => {
                 e.stopPropagation()
@@ -412,7 +415,7 @@ const UsersList = () => {
           )}
           {canUpdateUser && (
             <Button
-              variant="warning"
+              variant="outline-primary"
               size="sm"
               onClick={(e) => {
                 e.stopPropagation()
@@ -425,7 +428,7 @@ const UsersList = () => {
           )}
           {canDeleteUser && (
             <Button
-              variant="danger"
+              variant="outline-danger"
               size="sm"
               onClick={(e) => {
                 e.stopPropagation()
@@ -452,8 +455,18 @@ const UsersList = () => {
                 Monitor team members, manage access levels, and keep account details up to date.
               </p>
             </div>
-            {canCreateUser && (
-              <div className="ms-auto">
+            <div className="ms-auto d-flex gap-2">
+              {canViewRoles && (
+                <Button
+                  variant="outline-primary"
+                  className="shadow-sm"
+                  onClick={() => navigate('/roles')}
+                >
+                  <FontAwesomeIcon icon={faLock} className="me-2" />
+                  Manage Role & Permission
+                </Button>
+              )}
+              {canCreateUser && (
                 <Button
                   variant="primary"
                   className="shadow-sm text-white"
@@ -462,8 +475,8 @@ const UsersList = () => {
                   <FontAwesomeIcon icon={faPlus} className="me-2" />
                   Add User
                 </Button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
           <div className="bg-white rounded-3 shadow-sm p-4">
@@ -557,8 +570,16 @@ const UsersList = () => {
                   />
                 </Col>
                 <Col md={2} sm={12}>
-                  {selectedUsers.length > 0 && canDeleteUser && (
-                    <div className="d-grid">
+                  <div className="d-flex gap-2">
+                    <Button
+                      variant="outline-secondary"
+                      className="flex-grow-1"
+                      onClick={() => fetchUsersWithParams()}
+                      title="Refresh"
+                    >
+                      <FontAwesomeIcon icon={faRefresh} />
+                    </Button>
+                    {selectedUsers.length > 0 && canDeleteUser && (
                       <Button
                         variant="danger"
                         className="text-white fw-semibold"
@@ -566,8 +587,8 @@ const UsersList = () => {
                       >
                         Delete ({selectedUsers.length})
                       </Button>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </Col>
               </Row>
             </Form>

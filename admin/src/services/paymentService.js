@@ -12,7 +12,6 @@ class PaymentService {
       if (params.limit) queryParams.append('limit', params.limit)
       if (params.order_id || params.orderId) queryParams.append('order_id', params.order_id || params.orderId)
       if (params.customer_id || params.customerId) queryParams.append('customer_id', params.customer_id || params.customerId)
-      if (params.branch_id) queryParams.append('branch_id', params.branch_id)
       if (params.payment_type || params.paymentType) queryParams.append('payment_type', params.payment_type || params.paymentType)
       if (params.payment_method || params.paymentMethod) queryParams.append('payment_method', params.payment_method || params.paymentMethod)
       if (params.search) queryParams.append('search', params.search)

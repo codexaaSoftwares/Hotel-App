@@ -42,12 +42,6 @@ const PERMISSION_ALIAS_MAP = {
   edit_table: ['table:write'],
   delete_table: ['table:delete'],
   
-  // Branch Management
-  view_branch: ['branch:read'],
-  create_branch: ['branch:write'],
-  edit_branch: ['branch:write'],
-  delete_branch: ['branch:delete'],
-  
   // Customer Management
   view_customer: ['customer:read'],
   create_customer: ['customer:write'],
@@ -95,7 +89,6 @@ const PERMISSION_ALIAS_MAP = {
   special_view_audit_logs: ['special_view_audit_logs'],
   special_manage_backups: ['special_manage_backups'],
   special_system_maintenance: ['special_system_maintenance'],
-  special_view_all_branches: ['special_view_all_branches'],
   special_override_restrictions: ['special_override_restrictions'],
 }
 

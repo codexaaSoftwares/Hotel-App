@@ -15,10 +15,6 @@ const routesConfig = [
   { path: '/roles/edit/:id', name: 'Edit Role' },
   { path: '/roles/:id', name: 'Role Details' },
   
-  // Branch Management Routes
-  { path: '/branches', name: 'Branches' },
-  { path: '/branches/:id', name: 'Branch Details' },
-  
   // Customer Management Routes
   { path: '/customers', name: 'Customers' },
   { path: '/customers/create', name: 'Create Customer' },

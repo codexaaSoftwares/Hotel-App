@@ -108,16 +108,6 @@ export const API_ENDPOINTS = {
     PREFERENCES: '/notifications/preferences',
   },
 
-  // Branch Management
-  BRANCHES: {
-    BASE: '/branches',
-    LIST: '/branches',
-    CREATE: '/branches',
-    GET_BY_ID: (id) => `/branches/${id}`,
-    UPDATE: (id) => `/branches/${id}`,
-    DELETE: (id) => `/branches/${id}`,
-  },
-
   // Customer Management
   CUSTOMERS: {
     BASE: '/customers',
@@ -157,7 +147,6 @@ export const API_ENDPOINTS = {
     BASE: '/reports',
     SALES: '/reports/sales',
     LEDGER: '/reports/ledger',
-    BRANCH: '/reports/branch',
     STAFF: '/reports/staff',
     EXPORT: (type) => `/reports/${type}/export`,
   },

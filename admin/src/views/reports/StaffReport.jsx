@@ -7,7 +7,6 @@ import reportService from '../../services/reportService'
 
 const StaffReport = () => {
   const [userId, setUserId] = useState('')
-  const [branchId, setBranchId] = useState('')
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [loading, setLoading] = useState(false)
@@ -17,7 +16,6 @@ const StaffReport = () => {
       setLoading(true)
       const response = await reportService.getStaffReport({
         user_id: userId,
-        branch_id: branchId,
         startDate,
         endDate
       })
@@ -51,19 +49,6 @@ const StaffReport = () => {
                     onChange={(e) => setUserId(e.target.value)}
                     options={[
                       { value: '', label: 'All Staff' },
-                    ]}
-                    col={12}
-                    showLabel={true}
-                  />
-                </Col>
-                <Col md={3}>
-                  <SelectField
-                    id="branchId"
-                    label="Branch"
-                    value={branchId}
-                    onChange={(e) => setBranchId(e.target.value)}
-                    options={[
-                      { value: '', label: 'All Branches' },
                     ]}
                     col={12}
                     showLabel={true}

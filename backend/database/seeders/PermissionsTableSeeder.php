@@ -34,12 +34,6 @@ class PermissionsTableSeeder extends Seeder
             ['name' => 'view_setting', 'description' => 'View settings', 'module' => 'settings', 'submodule' => 'management', 'type' => 'read'],
             ['name' => 'edit_setting', 'description' => 'Edit settings', 'module' => 'settings', 'submodule' => 'management', 'type' => 'write'],
 
-            // Branch Management
-            ['name' => 'view_branch', 'description' => 'View branches', 'module' => 'branches', 'submodule' => 'management', 'type' => 'read'],
-            ['name' => 'create_branch', 'description' => 'Create branches', 'module' => 'branches', 'submodule' => 'management', 'type' => 'write'],
-            ['name' => 'edit_branch', 'description' => 'Edit branches', 'module' => 'branches', 'submodule' => 'management', 'type' => 'write'],
-            ['name' => 'delete_branch', 'description' => 'Delete branches', 'module' => 'branches', 'submodule' => 'management', 'type' => 'delete'],
-
             // Dashboard
             ['name' => 'view_dashboard', 'description' => 'View dashboard analytics', 'module' => 'dashboard', 'submodule' => 'overview', 'type' => 'read'],
 
@@ -131,7 +125,6 @@ class PermissionsTableSeeder extends Seeder
             ['name' => 'special_view_audit_logs', 'description' => 'View audit logs and activity history', 'module' => 'special', 'submodule' => 'special', 'type' => 'special'],
             ['name' => 'special_manage_backups', 'description' => 'Manage database backups', 'module' => 'special', 'submodule' => 'special', 'type' => 'special'],
             ['name' => 'special_system_maintenance', 'description' => 'Access system maintenance mode', 'module' => 'special', 'submodule' => 'special', 'type' => 'special'],
-            ['name' => 'special_view_all_branches', 'description' => 'View all branches regardless of assignment', 'module' => 'special', 'submodule' => 'special', 'type' => 'special'],
             ['name' => 'special_override_restrictions', 'description' => 'Override business rules and restrictions', 'module' => 'special', 'submodule' => 'special', 'type' => 'special'],
         ];
 

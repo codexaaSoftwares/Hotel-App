@@ -8,7 +8,6 @@ class ReportService {
    * @param {Object} params - Report parameters
    * @param {string} params.start_date - Start date (YYYY-MM-DD)
    * @param {string} params.end_date - End date (YYYY-MM-DD)
-   * @param {number} params.branch_id - Optional branch ID filter
    */
   async getCompanyHealthReport(params = {}) {
     try {
@@ -131,11 +130,6 @@ class ReportService {
     return this.getCompanyHealthReport(params)
   }
 
-  async getBranchReport(params = {}) {
-    // Redirect to company health report with branch filter
-    return this.getCompanyHealthReport(params)
-  }
-
   async getStaffReport(params = {}) {
     // Redirect to staff salary report
     return this.getStaffSalaryReport(params)
@@ -168,7 +162,6 @@ class ReportService {
    * @param {Object} params - Report parameters
    * @param {string} params.start_date - Start date (YYYY-MM-DD)
    * @param {string} params.end_date - End date (YYYY-MM-DD)
-   * @param {number} params.branch_id - Optional branch ID filter
    */
   async exportCompanyHealthReportPdf(params = {}) {
     try {

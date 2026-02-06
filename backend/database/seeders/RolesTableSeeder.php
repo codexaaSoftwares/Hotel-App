@@ -21,11 +21,6 @@ class RolesTableSeeder extends Seeder
                 'is_active' => true,
             ],
             [
-                'name' => 'branch-manager',
-                'description' => 'Branch Manager role',
-                'is_active' => true,
-            ],
-            [
                 'name' => 'manager',
                 'description' => 'Manager role',
                 'is_active' => true,

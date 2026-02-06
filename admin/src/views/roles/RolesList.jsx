@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { Container, Row, Col, Button, Form, FormControl, InputGroup, Badge } from 'react-bootstrap'
+import { useNavigate } from 'react-router-dom'
 import { SelectField } from '../../components/common/FormFields'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus, faPencil, faTrash, faInfo, faMagnifyingGlass, faLock } from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faPencil, faTrash, faInfo, faMagnifyingGlass, faLock, faUsers, faRefresh } from '@fortawesome/free-solid-svg-icons'
 import { useToast } from '../../components'
 import { Table, Modal, FormModal } from '../../components'
 import RoleForm from '../../components/pages/roles/RoleForm'
@@ -47,6 +48,7 @@ const RolesList = () => {
   const addRoleFormRef = useRef()
   const editRoleFormRef = useRef()
   
+  const navigate = useNavigate()
   const { hasPermission } = usePermissions()
   const { success: showSuccess, error: showError, warning: showWarning } = useToast()
   const debouncedSearch = useDebounce(searchTerm, 400)
@@ -56,6 +58,7 @@ const RolesList = () => {
   const canUpdateRole = hasPermission('edit_role')
   const canDeleteRole = hasPermission('delete_role')
   const canViewRole = hasPermission('view_role') || hasPermission(PERMISSIONS.ROLE_READ)
+  const canViewUser = hasPermission('view_user') || hasPermission(PERMISSIONS.USER_READ)
 
   const fetchRolesWithParams = useCallback(async () => {
     const searchValue = (debouncedSearch || '').trim()
@@ -305,7 +308,7 @@ const RolesList = () => {
         <div className="d-flex gap-2">
           {canViewRole && (
             <Button
-              variant="info"
+              variant="outline-info"
               size="sm"
               onClick={(e) => {
                 e.stopPropagation()
@@ -318,7 +321,7 @@ const RolesList = () => {
           )}
           {canUpdateRole && (
             <Button
-              variant="warning"
+              variant="outline-primary"
               size="sm"
               onClick={(e) => {
                 e.stopPropagation()
@@ -331,7 +334,7 @@ const RolesList = () => {
           )}
           {canDeleteRole && (
             <Button
-              variant="danger"
+              variant="outline-danger"
               size="sm"
               onClick={(e) => {
                 e.stopPropagation()
@@ -358,8 +361,18 @@ const RolesList = () => {
                 Configure access policies, assign capabilities, and maintain a secure workspace.
               </p>
             </div>
-            {canCreateRole && (
-              <div className="ms-auto">
+            <div className="ms-auto d-flex gap-2">
+              {canViewUser && (
+                <Button
+                  variant="outline-primary"
+                  className="shadow-sm"
+                  onClick={() => navigate('/users')}
+                >
+                  <FontAwesomeIcon icon={faUsers} className="me-2" />
+                  Manage User
+                </Button>
+              )}
+              {canCreateRole && (
                 <Button
                   variant="primary"
                   className="shadow-sm text-white"
@@ -368,8 +381,8 @@ const RolesList = () => {
                   <FontAwesomeIcon icon={faPlus} className="me-2" />
                   Create Role
                 </Button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
           <div className="bg-white rounded-3 shadow-sm p-4">
@@ -416,7 +429,7 @@ const RolesList = () => {
 
             <Form className="mb-4">
               <Row className="g-3 align-items-end">
-                <Col md={6} sm={12}>
+                <Col md={4} sm={12}>
                   <Form.Label className="fw-semibold text-muted">Search</Form.Label>
                   <InputGroup>
                     <InputGroup.Text className="bg-white border-2 text-muted">
@@ -448,16 +461,16 @@ const RolesList = () => {
                     showLabel={false}
                   />
                 </Col>
-                <Col md={3} sm={6}>
-                  <Form.Label className="fw-semibold text-muted">Quick Insights</Form.Label>
-                  <div className="d-flex gap-2">
-                    <Badge bg="secondary" className="bg-gradient-primary text-white">
-                      {roleStats.totalPermissions} Permissions
-                    </Badge>
-                    <Badge bg="secondary" className="bg-gradient-success text-white">
-                      {roleStats.active} Active
-                    </Badge>
-                  </div>
+                <Col md={2} sm={6}>
+                  <Button
+                    variant="outline-secondary"
+                    className="w-100"
+                    onClick={() => fetchRolesWithParams()}
+                    title="Refresh"
+                  >
+                    <FontAwesomeIcon icon={faRefresh} className="me-2" />
+                    Refresh
+                  </Button>
                 </Col>
               </Row>
             </Form>
