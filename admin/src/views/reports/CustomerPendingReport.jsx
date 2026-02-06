@@ -102,9 +102,39 @@ const CustomerPendingReport = () => {
     }
   }
 
-  const handleExportPDF = () => {
-    // TODO: Implement PDF export API
-    error('PDF export will be implemented soon')
+  const handleExportPDF = async () => {
+    setLoading(true)
+    try {
+      const params = {}
+
+      if (startDate) {
+        params.start_date = startDate
+      }
+
+      if (endDate) {
+        params.end_date = endDate
+      }
+
+      if (customerId && customerId !== 'all') {
+        params.customer_id = customerId
+      }
+
+      if (status && status !== 'all') {
+        params.status = status
+      }
+
+      const response = await reportService.exportCustomerPendingReportPdf(params)
+      if (response.success) {
+        success('PDF exported successfully')
+      } else {
+        error(response.message || 'Failed to export PDF')
+      }
+    } catch (err) {
+      console.error('Error exporting PDF:', err)
+      error('Failed to export PDF')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleExportCSV = () => {

@@ -204,6 +204,226 @@ class ReportService {
       return handleApiError(error)
     }
   }
+
+  /**
+   * Export Sales Report as PDF
+   * @param {Object} params - Report parameters
+   */
+  async exportSalesReportPdf(params = {}) {
+    try {
+      const queryParams = new URLSearchParams()
+      Object.keys(params).forEach(key => {
+        if (params[key]) queryParams.append(key, params[key])
+      })
+      
+      const url = `/reports/sales/export-pdf${queryParams.toString() ? '?' + queryParams.toString() : ''}`
+      const response = await apiClient.get(url, { responseType: 'blob' })
+      
+      let filename = `sales_report_${params.start_date || 'all'}_${params.end_date || 'all'}.pdf`
+      const contentDisposition = response.headers['content-disposition'] || response.headers['Content-Disposition']
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1].replace(/['"]/g, '').trim()
+          try {
+            filename = decodeURIComponent(filename)
+          } catch (e) {
+            // If decoding fails, use as-is
+          }
+        }
+      }
+      
+      const blob = new Blob([response.data], { type: 'application/pdf' })
+      const url_blob = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url_blob
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url_blob)
+      
+      return { success: true, message: 'PDF exported successfully' }
+    } catch (error) {
+      return handleApiError(error)
+    }
+  }
+
+  /**
+   * Export Expense Report as PDF
+   * @param {Object} params - Report parameters
+   */
+  async exportExpenseReportPdf(params = {}) {
+    try {
+      const queryParams = new URLSearchParams()
+      Object.keys(params).forEach(key => {
+        if (params[key]) queryParams.append(key, params[key])
+      })
+      
+      const url = `/reports/expenses/export-pdf${queryParams.toString() ? '?' + queryParams.toString() : ''}`
+      const response = await apiClient.get(url, { responseType: 'blob' })
+      
+      let filename = `expense_report_${params.start_date || 'all'}_${params.end_date || 'all'}.pdf`
+      const contentDisposition = response.headers['content-disposition'] || response.headers['Content-Disposition']
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1].replace(/['"]/g, '').trim()
+          try {
+            filename = decodeURIComponent(filename)
+          } catch (e) {
+            // If decoding fails, use as-is
+          }
+        }
+      }
+      
+      const blob = new Blob([response.data], { type: 'application/pdf' })
+      const url_blob = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url_blob
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url_blob)
+      
+      return { success: true, message: 'PDF exported successfully' }
+    } catch (error) {
+      return handleApiError(error)
+    }
+  }
+
+  /**
+   * Export Customer Pending Report as PDF
+   * @param {Object} params - Report parameters
+   */
+  async exportCustomerPendingReportPdf(params = {}) {
+    try {
+      const queryParams = new URLSearchParams()
+      Object.keys(params).forEach(key => {
+        if (params[key]) queryParams.append(key, params[key])
+      })
+      
+      const url = `/reports/customer-pending/export-pdf${queryParams.toString() ? '?' + queryParams.toString() : ''}`
+      const response = await apiClient.get(url, { responseType: 'blob' })
+      
+      let filename = `customer_pending_report_${params.start_date || 'all'}_${params.end_date || 'all'}.pdf`
+      const contentDisposition = response.headers['content-disposition'] || response.headers['Content-Disposition']
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1].replace(/['"]/g, '').trim()
+          try {
+            filename = decodeURIComponent(filename)
+          } catch (e) {
+            // If decoding fails, use as-is
+          }
+        }
+      }
+      
+      const blob = new Blob([response.data], { type: 'application/pdf' })
+      const url_blob = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url_blob
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url_blob)
+      
+      return { success: true, message: 'PDF exported successfully' }
+    } catch (error) {
+      return handleApiError(error)
+    }
+  }
+
+  /**
+   * Export Staff & Salary Report as PDF
+   * @param {Object} params - Report parameters
+   */
+  async exportStaffSalaryReportPdf(params = {}) {
+    try {
+      const queryParams = new URLSearchParams()
+      Object.keys(params).forEach(key => {
+        if (params[key]) queryParams.append(key, params[key])
+      })
+      
+      const url = `/reports/staff-salary/export-pdf${queryParams.toString() ? '?' + queryParams.toString() : ''}`
+      const response = await apiClient.get(url, { responseType: 'blob' })
+      
+      let filename = `staff_salary_report_${params.month || 'all'}_${params.year || 'all'}.pdf`
+      const contentDisposition = response.headers['content-disposition'] || response.headers['Content-Disposition']
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1].replace(/['"]/g, '').trim()
+          try {
+            filename = decodeURIComponent(filename)
+          } catch (e) {
+            // If decoding fails, use as-is
+          }
+        }
+      }
+      
+      const blob = new Blob([response.data], { type: 'application/pdf' })
+      const url_blob = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url_blob
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url_blob)
+      
+      return { success: true, message: 'PDF exported successfully' }
+    } catch (error) {
+      return handleApiError(error)
+    }
+  }
+
+  /**
+   * Export Category-wise Item Sales Report as PDF
+   * @param {Object} params - Report parameters
+   */
+  async exportCategoryWiseItemReportPdf(params = {}) {
+    try {
+      const queryParams = new URLSearchParams()
+      Object.keys(params).forEach(key => {
+        if (params[key]) queryParams.append(key, params[key])
+      })
+      
+      const url = `/reports/category-wise-items/export-pdf${queryParams.toString() ? '?' + queryParams.toString() : ''}`
+      const response = await apiClient.get(url, { responseType: 'blob' })
+      
+      let filename = `category_wise_item_report_${params.start_date || 'all'}_${params.end_date || 'all'}.pdf`
+      const contentDisposition = response.headers['content-disposition'] || response.headers['Content-Disposition']
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1].replace(/['"]/g, '').trim()
+          try {
+            filename = decodeURIComponent(filename)
+          } catch (e) {
+            // If decoding fails, use as-is
+          }
+        }
+      }
+      
+      const blob = new Blob([response.data], { type: 'application/pdf' })
+      const url_blob = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url_blob
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url_blob)
+      
+      return { success: true, message: 'PDF exported successfully' }
+    } catch (error) {
+      return handleApiError(error)
+    }
+  }
 }
 
 // Create and export singleton instance

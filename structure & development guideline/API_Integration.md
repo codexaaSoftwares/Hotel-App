@@ -255,6 +255,21 @@ This document maps frontend modules to their corresponding backend API endpoints
 - `GET /api/reports/staff-salary` - Staff & Salary Report (with filters: month, year, staff, department)
 - `GET /api/reports/category-wise-items` - Category-wise Item Sales Report (with filters: date range, category, item status)
 
+### Report PDF Export Endpoints
+- `GET /api/reports/sales/export-pdf` - Export Sales Report as PDF (with same filters as report endpoint)
+- `GET /api/reports/expenses/export-pdf` - Export Expense Report as PDF (with same filters as report endpoint)
+- `GET /api/reports/customer-pending/export-pdf` - Export Customer Pending Report as PDF (with same filters as report endpoint)
+- `GET /api/reports/staff-salary/export-pdf` - Export Staff & Salary Report as PDF (with same filters as report endpoint)
+- `GET /api/reports/category-wise-items/export-pdf` - Export Category-wise Item Sales Report as PDF (with same filters as report endpoint)
+
+**PDF Export Features:**
+- Compact format with narrow spacing (7px table font, 3px cell padding)
+- Business information header (Company Name, Address, Phone, Email, GST Number)
+- "(Restaurant)" subtitle for Sales, Category-wise Item Sales, and Customer Pending reports
+- Summary section with table-based layout
+- Right-aligned amount columns
+- Truncated long text for better fit
+
 **Permissions:**
 - `sales_report:read` - Access to Sales Report and Category-wise Item Sales Report
 - `expense_report:read` - Access to Expense Report

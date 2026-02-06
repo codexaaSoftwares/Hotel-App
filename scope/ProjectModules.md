@@ -240,14 +240,14 @@ This document tracks all modules and their implementation status in the Hotel Ma
     - ✅ Frontend component with filters
     - ✅ Summary cards (Total Bills, Paid Bills, Pending Bills, Total Sales, Subtotal, Discount, CGST, SGST, Service Tax)
     - ✅ Data table with sorting
-    - ⏳ PDF Export API
+    - ✅ PDF Export API (compact format with business information and "(Restaurant)" subtitle)
     - ⏳ CSV Export API
   - ✅ Expense Report - **COMPLETED**
     - ✅ Backend API endpoint
     - ✅ Frontend component with filters
     - ✅ Summary cards (Total Expenses, This Month, Today, Average Daily Expense)
     - ✅ Data table with sorting
-    - ⏳ PDF Export API
+    - ✅ PDF Export API (compact format with business information)
     - ⏳ CSV Export API
   - ✅ Customer Pending (Udhar) Report - **COMPLETED**
     - ✅ Backend API endpoint
@@ -255,7 +255,7 @@ This document tracks all modules and their implementation status in the Hotel Ma
     - ✅ Summary cards (Total Pending Amount, Total Customers with Pending, Average Pending per Customer)
     - ✅ Data table with sorting
     - ✅ Date range filter (optional)
-    - ⏳ PDF Export API
+    - ✅ PDF Export API (compact format with business information and "(Restaurant)" subtitle)
     - ⏳ CSV Export API
   - ✅ Staff & Salary Report - **COMPLETED**
     - ✅ Backend API endpoint
@@ -263,7 +263,7 @@ This document tracks all modules and their implementation status in the Hotel Ma
     - ✅ Summary cards (Total Salary Paid, Total Staff Count, Total Payments Count, Average Salary per Staff)
     - ✅ Data table with sorting
     - ✅ Filters (Month, Year, Staff, Department)
-    - ⏳ PDF Export API
+    - ✅ PDF Export API (compact format with business information)
     - ⏳ CSV Export API
   - ✅ Category-wise Item Sales Report - **COMPLETED**
     - ✅ Backend API endpoint
@@ -271,7 +271,7 @@ This document tracks all modules and their implementation status in the Hotel Ma
     - ✅ Summary cards (Total Items Sold, Total Revenue, Total Bills, Average Items per Bill, Top Category, Top Item)
     - ✅ Data table with sorting (Category, Item Name, Price, Quantity Sold, Revenue, Bills Count, Avg Price)
     - ✅ Filters (Date Range, Category, Item Status)
-    - ⏳ PDF Export API
+    - ✅ PDF Export API (compact format with business information and "(Restaurant)" subtitle)
     - ⏳ CSV Export API
 
 ---
@@ -305,7 +305,7 @@ This document tracks all modules and their implementation status in the Hotel Ma
 - Expense Management
 
 ### Partially Complete Modules
-- Reports (Sales Report ✅, Expense Report ✅, Customer Pending Report ✅, Staff & Salary Report ✅, Category-wise Item Sales Report ✅, PDF/CSV Export APIs pending)
+- Reports (Sales Report ✅, Expense Report ✅, Customer Pending Report ✅, Staff & Salary Report ✅, Category-wise Item Sales Report ✅, PDF Export APIs ✅, CSV Export APIs pending)
 
 ### Pending Modules
 - Dashboard

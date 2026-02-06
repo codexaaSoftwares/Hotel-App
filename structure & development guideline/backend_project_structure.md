@@ -356,6 +356,8 @@ backend/
   - ✅ Customer Pending Report
   - ✅ Staff & Salary Report
   - ✅ Category-wise Item Sales Report
+  - ✅ PDF Export for all reports (compact format with business information)
+  - ⏳ CSV Export (pending)
 
 ---
 

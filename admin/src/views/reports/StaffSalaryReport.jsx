@@ -138,9 +138,39 @@ const StaffSalaryReport = () => {
     }
   }
 
-  const handleExportPDF = () => {
-    // TODO: Implement PDF export API
-    error('PDF export will be implemented soon')
+  const handleExportPDF = async () => {
+    setLoading(true)
+    try {
+      const params = {}
+
+      if (staffId && staffId !== 'all' && staffId !== '') {
+        params.staff_id = staffId
+      }
+
+      if (department && department !== 'all' && department !== '') {
+        params.department = department
+      }
+
+      if (month && month !== 'all' && month !== '') {
+        params.month = month
+      }
+
+      if (year && year !== 'all' && year !== '') {
+        params.year = year
+      }
+
+      const response = await reportService.exportStaffSalaryReportPdf(params)
+      if (response.success) {
+        success('PDF exported successfully')
+      } else {
+        error(response.message || 'Failed to export PDF')
+      }
+    } catch (err) {
+      console.error('Error exporting PDF:', err)
+      error('Failed to export PDF')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleExportCSV = () => {

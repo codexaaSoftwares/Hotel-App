@@ -336,7 +336,8 @@ admin/
   - ✅ Multiple filter options (payment status, payment method, table, customer, category, status, month, year, staff, department)
   - ✅ Summary cards with key metrics
   - ✅ Detailed data tables with sorting
-  - ✅ Export buttons (PDF/CSV - API implementation pending)
+  - ✅ PDF Export (all reports - compact format with business information)
+  - ⏳ CSV Export (API implementation pending)
 
 ---
 

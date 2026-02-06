@@ -111,9 +111,39 @@ const CategoryWiseItemReport = () => {
     }
   }
 
-  const handleExportPDF = () => {
-    // TODO: Implement PDF export API
-    error('PDF export will be implemented soon')
+  const handleExportPDF = async () => {
+    if (!startDate || !endDate) {
+      error('Please select both start and end dates')
+      return
+    }
+
+    setLoading(true)
+    try {
+      const params = {
+        start_date: startDate,
+        end_date: endDate,
+      }
+
+      if (categoryId && categoryId !== 'all' && categoryId !== '') {
+        params.category_id = categoryId
+      }
+
+      if (itemStatus && itemStatus !== 'all' && itemStatus !== '') {
+        params.item_status = itemStatus
+      }
+
+      const response = await reportService.exportCategoryWiseItemReportPdf(params)
+      if (response.success) {
+        success('PDF exported successfully')
+      } else {
+        error(response.message || 'Failed to export PDF')
+      }
+    } catch (err) {
+      console.error('Error exporting PDF:', err)
+      error('Failed to export PDF')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleExportCSV = () => {

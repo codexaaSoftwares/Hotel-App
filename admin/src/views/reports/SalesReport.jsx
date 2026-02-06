@@ -140,9 +140,47 @@ const SalesReport = () => {
     }
   }
 
-  const handleExportPDF = () => {
-    // TODO: Implement PDF export API
-    error('PDF export will be implemented soon')
+  const handleExportPDF = async () => {
+    if (!startDate || !endDate) {
+      error('Please select both start and end dates')
+      return
+    }
+
+    setLoading(true)
+    try {
+      const params = {
+        start_date: startDate,
+        end_date: endDate,
+      }
+
+      if (paymentStatus && paymentStatus !== 'all') {
+        params.payment_status = paymentStatus
+      }
+
+      if (paymentMethod && paymentMethod !== 'all') {
+        params.payment_method = paymentMethod
+      }
+
+      if (tableId) {
+        params.table_id = tableId
+      }
+
+      if (customerId) {
+        params.customer_id = customerId
+      }
+
+      const response = await reportService.exportSalesReportPdf(params)
+      if (response.success) {
+        success('PDF exported successfully')
+      } else {
+        error(response.message || 'Failed to export PDF')
+      }
+    } catch (err) {
+      console.error('Error exporting PDF:', err)
+      error('Failed to export PDF')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleExportCSV = () => {

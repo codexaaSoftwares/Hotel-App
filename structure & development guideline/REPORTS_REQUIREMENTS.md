@@ -46,7 +46,7 @@ This document defines all reports required for the Restaurant Management System 
   - By Table
 
 **Export Options:**
-- PDF Export ⏳ (Button added, API pending)
+- PDF Export ✅ (API implemented with compact format, business information, and "(Restaurant)" subtitle)
 - CSV Export ⏳ (Button added, API pending)
 
 **Implementation Status:**
@@ -55,7 +55,7 @@ This document defines all reports required for the Restaurant Management System 
 - ✅ Filters (Date Range, Payment Status, Payment Method, Table, Customer)
 - ✅ Summary Cards (Total Bills, Paid Bills, Pending Bills, Total Sales, Total Subtotal, Total Discount, Total CGST, Total SGST, Total Service Tax)
 - ✅ Data Table with sorting
-- ⏳ PDF Export API
+- ✅ PDF Export API (`/api/reports/sales/export-pdf`)
 - ⏳ CSV Export API
 
 ---
@@ -87,7 +87,7 @@ This document defines all reports required for the Restaurant Management System 
   - By Payment Method
 
 **Export Options:**
-- PDF Export ⏳ (Button added, API pending)
+- PDF Export ✅ (API implemented with compact format and business information)
 - CSV Export ⏳ (Button added, API pending)
 
 **Implementation Status:**
@@ -96,7 +96,7 @@ This document defines all reports required for the Restaurant Management System 
 - ✅ Filters (Date Range, Expense Category, Payment Method)
 - ✅ Summary Cards (Total Expenses, This Month, Today, Average Daily Expense)
 - ✅ Data Table with sorting
-- ⏳ PDF Export API
+- ✅ PDF Export API (`/api/reports/expenses/export-pdf`)
 - ⏳ CSV Export API
 
 ---
@@ -125,7 +125,7 @@ This document defines all reports required for the Restaurant Management System 
   - Customer Status
 
 **Export Options:**
-- PDF Export ⏳ (Button added, API pending)
+- PDF Export ✅ (API implemented with compact format, business information, and "(Restaurant)" subtitle)
 - CSV Export ⏳ (Button added, API pending)
 
 **Implementation Status:**
@@ -134,7 +134,7 @@ This document defines all reports required for the Restaurant Management System 
 - ✅ Filters (Date Range, Customer, Status)
 - ✅ Summary Cards (Total Pending Amount, Total Customers with Pending, Average Pending per Customer)
 - ✅ Data Table with sorting
-- ⏳ PDF Export API
+- ✅ PDF Export API (`/api/reports/customer-pending/export-pdf`)
 - ⏳ CSV Export API
 
 ---
@@ -171,7 +171,7 @@ This document defines all reports required for the Restaurant Management System 
   - By Month/Year
 
 **Export Options:**
-- PDF Export ⏳ (Button added, API pending)
+- PDF Export ✅ (API implemented with compact format and business information)
 - CSV Export ⏳ (Button added, API pending)
 
 **Implementation Status:**
@@ -180,7 +180,7 @@ This document defines all reports required for the Restaurant Management System 
 - ✅ Filters (Month, Year, Staff, Department)
 - ✅ Summary Cards (Total Salary Paid, Total Staff Count, Total Payments Count, Average Salary per Staff)
 - ✅ Data Table with sorting
-- ⏳ PDF Export API
+- ✅ PDF Export API (`/api/reports/staff-salary/export-pdf`)
 - ⏳ CSV Export API
 
 ---
@@ -212,7 +212,7 @@ This document defines all reports required for the Restaurant Management System 
 - Sorting: By Quantity Sold (descending) by default
 
 **Export Options:**
-- PDF Export ⏳ (Button added, API pending)
+- PDF Export ✅ (API implemented with compact format, business information, and "(Restaurant)" subtitle)
 - CSV Export ⏳ (Button added, API pending)
 
 **Implementation Status:**
@@ -221,7 +221,7 @@ This document defines all reports required for the Restaurant Management System 
 - ✅ Filters (Date Range, Category, Item Status)
 - ✅ Summary Cards (Total Items Sold, Total Revenue, Total Bills, Average Items per Bill, Top Category, Top Item)
 - ✅ Data Table with sorting (simple flat table with category badges)
-- ⏳ PDF Export API
+- ✅ PDF Export API (`/api/reports/category-wise-items/export-pdf`)
 - ⏳ CSV Export API
 
 ---

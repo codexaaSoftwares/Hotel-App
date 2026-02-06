@@ -111,9 +111,39 @@ const ExpenseReport = () => {
     }
   }
 
-  const handleExportPDF = () => {
-    // TODO: Implement PDF export API
-    error('PDF export will be implemented soon')
+  const handleExportPDF = async () => {
+    if (!startDate || !endDate) {
+      error('Please select both start and end dates')
+      return
+    }
+
+    setLoading(true)
+    try {
+      const params = {
+        start_date: startDate,
+        end_date: endDate,
+      }
+
+      if (categoryId && categoryId !== 'all') {
+        params.category_id = categoryId
+      }
+
+      if (paymentMethod && paymentMethod !== 'all') {
+        params.payment_method = paymentMethod
+      }
+
+      const response = await reportService.exportExpenseReportPdf(params)
+      if (response.success) {
+        success('PDF exported successfully')
+      } else {
+        error(response.message || 'Failed to export PDF')
+      }
+    } catch (err) {
+      console.error('Error exporting PDF:', err)
+      error('Failed to export PDF')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleExportCSV = () => {
