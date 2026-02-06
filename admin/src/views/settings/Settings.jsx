@@ -7,6 +7,7 @@ import { useToast } from '../../components'
 import { settingsService } from '../../services/settingsService'
 import { usePermissions } from '../../hooks'
 import { PERMISSIONS } from '../../constants/permissions'
+import { getImageUrl } from '../../utils/imageUtils'
 
 const Settings = () => {
   const { hasPermission } = usePermissions()
@@ -129,35 +130,13 @@ const Settings = () => {
         // Load business logo
         const logoResponse = await settingsService.getSettingByKey('business_logo', 'Business Information', true)
         if (logoResponse.success && logoResponse.data && logoResponse.data.value) {
-          const logoPath = logoResponse.data.value
-          // Convert storage path to URL
-          // For subdirectory installations like /admin/api, storage is at /admin/api/storage/
-          let logoUrl
-          if (logoPath.startsWith('http')) {
-            // Already a full URL, use it as is
-            logoUrl = logoPath
-          } else {
-            // Construct URL from API base URL
-            let baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
-            // Remove trailing slash if present
-            baseUrl = baseUrl.replace(/\/+$/, '')
-            // For subdirectory installations (/admin/api), storage is at /admin/api/storage/
-            // If baseUrl includes /admin/api, use it as is
-            if (baseUrl.includes('/admin/api')) {
-              logoUrl = `${baseUrl}/storage/${logoPath}`
-            } else if (baseUrl.includes('/admin')) {
-              // If baseUrl is /admin, add /api/storage
-              logoUrl = `${baseUrl}/api/storage/${logoPath}`
-            } else {
-              // For root installations, remove /api if present and add /storage
-              baseUrl = baseUrl.replace(/\/api\/?$/, '')
-              logoUrl = `${baseUrl}/storage/${logoPath}`
+          const logoUrl = getImageUrl(logoResponse.data.url, logoResponse.data.value)
+          if (logoUrl) {
+            if (import.meta.env.DEV) {
+              console.log('[Settings] Logo loaded:', { logoUrl, logoResponse: logoResponse.data })
             }
+            setLogoPreview(logoUrl)
           }
-          
-          // Add cache busting to prevent browser caching issues
-          const logoUrlWithCache = `${logoUrl}?t=${Date.now()}`
-          setLogoPreview(logoUrlWithCache)
         }
       } catch (err) {
         // If error occurs, use default values
@@ -352,10 +331,19 @@ const Settings = () => {
       const result = await settingsService.uploadLogo(file)
       if (result.success) {
         success('Logo uploaded successfully')
-        // Use URL from backend response, add cache busting
-        const logoUrl = result.data.url || result.data.path
-        const logoUrlWithCache = logoUrl ? `${logoUrl}?t=${Date.now()}` : null
-        setLogoPreview(logoUrlWithCache)
+        // Use URL from backend response (backend returns full URL in result.data.url)
+        const logoUrl = result.data?.url
+        if (logoUrl) {
+          // Use logo URL directly (backend handles caching via headers)
+          setLogoPreview(logoUrl)
+          
+          if (import.meta.env.DEV) {
+            console.log('[Settings] Logo uploaded:', { logoUrl, resultData: result.data })
+          }
+        } else {
+          console.error('[Settings] Logo URL not found in response:', result.data)
+          error('Logo uploaded but URL not received')
+        }
         
         // Update localStorage settings for immediate sidebar update
         try {
@@ -483,9 +471,13 @@ const Settings = () => {
                       padding: '8px',
                       backgroundColor: '#f8f9fa'
                     }}
-                    onError={() => {
-                      setLogoPreview(null)
-                      error('Failed to load logo image')
+                    onError={(e) => {
+                      console.error('[Settings] Failed to load logo image:', {
+                        src: logoPreview,
+                        error: e
+                      })
+                      // Don't clear the preview immediately - might be a temporary network issue
+                      // Just log the error for debugging
                     }}
                   />
                   {!isReadOnly && (

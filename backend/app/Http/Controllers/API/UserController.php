@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Concerns\PaginatesResults;
+use App\Http\Controllers\Concerns\GeneratesStorageUrl;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -14,7 +15,7 @@ use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
-    use PaginatesResults;
+    use PaginatesResults, GeneratesStorageUrl;
 
 
     /**
@@ -46,46 +47,6 @@ class UserController extends Controller
         return $userData;
     }
 
-    /**
-     * Generate storage URL with correct backend path.
-     * Handles subdirectory installations like /admin/api
-     *
-     * @param string $relativePath Relative path from storage/app/public (e.g., 'avatars/file.png')
-     * @return string Full URL to the storage file
-     */
-    protected function getStorageUrl(string $relativePath): string
-    {
-        $appUrl = rtrim(config('app.url'), '/');
-        
-        // Extract domain from APP_URL
-        $parsedUrl = parse_url($appUrl);
-        $domain = ($parsedUrl['scheme'] ?? 'https') . '://' . ($parsedUrl['host'] ?? 'lvclicks.in');
-        
-        // Check if APP_URL includes /api
-        if (str_contains($appUrl, '/api')) {
-            return $appUrl . '/storage/' . $relativePath;
-        }
-        
-        // If APP_URL ends with /admin, add /api before /storage
-        if (str_ends_with($appUrl, '/admin')) {
-            return $domain . '/admin/api/storage/' . $relativePath;
-        }
-        
-        // If APP_URL contains /admin but doesn't end with it, check path
-        if (str_contains($appUrl, '/admin')) {
-            // Extract path from APP_URL
-            $path = $parsedUrl['path'] ?? '';
-            // If path is /admin, add /api
-            if ($path === '/admin') {
-                return $domain . '/admin/api/storage/' . $relativePath;
-            }
-            // Otherwise use APP_URL as is
-            return $appUrl . '/storage/' . $relativePath;
-        }
-        
-        // Default: append /storage/ to APP_URL
-        return $appUrl . '/storage/' . $relativePath;
-    }
 
     /**
      * Display a listing of users.

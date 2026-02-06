@@ -1713,7 +1713,7 @@ html[data-coreui-theme="dark"] .top-header-bar {
   width: auto !important;
   max-width: 150px !important;
   object-fit: contain !important;
-  filter: brightness(0) invert(1) !important; /* Make logo white */
+  background-color: white !important;
   flex-shrink: 0 !important;
 }
 
