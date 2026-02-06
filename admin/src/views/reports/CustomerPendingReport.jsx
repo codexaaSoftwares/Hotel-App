@@ -137,9 +137,39 @@ const CustomerPendingReport = () => {
     }
   }
 
-  const handleExportCSV = () => {
-    // TODO: Implement CSV export API
-    error('CSV export will be implemented soon')
+  const handleExportCSV = async () => {
+    setLoading(true)
+    try {
+      const params = {}
+
+      if (startDate) {
+        params.start_date = startDate
+      }
+
+      if (endDate) {
+        params.end_date = endDate
+      }
+
+      if (customerId && customerId !== 'all') {
+        params.customer_id = customerId
+      }
+
+      if (status && status !== 'all') {
+        params.status = status
+      }
+
+      const response = await reportService.exportCustomerPendingReportCsv(params)
+      if (response.success) {
+        success('CSV exported successfully')
+      } else {
+        error(response.message || 'Failed to export CSV')
+      }
+    } catch (err) {
+      console.error('Error exporting CSV:', err)
+      error('Failed to export CSV')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const formatCurrency = (amount) => {

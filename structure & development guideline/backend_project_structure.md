@@ -357,7 +357,7 @@ backend/
   - ✅ Staff & Salary Report
   - ✅ Category-wise Item Sales Report
   - ✅ PDF Export for all reports (compact format with business information)
-  - ⏳ CSV Export (pending)
+  - ✅ CSV Export for all reports (UTF-8 encoding with proper formatting)
 
 ---
 

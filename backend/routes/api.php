@@ -185,6 +185,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/reports/customer-pending/export-pdf', [ReportController::class, 'exportCustomerPendingReportPdf'])->middleware('permission:customer_pending_report:read');
     Route::get('/reports/staff-salary/export-pdf', [ReportController::class, 'exportStaffSalaryReportPdf'])->middleware('permission:staff_salary_report:read');
     Route::get('/reports/category-wise-items/export-pdf', [ReportController::class, 'exportCategoryWiseItemReportPdf'])->middleware('permission:sales_report:read');
+    
+    // Report CSV Exports
+    Route::get('/reports/sales/export-csv', [ReportController::class, 'exportSalesReportCsv'])->middleware('permission:sales_report:read');
+    Route::get('/reports/expenses/export-csv', [ReportController::class, 'exportExpenseReportCsv'])->middleware('permission:expense_report:read');
+    Route::get('/reports/customer-pending/export-csv', [ReportController::class, 'exportCustomerPendingReportCsv'])->middleware('permission:customer_pending_report:read');
+    Route::get('/reports/staff-salary/export-csv', [ReportController::class, 'exportStaffSalaryReportCsv'])->middleware('permission:staff_salary_report:read');
+    Route::get('/reports/category-wise-items/export-csv', [ReportController::class, 'exportCategoryWiseItemReportCsv'])->middleware('permission:sales_report:read');
 
     // Settings
     Route::get('/settings', [SettingController::class, 'index'])->middleware('permission:view_setting');

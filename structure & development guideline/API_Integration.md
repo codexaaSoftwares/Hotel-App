@@ -270,6 +270,21 @@ This document maps frontend modules to their corresponding backend API endpoints
 - Right-aligned amount columns
 - Truncated long text for better fit
 
+### Report CSV Export Endpoints
+- `GET /api/reports/sales/export-csv` - Export Sales Report as CSV (with same filters as report endpoint)
+- `GET /api/reports/expenses/export-csv` - Export Expense Report as CSV (with same filters as report endpoint)
+- `GET /api/reports/customer-pending/export-csv` - Export Customer Pending Report as CSV (with same filters as report endpoint)
+- `GET /api/reports/staff-salary/export-csv` - Export Staff & Salary Report as CSV (with same filters as report endpoint)
+- `GET /api/reports/category-wise-items/export-csv` - Export Category-wise Item Sales Report as CSV (with same filters as report endpoint)
+
+**CSV Export Features:**
+- UTF-8 encoding with BOM for proper Excel/Google Sheets display
+- Proper CSV headers for each report
+- Formatted numbers (2 decimal places)
+- Date format: `d/m/Y`
+- All filters applied (same as PDF exports)
+- Automatic filename with date range
+
 **Permissions:**
 - `sales_report:read` - Access to Sales Report and Category-wise Item Sales Report
 - `expense_report:read` - Access to Expense Report

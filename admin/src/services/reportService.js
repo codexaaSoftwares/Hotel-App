@@ -424,6 +424,226 @@ class ReportService {
       return handleApiError(error)
     }
   }
+
+  /**
+   * Export Sales Report as CSV
+   * @param {Object} params - Report parameters
+   */
+  async exportSalesReportCsv(params = {}) {
+    try {
+      const queryParams = new URLSearchParams()
+      Object.keys(params).forEach(key => {
+        if (params[key]) queryParams.append(key, params[key])
+      })
+      
+      const url = `/reports/sales/export-csv${queryParams.toString() ? '?' + queryParams.toString() : ''}`
+      const response = await apiClient.get(url, { responseType: 'blob' })
+      
+      let filename = `sales_report_${params.start_date || 'all'}_${params.end_date || 'all'}.csv`
+      const contentDisposition = response.headers['content-disposition'] || response.headers['Content-Disposition']
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1].replace(/['"]/g, '').trim()
+          try {
+            filename = decodeURIComponent(filename)
+          } catch (e) {
+            // If decoding fails, use as-is
+          }
+        }
+      }
+      
+      const blob = new Blob([response.data], { type: 'text/csv;charset=utf-8;' })
+      const url_blob = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url_blob
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url_blob)
+      
+      return { success: true, message: 'CSV exported successfully' }
+    } catch (error) {
+      return handleApiError(error)
+    }
+  }
+
+  /**
+   * Export Expense Report as CSV
+   * @param {Object} params - Report parameters
+   */
+  async exportExpenseReportCsv(params = {}) {
+    try {
+      const queryParams = new URLSearchParams()
+      Object.keys(params).forEach(key => {
+        if (params[key]) queryParams.append(key, params[key])
+      })
+      
+      const url = `/reports/expenses/export-csv${queryParams.toString() ? '?' + queryParams.toString() : ''}`
+      const response = await apiClient.get(url, { responseType: 'blob' })
+      
+      let filename = `expense_report_${params.start_date || 'all'}_${params.end_date || 'all'}.csv`
+      const contentDisposition = response.headers['content-disposition'] || response.headers['Content-Disposition']
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1].replace(/['"]/g, '').trim()
+          try {
+            filename = decodeURIComponent(filename)
+          } catch (e) {
+            // If decoding fails, use as-is
+          }
+        }
+      }
+      
+      const blob = new Blob([response.data], { type: 'text/csv;charset=utf-8;' })
+      const url_blob = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url_blob
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url_blob)
+      
+      return { success: true, message: 'CSV exported successfully' }
+    } catch (error) {
+      return handleApiError(error)
+    }
+  }
+
+  /**
+   * Export Customer Pending Report as CSV
+   * @param {Object} params - Report parameters
+   */
+  async exportCustomerPendingReportCsv(params = {}) {
+    try {
+      const queryParams = new URLSearchParams()
+      Object.keys(params).forEach(key => {
+        if (params[key]) queryParams.append(key, params[key])
+      })
+      
+      const url = `/reports/customer-pending/export-csv${queryParams.toString() ? '?' + queryParams.toString() : ''}`
+      const response = await apiClient.get(url, { responseType: 'blob' })
+      
+      let filename = `customer_pending_report_${params.start_date || 'all'}_${params.end_date || 'all'}.csv`
+      const contentDisposition = response.headers['content-disposition'] || response.headers['Content-Disposition']
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1].replace(/['"]/g, '').trim()
+          try {
+            filename = decodeURIComponent(filename)
+          } catch (e) {
+            // If decoding fails, use as-is
+          }
+        }
+      }
+      
+      const blob = new Blob([response.data], { type: 'text/csv;charset=utf-8;' })
+      const url_blob = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url_blob
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url_blob)
+      
+      return { success: true, message: 'CSV exported successfully' }
+    } catch (error) {
+      return handleApiError(error)
+    }
+  }
+
+  /**
+   * Export Staff & Salary Report as CSV
+   * @param {Object} params - Report parameters
+   */
+  async exportStaffSalaryReportCsv(params = {}) {
+    try {
+      const queryParams = new URLSearchParams()
+      Object.keys(params).forEach(key => {
+        if (params[key]) queryParams.append(key, params[key])
+      })
+      
+      const url = `/reports/staff-salary/export-csv${queryParams.toString() ? '?' + queryParams.toString() : ''}`
+      const response = await apiClient.get(url, { responseType: 'blob' })
+      
+      let filename = `staff_salary_report_${params.month || 'all'}_${params.year || 'all'}.csv`
+      const contentDisposition = response.headers['content-disposition'] || response.headers['Content-Disposition']
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1].replace(/['"]/g, '').trim()
+          try {
+            filename = decodeURIComponent(filename)
+          } catch (e) {
+            // If decoding fails, use as-is
+          }
+        }
+      }
+      
+      const blob = new Blob([response.data], { type: 'text/csv;charset=utf-8;' })
+      const url_blob = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url_blob
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url_blob)
+      
+      return { success: true, message: 'CSV exported successfully' }
+    } catch (error) {
+      return handleApiError(error)
+    }
+  }
+
+  /**
+   * Export Category-wise Item Sales Report as CSV
+   * @param {Object} params - Report parameters
+   */
+  async exportCategoryWiseItemReportCsv(params = {}) {
+    try {
+      const queryParams = new URLSearchParams()
+      Object.keys(params).forEach(key => {
+        if (params[key]) queryParams.append(key, params[key])
+      })
+      
+      const url = `/reports/category-wise-items/export-csv${queryParams.toString() ? '?' + queryParams.toString() : ''}`
+      const response = await apiClient.get(url, { responseType: 'blob' })
+      
+      let filename = `category_wise_item_report_${params.start_date || 'all'}_${params.end_date || 'all'}.csv`
+      const contentDisposition = response.headers['content-disposition'] || response.headers['Content-Disposition']
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1].replace(/['"]/g, '').trim()
+          try {
+            filename = decodeURIComponent(filename)
+          } catch (e) {
+            // If decoding fails, use as-is
+          }
+        }
+      }
+      
+      const blob = new Blob([response.data], { type: 'text/csv;charset=utf-8;' })
+      const url_blob = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url_blob
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url_blob)
+      
+      return { success: true, message: 'CSV exported successfully' }
+    } catch (error) {
+      return handleApiError(error)
+    }
+  }
 }
 
 // Create and export singleton instance

@@ -1423,5 +1423,575 @@ class ReportController extends Controller
             'sections' => $sections,
         ], $filename);
     }
+
+    /**
+     * Export Sales Report as CSV
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function exportSalesReportCsv(Request $request)
+    {
+        // Get report data (reuse salesReport logic)
+        $query = Bill::with(['table', 'customer', 'creator']);
+
+        // Date range filter
+        if ($startDate = $request->input('start_date')) {
+            $query->whereDate('bill_date', '>=', $startDate);
+        } else {
+            $query->whereMonth('bill_date', now()->month)
+                  ->whereYear('bill_date', now()->year);
+        }
+
+        if ($endDate = $request->input('end_date')) {
+            $query->whereDate('bill_date', '<=', $endDate);
+        }
+
+        // Payment status filter
+        if ($paymentStatus = $request->input('payment_status')) {
+            if ($paymentStatus !== 'all') {
+                $query->where('payment_status', $paymentStatus);
+            }
+        }
+
+        // Payment method filter
+        if ($request->has('payment_method')) {
+            $paymentMethod = $request->input('payment_method');
+            if ($paymentMethod && $paymentMethod !== 'all') {
+                $query->where('payment_method', $paymentMethod);
+            }
+        }
+
+        // Table filter
+        if ($tableId = $request->input('table_id')) {
+            $query->where('table_id', $tableId);
+        }
+
+        // Customer filter
+        if ($customerId = $request->input('customer_id')) {
+            $query->where('customer_id', $customerId);
+        }
+
+        $bills = $query->orderBy('bill_date', 'desc')
+                      ->orderBy('created_at', 'desc')
+                      ->get();
+
+        // Prepare CSV data
+        $filename = 'sales_report_' . ($startDate ?? 'all') . '_' . ($endDate ?? 'all') . '.csv';
+        
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+
+        $callback = function() use ($bills) {
+            $file = fopen('php://output', 'w');
+            
+            // Add BOM for UTF-8
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+            
+            // Headers
+            fputcsv($file, [
+                'Bill Number',
+                'Date',
+                'Table',
+                'Customer',
+                'Payment Method',
+                'Payment Status',
+                'Subtotal',
+                'Discount',
+                'CGST',
+                'SGST',
+                'Service Tax',
+                'Total Amount'
+            ]);
+
+            // Data rows
+            foreach ($bills as $bill) {
+                fputcsv($file, [
+                    $bill->bill_number ?? '#BILL' . $bill->id,
+                    Carbon::parse($bill->bill_date)->format('d/m/Y'),
+                    $bill->table ? $bill->table->table_name : 'N/A',
+                    $bill->customer ? $bill->customer->name : 'Walk-in',
+                    ucfirst($bill->payment_method ?? 'N/A'),
+                    ucfirst($bill->payment_status),
+                    number_format($bill->subtotal, 2),
+                    number_format($bill->discount, 2),
+                    number_format($bill->cgst_amount, 2),
+                    number_format($bill->sgst_amount, 2),
+                    number_format($bill->service_tax_amount, 2),
+                    number_format($bill->total_amount, 2),
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Export Expense Report as CSV
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function exportExpenseReportCsv(Request $request)
+    {
+        // Get report data (reuse expenseReport logic)
+        $query = Expense::with(['category', 'creator']);
+
+        // Date range filter
+        if ($startDate = $request->input('start_date')) {
+            $query->whereDate('expense_date', '>=', $startDate);
+        } else {
+            $query->whereMonth('expense_date', now()->month)
+                  ->whereYear('expense_date', now()->year);
+        }
+
+        if ($endDate = $request->input('end_date')) {
+            $query->whereDate('expense_date', '<=', $endDate);
+        }
+
+        // Category filter
+        if ($categoryId = $request->input('category_id')) {
+            if ($categoryId !== 'all') {
+                $query->where('category_id', $categoryId);
+            }
+        }
+
+        // Payment method filter
+        if ($paymentMethod = $request->input('payment_method')) {
+            if ($paymentMethod !== 'all') {
+                $query->where('payment_method', $paymentMethod);
+            }
+        }
+
+        $expenses = $query->orderBy('expense_date', 'desc')
+                         ->orderBy('created_at', 'desc')
+                         ->get();
+
+        // Prepare CSV data
+        $filename = 'expense_report_' . ($startDate ?? 'all') . '_' . ($endDate ?? 'all') . '.csv';
+        
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+
+        $callback = function() use ($expenses) {
+            $file = fopen('php://output', 'w');
+            
+            // Add BOM for UTF-8
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+            
+            // Headers
+            fputcsv($file, [
+                'Date',
+                'Category',
+                'Description',
+                'Amount',
+                'Payment Method',
+                'Created By'
+            ]);
+
+            // Data rows
+            foreach ($expenses as $expense) {
+                fputcsv($file, [
+                    Carbon::parse($expense->expense_date)->format('d/m/Y'),
+                    $expense->category ? $expense->category->name : 'N/A',
+                    $expense->description ?? 'N/A',
+                    number_format($expense->amount, 2),
+                    ucfirst($expense->payment_method ?? 'N/A'),
+                    $expense->creator ? $expense->creator->first_name . ' ' . $expense->creator->last_name : 'N/A',
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Export Customer Pending Report as CSV
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function exportCustomerPendingReportCsv(Request $request)
+    {
+        // Get report data (reuse customerPendingReport logic)
+        $query = Customer::query();
+
+        // Customer filter
+        if ($customerId = $request->input('customer_id')) {
+            if ($customerId !== 'all') {
+                $query->where('id', $customerId);
+            }
+        }
+
+        // Status filter
+        if ($status = $request->input('status')) {
+            if ($status !== 'all') {
+                $query->where('status', $status);
+            }
+        }
+
+        $customers = $query->get();
+
+        // Get date range filters
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        // Calculate wallet balances
+        $customersWithBalance = $customers->map(function ($customer) use ($startDate, $endDate) {
+            $creditsQuery = WalletTransaction::where('customer_id', $customer->id)
+                ->where('transaction_type', 'credit');
+            
+            $debitsQuery = WalletTransaction::where('customer_id', $customer->id)
+                ->where('transaction_type', 'debit');
+            
+            if ($startDate) {
+                $creditsQuery->whereDate('transaction_date', '>=', $startDate);
+                $debitsQuery->whereDate('transaction_date', '>=', $startDate);
+            }
+            
+            if ($endDate) {
+                $creditsQuery->whereDate('transaction_date', '<=', $endDate);
+                $debitsQuery->whereDate('transaction_date', '<=', $endDate);
+            }
+            
+            $totalCredits = (float) $creditsQuery->sum('amount');
+            $totalDebits = (float) $debitsQuery->sum('amount');
+            $remainingBalance = $totalCredits - $totalDebits;
+
+            $lastTransactionQuery = WalletTransaction::where('customer_id', $customer->id);
+            
+            if ($startDate) {
+                $lastTransactionQuery->whereDate('transaction_date', '>=', $startDate);
+            }
+            
+            if ($endDate) {
+                $lastTransactionQuery->whereDate('transaction_date', '<=', $endDate);
+            }
+            
+            $lastTransaction = $lastTransactionQuery->orderBy('created_at', 'desc')->first();
+
+            return [
+                'customerCode' => $customer->customer_code,
+                'name' => $customer->name,
+                'mobile' => $customer->mobile,
+                'totalCredits' => $totalCredits,
+                'totalDebits' => $totalDebits,
+                'remainingBalance' => $remainingBalance,
+                'lastTransactionDate' => $lastTransaction ? $lastTransaction->created_at : null,
+                'status' => $customer->status,
+            ];
+        });
+
+        // Filter customers with pending
+        $customersWithPending = $customersWithBalance->filter(function ($customer) {
+            return $customer['remainingBalance'] < 0;
+        });
+
+        // Prepare CSV data
+        $filename = 'customer_pending_report_' . ($startDate ?? 'all') . '_' . ($endDate ?? 'all') . '.csv';
+        
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+
+        $callback = function() use ($customersWithPending) {
+            $file = fopen('php://output', 'w');
+            
+            // Add BOM for UTF-8
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+            
+            // Headers
+            fputcsv($file, [
+                'Customer Code',
+                'Customer Name',
+                'Mobile',
+                'Total Credit',
+                'Total Debit',
+                'Pending Amount',
+                'Last Transaction Date',
+                'Status'
+            ]);
+
+            // Data rows
+            foreach ($customersWithPending as $customer) {
+                fputcsv($file, [
+                    $customer['customerCode'],
+                    $customer['name'],
+                    $customer['mobile'] ?? 'N/A',
+                    number_format($customer['totalCredits'], 2),
+                    number_format($customer['totalDebits'], 2),
+                    number_format(abs($customer['remainingBalance']), 2),
+                    $customer['lastTransactionDate'] ? Carbon::parse($customer['lastTransactionDate'])->format('d/m/Y') : 'N/A',
+                    ucfirst($customer['status']),
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Export Staff & Salary Report as CSV
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function exportStaffSalaryReportCsv(Request $request)
+    {
+        // Get report data (reuse staffSalaryReport logic)
+        $query = SalaryPayment::with(['staff', 'creator']);
+
+        // Staff filter
+        if ($staffId = $request->input('staff_id')) {
+            if ($staffId !== 'all' && $staffId !== '') {
+                $query->where('staff_id', $staffId);
+            }
+        }
+
+        // Department filter
+        if ($department = $request->input('department')) {
+            if ($department !== 'all' && $department !== '') {
+                $query->whereHas('staff', function ($q) use ($department) {
+                    $q->where('department', $department);
+                });
+            }
+        }
+
+        // Month filter
+        if ($month = $request->input('month')) {
+            if ($month !== 'all' && $month !== '') {
+                $query->where('month', $month);
+            }
+        }
+
+        // Year filter
+        if ($year = $request->input('year')) {
+            if ($year !== 'all' && $year !== '') {
+                $query->where('year', $year);
+            }
+        }
+
+        $salaryPayments = $query->orderBy('payment_date', 'desc')
+                              ->orderBy('created_at', 'desc')
+                              ->get();
+
+        // Prepare CSV data
+        $filename = 'staff_salary_report_' . ($request->input('month') ?? 'all') . '_' . ($request->input('year') ?? 'all') . '.csv';
+        
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+
+        $callback = function() use ($salaryPayments) {
+            $file = fopen('php://output', 'w');
+            
+            // Add BOM for UTF-8
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+            
+            // Headers
+            fputcsv($file, [
+                'Payment Date',
+                'Staff Code',
+                'Staff Name',
+                'Department',
+                'Month & Year',
+                'Paid Amount',
+                'Payment Method',
+                'Notes',
+                'Created By'
+            ]);
+
+            // Data rows
+            foreach ($salaryPayments as $payment) {
+                fputcsv($file, [
+                    Carbon::parse($payment->payment_date)->format('d/m/Y'),
+                    'STF' . $payment->staff_id,
+                    $payment->staff ? $payment->staff->name : 'N/A',
+                    $payment->staff ? $payment->staff->department : 'N/A',
+                    Carbon::create()->month($payment->month)->format('M') . ' ' . $payment->year,
+                    number_format($payment->paid_amount, 2),
+                    ucfirst($payment->payment_method ?? 'N/A'),
+                    $payment->notes ?? 'N/A',
+                    $payment->creator ? $payment->creator->first_name . ' ' . $payment->creator->last_name : 'N/A',
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Export Category-wise Item Sales Report as CSV
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function exportCategoryWiseItemReportCsv(Request $request)
+    {
+        // Get report data (reuse categoryWiseItemReport logic)
+        $query = BillItem::with(['foodItem.foodCategory', 'bill'])
+            ->whereHas('bill', function ($q) {
+                $q->where('payment_status', 'paid');
+            });
+
+        // Date range filter
+        if ($startDate = $request->input('start_date')) {
+            $query->whereHas('bill', function ($q) use ($startDate) {
+                $q->whereDate('bill_date', '>=', $startDate);
+            });
+        } else {
+            $query->whereHas('bill', function ($q) {
+                $q->whereMonth('bill_date', now()->month)
+                  ->whereYear('bill_date', now()->year);
+            });
+        }
+
+        if ($endDate = $request->input('end_date')) {
+            $query->whereHas('bill', function ($q) use ($endDate) {
+                $q->whereDate('bill_date', '<=', $endDate);
+            });
+        }
+
+        // Category filter
+        if ($categoryId = $request->input('category_id')) {
+            if ($categoryId !== 'all' && $categoryId !== '') {
+                $query->whereHas('foodItem', function ($q) use ($categoryId) {
+                    $q->where('food_category_id', $categoryId);
+                });
+            }
+        }
+
+        // Item status filter
+        if ($itemStatus = $request->input('item_status')) {
+            if ($itemStatus !== 'all' && $itemStatus !== '') {
+                $query->whereHas('foodItem', function ($q) use ($itemStatus) {
+                    $q->where('status', $itemStatus);
+                });
+            }
+        }
+
+        $billItems = $query->get();
+
+        // Group and aggregate data (same logic as categoryWiseItemReport)
+        $categoryData = [];
+        foreach ($billItems as $billItem) {
+            if (!$billItem->foodItem || !$billItem->foodItem->foodCategory) {
+                continue;
+            }
+
+            $category = $billItem->foodItem->foodCategory;
+            $item = $billItem->foodItem;
+            $categoryId = $category->id;
+            $itemId = $item->id;
+            $billId = $billItem->bill_id;
+
+            if (!isset($categoryData[$categoryId])) {
+                $categoryData[$categoryId] = [
+                    'categoryName' => $category->name,
+                    'items' => [],
+                ];
+            }
+
+            if (!isset($categoryData[$categoryId]['items'][$itemId])) {
+                $categoryData[$categoryId]['items'][$itemId] = [
+                    'itemName' => $item->name,
+                    'itemPrice' => (float) $item->price,
+                    'quantitySold' => 0,
+                    'revenue' => 0,
+                    'billIds' => [],
+                ];
+            }
+
+            if (!in_array($billId, $categoryData[$categoryId]['items'][$itemId]['billIds'])) {
+                $categoryData[$categoryId]['items'][$itemId]['billIds'][] = $billId;
+            }
+
+            $quantity = (int) $billItem->quantity;
+            $revenue = (float) $billItem->total_price;
+
+            $categoryData[$categoryId]['items'][$itemId]['quantitySold'] += $quantity;
+            $categoryData[$categoryId]['items'][$itemId]['revenue'] += $revenue;
+        }
+
+        // Flatten the data
+        $itemsList = [];
+        foreach ($categoryData as $category) {
+            foreach ($category['items'] as $item) {
+                $itemsList[] = [
+                    'categoryName' => $category['categoryName'],
+                    'itemName' => $item['itemName'],
+                    'itemPrice' => $item['itemPrice'],
+                    'quantitySold' => $item['quantitySold'],
+                    'revenue' => $item['revenue'],
+                    'billsCount' => count($item['billIds']),
+                    'avgPrice' => $item['quantitySold'] > 0 
+                        ? $item['revenue'] / $item['quantitySold'] 
+                        : 0,
+                ];
+            }
+        }
+
+        // Sort by quantity sold (descending)
+        usort($itemsList, function ($a, $b) {
+            return $b['quantitySold'] <=> $a['quantitySold'];
+        });
+
+        // Prepare CSV data
+        $filename = 'category_wise_item_report_' . ($startDate ?? 'all') . '_' . ($endDate ?? 'all') . '.csv';
+        
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+
+        $callback = function() use ($itemsList) {
+            $file = fopen('php://output', 'w');
+            
+            // Add BOM for UTF-8
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+            
+            // Headers
+            fputcsv($file, [
+                'Category',
+                'Item Name',
+                'Price',
+                'Quantity Sold',
+                'Revenue',
+                'Bills Count',
+                'Avg Price'
+            ]);
+
+            // Data rows
+            foreach ($itemsList as $item) {
+                fputcsv($file, [
+                    $item['categoryName'],
+                    $item['itemName'],
+                    number_format($item['itemPrice'], 2),
+                    $item['quantitySold'],
+                    number_format($item['revenue'], 2),
+                    $item['billsCount'],
+                    number_format($item['avgPrice'], 2),
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
 }
 

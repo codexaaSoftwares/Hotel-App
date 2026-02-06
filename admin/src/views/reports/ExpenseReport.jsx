@@ -146,9 +146,39 @@ const ExpenseReport = () => {
     }
   }
 
-  const handleExportCSV = () => {
-    // TODO: Implement CSV export API
-    error('CSV export will be implemented soon')
+  const handleExportCSV = async () => {
+    if (!startDate || !endDate) {
+      error('Please select both start and end dates')
+      return
+    }
+
+    setLoading(true)
+    try {
+      const params = {
+        start_date: startDate,
+        end_date: endDate,
+      }
+
+      if (categoryId && categoryId !== 'all') {
+        params.category_id = categoryId
+      }
+
+      if (paymentMethod && paymentMethod !== 'all') {
+        params.payment_method = paymentMethod
+      }
+
+      const response = await reportService.exportExpenseReportCsv(params)
+      if (response.success) {
+        success('CSV exported successfully')
+      } else {
+        error(response.message || 'Failed to export CSV')
+      }
+    } catch (err) {
+      console.error('Error exporting CSV:', err)
+      error('Failed to export CSV')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const formatCurrency = (amount) => {

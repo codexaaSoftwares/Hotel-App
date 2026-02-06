@@ -173,9 +173,39 @@ const StaffSalaryReport = () => {
     }
   }
 
-  const handleExportCSV = () => {
-    // TODO: Implement CSV export API
-    error('CSV export will be implemented soon')
+  const handleExportCSV = async () => {
+    setLoading(true)
+    try {
+      const params = {}
+
+      if (staffId && staffId !== 'all' && staffId !== '') {
+        params.staff_id = staffId
+      }
+
+      if (department && department !== 'all' && department !== '') {
+        params.department = department
+      }
+
+      if (month && month !== 'all' && month !== '') {
+        params.month = month
+      }
+
+      if (year && year !== 'all' && year !== '') {
+        params.year = year
+      }
+
+      const response = await reportService.exportStaffSalaryReportCsv(params)
+      if (response.success) {
+        success('CSV exported successfully')
+      } else {
+        error(response.message || 'Failed to export CSV')
+      }
+    } catch (err) {
+      console.error('Error exporting CSV:', err)
+      error('Failed to export CSV')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const formatCurrency = (amount) => {
