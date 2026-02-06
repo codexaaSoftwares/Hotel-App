@@ -11,6 +11,7 @@ import {
   faSearch,
   faFilter,
   faRefresh,
+  faFilePdf,
 } from '@fortawesome/free-solid-svg-icons'
 import { Table, Modal, FormModal } from '../../components'
 import TableForm from '../../components/pages/restaurant/TableForm'
@@ -45,6 +46,7 @@ const TablesList = () => {
   const [addLoading, setAddLoading] = useState(false)
   const [editLoading, setEditLoading] = useState(false)
   const [deleteLoading, setDeleteLoading] = useState(false)
+  const [exportLoading, setExportLoading] = useState(false)
 
   const addFormRef = useRef()
   const editFormRef = useRef()
@@ -305,6 +307,33 @@ const TablesList = () => {
     setCurrentPage(1)
   }
 
+  const handleExportTables = async () => {
+    setExportLoading(true)
+    try {
+      const params = {}
+      if (searchTerm) {
+        params.search = searchTerm
+      }
+      if (statusFilter) {
+        params.status = statusFilter
+      }
+      if (activeFilter !== '') {
+        params.is_active = activeFilter === 'true'
+      }
+      const response = await tableService.exportTables(params)
+      if (response.success) {
+        success('Tables exported successfully')
+      } else {
+        error(response.message || 'Failed to export tables')
+      }
+    } catch (err) {
+      console.error('Error exporting tables:', err)
+      error('Failed to export tables. Please try again.')
+    } finally {
+      setExportLoading(false)
+    }
+  }
+
   const columns = [
     {
       key: 'table_number',
@@ -401,14 +430,23 @@ const TablesList = () => {
               <FontAwesomeIcon icon={faTable} className="me-3 text-primary fs-4" />
               <h2 className="mb-0 text-dark">Table Management</h2>
             </div>
-            {canCreateTable && (
-              <div className="ms-auto">
-                <Button variant="primary" onClick={handleAddTable} className="text-white">
+            <div className="ms-auto d-flex gap-2">
+              <Button 
+                variant="outline-danger" 
+                onClick={handleExportTables} 
+                disabled={exportLoading}
+                className="shadow-sm"
+              >
+                <FontAwesomeIcon icon={faFilePdf} className="me-2" />
+                {exportLoading ? 'Exporting...' : 'Export Tables'}
+              </Button>
+              {canCreateTable && (
+                <Button variant="primary" onClick={handleAddTable} className="text-white shadow-sm">
                   <FontAwesomeIcon icon={faPlus} className="me-2" />
                   Add Table
                 </Button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
           <Row className="mb-4 g-3">

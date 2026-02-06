@@ -378,6 +378,56 @@ class StaffService {
       }
     }
   }
+
+  /**
+   * Export salary payments report as PDF
+   * @param {object} params - Export parameters (search, month, year, etc.)
+   */
+  async exportSalaryPaymentsReport(params = {}) {
+    try {
+      const queryParams = new URLSearchParams()
+      Object.keys(params).forEach(key => {
+        if (params[key] !== undefined && params[key] !== null && params[key] !== '') {
+          queryParams.append(key, params[key])
+        }
+      })
+      
+      const url = `/salary-payments/export-report${queryParams.toString() ? '?' + queryParams.toString() : ''}`
+      const response = await apiClient.get(url, { responseType: 'blob' })
+      
+      let filename = `salary_payments_report_${new Date().toISOString().split('T')[0]}.pdf`
+      const contentDisposition = response.headers['content-disposition'] || response.headers['Content-Disposition']
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1].replace(/['"]/g, '').trim()
+          try {
+            filename = decodeURIComponent(filename)
+          } catch (e) {
+            // If decoding fails, use as-is
+          }
+        }
+      }
+      
+      const blob = new Blob([response.data], { type: 'application/pdf' })
+      const url_blob = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url_blob
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url_blob)
+      
+      return { success: true, message: 'Salary payments report exported successfully' }
+    } catch (error) {
+      console.error('Error exporting salary payments report:', error)
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Failed to export salary payments report',
+      }
+    }
+  }
 }
 
 // Create and export singleton instance

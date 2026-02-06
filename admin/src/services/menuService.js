@@ -494,6 +494,92 @@ export const updateCategoryOrder = async (categoryOrders) => {
   }
 }
 
+// Export menu as PDF
+export const exportMenu = async (params = {}) => {
+  try {
+    const queryParams = new URLSearchParams()
+    Object.keys(params).forEach(key => {
+      if (params[key]) queryParams.append(key, params[key])
+    })
+    
+    const url = `/food-categories/export-menu${queryParams.toString() ? '?' + queryParams.toString() : ''}`
+    const response = await apiClient.get(url, { responseType: 'blob' })
+    
+    let filename = `menu_${new Date().toISOString().split('T')[0]}.pdf`
+    const contentDisposition = response.headers['content-disposition'] || response.headers['Content-Disposition']
+    if (contentDisposition) {
+      const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)
+      if (filenameMatch && filenameMatch[1]) {
+        filename = filenameMatch[1].replace(/['"]/g, '').trim()
+        try {
+          filename = decodeURIComponent(filename)
+        } catch (e) {
+          // If decoding fails, use as-is
+        }
+      }
+    }
+    
+    const blob = new Blob([response.data], { type: 'application/pdf' })
+    const url_blob = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url_blob
+    link.download = filename
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url_blob)
+    
+    return { success: true, message: 'Menu exported successfully' }
+  } catch (error) {
+    console.error('Error exporting menu:', error)
+    return handleApiError(error)
+  }
+}
+
+// Export menu as Excel (CSV)
+export const exportMenuCsv = async (params = {}) => {
+  try {
+    const queryParams = new URLSearchParams()
+    Object.keys(params).forEach(key => {
+      if (params[key] !== undefined && params[key] !== null && params[key] !== '') {
+        queryParams.append(key, params[key])
+      }
+    })
+    
+    const url = `/food-categories/export-menu-csv${queryParams.toString() ? '?' + queryParams.toString() : ''}`
+    const response = await apiClient.get(url, { responseType: 'blob' })
+    
+    let filename = `menu_${new Date().toISOString().split('T')[0]}.csv`
+    const contentDisposition = response.headers['content-disposition'] || response.headers['Content-Disposition']
+    if (contentDisposition) {
+      const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)
+      if (filenameMatch && filenameMatch[1]) {
+        filename = filenameMatch[1].replace(/['"]/g, '').trim()
+        try {
+          filename = decodeURIComponent(filename)
+        } catch (e) {
+          // If decoding fails, use as-is
+        }
+      }
+    }
+    
+    const blob = new Blob([response.data], { type: 'text/csv;charset=utf-8;' })
+    const url_blob = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url_blob
+    link.download = filename
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url_blob)
+    
+    return { success: true, message: 'Menu exported to Excel successfully' }
+  } catch (error) {
+    console.error('Error exporting menu to Excel:', error)
+    return handleApiError(error)
+  }
+}
+
 const menuService = {
   getMenuHierarchy,
   getPOSMenu,
@@ -512,6 +598,8 @@ const menuService = {
   updateCategoryOrder,
   moveItemUp,
   moveItemDown,
+  exportMenu,
+  exportMenuCsv,
 }
 
 export default menuService

@@ -17,6 +17,8 @@ import {
   faArrowDown,
   faImage,
   faStar,
+  faFilePdf,
+  faFileCsv,
 } from '@fortawesome/free-solid-svg-icons'
 import { useToast } from '../../components'
 import menuService from '../../services/menuService'
@@ -51,6 +53,8 @@ const MenuManagement = () => {
   const [deleting, setDeleting] = useState({})
   const [searchTerm, setSearchTerm] = useState('')
   const [filterCategory, setFilterCategory] = useState('')
+  const [exportLoading, setExportLoading] = useState(false)
+  const [exportCsvLoading, setExportCsvLoading] = useState(false)
 
   useEffect(() => {
     if (!canView) {
@@ -344,6 +348,48 @@ const MenuManagement = () => {
     return menuData.reduce((sum, cat) => sum + (cat.items?.length || 0), 0)
   }, [menuData])
 
+  const handleExportMenu = async () => {
+    setExportLoading(true)
+    try {
+      const params = {}
+      if (filterCategory) {
+        params.status = 'active' // You can adjust this based on your needs
+      }
+      const response = await menuService.exportMenu(params)
+      if (response.success) {
+        success('Menu exported successfully')
+      } else {
+        error(response.message || 'Failed to export menu')
+      }
+    } catch (err) {
+      console.error('Error exporting menu:', err)
+      error('Failed to export menu. Please try again.')
+    } finally {
+      setExportLoading(false)
+    }
+  }
+
+  const handleExportMenuCsv = async () => {
+    setExportCsvLoading(true)
+    try {
+      const params = {}
+      if (filterCategory) {
+        params.status = 'active'
+      }
+      const response = await menuService.exportMenuCsv(params)
+      if (response.success) {
+        success('Menu exported to Excel successfully')
+      } else {
+        error(response.message || 'Failed to export menu to Excel')
+      }
+    } catch (err) {
+      console.error('Error exporting menu to Excel:', err)
+      error('Failed to export menu to Excel. Please try again.')
+    } finally {
+      setExportCsvLoading(false)
+    }
+  }
+
   if (!canView) {
     return (
       <Container fluid className="py-4">
@@ -362,14 +408,32 @@ const MenuManagement = () => {
               <FontAwesomeIcon icon={faUtensils} className="me-3 text-primary fs-4" />
               <h2 className="mb-0 text-dark">Menu Management</h2>
             </div>
-            {canCreateCategory && (
-              <div className="ms-auto">
-                <Button variant="primary" onClick={handleAddCategory} className="text-white">
+            <div className="ms-auto d-flex gap-2">
+              <Button 
+                variant="outline-danger" 
+                onClick={handleExportMenu} 
+                disabled={exportLoading}
+                className="shadow-sm"
+              >
+                <FontAwesomeIcon icon={faFilePdf} className="me-2" />
+                {exportLoading ? 'Exporting...' : 'Export PDF'}
+              </Button>
+              <Button 
+                variant="outline-success" 
+                onClick={handleExportMenuCsv} 
+                disabled={exportCsvLoading}
+                className="shadow-sm"
+              >
+                <FontAwesomeIcon icon={faFileCsv} className="me-2" />
+                {exportCsvLoading ? 'Exporting...' : 'Export Excel'}
+              </Button>
+              {canCreateCategory && (
+                <Button variant="primary" onClick={handleAddCategory} className="text-white shadow-sm">
                   <FontAwesomeIcon icon={faPlus} className="me-2" />
                   Add Category
                 </Button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
           {/* Search and Filter Bar */}

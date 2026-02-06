@@ -162,8 +162,22 @@ const SalaryReportModal = ({ show, onHide }) => {
   const handleExport = async () => {
     try {
       setExportLoading(true)
-      // TODO: Implement export when backend is ready
-      error('Export functionality will be available soon. API is pending.')
+      
+      // Prepare export parameters (same as current filters)
+      const params = {
+        search: debouncedSearch || undefined,
+        month: monthFilter || undefined,
+        year: yearFilter || undefined,
+        sort_by: sortState.sortBy,
+        sort_direction: sortState.sortDirection,
+      }
+
+      const response = await staffService.exportSalaryPaymentsReport(params)
+      if (response.success) {
+        success('Salary payments report exported successfully.')
+      } else {
+        error(response.message || 'Failed to export salary payments report.')
+      }
     } catch (err) {
       console.error('Error exporting salary report:', err)
       error('Failed to export salary report. Please try again.')

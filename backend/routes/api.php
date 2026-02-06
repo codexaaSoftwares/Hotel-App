@@ -73,6 +73,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Food Category Management
     Route::get('/food-categories', [FoodCategoryController::class, 'index'])->middleware('permission:view_food_category');
     Route::get('/food-categories/hierarchy', [FoodCategoryController::class, 'hierarchy'])->middleware('permission:view_food_category');
+    Route::get('/food-categories/export-menu', [FoodCategoryController::class, 'exportMenu'])->middleware('permission:view_food_category');
+    Route::get('/food-categories/export-menu-csv', [FoodCategoryController::class, 'exportMenuCsv'])->middleware('permission:view_food_category');
     Route::post('/food-categories', [FoodCategoryController::class, 'store'])->middleware('permission:create_food_category');
     Route::get('/food-categories/{foodCategory}', [FoodCategoryController::class, 'show'])->middleware('permission:view_food_category');
     Route::put('/food-categories/{foodCategory}', [FoodCategoryController::class, 'update'])->middleware('permission:edit_food_category');
@@ -95,6 +97,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Table Management
     Route::get('/tables', [TableController::class, 'index'])->middleware('permission:view_table');
+    Route::get('/tables/export-tables', [TableController::class, 'exportTables'])->middleware('permission:view_table');
     Route::post('/tables', [TableController::class, 'store'])->middleware('permission:create_table');
     Route::get('/tables/{table}', [TableController::class, 'show'])->middleware('permission:view_table');
     Route::put('/tables/{table}', [TableController::class, 'update'])->middleware('permission:edit_table');
@@ -125,6 +128,7 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // Customer-specific wallet transactions (Customer Ledger)
     Route::get('/customers/{customer}/wallet-transactions', [WalletTransactionController::class, 'getByCustomer'])->middleware('permission:view_customer_ledger');
+    Route::get('/customers/{customer}/wallet-transactions/export-ledger', [WalletTransactionController::class, 'exportCustomerLedger'])->middleware('permission:view_customer_ledger');
 
     // Staff Management
     Route::get('/staff', [StaffController::class, 'index'])->middleware('permission:view_staff');
@@ -135,6 +139,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Salary Payment Management
     Route::get('/salary-payments', [SalaryPaymentController::class, 'index'])->middleware('permission:view_salary_payment');
+    Route::get('/salary-payments/export-report', [SalaryPaymentController::class, 'exportSalaryPayments'])->middleware('permission:view_salary_payment');
     Route::post('/salary-payments', [SalaryPaymentController::class, 'store'])->middleware('permission:create_salary_payment');
     Route::get('/salary-payments/{salaryPayment}', [SalaryPaymentController::class, 'show'])->middleware('permission:view_salary_payment');
     Route::put('/salary-payments/{salaryPayment}', [SalaryPaymentController::class, 'update'])->middleware('permission:edit_salary_payment');

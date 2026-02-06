@@ -9,6 +9,8 @@ use App\Http\Requests\SalaryPaymentUpdateRequest;
 use App\Http\Resources\SalaryPaymentResource;
 use App\Models\SalaryPayment;
 use App\Models\Staff;
+use App\Models\Setting;
+use App\Services\PdfExportService;
 use Illuminate\Http\Request;
 
 class SalaryPaymentController extends Controller
@@ -164,5 +166,77 @@ class SalaryPaymentController extends Controller
             'success' => true,
             'message' => 'Salary payment deleted successfully.',
         ]);
+    }
+
+    /**
+     * Export salary payments report as PDF.
+     */
+    public function exportSalaryPayments(Request $request)
+    {
+        $query = SalaryPayment::with(['staff', 'creator']);
+
+        // Search functionality
+        if ($search = $request->input('search')) {
+            $query->whereHas('staff', function ($q) use ($search) {
+                $q->withTrashed()
+                  ->where('name', 'like', "%{$search}%")
+                  ->orWhere('mobile', 'like', "%{$search}%");
+            });
+        }
+
+        // Month filter
+        if ($month = $request->input('month')) {
+            $query->where('month', $month);
+        }
+
+        // Year filter
+        if ($year = $request->input('year')) {
+            $query->where('year', $year);
+        }
+
+        // Sort
+        $sortBy = $request->input('sort_by', 'created_at');
+        $sortDirection = $request->input('sort_direction', 'desc');
+        $query->orderBy($sortBy, $sortDirection);
+
+        // Get all payments (no pagination for export)
+        $salaryPayments = $query->get();
+
+        // Calculate summary
+        $summary = [
+            'total' => $salaryPayments->count(),
+            'totalPaid' => $salaryPayments->sum('paid_amount'),
+        ];
+
+        // Get business info - check multiple possible key variations
+        $businessInfo = Setting::businessInfo(['company_name', 'businessAddress']);
+        $businessName = $businessInfo['company_name'] ?? $businessInfo['business_name'] ?? 'Company Name';
+        $businessAddress = $businessInfo['businessAddress'] ?? $businessInfo['business_address'] ?? 'Company Address';
+        $businessPhone = $businessInfo['business_phone'] ?? null;
+        $businessEmail = $businessInfo['business_email'] ?? null;
+        $gstNumber = $businessInfo['gstNumber'] ?? null;
+
+        // Prepare data for PDF
+        $data = [
+            'salaryPayments' => $salaryPayments,
+            'summary' => $summary,
+            'businessInfo' => [
+                'company_name' => $businessName,
+                'business_name' => $businessName,
+                'businessAddress' => $businessAddress,
+                'business_address' => $businessAddress,
+                'businessPhone' => $businessPhone,
+                'business_phone' => $businessPhone,
+                'businessEmail' => $businessEmail,
+                'business_email' => $businessEmail,
+                'gstNumber' => $gstNumber,
+            ],
+            'generatedDate' => now()->format('d/m/Y h:i A'),
+        ];
+
+        $filename = 'Salary_Payments_Report_' . now()->format('Y-m-d') . '.pdf';
+
+        $pdfService = new PdfExportService();
+        return $pdfService->export('pdfs.salary_payments', $data, $filename);
     }
 }

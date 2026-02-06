@@ -130,6 +130,53 @@ const tableService = {
       return handleApiError(error)
     }
   },
+
+  /**
+   * Export tables as PDF
+   * @param {Object} params - Query parameters (search, status, is_active)
+   * @returns {Promise<Object>} Response with success status
+   */
+  async exportTables(params = {}) {
+    try {
+      const queryParams = new URLSearchParams()
+      Object.keys(params).forEach(key => {
+        if (params[key] !== undefined && params[key] !== null && params[key] !== '') {
+          queryParams.append(key, params[key])
+        }
+      })
+      
+      const url = `/tables/export-tables${queryParams.toString() ? '?' + queryParams.toString() : ''}`
+      const response = await apiClient.get(url, { responseType: 'blob' })
+      
+      let filename = `tables_${new Date().toISOString().split('T')[0]}.pdf`
+      const contentDisposition = response.headers['content-disposition'] || response.headers['Content-Disposition']
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1].replace(/['"]/g, '').trim()
+          try {
+            filename = decodeURIComponent(filename)
+          } catch (e) {
+            // If decoding fails, use as-is
+          }
+        }
+      }
+      
+      const blob = new Blob([response.data], { type: 'application/pdf' })
+      const url_blob = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url_blob
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url_blob)
+      
+      return { success: true, message: 'Tables exported successfully' }
+    } catch (error) {
+      return handleApiError(error)
+    }
+  },
 }
 
 export default tableService

@@ -8,6 +8,8 @@ use App\Http\Requests\TableStoreRequest;
 use App\Http\Requests\TableUpdateRequest;
 use App\Http\Resources\TableResource;
 use App\Models\Table;
+use App\Models\Setting;
+use App\Services\PdfExportService;
 use Illuminate\Http\Request;
 
 class TableController extends Controller
@@ -166,6 +168,81 @@ class TableController extends Controller
             'success' => true,
             'message' => 'Table deleted successfully.',
         ]);
+    }
+
+    /**
+     * Export tables as PDF.
+     */
+    public function exportTables(Request $request)
+    {
+        $query = Table::query();
+
+        // Search functionality
+        if ($search = $request->input('search')) {
+            $query->where(function ($builder) use ($search) {
+                $builder->where('table_number', 'like', "%{$search}%")
+                    ->orWhere('table_name', 'like', "%{$search}%");
+            });
+        }
+
+        // Status filter
+        if ($status = $request->input('status')) {
+            $query->where('status', $status);
+        }
+
+        // Active filter
+        if ($request->has('is_active')) {
+            $isActive = filter_var($request->input('is_active'), FILTER_VALIDATE_BOOLEAN);
+            $query->where('is_active', $isActive);
+        }
+
+        // Order by table_number
+        $query->orderBy('table_number', 'asc');
+
+        $tables = $query->get();
+
+        // Get business info - check multiple possible key variations
+        $businessInfo = Setting::businessInfo(['company_name', 'businessAddress']);
+        $businessName = $businessInfo['company_name'] ?? $businessInfo['business_name'] ?? 'Company Name';
+        $businessAddress = $businessInfo['businessAddress'] ?? $businessInfo['business_address'] ?? 'Company Address';
+        $businessPhone = $businessInfo['business_phone'] ?? null;
+        $businessEmail = $businessInfo['business_email'] ?? null;
+        $gstNumber = $businessInfo['gstNumber'] ?? null;
+
+        // Calculate summary
+        $summary = [
+            'total' => $tables->count(),
+            'available' => $tables->where('status', 'available')->count(),
+            'occupied' => $tables->where('status', 'occupied')->count(),
+            'reserved' => $tables->where('status', 'reserved')->count(),
+            'cleaning' => $tables->where('status', 'cleaning')->count(),
+            'maintenance' => $tables->where('status', 'maintenance')->count(),
+            'active' => $tables->where('is_active', true)->count(),
+            'inactive' => $tables->where('is_active', false)->count(),
+        ];
+
+        // Prepare data for PDF
+        $data = [
+            'tables' => $tables,
+            'summary' => $summary,
+            'businessInfo' => [
+                'company_name' => $businessName,
+                'business_name' => $businessName,
+                'businessAddress' => $businessAddress,
+                'business_address' => $businessAddress,
+                'businessPhone' => $businessPhone,
+                'business_phone' => $businessPhone,
+                'businessEmail' => $businessEmail,
+                'business_email' => $businessEmail,
+                'gstNumber' => $gstNumber,
+            ],
+            'generatedDate' => now()->format('d/m/Y h:i A'),
+        ];
+
+        $filename = 'Tables_' . now()->format('Y-m-d') . '.pdf';
+
+        $pdfService = new PdfExportService();
+        return $pdfService->export('pdfs.tables', $data, $filename);
     }
 }
 

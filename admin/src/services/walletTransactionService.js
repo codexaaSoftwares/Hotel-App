@@ -145,28 +145,53 @@ class WalletTransactionService {
   }
 
   /**
-   * Export customer ledger (PDF/Excel)
+   * Export customer ledger (PDF)
    * @param {number} customerId - Customer ID
    * @param {object} params - Export parameters (search, filters, etc.)
-   * @param {string} format - Export format ('pdf' or 'excel'), defaults to 'pdf'
    */
-  async exportCustomerLedger(customerId, params = {}, format = 'pdf') {
+  async exportCustomerLedger(customerId, params = {}) {
     try {
-      const response = await apiClient.get(
-        API_ENDPOINTS.WALLET_TRANSACTIONS.EXPORT_CUSTOMER_LEDGER(customerId),
-        {
-          params: { ...params, format },
-          responseType: 'blob', // Important for file downloads
+      const queryParams = new URLSearchParams()
+      Object.keys(params).forEach(key => {
+        if (params[key] !== undefined && params[key] !== null && params[key] !== '') {
+          queryParams.append(key, params[key])
         }
-      )
-      return {
-        success: true,
-        data: response.data, // Blob data
-        message: 'Ledger exported successfully.',
+      })
+      
+      const url = `/customers/${customerId}/wallet-transactions/export-ledger${queryParams.toString() ? '?' + queryParams.toString() : ''}`
+      const response = await apiClient.get(url, { responseType: 'blob' })
+      
+      let filename = `customer_ledger_${customerId}_${new Date().toISOString().split('T')[0]}.pdf`
+      const contentDisposition = response.headers['content-disposition'] || response.headers['Content-Disposition']
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1].replace(/['"]/g, '').trim()
+          try {
+            filename = decodeURIComponent(filename)
+          } catch (e) {
+            // If decoding fails, use as-is
+          }
+        }
       }
+      
+      const blob = new Blob([response.data], { type: 'application/pdf' })
+      const url_blob = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url_blob
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url_blob)
+      
+      return { success: true, message: 'Customer ledger exported successfully' }
     } catch (error) {
       console.error('Error exporting customer ledger:', error)
-      throw error
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Failed to export customer ledger',
+      }
     }
   }
 }

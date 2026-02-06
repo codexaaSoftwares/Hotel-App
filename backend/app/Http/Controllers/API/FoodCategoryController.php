@@ -9,7 +9,10 @@ use App\Http\Requests\FoodCategoryUpdateRequest;
 use App\Http\Resources\FoodCategoryResource;
 use App\Models\FoodCategory;
 use App\Models\FoodItem;
+use App\Models\Setting;
+use App\Services\PdfExportService;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class FoodCategoryController extends Controller
 {
@@ -312,6 +315,144 @@ class FoodCategoryController extends Controller
                 'popular_items' => $popularData,
             ],
         ]);
+    }
+
+    /**
+     * Export menu as PDF.
+     */
+    public function exportMenu(Request $request)
+    {
+        // Get all categories with their items
+        $query = FoodCategory::with(['foodItems' => function ($q) {
+            $q->orderBy('display_order', 'asc')
+              ->orderBy('name', 'asc');
+        }]);
+
+        // Status filter
+        if ($status = $request->input('status')) {
+            $query->where('status', $status);
+        }
+
+        // Order by display_order
+        $query->ordered();
+
+        $categories = $query->get();
+
+        // Get business info - check multiple possible key variations
+        $businessInfo = Setting::businessInfo(['company_name', 'businessAddress']);
+        $businessName = $businessInfo['company_name'] ?? $businessInfo['business_name'] ?? 'Company Name';
+        $businessAddress = $businessInfo['businessAddress'] ?? $businessInfo['business_address'] ?? 'Company Address';
+        $businessPhone = $businessInfo['business_phone'] ?? null;
+        $businessEmail = $businessInfo['business_email'] ?? null;
+        $gstNumber = $businessInfo['gstNumber'] ?? null;
+
+        // Prepare data for PDF
+        $data = [
+            'categories' => $categories,
+            'businessInfo' => [
+                'company_name' => $businessName,
+                'business_name' => $businessName,
+                'businessAddress' => $businessAddress,
+                'business_address' => $businessAddress,
+                'businessPhone' => $businessPhone,
+                'business_phone' => $businessPhone,
+                'businessEmail' => $businessEmail,
+                'business_email' => $businessEmail,
+                'gstNumber' => $gstNumber,
+            ],
+            'generatedDate' => now()->format('d/m/Y h:i A'),
+        ];
+
+        $filename = 'Menu_' . now()->format('Y-m-d') . '.pdf';
+
+        $pdfService = new PdfExportService();
+        return $pdfService->export('pdfs.menu', $data, $filename);
+    }
+
+    /**
+     * Export menu as Excel (CSV format).
+     */
+    public function exportMenuCsv(Request $request)
+    {
+        // Get all categories with their items
+        $query = FoodCategory::with(['foodItems' => function ($q) {
+            $q->orderBy('display_order', 'asc')
+              ->orderBy('name', 'asc');
+        }]);
+
+        // Status filter
+        if ($status = $request->input('status')) {
+            $query->where('status', $status);
+        }
+
+        // Order by display_order
+        $query->ordered();
+
+        $categories = $query->get();
+
+        // Prepare CSV data
+        $filename = 'menu_' . now()->format('Y-m-d') . '.csv';
+        
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+
+        $callback = function() use ($categories) {
+            $file = fopen('php://output', 'w');
+            
+            // Add BOM for UTF-8
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+            
+            // Headers
+            fputcsv($file, [
+                'Category',
+                'Category Description',
+                'Item Name',
+                'Item Description',
+                'Type',
+                'Price',
+                'Status',
+                'Popular',
+                'Display Order'
+            ]);
+
+            // Data rows
+            foreach ($categories as $category) {
+                if ($category->foodItems && $category->foodItems->count() > 0) {
+                    foreach ($category->foodItems as $item) {
+                        fputcsv($file, [
+                            $category->name,
+                            $category->description ?? 'N/A',
+                            $item->name,
+                            $item->description ?? 'N/A',
+                            ucfirst($item->food_type ?? 'N/A'),
+                            number_format($item->price, 2),
+                            ucfirst($item->status ?? 'active'),
+                            $item->is_popular ? 'Yes' : 'No',
+                            $item->display_order ?? 0,
+                        ]);
+                    }
+                } else {
+                    // Include category even if no items
+                    fputcsv($file, [
+                        $category->name,
+                        $category->description ?? 'N/A',
+                        'N/A',
+                        'N/A',
+                        'N/A',
+                        '0.00',
+                        ucfirst($category->status ?? 'active'),
+                        'No',
+                        '0',
+                    ]);
+                }
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }
 

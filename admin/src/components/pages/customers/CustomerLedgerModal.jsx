@@ -325,26 +325,12 @@ const CustomerLedgerModal = ({ show, onHide, customerId, customer: initialCustom
         sort_direction: sortState.sortDirection,
       }
 
-      // TODO: Call export API when backend is ready
-      // const response = await walletTransactionService.exportCustomerLedger(customerId, params)
-      // if (response.success) {
-      //   // Download the file
-      //   const blob = new Blob([response.data], { type: 'application/pdf' })
-      //   const url = window.URL.createObjectURL(blob)
-      //   const link = document.createElement('a')
-      //   link.href = url
-      //   link.download = `Customer_Ledger_${customer.name}_${new Date().toISOString().split('T')[0]}.pdf`
-      //   document.body.appendChild(link)
-      //   link.click()
-      //   document.body.removeChild(link)
-      //   window.URL.revokeObjectURL(url)
-      //   success('Ledger exported successfully.')
-      // } else {
-      //   error(response.message || 'Failed to export ledger.')
-      // }
-
-      // Temporary message until API is ready
-      error('Export functionality will be available soon. API is pending.')
+      const response = await walletTransactionService.exportCustomerLedger(customerId, params)
+      if (response.success) {
+        success('Ledger exported successfully.')
+      } else {
+        error(response.message || 'Failed to export ledger.')
+      }
     } catch (err) {
       console.error('Error exporting ledger:', err)
       error('Failed to export ledger. Please try again.')
