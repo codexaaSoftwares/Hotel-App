@@ -9,6 +9,7 @@ import '../styles/theme.css'
 // Import Providers
 import { ToastProvider, ScrollToTop } from './components'
 import { AuthProvider } from './context/AuthContext'
+import { ModuleProvider } from './context/ModuleContext'
 
 // Import Routes
 import AppRoutes from './routes'
@@ -39,10 +40,12 @@ const App = () => {
   return (
     <HashRouter>
       <AuthProvider>
-        <ToastProvider>
-          <ScrollToTop />
-          <AppRoutes />
-        </ToastProvider>
+        <ModuleProvider>
+          <ToastProvider>
+            <ScrollToTop />
+            <AppRoutes />
+          </ToastProvider>
+        </ModuleProvider>
       </AuthProvider>
     </HashRouter>
   )

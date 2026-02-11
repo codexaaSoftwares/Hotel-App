@@ -19,15 +19,22 @@ import { settingsService } from '../../services/settingsService'
 import { getImageUrl } from '../../utils/imageUtils'
 
 // sidebar nav config
-import navigation from '../../_nav.jsx'
+import { getNavigation } from '../../_nav.jsx'
 import { usePermissions } from '../../hooks'
+import { useModule } from '../../context/ModuleContext'
 
 const AppSidebar = () => {
   const dispatch = useDispatch()
   const unfoldable = useSelector((state) => state.sidebarUnfoldable)
   const sidebarShow = useSelector((state) => state.sidebarShow)
   const { hasPermission } = usePermissions()
+  const { activeModule } = useModule()
   const [businessLogo, setBusinessLogo] = useState(null)
+
+  // Get module-specific navigation
+  const navigation = useMemo(() => {
+    return getNavigation(activeModule)
+  }, [activeModule])
 
   useEffect(() => {
     // Get settings from localStorage (set by auth service)

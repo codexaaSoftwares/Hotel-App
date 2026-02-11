@@ -5,12 +5,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { CNavTitle } from '@coreui/react'
 import { usePermissions } from '../../hooks'
-import navigation from '../../_nav.jsx'
+import { useModule } from '../../context/ModuleContext'
+import { getNavigation } from '../../_nav.jsx'
 
 const AppHorizontalNav = () => {
   const location = useLocation()
   const { hasPermission } = usePermissions()
+  const { activeModule } = useModule()
   const [expanded, setExpanded] = useState(false)
+
+  // Get module-specific navigation
+  const navigation = useMemo(() => {
+    return getNavigation(activeModule)
+  }, [activeModule])
 
   // Filter navigation items based on permissions
   const filterNavItems = (items = []) => {

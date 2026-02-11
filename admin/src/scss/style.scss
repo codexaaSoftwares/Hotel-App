@@ -481,3 +481,60 @@ textarea {
     border-color: var(--cui-border-color) !important;
   }
 }
+
+// Module Switcher Styles
+.module-switcher {
+  .btn {
+    border: 1px solid;
+    font-weight: 500;
+    transition: all 0.2s ease;
+
+    &:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 0.2rem rgba(13, 148, 136, 0.25);
+    }
+  }
+
+  .dropdown-menu {
+    min-width: 200px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--cui-border-color);
+    padding: 0.5rem 0;
+  }
+
+  .dropdown-item {
+    transition: all 0.2s ease;
+    border-radius: 4px;
+    margin: 0.125rem 0.5rem;
+
+    &:hover {
+      background-color: var(--cui-tertiary-bg);
+    }
+
+    &.active {
+      font-weight: 600;
+    }
+  }
+}
+
+html[data-coreui-theme="dark"] {
+  .module-switcher {
+    .dropdown-menu {
+      background-color: var(--cui-dark-bg);
+      border-color: var(--cui-border-color);
+    }
+
+    .dropdown-item {
+      color: var(--cui-body-color);
+
+      &:hover {
+        background-color: rgba(13, 148, 136, 0.1);
+      }
+    }
+  }
+}

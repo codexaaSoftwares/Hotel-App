@@ -43,16 +43,73 @@ import PermissionRoute from './PermissionRoute'
 import { PERMISSIONS } from '../../constants/permissions'
 
 const AppContent = () => {
+
   return (
     <div className="app-content">
       <Suspense fallback={<CSpinner color="primary" />}>
         <Routes>
-          {/* Dashboard */}
+          {/* Restaurant Module Routes */}
           <Route
-            path="/dashboard"
+            path="/restaurant/dashboard"
             element={
               <PermissionRoute requiredPermission={PERMISSIONS.DASHBOARD_READ} showAccessDenied>
                 <Dashboard />
+              </PermissionRoute>
+            }
+          />
+          <Route
+            path="/restaurant/pos/panel"
+            element={
+              <PermissionRoute requiredPermission="create_bill" showAccessDenied>
+                <POSPanel />
+              </PermissionRoute>
+            }
+          />
+          <Route
+            path="/restaurant/pos/bills"
+            element={
+              <PermissionRoute requiredPermission="view_bill" showAccessDenied>
+                <BillsList />
+              </PermissionRoute>
+            }
+          />
+          <Route
+            path="/restaurant/reports/sales"
+            element={
+              <PermissionRoute requiredPermission={PERMISSIONS.SALES_REPORT_READ} showAccessDenied>
+                <SalesReport />
+              </PermissionRoute>
+            }
+          />
+          <Route
+            path="/restaurant/reports/expenses"
+            element={
+              <PermissionRoute requiredPermission={PERMISSIONS.EXPENSE_REPORT_READ} showAccessDenied>
+                <ExpenseReport />
+              </PermissionRoute>
+            }
+          />
+          <Route
+            path="/restaurant/reports/customer-pending"
+            element={
+              <PermissionRoute requiredPermission={PERMISSIONS.CUSTOMER_PENDING_REPORT_READ} showAccessDenied>
+                <CustomerPendingReport />
+              </PermissionRoute>
+            }
+          />
+          <Route
+            path="/restaurant/reports/staff-salary"
+            element={
+              <PermissionRoute requiredPermission={PERMISSIONS.STAFF_SALARY_REPORT_READ} showAccessDenied>
+                <StaffSalaryReport />
+              </PermissionRoute>
+            }
+          />
+          <Route
+            path="/restaurant/reports/category-wise-items"
+            element={
+              <PermissionRoute requiredPermission={PERMISSIONS.SALES_REPORT_READ} showAccessDenied>
+                <CategoryWiseItemReport />
               </PermissionRoute>
             }
           />
@@ -136,24 +193,6 @@ const AppContent = () => {
           <Route path="/staff/create" element={<Navigate to="/staff" replace />} />
           <Route path="/staff/edit/:id" element={<Navigate to="/staff" replace />} />
           
-          {/* POS Panel Routes */}
-          <Route
-            path="/pos/panel"
-            element={
-              <PermissionRoute requiredPermission="create_bill" showAccessDenied>
-                <POSPanel />
-              </PermissionRoute>
-            }
-          />
-          <Route
-            path="/pos/bills"
-            element={
-              <PermissionRoute requiredPermission="view_bill" showAccessDenied>
-                <BillsList />
-              </PermissionRoute>
-            }
-          />
-          
           {/* Expense Management Routes */}
           <Route
             path="/expenses"
@@ -166,50 +205,11 @@ const AppContent = () => {
           <Route path="/expenses/create" element={<Navigate to="/expenses" replace />} />
           <Route path="/expenses/edit/:id" element={<Navigate to="/expenses" replace />} />
           
-          {/* Report Routes */}
-          <Route
-            path="/reports/sales"
-            element={
-              <PermissionRoute requiredPermission={PERMISSIONS.SALES_REPORT_READ} showAccessDenied>
-                <SalesReport />
-              </PermissionRoute>
-            }
+          {/* Default redirect - redirect to restaurant module dashboard */}
+          <Route 
+            path="/" 
+            element={<Navigate to="/restaurant/dashboard" replace />} 
           />
-          <Route
-            path="/reports/expenses"
-            element={
-              <PermissionRoute requiredPermission={PERMISSIONS.EXPENSE_REPORT_READ} showAccessDenied>
-                <ExpenseReport />
-              </PermissionRoute>
-            }
-          />
-          <Route
-            path="/reports/customer-pending"
-            element={
-              <PermissionRoute requiredPermission={PERMISSIONS.CUSTOMER_PENDING_REPORT_READ} showAccessDenied>
-                <CustomerPendingReport />
-              </PermissionRoute>
-            }
-          />
-          <Route
-            path="/reports/staff-salary"
-            element={
-              <PermissionRoute requiredPermission={PERMISSIONS.STAFF_SALARY_REPORT_READ} showAccessDenied>
-                <StaffSalaryReport />
-              </PermissionRoute>
-            }
-          />
-          <Route
-            path="/reports/category-wise-items"
-            element={
-              <PermissionRoute requiredPermission={PERMISSIONS.SALES_REPORT_READ} showAccessDenied>
-                <CategoryWiseItemReport />
-              </PermissionRoute>
-            }
-          />
-          
-          {/* Default redirect */}
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </Suspense>
     </div>

@@ -10,6 +10,7 @@ import {
 
 import { AppHorizontalNav } from '../index'
 import { AppHeaderDropdown } from './header/index.jsx'
+import ModuleSwitcher from './ModuleSwitcher'
 import { useAuth } from '../../context/AuthContext'
 import { settingsService } from '../../services/settingsService'
 import logoImg from 'src/assets/logo/logo-transprant.png'
@@ -188,8 +189,11 @@ const AppHeader = () => {
               )}
             </div>
 
-            {/* Right: Watch + Fullscreen + User */}
+            {/* Right: Module Switcher + Watch + Fullscreen + User */}
             <div className="header-right-section">
+              {/* Module Switcher */}
+              <ModuleSwitcher />
+
               {/* Watch/Time */}
               <div className="watch-container">
                 <FontAwesomeIcon icon={faClock} className="text-white watch-icon" />

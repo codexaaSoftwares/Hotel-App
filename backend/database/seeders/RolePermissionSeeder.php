@@ -28,6 +28,8 @@ class RolePermissionSeeder extends Seeder
             'view_setting',
             'edit_setting',
             'view_dashboard',
+            'dashboard:read',
+            'restaurant_dashboard:read',
             // Restaurant Management
             'view_restaurant_settings',
             'edit_restaurant_settings',
@@ -75,6 +77,8 @@ class RolePermissionSeeder extends Seeder
 
         $staffPermissionNames = [
             'view_dashboard',
+            'dashboard:read',
+            'restaurant_dashboard:read',
             // Bill Management (POS Panel) - Staff can create and view bills
             'view_bill',
             'create_bill',

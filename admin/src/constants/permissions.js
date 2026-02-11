@@ -86,6 +86,40 @@ export const PERMISSIONS = {
   EXPENSE_WRITE: 'expense:write',
   EXPENSE_DELETE: 'expense:delete',
 
+  // Module-Specific Permissions
+  // Restaurant Module
+  RESTAURANT_DASHBOARD_READ: 'restaurant_dashboard:read',
+  
+  // Hotel Room Module (Planned)
+  HOTEL_ROOM_DASHBOARD_READ: 'hotel_room_dashboard:read',
+  ROOM_READ: 'room:read',
+  ROOM_WRITE: 'room:write',
+  ROOM_DELETE: 'room:delete',
+  ROOM_TYPE_READ: 'room_type:read',
+  ROOM_TYPE_WRITE: 'room_type:write',
+  ROOM_TYPE_DELETE: 'room_type:delete',
+  BOOKING_READ: 'booking:read',
+  BOOKING_WRITE: 'booking:write',
+  BOOKING_DELETE: 'booking:delete',
+  HOTEL_SETTINGS_READ: 'hotel_settings:read',
+  HOTEL_SETTINGS_WRITE: 'hotel_settings:write',
+  OCCUPANCY_REPORT_READ: 'occupancy_report:read',
+  REVENUE_REPORT_READ: 'revenue_report:read',
+  BOOKING_REPORT_READ: 'booking_report:read',
+  
+  // Banquet Hall Module (Planned)
+  BANQUET_DASHBOARD_READ: 'banquet_dashboard:read',
+  HALL_READ: 'hall:read',
+  HALL_WRITE: 'hall:write',
+  HALL_DELETE: 'hall:delete',
+  BANQUET_BOOKING_READ: 'banquet_booking:read',
+  BANQUET_BOOKING_WRITE: 'banquet_booking:write',
+  BANQUET_BOOKING_DELETE: 'banquet_booking:delete',
+  BANQUET_SETTINGS_READ: 'banquet_settings:read',
+  BANQUET_SETTINGS_WRITE: 'banquet_settings:write',
+  BANQUET_REPORT_READ: 'banquet_report:read',
+  BANQUET_REVENUE_REPORT_READ: 'banquet_revenue_report:read',
+
   // Admin
   ADMIN_ACCESS: 'admin:access',
   SYSTEM_CONFIG: 'system:config',
