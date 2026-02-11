@@ -313,6 +313,7 @@ backend/
 ### 7. **Food Categories & Items Module**
 - **Location**: `app/Http/Controllers/API/FoodCategoryController.php`, `FoodItemController.php`
 - **Routes**: `/api/food-categories/*`, `/api/food-items/*`
+- **Features**: Menu PDF export, Menu CSV/Excel export
 - **Status**: ✅ Fully implemented
 
 ### 8. **Table Management Module**

@@ -297,7 +297,7 @@ admin/
 
 ### 8. **Restaurant Management**
 - **Location**: `src/views/restaurant/`
-- **Features**: Menu Management, Table Management, Restaurant Settings
+- **Features**: Menu Management (with PDF & Excel export), Table Management (with PDF export), Restaurant Settings
 - **Status**: ✅ Fully implemented
 
 ### 9. **Customer Management**

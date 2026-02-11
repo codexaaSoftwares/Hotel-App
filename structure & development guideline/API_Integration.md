@@ -127,6 +127,8 @@ This document maps frontend modules to their corresponding backend API endpoints
 - `POST /api/food-categories` - Create category
 - `PUT /api/food-categories/{category}` - Update category
 - `DELETE /api/food-categories/{category}` - Delete category (soft delete)
+- `GET /api/food-categories/export-menu` - Export menu as PDF (with business information)
+- `GET /api/food-categories/export-menu-csv` - Export menu as CSV/Excel (UTF-8 encoding)
 
 ### Food Items Endpoints
 - `GET /api/food-items` - List items (paginated, sortable, searchable)
@@ -145,6 +147,7 @@ This document maps frontend modules to their corresponding backend API endpoints
 - `POST /api/tables` - Create table
 - `PUT /api/tables/{table}` - Update table
 - `DELETE /api/tables/{table}` - Delete table (soft delete)
+- `GET /api/tables/export-tables` - Export tables as PDF (with business information)
 
 ### Restaurant Settings Endpoints
 - `GET /api/restaurant-settings` - List all restaurant settings

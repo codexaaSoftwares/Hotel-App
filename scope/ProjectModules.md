@@ -110,6 +110,8 @@ This document tracks all modules and their implementation status in the Hotel Ma
   - ✅ Item status management
   - ✅ Server-side pagination, sorting, searching
   - ✅ Soft delete support
+  - ✅ Menu PDF export (with business information)
+  - ✅ Menu Excel/CSV export (UTF-8 encoding)
 
 ### 9. **Table Management**
 - **Status**: ✅ Complete
@@ -121,6 +123,7 @@ This document tracks all modules and their implementation status in the Hotel Ma
   - ✅ Server-side pagination, sorting, searching
   - ✅ Automatic status updates based on bills
   - ✅ Soft delete support
+  - ✅ Tables PDF export (with business information)
 
 ### 10. **Customer Management**
 - **Status**: ✅ Complete
