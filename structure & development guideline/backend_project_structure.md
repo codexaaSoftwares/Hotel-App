@@ -26,6 +26,7 @@
 - 📤 File upload service (avatars, business logos)
 - 🔒 Permission-based route protection
 - 📦 Standardized pagination and sorting
+- 🏢 Multi-module support (Restaurant, Hotel Room, Banquet Hall, Common)
 
 ---
 
@@ -279,6 +280,18 @@ backend/
 
 ## 📦 Module Overview
 
+### Multi-Module Architecture
+The backend API supports multiple business modules:
+- **Restaurant Module**: Food categories, items, tables, bills, restaurant settings
+- **Hotel Room Module**: Room categories, rooms, bookings, check-in/check-out (Planned)
+- **Banquet Hall Module**: Halls, bookings (Planned)
+- **Common Modules**: Customers, Staff, Expenses, Users, Settings (shared across all modules)
+
+**Permission System:**
+- Permissions organized by module and submodule in `permissions` table
+- Module-based permission grouping for frontend UI
+- Permission seeder supports multi-module structure
+
 ### 1. **Authentication Module**
 - **Location**: `app/Http/Controllers/AuthController.php`
 - **Routes**: `/api/auth/*`
@@ -330,6 +343,7 @@ backend/
 - **Location**: `app/Http/Controllers/API/CustomerController.php`
 - **Routes**: `/api/customers/*`
 - **Status**: ✅ Fully implemented
+- **Note**: Unified customer system - serves all modules (Restaurant, Hotel Room, Banquet Hall)
 
 ### 11. **Staff Management Module**
 - **Location**: `app/Http/Controllers/API/StaffController.php`
@@ -496,8 +510,10 @@ use App\Http\Controllers\Concerns\PaginatesResults;
 ## ⚠️ Important Notes
 
 ### Permission System
+- **Module-based Permissions**: Organized by module (Restaurant, Hotel Room, Banquet Hall, Common) and submodule
 - **Standard Permissions**: Pattern `{action}_{resource}` (e.g., `view_user`, `create_branch`)
 - **Special Permissions**: Start with `special_` prefix (e.g., `special_export_data`)
+- **Permission Grouping**: Backend API supports `group_by_module` parameter for frontend UI
 - Admin role has all permissions automatically
 
 ### Database Best Practices
@@ -522,4 +538,5 @@ use App\Http\Controllers\Concerns\PaginatesResults;
 ---
 
 **Last Updated**: January 2025  
-**Version**: 1.9.0
+**Version**: 2.0.0  
+**Multi-Module Support**: ✅ Implemented

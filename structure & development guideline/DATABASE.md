@@ -7,6 +7,11 @@ This document provides an overview of the Hotel Management App database schema, 
 **Character Set:** utf8mb4  
 **Collation:** utf8mb4_unicode_ci
 
+**Multi-Module Architecture:**
+- Database supports multiple business modules: Restaurant, Hotel Room, Banquet Hall
+- Common tables (customers, staff, expenses, users, settings) are shared across all modules
+- Module-specific tables are organized by module (e.g., `food_categories`, `rooms`, `bookings`)
+
 ---
 
 ## Table of Contents
@@ -44,11 +49,13 @@ User roles for access control.
 ---
 
 ### `permissions`
-System permissions.
+System permissions organized by module and submodule.
 
 **Key Columns:**
 - `id`, `name` (UNIQUE), `description`
-- `module`, `submodule`, `type`
+- `module` (Restaurant, Hotel Room, Banquet Hall, Common)
+- `submodule` (e.g., Dashboard, Bills, Rooms, Bookings)
+- `type` (standard, special)
 - `created_at`, `updated_at`
 
 ---
@@ -102,7 +109,7 @@ System settings (email, business info, app settings, restaurant settings).
 ---
 
 ### `customers`
-Customer accounts.
+Customer accounts (unified system for all modules).
 
 **Key Columns:**
 - `id`, `customer_code` (UNIQUE, auto-generated: #CUST001)
@@ -113,9 +120,12 @@ Customer accounts.
 
 **Soft Deletes:** Yes
 
+**Note:** Unified customer system - serves Restaurant, Hotel Room, and Banquet Hall modules.
+
 **Relationships:**
-- Has many `bills`
+- Has many `bills` (restaurant bills)
 - Has many `wallet_transactions`
+- Will have many `bookings` (hotel room and banquet hall bookings)
 
 ---
 
@@ -218,10 +228,12 @@ Customer wallet transactions (credits/debits).
 
 ---
 
-## Restaurant Management Tables
+## Module-Specific Tables
+
+### Restaurant Management Tables
 
 ### `food_categories`
-Food categories.
+Food categories (Restaurant module).
 
 **Key Columns:**
 - `id`, `name` (UNIQUE), `description` (text)
@@ -254,7 +266,7 @@ Food items.
 ---
 
 ### `tables`
-Restaurant tables.
+Restaurant tables (Restaurant module).
 
 **Key Columns:**
 - `id`, `table_number` (UNIQUE), `table_name`
@@ -338,4 +350,18 @@ For high-volume tables (`bills`, `bill_items`), indexes are critical for perform
 
 ---
 
-**Last Updated**: January 2025
+**Last Updated**: January 2025  
+**Multi-Module Support**: ✅ Implemented
+
+### Planned Tables (Hotel Room Module)
+- `room_categories` - Room category master
+- `rooms` - Room master
+- `bookings` - Room bookings
+- `booking_rooms` - Booking-room pivot
+- `booking_id_documents` - ID documents for check-in
+- `laundry_services` - Laundry service entries
+- `booking_payments` - Room booking payments
+
+### Planned Tables (Banquet Hall Module)
+- `halls` - Banquet hall master
+- `hall_bookings` - Banquet hall bookings

@@ -3,8 +3,13 @@
 ## Overview
 This document defines all reports required for the Restaurant Management System (Phase 1).
 
-**Total Reports**: 5  
+**Total Reports**: 5 (Restaurant Module)  
 **Export Formats**: PDF + CSV (both required for all reports)
+
+**Multi-Module Reports:**
+- Restaurant Module: 5 reports (Sales, Expense, Customer Pending, Staff & Salary, Category-wise Items)
+- Hotel Room Module: 5 reports planned (Occupancy, Revenue, Booking, Today Check-In/Out, Room Utilization)
+- Banquet Hall Module: Reports planned (Booking, Revenue)
 
 ---
 
@@ -283,6 +288,7 @@ This document defines all reports required for the Restaurant Management System 
 ---
 
 **Last Updated**: January 2025  
-**Version**: 1.0.0  
-**Status**: Requirements Defined
+**Version**: 1.1.0  
+**Status**: Requirements Defined (Restaurant Module Complete)  
+**Multi-Module Support**: ✅ Implemented
 

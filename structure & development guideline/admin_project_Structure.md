@@ -25,6 +25,7 @@
 - 🔄 Real-time data updates
 - 📱 Responsive design
 - 🎯 Permission-based navigation
+- 🏢 Multi-module architecture (Restaurant, Hotel Room, Banquet Hall, Common)
 
 ---
 
@@ -77,6 +78,7 @@ admin/
 │   │   │   ├── AppHorizontalNav.jsx
 │   │   │   ├── AppSidebar.jsx
 │   │   │   ├── AppSidebarNav.jsx
+│   │   │   ├── ModuleSwitcher.jsx      # Module switcher dropdown
 │   │   │   ├── PermissionRoute.jsx
 │   │   │   └── 📁 header/
 │   │   │       ├── AppHeaderDropdown.jsx
@@ -184,7 +186,8 @@ admin/
 │   │   └── permissions.js
 │   │
 │   ├── 📁 context/                     # React Context providers
-│   │   └── AuthContext.jsx
+│   │   ├── AuthContext.jsx
+│   │   └── ModuleContext.jsx           # Multi-module navigation context
 │   │
 │   ├── 📁 hooks/                       # Custom React hooks
 │   │   ├── index.jsx
@@ -267,13 +270,26 @@ admin/
 
 ## 📦 Module Overview
 
+### Multi-Module Architecture
+The application supports multiple business modules:
+- **Restaurant Module**: Restaurant management, POS, bills, menu, tables
+- **Hotel Room Module**: Room management, bookings, check-in/check-out (Planned)
+- **Banquet Hall Module**: Hall management, bookings (Planned)
+- **Common Modules**: Customers, Staff, Expenses, Users, Settings (shared across all modules)
+
+**Module Navigation:**
+- Module switching via `ModuleContext` and `ModuleSwitcher` component
+- Module-specific navigation menus in `_nav.jsx`
+- Module-based routing (e.g., `/restaurant/dashboard`, `/hotel-room/dashboard`)
+- Active module persisted in `localStorage`
+
 ### 1. **Authentication Module**
 - **Location**: `src/pages/Auth/`, `src/services/authService.js`
 - **Status**: ✅ Fully implemented
 
 ### 2. **Dashboard Module**
 - **Location**: `src/views/dashboard/`
-- **Status**: ⏳ Empty placeholder
+- **Status**: ⏳ Empty placeholder (Module-specific dashboards planned)
 
 ### 3. **Branch Management**
 - **Location**: `src/views/branches/`
@@ -303,6 +319,7 @@ admin/
 ### 9. **Customer Management**
 - **Location**: `src/views/customers/`
 - **Status**: ✅ Fully implemented
+- **Note**: Unified customer system - serves all modules (Restaurant, Hotel Room, Banquet Hall)
 
 ### 10. **Staff Management**
 - **Location**: `src/views/staff/`
@@ -575,7 +592,7 @@ import { Table } from '../components'
 #### 1. **State Management Strategy**
 - **Local State**: Use `useState` for component-specific state
 - **Global State**: Use Redux for application-wide state (sidebar, theme)
-- **Context**: Use React Context for auth and theme
+- **Context**: Use React Context for auth, theme, and active module (`ModuleContext`)
 - **Server State**: Use custom hooks for API calls
 
 #### 2. **State Naming Rules**
@@ -625,9 +642,12 @@ const userService = {
 - **Permission-based routes** using `PermissionRoute`
 
 #### 2. **Navigation Structure**
-- **Horizontal navigation** in `_nav.jsx`
+- **Module-based navigation** in `_nav.jsx` (Restaurant, Hotel Room, Banquet Hall, Common)
+- **Dynamic navigation** based on active module from `ModuleContext`
+- **Module switcher** in header (`ModuleSwitcher` component)
 - **Multi-level dropdowns** support
 - **Permission-based visibility** using `PERMISSIONS` constants
+- **Module-prefixed routes** (e.g., `/restaurant/dashboard`, `/hotel-room/rooms`)
 
 ### Authentication & Authorization
 
@@ -638,9 +658,11 @@ const userService = {
 
 #### 2. **Permission System**
 - **Permission constants** in `constants/permissions.js`
+- **Module-based permissions** organized by module (Restaurant, Hotel Room, Banquet Hall, Common)
 - **Permission checks** in components and routes
 - **Standard Permissions**: Pattern `{action}_{resource}` (e.g., `view_user`, `create_branch`)
 - **Special Permissions**: Start with `special_` prefix
+- **Permission UI**: Grouped by module and submodule in `RoleForm.jsx` with search and bulk selection
 
 ---
 
@@ -707,4 +729,5 @@ const userService = {
 ---
 
 **Last Updated**: January 2025  
-**Version**: 2.9.0
+**Version**: 3.0.0  
+**Multi-Module Support**: ✅ Implemented

@@ -11,6 +11,11 @@ This document maps frontend modules to their corresponding backend API endpoints
 - All protected routes require `Authorization: Bearer {token}` header
 - Token stored in `localStorage` as `access_token`
 
+**Multi-Module Architecture:**
+- The application supports multiple business modules: Restaurant, Hotel Room, Banquet Hall
+- Common modules (Customers, Staff, Expenses, Users, Settings) are shared across all modules
+- Module-specific APIs are organized by module (e.g., restaurant endpoints, room endpoints)
+
 ---
 
 ## Table of Contents
@@ -163,6 +168,7 @@ This document maps frontend modules to their corresponding backend API endpoints
 - **Service**: `src/services/customerService.js`, `src/services/walletTransactionService.js`
 - **Views**: `src/views/customers/CustomersList.jsx`
 - **Components**: `src/components/pages/customers/CustomerLedgerModal.jsx`
+- **Note**: Unified customer system - serves all modules (Restaurant, Hotel Room, Banquet Hall)
 
 ### Customer Endpoints
 - `GET /api/customers` - List customers (paginated, sortable, searchable, filterable)
@@ -371,4 +377,5 @@ The following resources support soft deletes:
 ---
 
 **Last Updated**: January 2025  
-**Version**: 1.9.0
+**Version**: 2.0.0  
+**Multi-Module Support**: ✅ Implemented
