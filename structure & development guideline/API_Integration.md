@@ -29,8 +29,9 @@ This document maps frontend modules to their corresponding backend API endpoints
 8. [Staff Management APIs](#staff-management-apis)
 9. [Bill Management APIs](#bill-management-apis)
 10. [Expense Management APIs](#expense-management-apis)
-11. [Reports APIs](#reports-apis)
-12. [Important Notes](#important-notes)
+11. [Room Management APIs](#room-management-apis)
+12. [Reports APIs](#reports-apis)
+13. [Important Notes](#important-notes)
 
 ---
 
@@ -248,6 +249,34 @@ This document maps frontend modules to their corresponding backend API endpoints
 - `POST /api/expenses` - Create expense
 - `PUT /api/expenses/{expense}` - Update expense
 - `DELETE /api/expenses/{expense}` - Delete expense (soft delete)
+
+---
+
+## Room Management APIs
+
+### Frontend Integration
+- **Service**: `src/services/roomService.js`
+- **Views**: `src/views/hotel-room/RoomCategoriesList.jsx`, `src/views/hotel-room/RoomsList.jsx`
+- **Components**: `src/components/pages/hotel-room/RoomCategoryForm.jsx`, `src/components/pages/hotel-room/RoomForm.jsx`
+
+### Room Category Endpoints
+- `GET /api/room-categories` - List categories (paginated, sortable, searchable)
+- `GET /api/room-categories/{roomCategory}` - Get category by ID
+- `POST /api/room-categories` - Create category
+- `PUT /api/room-categories/{roomCategory}` - Update category
+- `DELETE /api/room-categories/{roomCategory}` - Delete category (soft delete)
+
+### Room Endpoints
+- `GET /api/rooms` - List rooms (paginated, sortable, searchable, filterable)
+- `GET /api/rooms/{room}` - Get room by ID
+- `POST /api/rooms` - Create room
+- `PUT /api/rooms/{room}` - Update room
+- `DELETE /api/rooms/{room}` - Delete room (soft delete)
+- `GET /api/rooms/export-rooms` - Export rooms as PDF (with business information)
+
+**Permissions:**
+- `room_type:read`, `room_type:write`, `room_type:delete` - Room Category Management
+- `room:read`, `room:write`, `room:delete` - Room Management
 
 ---
 

@@ -56,6 +56,8 @@ backend/
 │   │   │   │   ├── ExpenseCategoryController.php
 │   │   │   │   ├── ExpenseController.php
 │   │   │   │   ├── ReportController.php
+│   │   │   │   ├── RoomCategoryController.php
+│   │   │   │   ├── RoomController.php
 │   │   │   │   ├── SalaryPaymentController.php
 │   │   │   │   ├── SettingController.php
 │   │   │   │   ├── StaffController.php
@@ -95,6 +97,10 @@ backend/
 │   │   │   ├── FoodItemStoreRequest.php
 │   │   │   ├── FoodItemUpdateRequest.php
 │   │   │   ├── ProcessPaymentRequest.php
+│   │   │   ├── RoomCategoryStoreRequest.php
+│   │   │   ├── RoomCategoryUpdateRequest.php
+│   │   │   ├── RoomStoreRequest.php
+│   │   │   ├── RoomUpdateRequest.php
 │   │   │   ├── SalaryPaymentStoreRequest.php
 │   │   │   ├── SalaryPaymentUpdateRequest.php
 │   │   │   ├── StaffStoreRequest.php
@@ -113,6 +119,8 @@ backend/
 │   │       ├── ExpenseResource.php
 │   │       ├── FoodCategoryResource.php
 │   │       ├── FoodItemResource.php
+│   │       ├── RoomCategoryResource.php
+│   │       ├── RoomResource.php
 │   │       ├── SalaryPaymentResource.php
 │   │       ├── StaffResource.php
 │   │       ├── TableResource.php
@@ -132,6 +140,8 @@ backend/
 │   │   ├── FoodItem.php
 │   │   ├── Permission.php
 │   │   ├── Role.php
+│   │   ├── Room.php
+│   │   ├── RoomCategory.php
 │   │   ├── SalaryPayment.php
 │   │   ├── Setting.php
 │   │   ├── Staff.php
@@ -198,7 +208,9 @@ backend/
 │   │   ├── 2026_01_29_134428_add_month_year_to_salary_payments_table.php
 │   │   ├── 2026_01_29_135523_remove_payable_amount_from_salary_payments_table.php
 │   │   ├── 2026_01_30_000001_create_expense_categories_table.php
-│   │   └── 2026_01_30_000002_create_expenses_table.php
+│   │   ├── 2026_01_30_000002_create_expenses_table.php
+│   │   ├── 2025_02_01_000001_create_room_categories_table.php
+│   │   └── 2025_02_01_000002_create_rooms_table.php
 │   │
 │   └── 📁 seeders/                       # Database seeders
 │       ├── BranchSeeder.php
@@ -209,6 +221,8 @@ backend/
 │       ├── PermissionsTableSeeder.php
 │       ├── RolePermissionSeeder.php
 │       ├── RolesTableSeeder.php
+│       ├── RoomCategorySeeder.php
+│       ├── RoomSeeder.php
 │       ├── TableSeeder.php
 │       └── UserSeeder.php
 │
@@ -361,7 +375,20 @@ The backend API supports multiple business modules:
 - **Permissions**: `view_expense_category`, `create_expense_category`, `edit_expense_category`, `delete_expense_category`, `view_expense`, `create_expense`, `edit_expense`, `delete_expense`
 - **Status**: ✅ Fully implemented
 
-### 14. **Reports Module**
+### 14. **Room Category Management Module**
+- **Location**: `app/Http/Controllers/API/RoomCategoryController.php`
+- **Routes**: `/api/room-categories/*`
+- **Permissions**: `room_type:read`, `room_type:write`, `room_type:delete`
+- **Status**: ✅ Fully implemented
+
+### 15. **Room Management Module**
+- **Location**: `app/Http/Controllers/API/RoomController.php`
+- **Routes**: `/api/rooms/*`
+- **Features**: Room CRUD, PDF export, search, filter (status, category, floor, active)
+- **Permissions**: `room:read`, `room:write`, `room:delete`
+- **Status**: ✅ Fully implemented
+
+### 16. **Reports Module**
 - **Location**: `app/Http/Controllers/API/ReportController.php`
 - **Routes**: `/api/reports/*`
 - **Permissions**: `sales_report:read`, `expense_report:read`, `customer_pending_report:read`, `staff_salary_report:read`

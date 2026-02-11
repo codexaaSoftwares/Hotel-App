@@ -35,6 +35,8 @@ This document tracks all modules and their implementation status in the Hotel Ma
 | Dashboard | ⏳ | ⏳ | ⏳ | ⏳ Pending |
 | Expense Management | ✅ | ✅ | ✅ | ✅ Complete |
 | Reports | ✅ | ✅ | ✅ | ✅ Complete |
+| Room Categories | ✅ | ✅ | ✅ | ✅ Complete |
+| Rooms Management | ✅ | ✅ | ✅ | ✅ Complete |
 
 ---
 

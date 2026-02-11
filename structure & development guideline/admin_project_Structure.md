@@ -112,6 +112,9 @@ admin/
 │   │       ├── 📁 expenses/
 │   │       │   ├── ExpenseForm.jsx
 │   │       │   └── ExpenseCategoryModal.jsx
+│   │       ├── 📁 hotel-room/
+│   │       │   ├── RoomCategoryForm.jsx
+│   │       │   └── RoomForm.jsx
 │   │       └── 📁 users/
 │   │           ├── 📁 __tests__/
 │   │           │   └── ProfileForm.test.js
@@ -135,6 +138,7 @@ admin/
 │   │   ├── reportService.js
 │   │   ├── restaurantSettingsService.js
 │   │   ├── roleService.js
+│   │   ├── roomService.js
 │   │   ├── settingsService.js
 │   │   ├── staffService.js
 │   │   ├── tableService.js
@@ -168,6 +172,9 @@ admin/
 │   │   │   ├── TablesList.jsx
 │   │   │   └── 📁 settings/
 │   │   │       └── RestaurantSettings.jsx
+│   │   ├── 📁 hotel-room/
+│   │   │   ├── RoomCategoriesList.jsx
+│   │   │   └── RoomsList.jsx
 │   │   ├── 📁 roles/
 │   │   │   └── RolesList.jsx
 │   │   ├── 📁 settings/
@@ -339,7 +346,20 @@ The application supports multiple business modules:
 - **Service**: `src/services/expenseService.js`
 - **Status**: ✅ Fully implemented
 
-### 14. **Reports Module**
+### 14. **Room Category Management**
+- **Location**: `src/views/hotel-room/RoomCategoriesList.jsx`
+- **Components**: `src/components/pages/hotel-room/RoomCategoryForm.jsx`
+- **Service**: `src/services/roomService.js`
+- **Status**: ✅ Fully implemented
+
+### 15. **Rooms Management**
+- **Location**: `src/views/hotel-room/RoomsList.jsx`
+- **Components**: `src/components/pages/hotel-room/RoomForm.jsx`
+- **Service**: `src/services/roomService.js`
+- **Features**: Room CRUD, PDF export, search, filter (status, category, floor, active)
+- **Status**: ✅ Fully implemented
+
+### 16. **Reports Module**
 - **Location**: `src/views/reports/`
 - **Service**: `src/services/reportService.js`
 - **Status**: ✅ Fully implemented

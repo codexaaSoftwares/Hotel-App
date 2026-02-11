@@ -230,6 +230,46 @@ Customer wallet transactions (credits/debits).
 
 ## Module-Specific Tables
 
+### Hotel Room Management Tables
+
+### `room_categories`
+Room categories (Hotel Room module).
+
+**Key Columns:**
+- `id`, `name` (UNIQUE), `description` (text)
+- `base_price` (decimal), `max_adults` (1-10), `max_children` (0-10)
+- `status` (enum: 'active', 'inactive')
+- `created_at`, `updated_at`, `deleted_at`
+
+**Soft Deletes:** Yes
+
+**Relationships:**
+- Has many `rooms`
+
+---
+
+### `rooms`
+Rooms master (Hotel Room module).
+
+**Key Columns:**
+- `id`, `room_number` (UNIQUE), `room_category_id` (FK → room_categories.id)
+- `floor_number`, `bed_type` (enum: 'single', 'double', 'king', 'queen', 'twin')
+- `max_occupancy` (1-20), `room_price` (nullable, overrides category price)
+- `status` (enum: 'available', 'occupied', 'cleaning', 'maintenance', 'reserved')
+- `notes` (text), `is_active` (boolean)
+- `created_at`, `updated_at`, `deleted_at`
+
+**Soft Deletes:** Yes
+
+**Relationships:**
+- Belongs to `room_categories`
+- Will have many `booking_rooms` (future)
+
+**Indexes:**
+- `room_category_id`, `status`, `is_active`, `floor_number`, `created_at`
+
+---
+
 ### Restaurant Management Tables
 
 ### `food_categories`
@@ -313,7 +353,7 @@ Restaurant tables (Restaurant module).
 ## Important Notes
 
 ### Soft Deletes
-Tables with soft deletes: `branches`, `roles`, `food_categories`, `food_items`, `tables`, `customers`, `staff`, `salary_payments`, `bills`, `wallet_transactions`, `expense_categories`, `expenses`
+Tables with soft deletes: `branches`, `roles`, `food_categories`, `food_items`, `tables`, `customers`, `staff`, `salary_payments`, `bills`, `wallet_transactions`, `expense_categories`, `expenses`, `room_categories`, `rooms`
 
 ### Auto-Generated Codes
 - **Customer Code**: `#CUST001` format (generated before creation)
@@ -354,8 +394,8 @@ For high-volume tables (`bills`, `bill_items`), indexes are critical for perform
 **Multi-Module Support**: ✅ Implemented
 
 ### Planned Tables (Hotel Room Module)
-- `room_categories` - Room category master
-- `rooms` - Room master
+- ✅ `room_categories` - Room category master (Implemented)
+- ✅ `rooms` - Room master (Implemented)
 - `bookings` - Room bookings
 - `booking_rooms` - Booking-room pivot
 - `booking_id_documents` - ID documents for check-in
