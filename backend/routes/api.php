@@ -19,6 +19,7 @@ use App\Http\Controllers\API\SalaryPaymentController;
 use App\Http\Controllers\API\ExpenseCategoryController;
 use App\Http\Controllers\API\ExpenseController;
 use App\Http\Controllers\API\ReportController;
+use App\Http\Controllers\API\RoomCategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -102,6 +103,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/tables/{table}', [TableController::class, 'show'])->middleware('permission:view_table');
     Route::put('/tables/{table}', [TableController::class, 'update'])->middleware('permission:edit_table');
     Route::delete('/tables/{table}', [TableController::class, 'destroy'])->middleware('permission:delete_table');
+
+    // Room Category Management
+    Route::get('/room-categories', [RoomCategoryController::class, 'index'])->middleware('permission:view_room_type');
+    Route::post('/room-categories', [RoomCategoryController::class, 'store'])->middleware('permission:create_room_type');
+    Route::get('/room-categories/{roomCategory}', [RoomCategoryController::class, 'show'])->middleware('permission:view_room_type');
+    Route::put('/room-categories/{roomCategory}', [RoomCategoryController::class, 'update'])->middleware('permission:edit_room_type');
+    Route::delete('/room-categories/{roomCategory}', [RoomCategoryController::class, 'destroy'])->middleware('permission:delete_room_type');
 
     // Customer Management
     Route::get('/customers', [CustomerController::class, 'index'])->middleware('permission:view_customer');

@@ -149,10 +149,10 @@ class PermissionsTableSeeder extends Seeder
             ['name' => 'room:write', 'description' => 'Create/Edit rooms', 'module' => 'hotel_room', 'submodule' => 'rooms', 'type' => 'write'],
             ['name' => 'room:delete', 'description' => 'Delete rooms', 'module' => 'hotel_room', 'submodule' => 'rooms', 'type' => 'delete'],
 
-            // Room Type Management
-            ['name' => 'room_type:read', 'description' => 'View room types', 'module' => 'hotel_room', 'submodule' => 'room_types', 'type' => 'read'],
-            ['name' => 'room_type:write', 'description' => 'Create/Edit room types', 'module' => 'hotel_room', 'submodule' => 'room_types', 'type' => 'write'],
-            ['name' => 'room_type:delete', 'description' => 'Delete room types', 'module' => 'hotel_room', 'submodule' => 'room_types', 'type' => 'delete'],
+            // Room Category Management
+            ['name' => 'room_type:read', 'description' => 'View room categories', 'module' => 'hotel_room', 'submodule' => 'room_categories', 'type' => 'read'],
+            ['name' => 'room_type:write', 'description' => 'Create/Edit room categories', 'module' => 'hotel_room', 'submodule' => 'room_categories', 'type' => 'write'],
+            ['name' => 'room_type:delete', 'description' => 'Delete room categories', 'module' => 'hotel_room', 'submodule' => 'room_categories', 'type' => 'delete'],
 
             // Booking Management
             ['name' => 'booking:read', 'description' => 'View bookings', 'module' => 'hotel_room', 'submodule' => 'bookings', 'type' => 'read'],

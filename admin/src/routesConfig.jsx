@@ -37,6 +37,9 @@ const routesConfig = [
   { path: '/restaurant/tables', name: 'Table Management' },
   { path: '/restaurant/settings', name: 'Restaurant Settings' },
   
+  // Hotel Room Routes
+  { path: '/hotel-room/room-types', name: 'Room Categories' },
+  
   // POS Routes
   { path: '/pos/panel', name: 'POS Panel' },
   { path: '/pos/bills', name: 'Bills Management' },

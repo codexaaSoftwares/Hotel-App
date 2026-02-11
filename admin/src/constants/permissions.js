@@ -95,6 +95,7 @@ export const PERMISSIONS = {
   ROOM_READ: 'room:read',
   ROOM_WRITE: 'room:write',
   ROOM_DELETE: 'room:delete',
+  // Room Category Management (permission names use room_type for backward compatibility)
   ROOM_TYPE_READ: 'room_type:read',
   ROOM_TYPE_WRITE: 'room_type:write',
   ROOM_TYPE_DELETE: 'room_type:delete',

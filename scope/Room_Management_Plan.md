@@ -660,7 +660,7 @@ backend/database/
 Already added in `PermissionsTableSeeder.php`:
 - `hotel_room_dashboard:read`
 - `room:read`, `room:write`, `room:delete`
-- `room_type:read`, `room_type:write`, `room_type:delete`
+- `room_type:read`, `room_type:write`, `room_type:delete` (Room Category Management)
 - `booking:read`, `booking:write`, `booking:delete`
 - `hotel_settings:read`, `hotel_settings:write`
 - `occupancy_report:read`

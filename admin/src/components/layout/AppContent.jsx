@@ -31,6 +31,9 @@ const BillsList = React.lazy(() => import('../../views/pos/BillsList'))
 // Expense Management Components
 const ExpensesList = React.lazy(() => import('../../views/expenses/ExpensesList'))
 
+// Hotel Room Components
+const RoomCategoriesList = React.lazy(() => import('../../views/hotel-room/RoomCategoriesList'))
+
 // Report Components
 const SalesReport = React.lazy(() => import('../../views/reports/SalesReport'))
 const ExpenseReport = React.lazy(() => import('../../views/reports/ExpenseReport'))
@@ -204,6 +207,16 @@ const AppContent = () => {
           />
           <Route path="/expenses/create" element={<Navigate to="/expenses" replace />} />
           <Route path="/expenses/edit/:id" element={<Navigate to="/expenses" replace />} />
+          
+          {/* Hotel Room Module Routes */}
+          <Route
+            path="/hotel-room/room-types"
+            element={
+              <PermissionRoute requiredPermission={PERMISSIONS.ROOM_TYPE_READ} showAccessDenied>
+                <RoomCategoriesList />
+              </PermissionRoute>
+            }
+          />
           
           {/* Default redirect - redirect to restaurant module dashboard */}
           <Route 

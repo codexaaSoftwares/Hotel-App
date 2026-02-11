@@ -206,10 +206,10 @@ const hotelRoomNavigation = [
       },
       {
         component: CNavItem,
-        name: 'Room Types',
+        name: 'Room Categories',
         to: '/hotel-room/room-types',
         icon: <CIcon icon={cilGrid} customClassName="nav-icon" />,
-        permission: PERMISSIONS.DASHBOARD_READ, // Will be updated to ROOM_TYPE_READ
+        permission: PERMISSIONS.ROOM_TYPE_READ,
       },
       {
         component: CNavItem,
