@@ -33,6 +33,7 @@ const ExpensesList = React.lazy(() => import('../../views/expenses/ExpensesList'
 
 // Hotel Room Components
 const RoomCategoriesList = React.lazy(() => import('../../views/hotel-room/RoomCategoriesList'))
+const RoomsList = React.lazy(() => import('../../views/hotel-room/RoomsList'))
 
 // Report Components
 const SalesReport = React.lazy(() => import('../../views/reports/SalesReport'))
@@ -214,6 +215,14 @@ const AppContent = () => {
             element={
               <PermissionRoute requiredPermission={PERMISSIONS.ROOM_TYPE_READ} showAccessDenied>
                 <RoomCategoriesList />
+              </PermissionRoute>
+            }
+          />
+          <Route
+            path="/hotel-room/rooms"
+            element={
+              <PermissionRoute requiredPermission={PERMISSIONS.ROOM_READ} showAccessDenied>
+                <RoomsList />
               </PermissionRoute>
             }
           />

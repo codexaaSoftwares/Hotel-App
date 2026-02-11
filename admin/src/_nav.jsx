@@ -202,7 +202,7 @@ const hotelRoomNavigation = [
         name: 'Rooms',
         to: '/hotel-room/rooms',
         icon: <CIcon icon={cilBed} customClassName="nav-icon" />,
-        permission: PERMISSIONS.DASHBOARD_READ, // Will be updated to ROOM_READ
+        permission: PERMISSIONS.ROOM_READ,
       },
       {
         component: CNavItem,

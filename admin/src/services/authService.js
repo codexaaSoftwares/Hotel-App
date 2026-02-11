@@ -48,6 +48,12 @@ const PERMISSION_ALIAS_MAP = {
   edit_room_type: ['room_type:write'],
   delete_room_type: ['room_type:delete'],
   
+  // Room Management
+  view_room: ['room:read'],
+  create_room: ['room:write'],
+  edit_room: ['room:write'],
+  delete_room: ['room:delete'],
+  
   // Customer Management
   view_customer: ['customer:read'],
   create_customer: ['customer:write'],
