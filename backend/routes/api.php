@@ -9,6 +9,7 @@ use App\Http\Controllers\API\SettingController;
 use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\FoodCategoryController;
 use App\Http\Controllers\API\RestaurantSettingsController;
+use App\Http\Controllers\API\RoomSettingsController;
 use App\Http\Controllers\API\FoodItemController;
 use App\Http\Controllers\API\TableController;
 use App\Http\Controllers\API\CustomerController;
@@ -188,6 +189,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('restaurant-settings')->middleware('permission:edit_restaurant_settings')->group(function () {
         Route::post('/', [RestaurantSettingsController::class, 'store']);
         Route::post('/bulk', [RestaurantSettingsController::class, 'bulkUpdate']);
+    });
+
+    // Room Settings Management
+    Route::prefix('room-settings')->middleware('permission:hotel_settings:read')->group(function () {
+        Route::get('/', [RoomSettingsController::class, 'index']);
+        Route::get('/by-section', [RoomSettingsController::class, 'listBySection']);
+        Route::get('/by-section/{section}', [RoomSettingsController::class, 'getSection']);
+        Route::get('/key/{key}', [RoomSettingsController::class, 'showByKey']);
+    });
+
+    Route::prefix('room-settings')->middleware('permission:hotel_settings:write')->group(function () {
+        Route::post('/', [RoomSettingsController::class, 'store']);
+        Route::post('/bulk', [RoomSettingsController::class, 'bulkUpdate']);
     });
 
 

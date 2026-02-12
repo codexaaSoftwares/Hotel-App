@@ -40,6 +40,7 @@ const routesConfig = [
   // Hotel Room Routes
   { path: '/hotel-room/room-types', name: 'Room Categories' },
   { path: '/hotel-room/rooms', name: 'Rooms Management' },
+  { path: '/hotel-room/settings', name: 'Room Settings' },
   
   // POS Routes
   { path: '/pos/panel', name: 'POS Panel' },

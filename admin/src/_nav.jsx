@@ -223,7 +223,7 @@ const hotelRoomNavigation = [
         name: 'Hotel Settings',
         to: '/hotel-room/settings',
         icon: <CIcon icon={cilCog} customClassName="nav-icon" />,
-        permission: PERMISSIONS.DASHBOARD_READ, // Will be updated to HOTEL_SETTINGS_READ
+        permission: PERMISSIONS.HOTEL_SETTINGS_READ,
       },
     ],
   },

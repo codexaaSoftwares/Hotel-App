@@ -15,6 +15,7 @@ const Settings = React.lazy(() => import('../../views/settings/Settings'))
 
 // Restaurant Components
 const RestaurantSettings = React.lazy(() => import('../../views/restaurant/settings/RestaurantSettings'))
+const RoomSettings = React.lazy(() => import('../../views/hotel-room/settings/RoomSettings'))
 const MenuManagement = React.lazy(() => import('../../views/restaurant/MenuManagement'))
 const TablesList = React.lazy(() => import('../../views/restaurant/TablesList'))
 
@@ -223,6 +224,14 @@ const AppContent = () => {
             element={
               <PermissionRoute requiredPermission={PERMISSIONS.ROOM_READ} showAccessDenied>
                 <RoomsList />
+              </PermissionRoute>
+            }
+          />
+          <Route
+            path="/hotel-room/settings"
+            element={
+              <PermissionRoute requiredPermission={PERMISSIONS.HOTEL_SETTINGS_READ} showAccessDenied>
+                <RoomSettings />
               </PermissionRoute>
             }
           />
