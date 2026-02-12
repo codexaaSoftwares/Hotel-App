@@ -36,7 +36,7 @@ const RoomsList = () => {
   const [floorFilter, setFloorFilter] = useState('')
   const [activeFilter, setActiveFilter] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
-  const [pageSize, setPageSize] = useState(25)
+  const [pageSize, setPageSize] = useState(100)
   const [sortState, setSortState] = useState({
     columnKey: 'room_number',
     sortBy: 'room_number',
@@ -150,6 +150,8 @@ const RoomsList = () => {
     const available = visibleRooms.filter((room) => room.status === 'available').length
     const occupied = visibleRooms.filter((room) => room.status === 'occupied').length
     const reserved = visibleRooms.filter((room) => room.status === 'reserved').length
+    const cleaning = visibleRooms.filter((room) => room.status === 'cleaning').length
+    const maintenance = visibleRooms.filter((room) => room.status === 'maintenance').length
     const active = visibleRooms.filter((room) => room.is_active).length
 
     return {
@@ -157,9 +159,34 @@ const RoomsList = () => {
       available,
       occupied,
       reserved,
+      cleaning,
+      maintenance,
       active,
     }
   }, [rooms, meta])
+
+  const categoryWiseCount = useMemo(() => {
+    const categoryMap = {}
+    
+    // Use rooms data from the API response
+    rooms.forEach((room) => {
+      if (room.room_category) {
+        const categoryId = room.room_category.id
+        const categoryName = room.room_category.name
+        
+        if (!categoryMap[categoryId]) {
+          categoryMap[categoryId] = {
+            id: categoryId,
+            name: categoryName,
+            count: 0,
+          }
+        }
+        categoryMap[categoryId].count++
+      }
+    })
+    
+    return Object.values(categoryMap).sort((a, b) => b.count - a.count)
+  }, [rooms])
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -550,56 +577,71 @@ const RoomsList = () => {
             </div>
           </div>
 
+          {/* Two Cards Layout */}
           <Row className="mb-4 g-3">
-            <Col md={3} sm={6}>
-              <Card className="bg-gradient-primary text-white border-0 shadow-sm">
-                <Card.Body className="p-4">
-                  <div className="d-flex align-items-center">
-                    <div className="flex-grow-1">
-                      <h4 className="mb-0">{roomSummary.total}</h4>
-                      <p className="mb-0 opacity-75">Total Rooms</p>
+            {/* Left Card - Availability Status */}
+            <Col md={6}>
+              <Card className="shadow-sm h-100">
+                <Card.Header className="bg-white border-bottom">
+                  <h5 className="mb-0 fw-semibold">
+                    <FontAwesomeIcon icon={faBed} className="me-2 text-theme" />
+                    Availability Status
+                  </h5>
+                </Card.Header>
+                <Card.Body>
+                  <div className="d-flex flex-column gap-3">
+                    <div className="d-flex justify-content-between align-items-center py-2 border-bottom">
+                      <span className="fw-semibold">Total Rooms</span>
+                      <span className="text-muted">{roomSummary.total}</span>
                     </div>
-                    <FontAwesomeIcon icon={faBed} className="fs-1 opacity-50" />
+                    <div className="d-flex justify-content-between align-items-center py-2 border-bottom">
+                      <span className="fw-semibold">Available</span>
+                      <span className="text-muted">{roomSummary.available}</span>
+                    </div>
+                    <div className="d-flex justify-content-between align-items-center py-2 border-bottom">
+                      <span className="fw-semibold">Occupied</span>
+                      <span className="text-muted">{roomSummary.occupied}</span>
+                    </div>
+                    <div className="d-flex justify-content-between align-items-center py-2 border-bottom">
+                      <span className="fw-semibold">Reserved</span>
+                      <span className="text-muted">{roomSummary.reserved}</span>
+                    </div>
+                    <div className="d-flex justify-content-between align-items-center py-2">
+                      <span className="fw-semibold">Cleaning</span>
+                      <span className="text-muted">{roomSummary.cleaning}</span>
+                    </div>
                   </div>
                 </Card.Body>
               </Card>
             </Col>
-            <Col md={3} sm={6}>
-              <Card className="bg-gradient-success text-white border-0 shadow-sm">
-                <Card.Body className="p-4">
-                  <div className="d-flex align-items-center">
-                    <div className="flex-grow-1">
-                      <h4 className="mb-0">{roomSummary.available}</h4>
-                      <p className="mb-0 opacity-75">Available</p>
+
+            {/* Right Card - Category-wise */}
+            <Col md={6}>
+              <Card className="shadow-sm h-100">
+                <Card.Header className="bg-white border-bottom">
+                  <h5 className="mb-0 fw-semibold">
+                    <FontAwesomeIcon icon={faBed} className="me-2 text-theme" />
+                    Rooms by Category
+                  </h5>
+                </Card.Header>
+                <Card.Body>
+                  {categoryWiseCount.length > 0 ? (
+                    <div className="d-flex flex-column gap-3">
+                      {categoryWiseCount.map((category, index) => (
+                        <div
+                          key={category.id}
+                          className={`d-flex justify-content-between align-items-center py-2 ${
+                            index < categoryWiseCount.length - 1 ? 'border-bottom' : ''
+                          }`}
+                        >
+                          <span className="fw-semibold">{category.name}</span>
+                          <span className="text-muted">{category.count}</span>
+                        </div>
+                      ))}
                     </div>
-                    <FontAwesomeIcon icon={faBed} className="fs-1 opacity-50" />
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
-            <Col md={3} sm={6}>
-              <Card className="text-white border-0 shadow-sm" style={{ background: 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)' }}>
-                <Card.Body className="p-4">
-                  <div className="d-flex align-items-center">
-                    <div className="flex-grow-1">
-                      <h4 className="mb-0">{roomSummary.occupied}</h4>
-                      <p className="mb-0 opacity-75">Occupied</p>
-                    </div>
-                    <FontAwesomeIcon icon={faBed} className="fs-1 opacity-50" />
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
-            <Col md={3} sm={6}>
-              <Card className="bg-gradient-info text-white border-0 shadow-sm">
-                <Card.Body className="p-4">
-                  <div className="d-flex align-items-center">
-                    <div className="flex-grow-1">
-                      <h4 className="mb-0">{roomSummary.active}</h4>
-                      <p className="mb-0 opacity-75">Active Rooms</p>
-                    </div>
-                    <FontAwesomeIcon icon={faUsers} className="fs-1 opacity-50" />
-                  </div>
+                  ) : (
+                    <div className="text-center text-muted py-3">No categories found</div>
+                  )}
                 </Card.Body>
               </Card>
             </Col>
@@ -608,9 +650,9 @@ const RoomsList = () => {
           <Card className="shadow-sm">
             <Card.Body>
               <Form className="mb-4">
-                <Row className="g-3 align-items-end">
-                  <Col md={3} sm={12}>
-                    <Form.Label className="fw-semibold text-muted">Search</Form.Label>
+                {/* First Row */}
+                <Row className="g-3 align-items-end mb-3">
+                  <Col md={4} sm={12}>
                     <InputGroup>
                       <InputGroup.Text className="bg-white border-2 text-muted">
                         <FontAwesomeIcon icon={faSearch} />
@@ -694,34 +736,26 @@ const RoomsList = () => {
                       showLabel={false}
                     />
                   </Col>
-                  <Col md={1} sm={12}>
-                    <Form.Label className="fw-semibold text-muted">Actions</Form.Label>
-                    <div className="d-flex gap-2">
-                      <Button
-                        type="button"
-                        variant="outline-secondary"
-                        className="border-2"
-                        onClick={() => {
-                          setSearchTerm('')
-                          setStatusFilter('')
-                          setCategoryFilter('')
-                          setFloorFilter('')
-                          setActiveFilter('')
-                          setCurrentPage(1)
-                        }}
-                      >
-                        Clear
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline-primary"
-                        className="border-2"
-                        disabled={loading}
-                        onClick={fetchRoomsWithParams}
-                      >
-                        <FontAwesomeIcon icon={faRefresh} className="me-1" /> Refresh
-                      </Button>
-                    </div>
+                </Row>
+                {/* Second Row - Actions */}
+                <Row className="g-3">
+                  <Col md={12} className="d-flex justify-content-end">
+                    <Button
+                      type="button"
+                      variant="outline-secondary"
+                      className="border-2"
+                      onClick={() => {
+                        setSearchTerm('')
+                        setStatusFilter('')
+                        setCategoryFilter('')
+                        setFloorFilter('')
+                        setActiveFilter('')
+                        setCurrentPage(1)
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faRefresh} className="me-2" />
+                      Reset Filters
+                    </Button>
                   </Col>
                 </Row>
               </Form>
@@ -736,6 +770,8 @@ const RoomsList = () => {
                 sortableColumns={['room_number', 'floor_number', 'bed_type', 'max_occupancy', 'status', 'is_active', 'created_at']}
                 serverSide={true}
                 meta={meta}
+                pageSize={pageSize}
+                pageSizeOptions={[10, 25, 50, 100]}
                 onPageChange={(page) => setCurrentPage(page)}
                 onPageSizeChange={(size) => {
                   setPageSize(size)
