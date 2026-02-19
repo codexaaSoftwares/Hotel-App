@@ -16,13 +16,14 @@ This document provides a comprehensive plan for implementing Hotel Room Manageme
 
 1. **Room Categories Management**
 2. **Rooms Master Management**
-3. **Booking Management**
-4. **Check-In/Check-Out Management**
-5. **Laundry Service Management**
-6. **Room Billing & Invoicing**
-7. **Room Settings**
-8. **Dashboard**
-9. **Reports**
+3. **Room Addon Services**
+4. **Room Settings**
+5. **Booking Management**
+6. **Check-In/Check-Out Management**
+7. **Laundry Service Management**
+8. **Room Billing & Invoicing**
+9. **Dashboard**
+10. **Reports**
 
 ---
 
@@ -99,7 +100,57 @@ This document provides a comprehensive plan for implementing Hotel Room Manageme
 
 ---
 
-### 3. **Booking Management**
+### 3. **Room Addon Services** ✅ COMPLETED
+
+#### Features
+- ✅ Create/Edit/Delete Addon Services
+- ✅ Service Name (e.g., Extra Bed, Laundry)
+- ✅ Charge (amount, e.g., Extra Bed ₹500, Laundry ₹50)
+- ✅ Status (Active/Inactive)
+- ✅ Server-side pagination, sorting, searching, filtering
+- ✅ Soft delete support
+- ✅ Used in room billing for extra services
+
+#### Frontend Components
+- **View**: `admin/src/views/hotel-room/AddonServicesList.jsx` ✅
+- **Form Component**: `admin/src/components/pages/hotel-room/AddonServiceForm.jsx` ✅
+- **Service**: `admin/src/services/addonService.js` ✅
+
+#### Backend
+- **Controller**: `backend/app/Http/Controllers/API/AddonServiceController.php` ✅
+- **Model**: `backend/app/Models/AddonService.php` ✅
+- **Request**: `AddonServiceStoreRequest.php`, `AddonServiceUpdateRequest.php` ✅
+- **Resource**: `backend/app/Http/Resources/AddonServiceResource.php` ✅
+- **Seeder**: `AddonServiceSeeder.php` ✅ (Extra Bed ₹500, Laundry ₹50)
+
+#### Database
+- **Table**: `addon_services` ✅
+- **Fields**: `id`, `name`, `charge`, `status`, `created_at`, `updated_at`, `deleted_at`
+
+**Status**: ✅ **PRODUCTION READY**
+
+---
+
+### 4. **Room Settings** ✅ COMPLETED
+
+#### Features
+- ✅ Check-In/Check-Out Time settings
+- ✅ Room GST settings (CGST %, SGST %, Service Tax %)
+- ✅ Room Invoice settings (Prefix, Footer, Terms)
+
+#### Frontend Components
+- **View**: `admin/src/views/hotel-room/settings/RoomSettings.jsx` ✅
+- **Service**: `admin/src/services/roomSettingsService.js` ✅
+
+#### Backend
+- **Controller**: `backend/app/Http/Controllers/API/RoomSettingsController.php` ✅
+- **Settings**: Stored in `settings` table with group = "Room Settings"
+
+**Status**: ✅ **PRODUCTION READY**
+
+---
+
+### 5. **Booking Management**
 
 #### Features
 - ✅ Create/Edit/Delete Bookings
@@ -157,7 +208,7 @@ This document provides a comprehensive plan for implementing Hotel Room Manageme
 
 ---
 
-### 5. **Check-In Management**
+### 7. **Check-In Management**
 
 #### Features
 - ✅ Check-In Form (from booking)
@@ -187,7 +238,7 @@ This document provides a comprehensive plan for implementing Hotel Room Manageme
 
 ---
 
-### 6. **Check-Out Management**
+### 8. **Check-Out Management**
 
 #### Features
 - ✅ Check-Out Form
@@ -216,7 +267,7 @@ This document provides a comprehensive plan for implementing Hotel Room Manageme
 
 ---
 
-### 7. **Laundry Service Management**
+### 9. **Laundry Service Management**
 
 #### Features
 - ✅ Create/Edit/Delete Laundry Entries
@@ -248,7 +299,7 @@ This document provides a comprehensive plan for implementing Hotel Room Manageme
 
 ---
 
-### 8. **Room Billing & Invoicing**
+### 10. **Room Billing & Invoicing**
 
 #### Features
 - ✅ Combined Invoice Generation
@@ -283,7 +334,7 @@ This document provides a comprehensive plan for implementing Hotel Room Manageme
 
 ---
 
-### 9. **Restaurant → Room Billing Integration**
+### 11. **Restaurant → Room Billing Integration**
 
 #### Features
 - ✅ Link Restaurant Bills to Room
@@ -310,10 +361,10 @@ This document provides a comprehensive plan for implementing Hotel Room Manageme
 
 ---
 
-### 10. **Room Settings Management**
+### 12. **Room Settings Management** (Core Implemented - see §4)
 
-#### Features
-- ✅ Hotel Information Settings
+#### Features (Planned/Implemented)
+- ⏳ Hotel Information Settings (Planned)
 - ✅ Room Pricing Settings
 - ✅ Check-In/Check-Out Time Settings
 - ✅ Laundry Service Settings (Item Types, Rates)
@@ -331,7 +382,7 @@ This document provides a comprehensive plan for implementing Hotel Room Manageme
 
 ---
 
-### 11. **Dashboard Module**
+### 13. **Dashboard Module**
 
 #### Features
 - ✅ Today's Check-Ins Count
@@ -360,11 +411,11 @@ This document provides a comprehensive plan for implementing Hotel Room Manageme
 
 ---
 
-### 12. **Reports Module**
+### 14. **Reports Module**
 
 #### Report Types
 
-##### 12.1 **Occupancy Report**
+##### 14.1 **Occupancy Report**
 - **Filters**: Date Range, Room Category, Room, Status
 - **Summary Cards**: 
   - Total Rooms
@@ -374,7 +425,7 @@ This document provides a comprehensive plan for implementing Hotel Room Manageme
 - **Data Table**: Room Number, Category, Status, Check-In Date, Check-Out Date, Nights, Revenue
 - **Exports**: PDF, CSV
 
-##### 12.2 **Revenue Report**
+##### 14.2 **Revenue Report**
 - **Filters**: Date Range, Booking Type, Payment Status
 - **Summary Cards**:
   - Total Revenue
@@ -385,7 +436,7 @@ This document provides a comprehensive plan for implementing Hotel Room Manageme
 - **Data Table**: Booking Number, Guest Name, Check-In, Check-Out, Nights, Room Rent, Laundry, Restaurant, Extra, Discount, GST, Total
 - **Exports**: PDF, CSV
 
-##### 12.3 **Booking Report**
+##### 14.3 **Booking Report**
 - **Filters**: Date Range, Booking Type, Booking Status, Customer
 - **Summary Cards**:
   - Total Bookings
@@ -396,7 +447,7 @@ This document provides a comprehensive plan for implementing Hotel Room Manageme
 - **Data Table**: Booking Number, Guest Name, Mobile, Booking Type, Check-In, Check-Out, Rooms, Status, Total Amount
 - **Exports**: PDF, CSV
 
-##### 12.4 **Today's Check-In/Check-Out Report**
+##### 14.4 **Today's Check-In/Check-Out Report**
 - **Filters**: Date (default: today)
 - **Summary Cards**:
   - Today's Check-Ins
@@ -405,7 +456,7 @@ This document provides a comprehensive plan for implementing Hotel Room Manageme
 - **Data Table**: Booking Number, Guest Name, Mobile, Room(s), Check-In Time, Check-Out Time, Status
 - **Exports**: PDF, CSV
 
-##### 12.5 **Room Utilization Report**
+##### 14.5 **Room Utilization Report**
 - **Filters**: Date Range, Room Category
 - **Summary Cards**:
   - Total Room Nights
@@ -452,22 +503,25 @@ This document provides a comprehensive plan for implementing Hotel Room Manageme
 1. **room_categories**
    - `id`, `name` (UNIQUE), `description`, `base_price`, `max_adults`, `max_children`, `status`, `created_at`, `updated_at`, `deleted_at`
 
-2. **rooms**
+2. **addon_services** ✅ Implemented
+   - `id`, `name`, `charge`, `status`, `created_at`, `updated_at`, `deleted_at`
+
+3. **rooms**
    - `id`, `room_number` (UNIQUE), `room_category_id` (FK), `floor_number`, `bed_type`, `max_occupancy`, `room_price` (nullable), `status`, `notes`, `is_active`, `created_at`, `updated_at`, `deleted_at`
 
-3. **bookings**
+4. **bookings**
    - `id`, `booking_number` (nullable), `customer_id` (FK, nullable), `guest_name`, `mobile_number`, `address`, `booking_type`, `check_in_date`, `check_in_time`, `expected_check_out_date`, `expected_check_out_time`, `actual_check_in_time` (nullable), `actual_check_out_time` (nullable), `booking_status`, `advance_payment_amount`, `notes`, `created_by` (FK), `created_at`, `updated_at`, `deleted_at`
 
-4. **booking_rooms**
+5. **booking_rooms**
    - `id`, `booking_id` (FK), `room_id` (FK), `adults_count`, `children_count`, `price_per_night`, `created_at`, `updated_at`
 
-5. **booking_id_documents**
+6. **booking_id_documents**
    - `id`, `booking_id` (FK), `document_type`, `document_number`, `guest_name`, `file_path` (nullable), `created_at`, `updated_at`
 
-6. **laundry_services**
+7. **laundry_services**
    - `id`, `booking_id` (FK), `item_type`, `quantity`, `rate`, `amount`, `date`, `status`, `notes`, `created_at`, `updated_at`, `deleted_at`
 
-7. **booking_payments**
+8. **booking_payments**
    - `id`, `booking_id` (FK), `payment_amount`, `payment_date`, `payment_method`, `reference_number` (nullable), `notes` (nullable), `created_by` (FK), `created_at`, `updated_at`
 
 ### Modified Tables
@@ -521,6 +575,7 @@ admin/src/
 │       │   └── Dashboard.jsx
 │       ├── RoomCategoriesList.jsx
 │       ├── RoomsList.jsx
+│       ├── AddonServicesList.jsx
 │       ├── BookingsList.jsx
 │       ├── CheckInForm.jsx
 │       ├── CheckOutForm.jsx
@@ -539,6 +594,7 @@ admin/src/
 │       └── hotel-room/
 │           ├── RoomCategoryForm.jsx
 │           ├── RoomForm.jsx
+│           ├── AddonServiceForm.jsx
 │           ├── BookingForm.jsx
 │           ├── CheckInForm.jsx
 │           ├── CheckOutForm.jsx
@@ -549,6 +605,7 @@ admin/src/
 │
 └── services/
     ├── roomService.js
+    ├── addonService.js
     ├── bookingService.js
     ├── laundryService.js
     └── roomSettingsService.js
@@ -565,6 +622,7 @@ backend/app/
 │   │   └── API/
 │   │       ├── RoomCategoryController.php
 │   │       ├── RoomController.php
+│   │       ├── AddonServiceController.php
 │   │       ├── BookingController.php
 │   │       ├── LaundryController.php
 │   │       └── RoomSettingsController.php
@@ -574,6 +632,8 @@ backend/app/
 │   │   ├── RoomCategoryUpdateRequest.php
 │   │   ├── RoomStoreRequest.php
 │   │   ├── RoomUpdateRequest.php
+│   │   ├── AddonServiceStoreRequest.php
+│   │   ├── AddonServiceUpdateRequest.php
 │   │   ├── BookingStoreRequest.php
 │   │   ├── BookingUpdateRequest.php
 │   │   ├── CheckInRequest.php
@@ -590,6 +650,7 @@ backend/app/
 ├── Models/
 │   ├── RoomCategory.php
 │   ├── Room.php
+│   ├── AddonService.php
 │   ├── Booking.php
 │   ├── BookingRoom.php
 │   ├── BookingIdDocument.php
@@ -603,6 +664,7 @@ backend/database/
 └── migrations/
     ├── 2025_XX_XX_000001_create_room_categories_table.php
     ├── 2025_XX_XX_000002_create_rooms_table.php
+    ├── 2025_02_19_000001_create_addon_services_table.php ✅
     ├── 2025_XX_XX_000003_create_bookings_table.php
     ├── 2025_XX_XX_000004_create_booking_rooms_table.php
     ├── 2025_XX_XX_000005_create_booking_id_documents_table.php
@@ -639,8 +701,9 @@ backend/database/
 ### Phase 2.1: Core Room Management (Week 1-2)
 1. ✅ Room Categories Management - **COMPLETED**
 2. ✅ Rooms Master Management - **COMPLETED**
-3. ⏳ Basic Booking Management - **PENDING**
-4. ⏳ Room Settings - **PENDING**
+3. ✅ Room Addon Services - **COMPLETED**
+4. ✅ Room Settings - **COMPLETED**
+5. ⏳ Basic Booking Management - **PENDING**
 
 ### Phase 2.2: Check-In/Check-Out (Week 3)
 1. Check-In Form with ID Documents
@@ -664,6 +727,7 @@ backend/database/
 ## 🔐 Permissions Required
 
 Already added in `PermissionsTableSeeder.php`:
+- `view_addon_service`, `create_addon_service`, `edit_addon_service`, `delete_addon_service` (Addon Services)
 - `hotel_room_dashboard:read`
 - `room:read`, `room:write`, `room:delete`
 - `room_type:read`, `room_type:write`, `room_type:delete` (Room Category Management)
@@ -682,6 +746,7 @@ Already added in `PermissionsTableSeeder.php`:
   ├── dashboard
   ├── room-categories
   ├── rooms
+  ├── addon-services
   ├── bookings
   ├── check-in
   ├── check-out
@@ -711,7 +776,8 @@ Already added in `PermissionsTableSeeder.php`:
 ---
 
 **Created**: January 2025  
-**Status**: Phase 2.1 Partially Complete  
-**Completed**: Room Categories Management ✅, Rooms Master Management ✅  
+**Last Updated**: February 2025  
+**Status**: Phase 2.1 Mostly Complete  
+**Completed**: Room Categories ✅, Rooms ✅, Addon Services ✅, Room Settings ✅  
 **Next Steps**: Begin Basic Booking Management implementation
 

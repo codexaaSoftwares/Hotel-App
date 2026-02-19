@@ -248,6 +248,21 @@ Room categories (Hotel Room module).
 
 ---
 
+### `addon_services`
+Room addon services (Hotel Room module). Extra services that can be included in room billing (e.g., Extra Bed, Laundry).
+
+**Key Columns:**
+- `id`, `name` (VARCHAR), `charge` (decimal)
+- `status` (enum: 'active', 'inactive')
+- `created_at`, `updated_at`, `deleted_at`
+
+**Soft Deletes:** Yes
+
+**Relationships:**
+- Will be linked to booking addon charges (future `booking_addon_services` pivot)
+
+---
+
 ### `rooms`
 Rooms master (Hotel Room module).
 
@@ -353,7 +368,7 @@ Restaurant tables (Restaurant module).
 ## Important Notes
 
 ### Soft Deletes
-Tables with soft deletes: `branches`, `roles`, `food_categories`, `food_items`, `tables`, `customers`, `staff`, `salary_payments`, `bills`, `wallet_transactions`, `expense_categories`, `expenses`, `room_categories`, `rooms`
+Tables with soft deletes: `branches`, `roles`, `food_categories`, `food_items`, `tables`, `customers`, `staff`, `salary_payments`, `bills`, `wallet_transactions`, `expense_categories`, `expenses`, `room_categories`, `rooms`, `addon_services`
 
 ### Auto-Generated Codes
 - **Customer Code**: `#CUST001` format (generated before creation)
@@ -390,12 +405,13 @@ For high-volume tables (`bills`, `bill_items`), indexes are critical for perform
 
 ---
 
-**Last Updated**: January 2025  
+**Last Updated**: February 2025  
 **Multi-Module Support**: ✅ Implemented
 
 ### Planned Tables (Hotel Room Module)
 - ✅ `room_categories` - Room category master (Implemented)
 - ✅ `rooms` - Room master (Implemented)
+- ✅ `addon_services` - Addon services for room billing (Implemented)
 - `bookings` - Room bookings
 - `booking_rooms` - Booking-room pivot
 - `booking_id_documents` - ID documents for check-in

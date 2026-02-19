@@ -220,6 +220,13 @@ const hotelRoomNavigation = [
       },
       {
         component: CNavItem,
+        name: 'Addon Services',
+        to: '/hotel-room/addon-services',
+        icon: <CIcon icon={cilTags} customClassName="nav-icon" />,
+        permission: PERMISSIONS.ADDON_SERVICE_READ,
+      },
+      {
+        component: CNavItem,
         name: 'Hotel Settings',
         to: '/hotel-room/settings',
         icon: <CIcon icon={cilCog} customClassName="nav-icon" />,

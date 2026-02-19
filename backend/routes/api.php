@@ -22,6 +22,7 @@ use App\Http\Controllers\API\ExpenseController;
 use App\Http\Controllers\API\ReportController;
 use App\Http\Controllers\API\RoomCategoryController;
 use App\Http\Controllers\API\RoomController;
+use App\Http\Controllers\API\AddonServiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -112,6 +113,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/room-categories/{roomCategory}', [RoomCategoryController::class, 'show'])->middleware('permission:view_room_type');
     Route::put('/room-categories/{roomCategory}', [RoomCategoryController::class, 'update'])->middleware('permission:edit_room_type');
     Route::delete('/room-categories/{roomCategory}', [RoomCategoryController::class, 'destroy'])->middleware('permission:delete_room_type');
+
+    // Addon Services Management (Room add-ons for billing)
+    Route::get('/addon-services', [AddonServiceController::class, 'index'])->middleware('permission:view_addon_service');
+    Route::post('/addon-services', [AddonServiceController::class, 'store'])->middleware('permission:create_addon_service');
+    Route::get('/addon-services/{addonService}', [AddonServiceController::class, 'show'])->middleware('permission:view_addon_service');
+    Route::put('/addon-services/{addonService}', [AddonServiceController::class, 'update'])->middleware('permission:edit_addon_service');
+    Route::delete('/addon-services/{addonService}', [AddonServiceController::class, 'destroy'])->middleware('permission:delete_addon_service');
 
     // Room Management
     Route::get('/rooms', [RoomController::class, 'index'])->middleware('permission:view_room');

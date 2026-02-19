@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             ExpenseCategorySeeder::class,
             RoomCategorySeeder::class,
             RoomSeeder::class,
+            AddonServiceSeeder::class,
         ]);
     }
 }

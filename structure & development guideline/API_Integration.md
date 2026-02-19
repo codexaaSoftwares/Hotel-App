@@ -30,8 +30,10 @@ This document maps frontend modules to their corresponding backend API endpoints
 9. [Bill Management APIs](#bill-management-apis)
 10. [Expense Management APIs](#expense-management-apis)
 11. [Room Management APIs](#room-management-apis)
-12. [Reports APIs](#reports-apis)
-13. [Important Notes](#important-notes)
+12. [Room Addon Services APIs](#room-addon-services-apis)
+13. [Room Settings APIs](#room-settings-apis)
+14. [Reports APIs](#reports-apis)
+15. [Important Notes](#important-notes)
 
 ---
 
@@ -280,6 +282,53 @@ This document maps frontend modules to their corresponding backend API endpoints
 
 ---
 
+## Room Addon Services APIs
+
+### Frontend Integration
+- **Service**: `src/services/addonService.js`
+- **Views**: `src/views/hotel-room/AddonServicesList.jsx`
+- **Components**: `src/components/pages/hotel-room/AddonServiceForm.jsx`
+
+### Addon Service Endpoints
+- `GET /api/addon-services` - List addon services (paginated, sortable, searchable, filterable by status)
+- `GET /api/addon-services/active` - List active addon services (for dropdown/selection)
+- `GET /api/addon-services/{addonService}` - Get addon service by ID
+- `POST /api/addon-services` - Create addon service
+- `PUT /api/addon-services/{addonService}` - Update addon service
+- `DELETE /api/addon-services/{addonService}` - Delete addon service (soft delete)
+
+**Request Body (Store/Update):**
+- `name` - Service name (e.g., "Extra Bed (pc)", "Laundry (pc)")
+- `charge` - Charge amount (decimal, e.g., 500, 50)
+- `status` - active | inactive
+
+**Permissions:**
+- `view_addon_service`, `create_addon_service`, `edit_addon_service`, `delete_addon_service`
+
+---
+
+## Room Settings APIs
+
+### Frontend Integration
+- **Service**: `src/services/roomSettingsService.js`
+- **Views**: `src/views/hotel-room/settings/RoomSettings.jsx`
+
+### Room Settings Endpoints
+- `GET /api/room-settings` - Get all room settings (grouped by section)
+- `GET /api/room-settings/{section}` - Get settings by section (check_in_check_out, room_gst, room_invoice)
+- `POST /api/room-settings` - Create/Update setting
+- `DELETE /api/room-settings/{key}` - Delete setting
+
+**Sections:**
+- `check_in_check_out` - Check-in time, Check-out time
+- `room_gst` - GST applicable, CGST %, SGST %, Service Tax %
+- `room_invoice` - Invoice prefix, Footer, Terms
+
+**Permissions:**
+- `hotel_settings:read`, `hotel_settings:write`
+
+---
+
 ## Reports APIs
 
 ### Frontend Integration
@@ -393,6 +442,7 @@ The following resources support soft deletes:
 - Branches, Roles, Food Categories, Food Items, Tables
 - Customers, Staff, Salary Payments, Bills, Wallet Transactions
 - Expense Categories, Expenses
+- Room Categories, Rooms, Addon Services
 
 ### Auto-Generated Codes
 - **Customer Code**: `#CUST001` format
@@ -405,6 +455,6 @@ The following resources support soft deletes:
 
 ---
 
-**Last Updated**: January 2025  
-**Version**: 2.0.0  
+**Last Updated**: February 2025  
+**Version**: 2.1.0  
 **Multi-Module Support**: ✅ Implemented

@@ -163,6 +163,12 @@ class PermissionsTableSeeder extends Seeder
             ['name' => 'hotel_settings:read', 'description' => 'View hotel settings', 'module' => 'hotel_room', 'submodule' => 'settings', 'type' => 'read'],
             ['name' => 'hotel_settings:write', 'description' => 'Edit hotel settings', 'module' => 'hotel_room', 'submodule' => 'settings', 'type' => 'write'],
 
+            // Addon Services Management
+            ['name' => 'view_addon_service', 'description' => 'View addon services', 'module' => 'hotel_room', 'submodule' => 'addon_services', 'type' => 'read'],
+            ['name' => 'create_addon_service', 'description' => 'Create addon services', 'module' => 'hotel_room', 'submodule' => 'addon_services', 'type' => 'write'],
+            ['name' => 'edit_addon_service', 'description' => 'Edit addon services', 'module' => 'hotel_room', 'submodule' => 'addon_services', 'type' => 'write'],
+            ['name' => 'delete_addon_service', 'description' => 'Delete addon services', 'module' => 'hotel_room', 'submodule' => 'addon_services', 'type' => 'delete'],
+
             // Hotel Room Reports
             ['name' => 'occupancy_report:read', 'description' => 'View occupancy report', 'module' => 'hotel_room', 'submodule' => 'reports', 'type' => 'read'],
             ['name' => 'revenue_report:read', 'description' => 'View revenue report', 'module' => 'hotel_room', 'submodule' => 'reports', 'type' => 'read'],

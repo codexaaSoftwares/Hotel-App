@@ -58,6 +58,8 @@ backend/
 │   │   │   │   ├── ReportController.php
 │   │   │   │   ├── RoomCategoryController.php
 │   │   │   │   ├── RoomController.php
+│   │   │   │   ├── AddonServiceController.php
+│   │   │   │   ├── RoomSettingsController.php
 │   │   │   │   ├── SalaryPaymentController.php
 │   │   │   │   ├── SettingController.php
 │   │   │   │   ├── StaffController.php
@@ -101,6 +103,8 @@ backend/
 │   │   │   ├── RoomCategoryUpdateRequest.php
 │   │   │   ├── RoomStoreRequest.php
 │   │   │   ├── RoomUpdateRequest.php
+│   │   │   ├── AddonServiceStoreRequest.php
+│   │   │   ├── AddonServiceUpdateRequest.php
 │   │   │   ├── SalaryPaymentStoreRequest.php
 │   │   │   ├── SalaryPaymentUpdateRequest.php
 │   │   │   ├── StaffStoreRequest.php
@@ -121,6 +125,7 @@ backend/
 │   │       ├── FoodItemResource.php
 │   │       ├── RoomCategoryResource.php
 │   │       ├── RoomResource.php
+│   │       ├── AddonServiceResource.php
 │   │       ├── SalaryPaymentResource.php
 │   │       ├── StaffResource.php
 │   │       ├── TableResource.php
@@ -142,6 +147,7 @@ backend/
 │   │   ├── Role.php
 │   │   ├── Room.php
 │   │   ├── RoomCategory.php
+│   │   ├── AddonService.php
 │   │   ├── SalaryPayment.php
 │   │   ├── Setting.php
 │   │   ├── Staff.php
@@ -210,7 +216,8 @@ backend/
 │   │   ├── 2026_01_30_000001_create_expense_categories_table.php
 │   │   ├── 2026_01_30_000002_create_expenses_table.php
 │   │   ├── 2025_02_01_000001_create_room_categories_table.php
-│   │   └── 2025_02_01_000002_create_rooms_table.php
+│   │   ├── 2025_02_01_000002_create_rooms_table.php
+│   │   └── 2025_02_19_000001_create_addon_services_table.php
 │   │
 │   └── 📁 seeders/                       # Database seeders
 │       ├── BranchSeeder.php
@@ -223,6 +230,7 @@ backend/
 │       ├── RolesTableSeeder.php
 │       ├── RoomCategorySeeder.php
 │       ├── RoomSeeder.php
+│       ├── AddonServiceSeeder.php
 │       ├── TableSeeder.php
 │       └── UserSeeder.php
 │
@@ -388,7 +396,19 @@ The backend API supports multiple business modules:
 - **Permissions**: `room:read`, `room:write`, `room:delete`
 - **Status**: ✅ Fully implemented
 
-### 16. **Reports Module**
+### 16. **Room Addon Services Module**
+- **Location**: `app/Http/Controllers/API/AddonServiceController.php`
+- **Routes**: `/api/addon-services/*`
+- **Permissions**: `view_addon_service`, `create_addon_service`, `edit_addon_service`, `delete_addon_service`
+- **Status**: ✅ Fully implemented
+
+### 17. **Room Settings Module**
+- **Location**: `app/Http/Controllers/API/RoomSettingsController.php`
+- **Routes**: `/api/room-settings/*`
+- **Permissions**: `hotel_settings:read`, `hotel_settings:write`
+- **Status**: ✅ Fully implemented
+
+### 18. **Reports Module**
 - **Location**: `app/Http/Controllers/API/ReportController.php`
 - **Routes**: `/api/reports/*`
 - **Permissions**: `sales_report:read`, `expense_report:read`, `customer_pending_report:read`, `staff_salary_report:read`
@@ -564,6 +584,6 @@ use App\Http\Controllers\Concerns\PaginatesResults;
 
 ---
 
-**Last Updated**: January 2025  
-**Version**: 2.0.0  
+**Last Updated**: February 2025  
+**Version**: 2.1.0  
 **Multi-Module Support**: ✅ Implemented

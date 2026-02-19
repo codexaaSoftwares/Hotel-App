@@ -64,6 +64,11 @@ class RolePermissionSeeder extends Seeder
             'create_wallet_transaction',
             'edit_wallet_transaction',
             'delete_wallet_transaction',
+            // Hotel Room - Addon Services
+            'view_addon_service',
+            'create_addon_service',
+            'edit_addon_service',
+            'delete_addon_service',
             // Reports
             'view_report',
             'sales_report:read',

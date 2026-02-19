@@ -114,7 +114,8 @@ admin/
 │   │       │   └── ExpenseCategoryModal.jsx
 │   │       ├── 📁 hotel-room/
 │   │       │   ├── RoomCategoryForm.jsx
-│   │       │   └── RoomForm.jsx
+│   │       │   ├── RoomForm.jsx
+│   │       │   └── AddonServiceForm.jsx
 │   │       └── 📁 users/
 │   │           ├── 📁 __tests__/
 │   │           │   └── ProfileForm.test.js
@@ -139,6 +140,8 @@ admin/
 │   │   ├── restaurantSettingsService.js
 │   │   ├── roleService.js
 │   │   ├── roomService.js
+│   │   ├── roomSettingsService.js
+│   │   ├── addonService.js
 │   │   ├── settingsService.js
 │   │   ├── staffService.js
 │   │   ├── tableService.js
@@ -174,7 +177,10 @@ admin/
 │   │   │       └── RestaurantSettings.jsx
 │   │   ├── 📁 hotel-room/
 │   │   │   ├── RoomCategoriesList.jsx
-│   │   │   └── RoomsList.jsx
+│   │   │   ├── RoomsList.jsx
+│   │   │   ├── AddonServicesList.jsx
+│   │   │   └── 📁 settings/
+│   │   │       └── RoomSettings.jsx
 │   │   ├── 📁 roles/
 │   │   │   └── RolesList.jsx
 │   │   ├── 📁 settings/
@@ -359,7 +365,20 @@ The application supports multiple business modules:
 - **Features**: Room CRUD, PDF export, search, filter (status, category, floor, active)
 - **Status**: ✅ Fully implemented
 
-### 16. **Reports Module**
+### 16. **Room Addon Services**
+- **Location**: `src/views/hotel-room/AddonServicesList.jsx`
+- **Components**: `src/components/pages/hotel-room/AddonServiceForm.jsx`
+- **Service**: `src/services/addonService.js`
+- **Features**: Addon service CRUD (Service Name, Charge, Status), used in room billing (e.g., Extra Bed, Laundry)
+- **Status**: ✅ Fully implemented
+
+### 17. **Room Settings**
+- **Location**: `src/views/hotel-room/settings/RoomSettings.jsx`
+- **Service**: `src/services/roomSettingsService.js`
+- **Features**: Check-In/Check-Out times, Room GST, Room Invoice settings
+- **Status**: ✅ Fully implemented
+
+### 18. **Reports Module**
 - **Location**: `src/views/reports/`
 - **Service**: `src/services/reportService.js`
 - **Status**: ✅ Fully implemented
@@ -748,6 +767,6 @@ const userService = {
 
 ---
 
-**Last Updated**: January 2025  
-**Version**: 3.0.0  
+**Last Updated**: February 2025  
+**Version**: 3.1.0  
 **Multi-Module Support**: ✅ Implemented
