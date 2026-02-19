@@ -33,10 +33,9 @@ Front-desk staff can quickly see room status, manage bookings, and process check
 - Items are clickable shortcuts to open the same Room Detail / Booking modal.
 
 ### 4. **Filters & Summary**
-- Date selector (default: Today).
-- Filters: Status, Category, Floor.
-- Search box: Room number, Guest name, Booking number.
-- Summary chips: Total Rooms, Available, Occupied, Reserved, Cleaning, Maintenance, Today Check-ins, Today Check-outs.
+- **Row 1**: Date, Status, Category (Cat), Floor, Search (Room / Guest / #) — all filters in a single row with compact widths.
+- **Row 2**: Summary badges — Total, Avail, Occ, Res, Clean, Maint (default Bootstrap badge size).
+- Date selector (default: Today). Filters: Status, Category, Floor. Search: Room number, Guest name, Booking number.
 
 ### 5. **Single-Screen Management**
 - Primary workflow runs on a single page:
@@ -52,10 +51,9 @@ Front-desk staff can quickly see room status, manage bookings, and process check
 
 ```text
 ┌──────────────────────────────────────────────────────────────────────────────┐
-│                      ROOM BOOKING POS PANEL HEADER                          │
-│ [Date: Today] [Status Filter] [Category] [Floor] [Search: Room/Guest/Book#] │
-│ [Chips: Total | Available | Occupied | Reserved | Cleaning | Maint |        │
-│         Today Check‑ins | Today Check‑outs ]                                │
+│  ROOM BOOKING POS PANEL HEADER (compact)                                    │
+│  Row 1: [Date] [Status] [Cat] [Floor] [Search: Room / Guest / #]            │
+│  Row 2: [Total 40] [Avail 16] [Occ 8] [Res 6] [Clean 4] [Maint 4]           │
 └──────────────────────────────────────────────────────────────────────────────┘
 ┌───────────────────────────────────────────────┬──────────────────────────────┐
 │                                               │                              │
@@ -107,15 +105,10 @@ Front-desk staff can quickly see room status, manage bookings, and process check
 **Purpose**: Show all rooms in a card grid with status and key info.
 
 **Layout & Behavior**:
-- Responsive grid of `RoomCard` components (3–4 columns desktop, 2 tablet, 1 mobile).
-- Top controls (inside panel header):
-  - Status filter dropdown.
-  - Category dropdown.
-  - Floor dropdown.
-  - Optional quick filter chips (e.g., only Available, only Occupied).
-- Scrollable area for large numbers of rooms.
+- Responsive grid of `RoomCard` components: 6 columns on xl, 4 on sm, 3 on md, 2 on mobile (xs). Grid gap `g-2`. Scrollable area for many rooms (e.g. 40+).
+- Filters live in the main header (not inside this panel). Panel shows "Room Grid (n)" header.
 
-#### `RoomCard`
+#### `RoomCard` (compact)
 
 **Display:**
 - Room number (primary, large & bold).
@@ -131,10 +124,8 @@ Front-desk staff can quickly see room status, manage bookings, and process check
   - Small pill: “Due Check‑in”, “Due Check‑out”, “Overstay”, or “Upcoming”.
 
 **Interactions:**
-- **Click**: Opens `RoomDetailModal` centered on screen.
-- Hover (desktop):
-  - Slight scale / shadow.
-  - Tooltip with extra notes if truncated (optional).
+- **Click**: Opens `RoomDetailModal`.
+- Hover: slight lift and shadow, border highlight.
 
 ---
 
@@ -144,7 +135,7 @@ Front-desk staff can quickly see room status, manage bookings, and process check
 
 **Layout:**
 - Header: “Today’s Activity”
-- Subsections (vertical, scrollable):
+- Subsections with compact list items.
 
 #### 2.1 Today’s Check-outs
 - List of items:
@@ -161,15 +152,11 @@ Front-desk staff can quickly see room status, manage bookings, and process check
   - Status: “Due”, “Checked-in”.
 - Sorted by check-in time.
 
-#### 2.3 Upcoming (today window)
-- Upcoming bookings for **today** (and optionally near-future window if configured):
-  - Later check-ins and check-outs.
-  - Bookings without assigned room yet (optional, if supported later).
+#### 2.3 Upcoming
+- Time, room, guest, action (Check-out / Check-in).
 
 **Interactions:**
-- Click on any row:
-  - Opens `RoomDetailModal` for the associated room/booking.
-- Optional chips/toggles to show/hide sections if many items.
+- Click any row opens `RoomDetailModal` for that room/booking.
 
 ---
 
@@ -338,21 +325,35 @@ Front-desk staff can quickly see room status, manage bookings, and process check
 
 ## 🔧 Technical Notes (Frontend)
 
-- New main view: `RoomBookingPOS.jsx` (or similar) under `admin/src/views/hotel-room/`.
-- Likely sub-components:
-  - `RoomGridPanel`
-  - `RoomCard`
-  - `TodayTimelinePanel`
-  - `RoomDetailModal`
-- Integrate with:
-  - `roomService` (for room list + status).
-  - Future `bookingService` (for bookings, today lists).
-- Respect existing patterns:
-  - React 19 + React Bootstrap + FormFields + PermissionRoute.
-  - Use `PermissionRoute` with `BOOKING_READ` / `BOOKING_WRITE` / `HOTEL_ROOM_DASHBOARD_READ` as needed.
+### Implemented (UI with mock data)
+
+| Item | Location |
+|------|----------|
+| Main view | `admin/src/views/hotel-room/RoomBookingPOS.jsx` |
+| Room grid panel | `admin/src/components/pages/hotel-room/RoomGridPanel.jsx` |
+| Room card | `admin/src/components/pages/hotel-room/RoomCard.jsx` |
+| Today timeline | `admin/src/components/pages/hotel-room/TodayTimelinePanel.jsx` |
+| Room detail modal | `admin/src/components/pages/hotel-room/RoomDetailModal.jsx` |
+
+- **Route**: `/hotel-room/booking-pos`. Nav: Hotel Room → "Room Booking POS".
+- **Permission**: `ROOM_READ` (or `BOOKING_READ` / `HOTEL_ROOM_DASHBOARD_READ`) for access.
+- **Mock data**: 40 rooms (floors 1–4, 10 rooms/floor), mix of Standard/Deluxe/Suite and statuses. Timeline derived from mock rooms (occupied → check-outs, reserved → check-ins).
+- **Filter widths**: Date 180px, Status 165px, Cat 155px, Floor 140px, Search 220px (maxWidth).
+- **Styles**: Room card status backgrounds and timeline hover in `admin/src/scss/style.scss` (`.room-card--available`, `.room-card--occupied`, etc.; `.timeline-item`).
+
+### Integration (when backend ready)
+
+- `roomService` for room list + status.
+- `bookingService` for bookings, today check-ins/check-outs, create/check-in/check-out/cancel.
+- Replace mock rooms and mock timeline with API responses.
+
+### Patterns
+
+- React 19 + React Bootstrap + FormFields + PermissionRoute.
+- Modal: `react-bootstrap` Modal, `size="xl"`, `fullscreen="lg-down"`.
 
 ---
 
-**Status**: Draft specification for Room Booking POS Panel (UI & workflow only).  
-Backend booking APIs and detailed billing integration will be defined in `Room_Management_Plan.md` and related backend specs.  
+**Status**: **UI implemented** with mock data. Use this UI as the blueprint for booking API and database design.  
+Backend booking APIs and billing integration: see `Room_Management_Plan.md` and related backend specs.  
 
