@@ -194,6 +194,13 @@ const hotelRoomNavigation = [
   },
   {
     component: CNavItem,
+    name: 'Room Booking POS',
+    to: '/hotel-room/booking-pos',
+    icon: <CIcon icon={cilCreditCard} customClassName="nav-icon" />,
+    permission: PERMISSIONS.ROOM_READ,
+  },
+  {
+    component: CNavItem,
     name: 'Room Management',
     icon: <CIcon icon={cilBed} customClassName="nav-icon" />,
     items: [

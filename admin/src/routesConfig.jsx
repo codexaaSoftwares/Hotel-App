@@ -38,6 +38,7 @@ const routesConfig = [
   { path: '/restaurant/settings', name: 'Restaurant Settings' },
   
   // Hotel Room Routes
+  { path: '/hotel-room/booking-pos', name: 'Room Booking POS' },
   { path: '/hotel-room/room-types', name: 'Room Categories' },
   { path: '/hotel-room/rooms', name: 'Rooms Management' },
   { path: '/hotel-room/addon-services', name: 'Addon Services' },
