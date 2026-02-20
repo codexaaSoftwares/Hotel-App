@@ -393,6 +393,97 @@ Front-desk staff can quickly see room status, manage bookings, and process check
 
 ---
 
-**Status**: **UI implemented** with mock data. Use this UI as the blueprint for booking API and database design.  
-Backend booking APIs and billing integration: see `Room_Management_Plan.md` and related backend specs.  
+## ✅ Implementation Status — What We Did So Far
+
+*Use this section to onboard a new developer or AI agent: what is already built and working with mock data.*
+
+### Core UI (done)
+
+| Feature | Status | Notes |
+|--------|--------|--------|
+| Room grid + filters + summary badges | ✅ | Date, Status, Cat, Floor, Search; Total/Avail/Occ/Res/Clean/Maint. |
+| Room cards with status, guest, times, pill | ✅ | Pill: Due Check-in, Due Check-out, Overstay, Upcoming. Max occupancy on card. |
+| Today timeline (check-outs, check-ins, upcoming) | ✅ | Driven by `selectedDate`; click row opens modal. |
+| Room detail modal (xl, fullscreen on mobile) | ✅ | Room summary bar, then context-based sections. |
+| New Booking form | ✅ | Guest, mobile, type, check-in/out, adults/children, notes. Validation: guest name required. |
+| Check-In / Check-Out / Cancel Booking | ✅ | Buttons in modal footer; state updates in parent. |
+
+### Workflow with mock state (done)
+
+- **Rooms** and **timeline** are in React state (no static mock). All actions update state and UI.
+- **New Booking**: adds booking to room, room → reserved, timeline updates.
+- **Check-In**: room → occupied, booking → checked_in.
+- **Check-Out**: room → cleaning, booking → checked_out.
+- **Cancel Booking**: room → available, booking cleared.
+- **Date filter** drives which check-ins/check-outs appear in the timeline for that date.
+
+### Edit booking (done)
+
+- For **reserved** (booked) rooms, an **Edit** section in the Current Booking card allows changing guest name, mobile, booking type, check-in/out, adults/children.
+- **Save changes** updates booking in state via `onUpdateBooking(roomId, payload)`.
+
+### Bill summary (done)
+
+- When there is an active booking, a **Bill summary** card shows mock **room charge** (category rate × nights), **addons** (mock), and **total** (₹, Indian formatting).
+- Mock rates: Standard ₹2000, Deluxe ₹3500, Suite ₹5000/night. Replace with API when backend is ready.
+
+### Linked bills (done)
+
+- **Link groups** are stored in parent state (`linkGroups`: e.g. `{ L1: [11, 12, 13] }` for rooms 201, 202, 203).
+- **Linked bill details** card in modal:
+  - If room is in a group: lists all rooms in the group with per-room total and **combined total**; **Unlink this room from group** button.
+  - If not in a group: **Link with other rooms** button opens a picker (checkboxes for other rooms); **Save link** creates/updates the link group.
+- **Linking/unlinking** is fully functional in UI (state only; no API yet).
+
+### Booking history (done)
+
+- **View booking history for this room** is an expandable section with **mock past bookings** (3 per room). Replace with API when available.
+
+### Route & permissions (done)
+
+- Route: `/hotel-room/booking-pos`. Access if user has **any** of: `ROOM_READ`, `BOOKING_READ`, `HOTEL_ROOM_DASHBOARD_READ`.
+
+### Key files
+
+| File | Role |
+|------|------|
+| `admin/src/views/hotel-room/RoomBookingPOS.jsx` | Main view: state (rooms, linkGroups), filters, timeline builder, handlers (new booking, check-in, check-out, cancel, update, link/unlink). |
+| `admin/src/components/pages/hotel-room/RoomDetailModal.jsx` | Modal: room summary, new booking form, current booking + edit form, bill summary, linked bill details + link/unlink UI, booking history. |
+| `admin/src/components/pages/hotel-room/RoomGridPanel.jsx` | Grid of RoomCards; receives `rooms`, `selectedDate`. |
+| `admin/src/components/pages/hotel-room/RoomCard.jsx` | Single room card; status pill and max occupancy. |
+| `admin/src/components/pages/hotel-room/TodayTimelinePanel.jsx` | Timeline list; shows action (Check-in/Check-out) in Upcoming. |
+
+---
+
+## 🔜 What's Next
+
+*Suggested order for next sessions or a new AI agent.*
+
+### 1. UI polish (no backend)
+
+- **Timeline**: Show "Checked-in" / "Checked-out" on timeline rows when done; improve empty-state copy.
+- **Room card**: Optional **Linked** badge on cards that are in a link group (e.g. rooms 201, 202, 203) so staff see at a glance.
+- **Pay actions**: Add **Pay this room** / **Pay all linked** buttons (placeholder: toast "Payment flow coming with backend" or wire when API exists).
+
+### 2. Backend integration
+
+- Replace mock **rooms** and **timeline** with APIs (e.g. `roomService`, `bookingService`).
+- Replace mock **link groups** with API (e.g. link group id on room/bill; CRUD for link groups).
+- Replace mock **bill summary** with real room rates and addon services from backend.
+- Replace mock **booking history** with API.
+
+### 3. API/database design (from this spec)
+
+- **Bookings**: per-room check-in/check-out dates; support edit before check-in.
+- **Bills**: one bill per room (room + addons); optional link group id for linked bills.
+- **Business rules**: See "Business Rules (Billing, Linked Bills, Dates)" in this document.
+
+### 4. Documentation
+
+- Keep this spec updated as backend and payment flows are added.
+- Optionally add a short "API contract" section (endpoints, request/response shapes) when backend is defined.
+
+---
+
+**Status**: **UI and workflows implemented** with mock data. Linking/unlinking, edit booking, and bill summary are in place. Next: UI polish, then backend integration and API design.  
 
