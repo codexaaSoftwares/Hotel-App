@@ -2,7 +2,7 @@ import React from 'react'
 import { Row, Col } from 'react-bootstrap'
 import RoomCard from './RoomCard'
 
-const RoomGridPanel = ({ rooms, onRoomClick }) => {
+const RoomGridPanel = ({ rooms, onRoomClick, selectedDate }) => {
   return (
     <div className="room-grid-panel p-2 h-100 overflow-auto">
       <h6 className="mb-2 fw-semibold small">
@@ -18,8 +18,12 @@ const RoomGridPanel = ({ rooms, onRoomClick }) => {
           </Col>
         ) : (
           rooms.map((room) => (
-            <Col key={room.id} xs={6} sm={4} md={3} lg={2} xl={2}>
-              <RoomCard room={room} onClick={() => onRoomClick(room)} />
+            <Col key={room.id} xs={6} sm={3} md={4} lg={2} xl={2}>
+              <RoomCard
+                room={room}
+                onClick={() => onRoomClick(room)}
+                selectedDate={selectedDate}
+              />
             </Col>
           ))
         )}

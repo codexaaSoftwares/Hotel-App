@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Modal, Button, Row, Col, Badge, Form } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBed, faUser, faCalendarCheck, faCalendarXmark, faPlus, faSignInAlt, faSignOutAlt, faTimes } from '@fortawesome/free-solid-svg-icons'
@@ -25,18 +25,27 @@ const BOOKING_TYPE_OPTIONS = [
   { value: 'online', label: 'Online' },
 ]
 
+const DEFAULT_BOOKING_FORM = {
+  customerId: '',
+  guestName: '',
+  guestMobile: '',
+  bookingType: 'walk_in',
+  checkInAt: '',
+  expectedCheckOutAt: '',
+  adultsCount: 2,
+  childrenCount: 0,
+  notes: '',
+}
+
 const RoomDetailModal = ({ show, onHide, room, booking, onAction, mockCustomers = [] }) => {
-  const [bookingForm, setBookingForm] = useState({
-    customerId: '',
-    guestName: '',
-    guestMobile: '',
-    bookingType: 'walk_in',
-    checkInAt: '',
-    expectedCheckOutAt: '',
-    adultsCount: 2,
-    childrenCount: 0,
-    notes: '',
-  })
+  const [bookingForm, setBookingForm] = useState({ ...DEFAULT_BOOKING_FORM })
+
+  // Reset form when opening modal for an available room so "New Booking" always starts clean
+  useEffect(() => {
+    if (show && room?.status === 'available') {
+      setBookingForm({ ...DEFAULT_BOOKING_FORM })
+    }
+  }, [show, room?.id, room?.status])
 
   const customerOptions = [
     { value: '', label: 'Select customer or enter guest details' },
@@ -56,7 +65,10 @@ const RoomDetailModal = ({ show, onHide, room, booking, onAction, mockCustomers 
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
-    setBookingForm(prev => ({ ...prev, [name]: value }))
+    const numValue = (name === 'adultsCount' || name === 'childrenCount')
+      ? (value === '' ? 0 : parseInt(value, 10) || 0)
+      : value
+    setBookingForm(prev => ({ ...prev, [name]: numValue }))
     if (name === 'customerId' && value) {
       const cust = mockCustomers.find(c => String(c.id) === value)
       if (cust) {
@@ -227,6 +239,30 @@ const RoomDetailModal = ({ show, onHide, room, booking, onAction, mockCustomers 
                   label="Expected Check-out"
                   type="datetime-local"
                   value={bookingForm.expectedCheckOutAt}
+                  onChange={handleInputChange}
+                  col={6}
+                />
+              </FormRow>
+              <FormRow>
+                <TextField
+                  id="adultsCount"
+                  name="adultsCount"
+                  label="Adults"
+                  type="number"
+                  min={1}
+                  max={20}
+                  value={bookingForm.adultsCount}
+                  onChange={handleInputChange}
+                  col={6}
+                />
+                <TextField
+                  id="childrenCount"
+                  name="childrenCount"
+                  label="Children"
+                  type="number"
+                  min={0}
+                  max={20}
+                  value={bookingForm.childrenCount}
                   onChange={handleInputChange}
                   col={6}
                 />

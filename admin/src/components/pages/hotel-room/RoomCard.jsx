@@ -19,9 +19,30 @@ const STATUS_LABELS = {
   maintenance: 'Maint.',
 }
 
-const RoomCard = ({ room, onClick }) => {
+/** Get booking pill label: Due Check-in, Due Check-out, Overstay, or Upcoming (based on selectedDate) */
+function getBookingPill(booking, selectedDateStr) {
+  if (!booking) return null
+  const dateStr = selectedDateStr || new Date().toISOString().slice(0, 10)
+  const today = dateStr
+  const checkInDate = booking.checkInAt ? new Date(booking.checkInAt).toISOString().slice(0, 10) : ''
+  const checkOutDate = booking.expectedCheckOutAt ? new Date(booking.expectedCheckOutAt).toISOString().slice(0, 10) : ''
+  if (booking.status === 'checked_in') {
+    if (checkOutDate < today) return { label: 'Overstay', variant: 'danger' }
+    if (checkOutDate === today) return { label: 'Due Check-out', variant: 'warning' }
+    return { label: 'Upcoming', variant: 'info' }
+  }
+  if (booking.status === 'booked') {
+    if (checkInDate === today) return { label: 'Due Check-in', variant: 'info' }
+    if (checkInDate > today) return { label: 'Upcoming', variant: 'secondary' }
+    return { label: 'Due Check-in', variant: 'warning' }
+  }
+  return null
+}
+
+const RoomCard = ({ room, onClick, selectedDate }) => {
   const statusColor = STATUS_COLORS[room.status] || 'secondary'
   const booking = room.activeBooking
+  const pill = getBookingPill(booking, selectedDate)
 
   const formatTime = (iso) => {
     try {
@@ -48,9 +69,17 @@ const RoomCard = ({ room, onClick }) => {
         </div>
         <div className="small text-muted" style={{ fontSize: '0.7rem' }}>
           {room.categoryName} · F{room.floorNumber}
+          {room.maxOccupancy != null && (
+            <span className="ms-1" title="Max occupancy"> · Max {room.maxOccupancy}</span>
+          )}
         </div>
         {booking && (
           <div className="mt-1 pt-1 border-top small" style={{ fontSize: '0.65rem' }}>
+            {pill && (
+              <span className={`badge bg-${pill.variant} me-1 mb-1`} style={{ fontSize: '0.6rem' }}>
+                {pill.label}
+              </span>
+            )}
             <div className="text-truncate fw-medium" title={booking.guestName}>
               <FontAwesomeIcon icon={faUser} className="me-1" />
               {booking.guestName}

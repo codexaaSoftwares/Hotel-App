@@ -268,6 +268,7 @@ const RoomBookingPOS = () => {
           <RoomGridPanel
             rooms={filteredRooms}
             onRoomClick={handleRoomCardClick}
+            selectedDate={selectedDate}
           />
         </Col>
         <Col xs={12} lg={4} xl={3} className="timeline-col bg-white">

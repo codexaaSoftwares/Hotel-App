@@ -6,7 +6,7 @@ import { faSignInAlt, faSignOutAlt, faClock, faUser } from '@fortawesome/free-so
 const TodayTimelinePanel = ({ timeline, onItemClick }) => {
   const formatTime = (timeStr) => timeStr || ''
 
-  const TimelineSection = ({ title, icon, items, emptyMessage }) => (
+  const TimelineSection = ({ title, icon, items, emptyMessage, showActionLabel = false }) => (
     <div className="mb-2">
       <div className="d-flex align-items-center mb-1 small fw-semibold text-muted" style={{ fontSize: '0.75rem' }}>
         <FontAwesomeIcon icon={icon} className="me-1 text-theme" style={{ fontSize: '0.65rem' }} />
@@ -26,8 +26,13 @@ const TodayTimelinePanel = ({ timeline, onItemClick }) => {
             >
               <div className="d-flex justify-content-between align-items-center">
                 <span className="fw-medium">{formatTime(item.time)}</span>
-                <span className={`badge ${item.status === 'due' ? 'bg-warning' : 'bg-success'}`} style={{ fontSize: '0.6rem' }}>
-                  {item.status === 'due' ? 'Due' : item.status}
+                <span className="d-flex align-items-center gap-1">
+                  {showActionLabel && item.action && (
+                    <span className="badge bg-primary" style={{ fontSize: '0.6rem' }}>{item.action}</span>
+                  )}
+                  <span className={`badge ${item.status === 'due' ? 'bg-warning' : 'bg-success'}`} style={{ fontSize: '0.6rem' }}>
+                    {item.status === 'due' ? 'Due' : item.status}
+                  </span>
                 </span>
               </div>
               <div className="text-truncate">
@@ -66,6 +71,7 @@ const TodayTimelinePanel = ({ timeline, onItemClick }) => {
             icon={faClock}
             items={timeline?.upcoming || []}
             emptyMessage="Nothing upcoming."
+            showActionLabel
           />
         </Card.Body>
       </Card>

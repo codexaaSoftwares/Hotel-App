@@ -216,7 +216,10 @@ const AppContent = () => {
           <Route
             path="/hotel-room/booking-pos"
             element={
-              <PermissionRoute requiredPermission={PERMISSIONS.ROOM_READ} showAccessDenied>
+              <PermissionRoute
+                requiredPermissions={[PERMISSIONS.ROOM_READ, PERMISSIONS.BOOKING_READ, PERMISSIONS.HOTEL_ROOM_DASHBOARD_READ]}
+                showAccessDenied
+              >
                 <RoomBookingPOS />
               </PermissionRoute>
             }
