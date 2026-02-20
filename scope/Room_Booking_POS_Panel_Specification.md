@@ -239,6 +239,45 @@ Front-desk staff can quickly see room status, manage bookings, and process check
 
 ---
 
+## 📌 Business Rules (Billing, Linked Bills, Dates)
+
+*These notes are from product discussion and must be reflected in API/database and UI when implementing room billing and linked stays.*
+
+### 1. One bill per room
+
+- Each room has **its own bill** (room charges + addon services for that room).
+- Check-in, check-out, add services, and **pay** can be done **per room** individually.
+- No shared "group bill" record: the "combined" view is a sum of individual room bills (see Linked bills below).
+
+### 2. Linked bills (flat group)
+
+- Bills can be **linked** to form a group (e.g. same guest/group, multiple rooms).
+- **No main vs linked hierarchy**: all bills in a link group are equal.
+- **From any bill in the group**:
+  - User can **see all linked bills** (list + combined total).
+  - User can **perform all actions**: pay this bill, pay all linked bills in one shot, add services, check-out, etc.
+- Implementation: store a **link group id** (or equivalent) on each bill; "linked bills" = all bills sharing that id. Combined total = sum of those bills' totals.
+
+### 3. Per-room check-in and check-out date/time
+
+- **Each room has its own check-in and check-out date/time.** They may be the same across rooms (e.g. group arrives/leaves together) or different (e.g. Room 101 checks in Monday, Room 102 Tuesday).
+- **All calculations are per room** using **that room's** check-in and check-out:
+  - Nights stayed.
+  - Room charges (e.g. rate × nights).
+  - Any date-based addons or services.
+- When showing **linked bills** or "pay all", the total is the **sum of each room's own calculated amount** (each from its own dates). Do not assume one common date range for the whole group.
+
+### 4. Summary for API/DB
+
+| Concept | Rule |
+|--------|------|
+| Bill | One bill per room (room + addons). |
+| Link | Bills can belong to a link group (same id); no main/linked hierarchy. |
+| View & actions | From any bill in the group: view all linked bills + combined total; pay this / pay all; same actions everywhere. |
+| Dates | Check-in/check-out stored per room (or per booking-room); calculations (nights, charges) always use that room's dates. |
+
+---
+
 ## 💾 Data Structure (High-Level)
 
 ### Room Object (for POS)
