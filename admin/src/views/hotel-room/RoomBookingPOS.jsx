@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useRef, useCallback } from 'react'
 import { Container, Row, Col, Form, Badge, InputGroup } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCalendarDay, faSearch } from '@fortawesome/free-solid-svg-icons'
@@ -56,31 +56,64 @@ const buildMockRooms = () => {
   }
   return rooms
 }
-const MOCK_ROOMS = buildMockRooms()
 
-// Build timeline from mock rooms (occupied = check-outs, reserved = check-ins)
-const buildMockTimeline = () => {
-  const occupied = MOCK_ROOMS.filter(r => r.status === 'occupied' && r.activeBooking).slice(0, 4)
-  const reserved = MOCK_ROOMS.filter(r => r.status === 'reserved' && r.activeBooking).slice(0, 4)
-  const formatT = (iso) => new Date(iso).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })
+/** Build today's timeline from current rooms and selected date (YYYY-MM-DD) */
+function buildTimelineFromRooms(rooms, selectedDateStr) {
+  const dateStr = selectedDateStr || new Date().toISOString().slice(0, 10)
+  const toDateStr = (iso) => (iso ? new Date(iso).toISOString().slice(0, 10) : '')
+  const formatT = (iso) => (iso ? new Date(iso).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }) : '')
+  const getNights = (checkIn, checkOut) => {
+    if (!checkIn || !checkOut) return 1
+    return Math.max(1, Math.ceil((new Date(checkOut) - new Date(checkIn)) / (24 * 60 * 60 * 1000)))
+  }
+  const occupied = rooms.filter(r => r.status === 'occupied' && r.activeBooking)
+  const reserved = rooms.filter(r => r.status === 'reserved' && r.activeBooking)
+  const checkOuts = occupied
+    .filter(r => toDateStr(r.activeBooking.expectedCheckOutAt) === dateStr)
+    .sort((a, b) => new Date(a.activeBooking.expectedCheckOutAt) - new Date(b.activeBooking.expectedCheckOutAt))
+    .map(r => ({
+      type: 'check_out',
+      time: formatT(r.activeBooking.expectedCheckOutAt),
+      roomId: r.id,
+      roomNumber: r.roomNumber,
+      categoryName: r.categoryName,
+      bookingId: r.activeBooking.id,
+      bookingNumber: r.activeBooking.bookingNumber,
+      guestName: r.activeBooking.guestName,
+      nights: getNights(r.activeBooking.checkInAt, r.activeBooking.expectedCheckOutAt),
+      status: 'due',
+      expectedCheckOutAt: r.activeBooking.expectedCheckOutAt,
+    }))
+  const checkIns = reserved
+    .filter(r => toDateStr(r.activeBooking.checkInAt) === dateStr)
+    .sort((a, b) => new Date(a.activeBooking.checkInAt) - new Date(b.activeBooking.checkInAt))
+    .map(r => ({
+      type: 'check_in',
+      time: formatT(r.activeBooking.checkInAt),
+      roomId: r.id,
+      roomNumber: r.roomNumber,
+      categoryName: r.categoryName,
+      bookingId: r.activeBooking.id,
+      bookingNumber: r.activeBooking.bookingNumber,
+      guestName: r.activeBooking.guestName,
+      nights: getNights(r.activeBooking.checkInAt, r.activeBooking.expectedCheckOutAt),
+      status: 'due',
+      checkInAt: r.activeBooking.checkInAt,
+    }))
+  const upcomingCheckOuts = occupied
+    .filter(r => toDateStr(r.activeBooking.expectedCheckOutAt) === dateStr)
+    .slice(0, 3)
+    .map(r => ({ type: 'upcoming', time: formatT(r.activeBooking.expectedCheckOutAt), roomId: r.id, roomNumber: r.roomNumber, categoryName: r.categoryName, bookingId: r.activeBooking.id, guestName: r.activeBooking.guestName, action: 'Check-out' }))
+  const upcomingCheckIns = reserved
+    .filter(r => toDateStr(r.activeBooking.checkInAt) === dateStr)
+    .slice(0, 3)
+    .map(r => ({ type: 'upcoming', time: formatT(r.activeBooking.checkInAt), roomId: r.id, roomNumber: r.roomNumber, categoryName: r.categoryName, bookingId: r.activeBooking.id, guestName: r.activeBooking.guestName, action: 'Check-in' }))
   return {
-    checkOuts: occupied.map((r, i) => ({
-      type: 'check_out', time: formatT(r.activeBooking.expectedCheckOutAt), roomId: r.id, roomNumber: r.roomNumber,
-      categoryName: r.categoryName, bookingId: r.activeBooking.id, bookingNumber: r.activeBooking.bookingNumber,
-      guestName: r.activeBooking.guestName, nights: 1, status: 'due', expectedCheckOutAt: r.activeBooking.expectedCheckOutAt,
-    })),
-    checkIns: reserved.map((r, i) => ({
-      type: 'check_in', time: formatT(r.activeBooking.checkInAt), roomId: r.id, roomNumber: r.roomNumber,
-      categoryName: r.categoryName, bookingId: r.activeBooking.id, bookingNumber: r.activeBooking.bookingNumber,
-      guestName: r.activeBooking.guestName, nights: 2, status: 'due', checkInAt: r.activeBooking.checkInAt,
-    })),
-    upcoming: [
-      ...occupied.slice(0, 2).map(r => ({ type: 'upcoming', time: formatT(r.activeBooking.expectedCheckOutAt), roomId: r.id, roomNumber: r.roomNumber, categoryName: r.categoryName, bookingId: r.activeBooking.id, guestName: r.activeBooking.guestName, action: 'Check-out' })),
-      ...reserved.slice(0, 2).map(r => ({ type: 'upcoming', time: formatT(r.activeBooking.checkInAt), roomId: r.id, roomNumber: r.roomNumber, categoryName: r.categoryName, bookingId: r.activeBooking.id, guestName: r.activeBooking.guestName, action: 'Check-in' })),
-    ],
+    checkOuts,
+    checkIns,
+    upcoming: [...upcomingCheckOuts, ...upcomingCheckIns],
   }
 }
-const MOCK_TODAY_TIMELINE = buildMockTimeline()
 
 const ROOM_CATEGORIES = [
   { value: '', label: 'All Categories' },
@@ -102,6 +135,10 @@ const RoomBookingPOS = () => {
   const { hasPermission } = usePermissions()
   const canAccess = hasPermission(PERMISSIONS.ROOM_READ) || hasPermission(PERMISSIONS.BOOKING_READ) || hasPermission(PERMISSIONS.HOTEL_ROOM_DASHBOARD_READ)
 
+  const [rooms, setRooms] = useState(() => buildMockRooms())
+  const [linkGroups, setLinkGroups] = useState({ L1: [11, 12, 13] })
+  const nextBookingIdRef = useRef(100)
+  const nextLinkGroupIdRef = useRef(10)
   const [selectedDate, setSelectedDate] = useState(() => {
     const today = new Date()
     return today.toISOString().split('T')[0]
@@ -115,12 +152,12 @@ const RoomBookingPOS = () => {
   const [showRoomModal, setShowRoomModal] = useState(false)
 
   const floors = useMemo(() => {
-    const floorSet = new Set(MOCK_ROOMS.map(r => r.floorNumber).sort((a, b) => a - b))
+    const floorSet = new Set(rooms.map(r => r.floorNumber).sort((a, b) => a - b))
     return [{ value: '', label: 'All Floors' }, ...Array.from(floorSet).map(f => ({ value: String(f), label: `Floor ${f}` }))]
-  }, [])
+  }, [rooms])
 
   const filteredRooms = useMemo(() => {
-    return MOCK_ROOMS.filter((room) => {
+    return rooms.filter((room) => {
       if (statusFilter && room.status !== statusFilter) return false
       if (categoryFilter && room.categoryName !== categoryFilter) return false
       if (floorFilter && String(room.floorNumber) !== floorFilter) return false
@@ -133,17 +170,22 @@ const RoomBookingPOS = () => {
       }
       return true
     })
-  }, [statusFilter, categoryFilter, floorFilter, searchQuery])
+  }, [rooms, statusFilter, categoryFilter, floorFilter, searchQuery])
+
+  const timeline = useMemo(
+    () => buildTimelineFromRooms(rooms, selectedDate),
+    [rooms, selectedDate]
+  )
 
   const summary = useMemo(() => {
-    const total = MOCK_ROOMS.length
-    const available = MOCK_ROOMS.filter(r => r.status === 'available').length
-    const occupied = MOCK_ROOMS.filter(r => r.status === 'occupied').length
-    const reserved = MOCK_ROOMS.filter(r => r.status === 'reserved').length
-    const cleaning = MOCK_ROOMS.filter(r => r.status === 'cleaning').length
-    const maintenance = MOCK_ROOMS.filter(r => r.status === 'maintenance').length
+    const total = rooms.length
+    const available = rooms.filter(r => r.status === 'available').length
+    const occupied = rooms.filter(r => r.status === 'occupied').length
+    const reserved = rooms.filter(r => r.status === 'reserved').length
+    const cleaning = rooms.filter(r => r.status === 'cleaning').length
+    const maintenance = rooms.filter(r => r.status === 'maintenance').length
     return { total, available, occupied, reserved, cleaning, maintenance }
-  }, [])
+  }, [rooms])
 
   const handleRoomCardClick = (room, booking = null) => {
     setSelectedRoom(room)
@@ -151,25 +193,126 @@ const RoomBookingPOS = () => {
     setShowRoomModal(true)
   }
 
-  const handleTimelineItemClick = (item) => {
-    const room = MOCK_ROOMS.find(r => r.id === item.roomId)
+  const handleTimelineItemClick = useCallback((item) => {
+    const room = rooms.find(r => r.id === item.roomId)
     if (room) {
       setSelectedRoom(room)
       setSelectedBooking(room.activeBooking)
       setShowRoomModal(true)
     }
-  }
+  }, [rooms])
 
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     setShowRoomModal(false)
     setSelectedRoom(null)
     setSelectedBooking(null)
-  }
+  }, [])
 
-  const handleModalAction = () => {
-    // When API is integrated, refresh data here
+  const handleNewBooking = useCallback((roomId, formData) => {
+    const bookingId = nextBookingIdRef.current++
+    const booking = {
+      id: bookingId,
+      bookingNumber: `#BOOK${bookingId}`,
+      guestName: formData.guestName || 'Guest',
+      guestMobile: formData.guestMobile || '',
+      bookingType: formData.bookingType || 'walk_in',
+      checkInAt: formData.checkInAt || new Date().toISOString(),
+      expectedCheckOutAt: formData.expectedCheckOutAt || new Date(Date.now() + 86400000).toISOString(),
+      status: 'booked',
+    }
+    setRooms(prev => prev.map(r => r.id === roomId ? { ...r, status: 'reserved', activeBooking: booking } : r))
     handleCloseModal()
-  }
+  }, [handleCloseModal])
+
+  const handleCheckIn = useCallback((roomId) => {
+    setRooms(prev => prev.map(r => {
+      if (r.id !== roomId || !r.activeBooking) return r
+      return { ...r, status: 'occupied', activeBooking: { ...r.activeBooking, status: 'checked_in' } }
+    }))
+    handleCloseModal()
+  }, [handleCloseModal])
+
+  const handleCheckOut = useCallback((roomId) => {
+    setRooms(prev => prev.map(r => {
+      if (r.id !== roomId || !r.activeBooking) return r
+      return { ...r, status: 'cleaning', activeBooking: { ...r.activeBooking, status: 'checked_out' } }
+    }))
+    handleCloseModal()
+  }, [handleCloseModal])
+
+  const handleCancelBooking = useCallback((roomId) => {
+    setRooms(prev => prev.map(r => r.id === roomId ? { ...r, status: 'available', activeBooking: null } : r))
+    handleCloseModal()
+  }, [handleCloseModal])
+
+  const handleUpdateBooking = useCallback((roomId, payload) => {
+    setRooms(prev => prev.map(r => {
+      if (r.id !== roomId || !r.activeBooking) return r
+      return {
+        ...r,
+        activeBooking: {
+          ...r.activeBooking,
+          guestName: payload.guestName ?? r.activeBooking.guestName,
+          guestMobile: payload.guestMobile ?? r.activeBooking.guestMobile,
+          checkInAt: payload.checkInAt ?? r.activeBooking.checkInAt,
+          expectedCheckOutAt: payload.expectedCheckOutAt ?? r.activeBooking.expectedCheckOutAt,
+          bookingType: payload.bookingType ?? r.activeBooking.bookingType,
+        },
+      }
+    }))
+    handleCloseModal()
+  }, [handleCloseModal])
+
+  const getMockBillTotal = useCallback((room, booking) => {
+    if (!room || !booking?.checkInAt || !booking?.expectedCheckOutAt) return 0
+    const nights = Math.max(1, Math.ceil((new Date(booking.expectedCheckOutAt) - new Date(booking.checkInAt)) / (24 * 60 * 60 * 1000)))
+    const rates = { Standard: 2000, Deluxe: 3500, Suite: 5000 }
+    const rate = rates[room.categoryName] ?? 2500
+    const addonsTotal = (room.id % 2) === 0 ? 700 : 500
+    return rate * nights + addonsTotal
+  }, [])
+  const linkedBillDetails = useMemo(() => {
+    if (!selectedRoom?.id) return { linkedRooms: [], combinedTotal: 0 }
+    const groupRoomIds = Object.values(linkGroups).find(ids => ids.includes(selectedRoom.id))
+    if (!groupRoomIds || groupRoomIds.length < 2) return { linkedRooms: [], combinedTotal: 0 }
+    const linkedRooms = groupRoomIds
+      .map(rid => rooms.find(r => r.id === rid))
+      .filter(Boolean)
+      .map(r => ({
+        roomId: r.id,
+        roomNumber: r.roomNumber,
+        categoryName: r.categoryName,
+        total: r.activeBooking ? getMockBillTotal(r, r.activeBooking) : 0,
+      }))
+    const combinedTotal = linkedRooms.reduce((sum, x) => sum + x.total, 0)
+    return { linkedRooms, combinedTotal }
+  }, [selectedRoom?.id, rooms, linkGroups, getMockBillTotal])
+
+  const handleLinkRooms = useCallback((roomId, selectedRoomIds) => {
+    if (!selectedRoomIds?.length) return
+    const existingGroup = Object.entries(linkGroups).find(([, ids]) => ids.includes(roomId))
+    const newIds = [...new Set([roomId, ...selectedRoomIds])]
+    if (existingGroup) {
+      const [key, ids] = existingGroup
+      const merged = [...new Set([...ids, ...selectedRoomIds])]
+      setLinkGroups(prev => ({ ...prev, [key]: merged }))
+    } else {
+      const newKey = `L${nextLinkGroupIdRef.current++}`
+      setLinkGroups(prev => ({ ...prev, [newKey]: newIds }))
+    }
+  }, [linkGroups])
+
+  const handleUnlinkRoom = useCallback((roomId) => {
+    setLinkGroups(prev => {
+      const next = { ...prev }
+      for (const [key, ids] of Object.entries(next)) {
+        const filtered = ids.filter(id => id !== roomId)
+        if (filtered.length < 2) delete next[key]
+        else next[key] = filtered
+      }
+      return next
+    })
+  }, [])
 
   if (!canAccess) {
     return (
@@ -273,7 +416,7 @@ const RoomBookingPOS = () => {
         </Col>
         <Col xs={12} lg={4} xl={3} className="timeline-col bg-white">
           <TodayTimelinePanel
-            timeline={MOCK_TODAY_TIMELINE}
+            timeline={timeline}
             onItemClick={handleTimelineItemClick}
           />
         </Col>
@@ -285,7 +428,15 @@ const RoomBookingPOS = () => {
         onHide={handleCloseModal}
         room={selectedRoom}
         booking={selectedBooking}
-        onAction={handleModalAction}
+        onNewBooking={handleNewBooking}
+        onCheckIn={handleCheckIn}
+        onCheckOut={handleCheckOut}
+        onCancelBooking={handleCancelBooking}
+        onUpdateBooking={handleUpdateBooking}
+        linkedBillDetails={linkedBillDetails}
+        allRooms={rooms}
+        onLinkRooms={handleLinkRooms}
+        onUnlinkRoom={handleUnlinkRoom}
         mockCustomers={[
           { id: 1, name: 'John Doe', mobile: '9876543210' },
           { id: 2, name: 'Jane Smith', mobile: '9876543211' },
