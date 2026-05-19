@@ -13,9 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('salary_payments', function (Blueprint $table) {
-            $table->dropColumn('payable_amount');
-        });
+        if (Schema::hasColumn('salary_payments', 'payable_amount')) {
+            Schema::table('salary_payments', function (Blueprint $table) {
+                $table->dropColumn('payable_amount');
+            });
+        }
     }
 
     /**
