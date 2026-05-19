@@ -20,11 +20,72 @@ const PERMISSION_ALIAS_MAP = {
   view_setting: ['settings:read'],
   edit_setting: ['settings:write'],
   
-  // Branch Management
-  view_branch: ['branch:read'],
-  create_branch: ['branch:write'],
-  edit_branch: ['branch:write'],
-  delete_branch: ['branch:delete'],
+  // Restaurant Settings Management
+  view_restaurant_settings: ['restaurant_settings:read'],
+  edit_restaurant_settings: ['restaurant_settings:write'],
+  
+  // Food Category Management
+  view_food_category: ['food_category:read'],
+  create_food_category: ['food_category:write'],
+  edit_food_category: ['food_category:write'],
+  delete_food_category: ['food_category:delete'],
+  
+  // Food Item Management
+  view_food_item: ['food_item:read'],
+  create_food_item: ['food_item:write'],
+  edit_food_item: ['food_item:write'],
+  delete_food_item: ['food_item:delete'],
+  
+  // Table Management
+  view_table: ['table:read'],
+  create_table: ['table:write'],
+  edit_table: ['table:write'],
+  delete_table: ['table:delete'],
+  
+  // Room Category Management
+  view_room_type: ['room_type:read'],
+  create_room_type: ['room_type:write'],
+  edit_room_type: ['room_type:write'],
+  delete_room_type: ['room_type:delete'],
+  
+  // Room Management
+  view_room: ['room:read'],
+  create_room: ['room:write'],
+  edit_room: ['room:write'],
+  delete_room: ['room:delete'],
+  
+  // Customer Management
+  view_customer: ['customer:read'],
+  create_customer: ['customer:write'],
+  edit_customer: ['customer:write'],
+  delete_customer: ['customer:delete'],
+  view_customer_ledger: ['customer_ledger:read'],
+  
+  // Wallet Transaction Management
+  view_wallet_transaction: ['wallet_transaction:read'],
+  create_wallet_transaction: ['wallet_transaction:write'],
+  edit_wallet_transaction: ['wallet_transaction:write'],
+  delete_wallet_transaction: ['wallet_transaction:delete'],
+  
+  // Bill Management
+  view_bill: ['bill:read'],
+  create_bill: ['bill:create', 'bill:write'],
+  edit_bill: ['bill:write'],
+  delete_bill: ['bill:delete'],
+  bill_payment: ['bill:payment'],
+  view_pending_bill: ['pending_bill:read'],
+  create_pending_bill: ['pending_bill:write'],
+  
+  // Staff Management
+  view_staff: ['staff:read'],
+  create_staff: ['staff:write'],
+  edit_staff: ['staff:write'],
+  delete_staff: ['staff:delete'],
+  view_salary_payment: ['salary:read'],
+  create_salary_payment: ['salary:write'],
+  edit_salary_payment: ['salary:write'],
+  delete_salary_payment: ['salary:delete'],
+  staff_salary_report: ['staff_salary_report:read'],
   
   // Dashboard
   view_dashboard: ['dashboard:read'],
@@ -40,7 +101,6 @@ const PERMISSION_ALIAS_MAP = {
   special_view_audit_logs: ['special_view_audit_logs'],
   special_manage_backups: ['special_manage_backups'],
   special_system_maintenance: ['special_system_maintenance'],
-  special_view_all_branches: ['special_view_all_branches'],
   special_override_restrictions: ['special_override_restrictions'],
 }
 

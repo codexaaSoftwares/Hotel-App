@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Concerns\GeneratesStorageUrl;
 use App\Models\Setting;
 use App\Services\EmailService;
 use Illuminate\Http\Request;
@@ -10,6 +11,7 @@ use Illuminate\Validation\Rule;
 
 class SettingController extends Controller
 {
+    use GeneratesStorageUrl;
     protected $emailService;
 
     public function __construct(EmailService $emailService)
@@ -355,7 +357,14 @@ class SettingController extends Controller
             return response()->json(['message' => 'Setting not found'], 404);
         }
 
-        return response()->json($this->formatSetting($setting));
+        $formatted = $this->formatSetting($setting);
+        
+        // For business_logo, also include the full URL
+        if ($key === 'business_logo' && $setting->value) {
+            $formatted['url'] = $this->getStorageUrl($setting->value);
+        }
+
+        return response()->json($formatted);
     }
 
     /**
@@ -491,47 +500,6 @@ class SettingController extends Controller
             'created_at' => $setting->created_at,
             'updated_at' => $setting->updated_at,
         ];
-    }
-
-    /**
-     * Generate storage URL with correct backend path.
-     * Handles subdirectory installations like /admin/api
-     *
-     * @param string $relativePath Relative path from storage/app/public (e.g., 'logos/file.png')
-     * @return string Full URL to the storage file
-     */
-    protected function getStorageUrl(string $relativePath): string
-    {
-        $appUrl = rtrim(config('app.url'), '/');
-        
-        // Extract domain from APP_URL
-        $parsedUrl = parse_url($appUrl);
-        $domain = ($parsedUrl['scheme'] ?? 'https') . '://' . ($parsedUrl['host'] ?? 'lvclicks.in');
-        
-        // Check if APP_URL includes /api
-        if (str_contains($appUrl, '/api')) {
-            return $appUrl . '/storage/' . $relativePath;
-        }
-        
-        // If APP_URL ends with /admin, add /api before /storage
-        if (str_ends_with($appUrl, '/admin')) {
-            return $domain . '/admin/api/storage/' . $relativePath;
-        }
-        
-        // If APP_URL contains /admin but doesn't end with it, check path
-        if (str_contains($appUrl, '/admin')) {
-            // Extract path from APP_URL
-            $path = $parsedUrl['path'] ?? '';
-            // If path is /admin, add /api
-            if ($path === '/admin') {
-                return $domain . '/admin/api/storage/' . $relativePath;
-            }
-            // Otherwise use APP_URL as is
-            return $appUrl . '/storage/' . $relativePath;
-        }
-        
-        // Default: append /storage/ to APP_URL
-        return $appUrl . '/storage/' . $relativePath;
     }
 
 }

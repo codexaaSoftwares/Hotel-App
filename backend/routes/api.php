@@ -6,8 +6,23 @@ use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\RoleController;
 use App\Http\Controllers\API\PermissionController;
 use App\Http\Controllers\API\SettingController;
-use App\Http\Controllers\API\BranchController;
 use App\Http\Controllers\API\DashboardController;
+use App\Http\Controllers\API\FoodCategoryController;
+use App\Http\Controllers\API\RestaurantSettingsController;
+use App\Http\Controllers\API\RoomSettingsController;
+use App\Http\Controllers\API\FoodItemController;
+use App\Http\Controllers\API\TableController;
+use App\Http\Controllers\API\CustomerController;
+use App\Http\Controllers\API\WalletTransactionController;
+use App\Http\Controllers\API\BillController;
+use App\Http\Controllers\API\StaffController;
+use App\Http\Controllers\API\SalaryPaymentController;
+use App\Http\Controllers\API\ExpenseCategoryController;
+use App\Http\Controllers\API\ExpenseController;
+use App\Http\Controllers\API\ReportController;
+use App\Http\Controllers\API\RoomCategoryController;
+use App\Http\Controllers\API\RoomController;
+use App\Http\Controllers\API\AddonServiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,19 +74,168 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/permissions', [PermissionController::class, 'index'])->middleware('permission:view_permission');
     Route::get('/permissions/{permission}', [PermissionController::class, 'show'])->middleware('permission:view_permission');
 
-    // Branch Management
-    Route::get('/branches', [BranchController::class, 'index'])->middleware('permission:view_branch');
-    Route::post('/branches', [BranchController::class, 'store'])->middleware('permission:create_branch');
-    Route::get('/branches/{branch}', [BranchController::class, 'show'])->middleware('permission:view_branch');
-    Route::put('/branches/{branch}', [BranchController::class, 'update'])->middleware('permission:edit_branch');
-    Route::delete('/branches/{branch}', [BranchController::class, 'destroy'])->middleware('permission:delete_branch');
+    // Food Category Management
+    Route::get('/food-categories', [FoodCategoryController::class, 'index'])->middleware('permission:view_food_category');
+    Route::get('/food-categories/hierarchy', [FoodCategoryController::class, 'hierarchy'])->middleware('permission:view_food_category');
+    Route::get('/food-categories/export-menu', [FoodCategoryController::class, 'exportMenu'])->middleware('permission:view_food_category');
+    Route::get('/food-categories/export-menu-csv', [FoodCategoryController::class, 'exportMenuCsv'])->middleware('permission:view_food_category');
+    Route::post('/food-categories', [FoodCategoryController::class, 'store'])->middleware('permission:create_food_category');
+    Route::get('/food-categories/{foodCategory}', [FoodCategoryController::class, 'show'])->middleware('permission:view_food_category');
+    Route::put('/food-categories/{foodCategory}', [FoodCategoryController::class, 'update'])->middleware('permission:edit_food_category');
+    Route::delete('/food-categories/{foodCategory}', [FoodCategoryController::class, 'destroy'])->middleware('permission:delete_food_category');
+    
+    // POS Menu (combined endpoint for POS Panel)
+    Route::get('/pos-menu', [FoodCategoryController::class, 'posMenu'])->middleware('permission:view_food_category');
+
+    // Food Item Management
+    Route::get('/food-items', [FoodItemController::class, 'index'])->middleware('permission:view_food_item');
+    Route::get('/food-items/popular', [FoodItemController::class, 'popular'])->middleware('permission:view_food_item');
+    Route::post('/food-items', [FoodItemController::class, 'store'])->middleware('permission:create_food_item');
+    Route::get('/food-items/{foodItem}', [FoodItemController::class, 'show'])->middleware('permission:view_food_item');
+    Route::put('/food-items/{foodItem}', [FoodItemController::class, 'update'])->middleware('permission:edit_food_item');
+    Route::delete('/food-items/{foodItem}', [FoodItemController::class, 'destroy'])->middleware('permission:delete_food_item');
+    Route::post('/food-items/{foodItem}/upload-image', [FoodItemController::class, 'uploadImage'])->middleware('permission:edit_food_item');
+    Route::delete('/food-items/{foodItem}/image', [FoodItemController::class, 'deleteImage'])->middleware('permission:edit_food_item');
+    Route::post('/food-items/{foodItem}/move-up', [FoodItemController::class, 'moveUp'])->middleware('permission:edit_food_item');
+    Route::post('/food-items/{foodItem}/move-down', [FoodItemController::class, 'moveDown'])->middleware('permission:edit_food_item');
+
+    // Table Management
+    Route::get('/tables', [TableController::class, 'index'])->middleware('permission:view_table');
+    Route::get('/tables/export-tables', [TableController::class, 'exportTables'])->middleware('permission:view_table');
+    Route::post('/tables', [TableController::class, 'store'])->middleware('permission:create_table');
+    Route::get('/tables/{table}', [TableController::class, 'show'])->middleware('permission:view_table');
+    Route::put('/tables/{table}', [TableController::class, 'update'])->middleware('permission:edit_table');
+    Route::delete('/tables/{table}', [TableController::class, 'destroy'])->middleware('permission:delete_table');
+
+    // Room Category Management
+    Route::get('/room-categories', [RoomCategoryController::class, 'index'])->middleware('permission:view_room_type');
+    Route::post('/room-categories', [RoomCategoryController::class, 'store'])->middleware('permission:create_room_type');
+    Route::get('/room-categories/{roomCategory}', [RoomCategoryController::class, 'show'])->middleware('permission:view_room_type');
+    Route::put('/room-categories/{roomCategory}', [RoomCategoryController::class, 'update'])->middleware('permission:edit_room_type');
+    Route::delete('/room-categories/{roomCategory}', [RoomCategoryController::class, 'destroy'])->middleware('permission:delete_room_type');
+
+    // Addon Services Management (Room add-ons for billing)
+    Route::get('/addon-services', [AddonServiceController::class, 'index'])->middleware('permission:view_addon_service');
+    Route::post('/addon-services', [AddonServiceController::class, 'store'])->middleware('permission:create_addon_service');
+    Route::get('/addon-services/{addonService}', [AddonServiceController::class, 'show'])->middleware('permission:view_addon_service');
+    Route::put('/addon-services/{addonService}', [AddonServiceController::class, 'update'])->middleware('permission:edit_addon_service');
+    Route::delete('/addon-services/{addonService}', [AddonServiceController::class, 'destroy'])->middleware('permission:delete_addon_service');
+
+    // Room Management
+    Route::get('/rooms', [RoomController::class, 'index'])->middleware('permission:view_room');
+    Route::get('/rooms/export-rooms', [RoomController::class, 'exportRooms'])->middleware('permission:view_room');
+    Route::post('/rooms', [RoomController::class, 'store'])->middleware('permission:create_room');
+    Route::get('/rooms/{room}', [RoomController::class, 'show'])->middleware('permission:view_room');
+    Route::put('/rooms/{room}', [RoomController::class, 'update'])->middleware('permission:edit_room');
+    Route::delete('/rooms/{room}', [RoomController::class, 'destroy'])->middleware('permission:delete_room');
+
+    // Customer Management
+    Route::get('/customers', [CustomerController::class, 'index'])->middleware('permission:view_customer');
+    Route::post('/customers', [CustomerController::class, 'store'])->middleware('permission:create_customer');
+    Route::get('/customers/{customer}', [CustomerController::class, 'show'])->middleware('permission:view_customer');
+    Route::put('/customers/{customer}', [CustomerController::class, 'update'])->middleware('permission:edit_customer');
+    Route::delete('/customers/{customer}', [CustomerController::class, 'destroy'])->middleware('permission:delete_customer');
+
+    // Bill Management
+    Route::get('/bills', [BillController::class, 'index'])->middleware('permission:view_bill');
+    Route::post('/bills', [BillController::class, 'store'])->middleware('permission:create_bill');
+    Route::get('/bills/{bill}', [BillController::class, 'show'])->middleware('permission:view_bill');
+    Route::put('/bills/{bill}', [BillController::class, 'update'])->middleware('permission:edit_bill');
+    Route::delete('/bills/{bill}', [BillController::class, 'destroy'])->middleware('permission:delete_bill');
+    Route::get('/bills/table/{tableId}', [BillController::class, 'getByTable'])->middleware('permission:view_bill');
+    Route::post('/bills/{bill}/process-payment', [BillController::class, 'processPayment'])->middleware('permission:bill_payment');
+
+    // Wallet Transaction Management
+    Route::get('/wallet-transactions', [WalletTransactionController::class, 'index'])->middleware('permission:view_wallet_transaction');
+    Route::post('/wallet-transactions', [WalletTransactionController::class, 'store'])->middleware('permission:create_wallet_transaction');
+    Route::get('/wallet-transactions/{walletTransaction}', [WalletTransactionController::class, 'show'])->middleware('permission:view_wallet_transaction');
+    Route::put('/wallet-transactions/{walletTransaction}', [WalletTransactionController::class, 'update'])->middleware('permission:edit_wallet_transaction');
+    Route::delete('/wallet-transactions/{walletTransaction}', [WalletTransactionController::class, 'destroy'])->middleware('permission:delete_wallet_transaction');
+    
+    // Customer-specific wallet transactions (Customer Ledger)
+    Route::get('/customers/{customer}/wallet-transactions', [WalletTransactionController::class, 'getByCustomer'])->middleware('permission:view_customer_ledger');
+    Route::get('/customers/{customer}/wallet-transactions/export-ledger', [WalletTransactionController::class, 'exportCustomerLedger'])->middleware('permission:view_customer_ledger');
+
+    // Staff Management
+    Route::get('/staff', [StaffController::class, 'index'])->middleware('permission:view_staff');
+    Route::post('/staff', [StaffController::class, 'store'])->middleware('permission:create_staff');
+    Route::get('/staff/{staff}', [StaffController::class, 'show'])->middleware('permission:view_staff');
+    Route::put('/staff/{staff}', [StaffController::class, 'update'])->middleware('permission:edit_staff');
+    Route::delete('/staff/{staff}', [StaffController::class, 'destroy'])->middleware('permission:delete_staff');
+
+    // Salary Payment Management
+    Route::get('/salary-payments', [SalaryPaymentController::class, 'index'])->middleware('permission:view_salary_payment');
+    Route::get('/salary-payments/export-report', [SalaryPaymentController::class, 'exportSalaryPayments'])->middleware('permission:view_salary_payment');
+    Route::post('/salary-payments', [SalaryPaymentController::class, 'store'])->middleware('permission:create_salary_payment');
+    Route::get('/salary-payments/{salaryPayment}', [SalaryPaymentController::class, 'show'])->middleware('permission:view_salary_payment');
+    Route::put('/salary-payments/{salaryPayment}', [SalaryPaymentController::class, 'update'])->middleware('permission:edit_salary_payment');
+    Route::delete('/salary-payments/{salaryPayment}', [SalaryPaymentController::class, 'destroy'])->middleware('permission:delete_salary_payment');
+    Route::get('/staff/{staff}/salary-payments', [SalaryPaymentController::class, 'getByStaff'])->middleware('permission:view_salary_payment');
+
+    // Expense Category Management
+    Route::get('/expense-categories', [ExpenseCategoryController::class, 'index'])->middleware('permission:view_expense_category');
+    Route::post('/expense-categories', [ExpenseCategoryController::class, 'store'])->middleware('permission:create_expense_category');
+    Route::get('/expense-categories/{expenseCategory}', [ExpenseCategoryController::class, 'show'])->middleware('permission:view_expense_category');
+    Route::put('/expense-categories/{expenseCategory}', [ExpenseCategoryController::class, 'update'])->middleware('permission:edit_expense_category');
+    Route::delete('/expense-categories/{expenseCategory}', [ExpenseCategoryController::class, 'destroy'])->middleware('permission:delete_expense_category');
+
+    // Expense Management
+    Route::get('/expenses', [ExpenseController::class, 'index'])->middleware('permission:view_expense');
+    Route::post('/expenses', [ExpenseController::class, 'store'])->middleware('permission:create_expense');
+    Route::get('/expenses/{expense}', [ExpenseController::class, 'show'])->middleware('permission:view_expense');
+    Route::put('/expenses/{expense}', [ExpenseController::class, 'update'])->middleware('permission:edit_expense');
+    Route::delete('/expenses/{expense}', [ExpenseController::class, 'destroy'])->middleware('permission:delete_expense');
+
+    // Restaurant Settings Management
+    Route::prefix('restaurant-settings')->middleware('permission:view_restaurant_settings')->group(function () {
+        Route::get('/', [RestaurantSettingsController::class, 'index']);
+        Route::get('/by-section', [RestaurantSettingsController::class, 'listBySection']);
+        Route::get('/by-section/{section}', [RestaurantSettingsController::class, 'getSection']);
+        Route::get('/key/{key}', [RestaurantSettingsController::class, 'showByKey']);
+    });
+
+    Route::prefix('restaurant-settings')->middleware('permission:edit_restaurant_settings')->group(function () {
+        Route::post('/', [RestaurantSettingsController::class, 'store']);
+        Route::post('/bulk', [RestaurantSettingsController::class, 'bulkUpdate']);
+    });
+
+    // Room Settings Management
+    Route::prefix('room-settings')->middleware('permission:hotel_settings:read')->group(function () {
+        Route::get('/', [RoomSettingsController::class, 'index']);
+        Route::get('/by-section', [RoomSettingsController::class, 'listBySection']);
+        Route::get('/by-section/{section}', [RoomSettingsController::class, 'getSection']);
+        Route::get('/key/{key}', [RoomSettingsController::class, 'showByKey']);
+    });
+
+    Route::prefix('room-settings')->middleware('permission:hotel_settings:write')->group(function () {
+        Route::post('/', [RoomSettingsController::class, 'store']);
+        Route::post('/bulk', [RoomSettingsController::class, 'bulkUpdate']);
+    });
 
 
     // Dashboard
     Route::get('/dashboard/summary', [DashboardController::class, 'summary'])->middleware('permission:view_dashboard');
 
     // Reports
-    // Report routes will be added here as needed
+    Route::get('/reports/sales', [ReportController::class, 'salesReport'])->middleware('permission:sales_report:read');
+    Route::get('/reports/expenses', [ReportController::class, 'expenseReport'])->middleware('permission:expense_report:read');
+    Route::get('/reports/customer-pending', [ReportController::class, 'customerPendingReport'])->middleware('permission:customer_pending_report:read');
+    Route::get('/reports/staff-salary', [ReportController::class, 'staffSalaryReport'])->middleware('permission:staff_salary_report:read');
+    Route::get('/reports/category-wise-items', [ReportController::class, 'categoryWiseItemReport'])->middleware('permission:sales_report:read');
+    
+    // Report PDF Exports
+    Route::get('/reports/sales/export-pdf', [ReportController::class, 'exportSalesReportPdf'])->middleware('permission:sales_report:read');
+    Route::get('/reports/expenses/export-pdf', [ReportController::class, 'exportExpenseReportPdf'])->middleware('permission:expense_report:read');
+    Route::get('/reports/customer-pending/export-pdf', [ReportController::class, 'exportCustomerPendingReportPdf'])->middleware('permission:customer_pending_report:read');
+    Route::get('/reports/staff-salary/export-pdf', [ReportController::class, 'exportStaffSalaryReportPdf'])->middleware('permission:staff_salary_report:read');
+    Route::get('/reports/category-wise-items/export-pdf', [ReportController::class, 'exportCategoryWiseItemReportPdf'])->middleware('permission:sales_report:read');
+    
+    // Report CSV Exports
+    Route::get('/reports/sales/export-csv', [ReportController::class, 'exportSalesReportCsv'])->middleware('permission:sales_report:read');
+    Route::get('/reports/expenses/export-csv', [ReportController::class, 'exportExpenseReportCsv'])->middleware('permission:expense_report:read');
+    Route::get('/reports/customer-pending/export-csv', [ReportController::class, 'exportCustomerPendingReportCsv'])->middleware('permission:customer_pending_report:read');
+    Route::get('/reports/staff-salary/export-csv', [ReportController::class, 'exportStaffSalaryReportCsv'])->middleware('permission:staff_salary_report:read');
+    Route::get('/reports/category-wise-items/export-csv', [ReportController::class, 'exportCategoryWiseItemReportCsv'])->middleware('permission:sales_report:read');
 
     // Settings
     Route::get('/settings', [SettingController::class, 'index'])->middleware('permission:view_setting');

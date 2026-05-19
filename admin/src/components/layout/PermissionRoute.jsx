@@ -2,17 +2,20 @@ import React from 'react'
 import { Navigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { useAuth } from '../../context/AuthContext'
+import { usePermissions } from '../../hooks'
 import { PERMISSIONS, ROLES } from '../../constants/permissions'
 
 const PermissionRoute = ({ 
   children, 
   requiredPermission, 
+  requiredPermissions, 
   requiredRole, 
   requiredRoles, 
   fallback = '/dashboard',
   showAccessDenied = false 
 }) => {
   const { user, isAuthenticated } = useAuth()
+  const { hasPermission } = usePermissions()
 
   // Check if user is authenticated
   if (!isAuthenticated) {
@@ -51,10 +54,27 @@ const PermissionRoute = ({
     return <Navigate to={fallback} replace />
   }
 
-  // Check permission-based access
-  if (requiredPermission) {
-    const hasPermission = user?.permissions?.includes(requiredPermission) || false
-    if (!hasPermission) {
+  // Check permission-based access (use hasPermission hook which checks both aliases and canonical names)
+  const permissionsToCheck = requiredPermissions && requiredPermissions.length
+    ? requiredPermissions
+    : requiredPermission
+      ? [requiredPermission]
+      : []
+  if (permissionsToCheck.length) {
+    const hasAnyPermission = permissionsToCheck.some((p) => hasPermission(p))
+    // TEMPORARY: Development bypass - Remove this when backend is ready
+    const isDevelopment = import.meta.env.DEV || import.meta.env.MODE === 'development'
+    const isStaffRoute = permissionsToCheck.some(
+      (p) => p === PERMISSIONS.STAFF_READ || p === 'staff:read' || p === 'view_staff'
+    )
+    const isExpenseRoute = permissionsToCheck.some(
+      (p) => p === PERMISSIONS.EXPENSE_READ || p === 'expense:read' || p === 'view_expense' ||
+             p === PERMISSIONS.EXPENSE_CATEGORY_READ || p === 'expense_category:read'
+    )
+    // Allow access in development for staff and expense routes (temporary)
+    if (isDevelopment && (isStaffRoute || isExpenseRoute)) {
+      // Bypass permission check for development
+    } else if (!hasAnyPermission) {
       if (showAccessDenied) {
         return (
           <div className="d-flex justify-content-center align-items-center min-vh-100">
@@ -76,6 +96,7 @@ const PermissionRoute = ({
 PermissionRoute.propTypes = {
   children: PropTypes.node.isRequired,
   requiredPermission: PropTypes.string,
+  requiredPermissions: PropTypes.arrayOf(PropTypes.string),
   requiredRole: PropTypes.string,
   requiredRoles: PropTypes.arrayOf(PropTypes.string),
   fallback: PropTypes.string,

@@ -1,8 +1,8 @@
 {
   "settings": {
     "general": {
-      "appName": "Codexaa Base Project",
-      "businessName": "Codexaa Base Project",
+      "appName": "Teja Hotel",
+      "businessName": "Teja Hotel",
       "businessAddress": "",
       "contactInfo": "",
       "email": "admin@codexaa.com",
@@ -15,7 +15,7 @@
       "smtpUsername": "noreply@codexaa.com",
       "smtpPassword": "encrypted_password_here",
       "fromEmail": "noreply@codexaa.com",
-      "fromName": "Codexaa Base Project",
+      "fromName": "Teja Hotel",
       "encryption": "tls",
       "updatedAt": "2024-01-15T10:30:00Z"
     },

@@ -37,7 +37,7 @@ const AppRoutes = () => {
         />
         
         {/* Default redirect */}
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/" element={<Navigate to="/restaurant/dashboard" replace />} />
       </Routes>
     </Suspense>
   )

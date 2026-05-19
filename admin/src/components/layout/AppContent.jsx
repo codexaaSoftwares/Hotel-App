@@ -13,24 +13,110 @@ const RolesList = React.lazy(() => import('../../views/roles/RolesList'))
 // Settings Components
 const Settings = React.lazy(() => import('../../views/settings/Settings'))
 
-// Branch Management Components
-const BranchesList = React.lazy(() => import('../../views/branches/BranchesList'))
+// Restaurant Components
+const RestaurantSettings = React.lazy(() => import('../../views/restaurant/settings/RestaurantSettings'))
+const RoomSettings = React.lazy(() => import('../../views/hotel-room/settings/RoomSettings'))
+const MenuManagement = React.lazy(() => import('../../views/restaurant/MenuManagement'))
+const TablesList = React.lazy(() => import('../../views/restaurant/TablesList'))
+
+// Customer Management Components
+const CustomersList = React.lazy(() => import('../../views/customers/CustomersList'))
+
+// Staff Management Components
+const StaffList = React.lazy(() => import('../../views/staff/StaffList'))
+
+// POS Panel Components
+const POSPanel = React.lazy(() => import('../../views/pos/POSPanel'))
+const BillsList = React.lazy(() => import('../../views/pos/BillsList'))
+
+// Expense Management Components
+const ExpensesList = React.lazy(() => import('../../views/expenses/ExpensesList'))
+
+// Hotel Room Components
+const RoomCategoriesList = React.lazy(() => import('../../views/hotel-room/RoomCategoriesList'))
+const RoomsList = React.lazy(() => import('../../views/hotel-room/RoomsList'))
+const AddonServicesList = React.lazy(() => import('../../views/hotel-room/AddonServicesList'))
+const RoomBookingPOS = React.lazy(() => import('../../views/hotel-room/RoomBookingPOS'))
+
+// Report Components
+const SalesReport = React.lazy(() => import('../../views/reports/SalesReport'))
+const ExpenseReport = React.lazy(() => import('../../views/reports/ExpenseReport'))
+const CustomerPendingReport = React.lazy(() => import('../../views/reports/CustomerPendingReport'))
+const StaffSalaryReport = React.lazy(() => import('../../views/reports/StaffSalaryReport'))
+const CategoryWiseItemReport = React.lazy(() => import('../../views/reports/CategoryWiseItemReport'))
 
 
 import PermissionRoute from './PermissionRoute'
 import { PERMISSIONS } from '../../constants/permissions'
 
 const AppContent = () => {
+
   return (
     <div className="app-content">
       <Suspense fallback={<CSpinner color="primary" />}>
         <Routes>
-          {/* Dashboard */}
+          {/* Restaurant Module Routes */}
           <Route
-            path="/dashboard"
+            path="/restaurant/dashboard"
             element={
               <PermissionRoute requiredPermission={PERMISSIONS.DASHBOARD_READ} showAccessDenied>
                 <Dashboard />
+              </PermissionRoute>
+            }
+          />
+          <Route
+            path="/restaurant/pos/panel"
+            element={
+              <PermissionRoute requiredPermission="create_bill" showAccessDenied>
+                <POSPanel />
+              </PermissionRoute>
+            }
+          />
+          <Route
+            path="/restaurant/pos/bills"
+            element={
+              <PermissionRoute requiredPermission="view_bill" showAccessDenied>
+                <BillsList />
+              </PermissionRoute>
+            }
+          />
+          <Route
+            path="/restaurant/reports/sales"
+            element={
+              <PermissionRoute requiredPermission={PERMISSIONS.SALES_REPORT_READ} showAccessDenied>
+                <SalesReport />
+              </PermissionRoute>
+            }
+          />
+          <Route
+            path="/restaurant/reports/expenses"
+            element={
+              <PermissionRoute requiredPermission={PERMISSIONS.EXPENSE_REPORT_READ} showAccessDenied>
+                <ExpenseReport />
+              </PermissionRoute>
+            }
+          />
+          <Route
+            path="/restaurant/reports/customer-pending"
+            element={
+              <PermissionRoute requiredPermission={PERMISSIONS.CUSTOMER_PENDING_REPORT_READ} showAccessDenied>
+                <CustomerPendingReport />
+              </PermissionRoute>
+            }
+          />
+          <Route
+            path="/restaurant/reports/staff-salary"
+            element={
+              <PermissionRoute requiredPermission={PERMISSIONS.STAFF_SALARY_REPORT_READ} showAccessDenied>
+                <StaffSalaryReport />
+              </PermissionRoute>
+            }
+          />
+          <Route
+            path="/restaurant/reports/category-wise-items"
+            element={
+              <PermissionRoute requiredPermission={PERMISSIONS.SALES_REPORT_READ} showAccessDenied>
+                <CategoryWiseItemReport />
               </PermissionRoute>
             }
           />
@@ -64,23 +150,118 @@ const AppContent = () => {
             }
           />
           
-          {/* Branch Management Routes */}
+          {/* Restaurant Routes */}
           <Route
-            path="/branches"
+            path="/restaurant/menu"
             element={
-              <PermissionRoute requiredPermission={PERMISSIONS.BRANCH_READ} showAccessDenied>
-                <BranchesList />
+              <PermissionRoute requiredPermission={PERMISSIONS.FOOD_CATEGORY_READ} showAccessDenied>
+                <MenuManagement />
               </PermissionRoute>
             }
           />
-          <Route path="/branches/create" element={<Navigate to="/branches" replace />} />
-          <Route path="/branches/edit/:id" element={<Navigate to="/branches" replace />} />
+          <Route
+            path="/restaurant/tables"
+            element={
+              <PermissionRoute requiredPermission={PERMISSIONS.TABLE_READ} showAccessDenied>
+                <TablesList />
+              </PermissionRoute>
+            }
+          />
+          <Route
+            path="/restaurant/settings"
+            element={
+              <PermissionRoute requiredPermission={PERMISSIONS.RESTAURANT_SETTINGS_READ} showAccessDenied>
+                <RestaurantSettings />
+              </PermissionRoute>
+            }
+          />
           
-          {/* Report Routes */}
-          {/* Report routes will be added here as needed */}
+          {/* Customer Management Routes */}
+          <Route
+            path="/customers"
+            element={
+              <PermissionRoute requiredPermission={PERMISSIONS.CUSTOMER_READ} showAccessDenied>
+                <CustomersList />
+              </PermissionRoute>
+            }
+          />
+          <Route path="/customers/create" element={<Navigate to="/customers" replace />} />
+          <Route path="/customers/edit/:id" element={<Navigate to="/customers" replace />} />
           
-          {/* Default redirect */}
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          {/* Staff Management Routes */}
+          <Route
+            path="/staff"
+            element={
+              <PermissionRoute requiredPermission={PERMISSIONS.STAFF_READ} showAccessDenied>
+                <StaffList />
+              </PermissionRoute>
+            }
+          />
+          <Route path="/staff/create" element={<Navigate to="/staff" replace />} />
+          <Route path="/staff/edit/:id" element={<Navigate to="/staff" replace />} />
+          
+          {/* Expense Management Routes */}
+          <Route
+            path="/expenses"
+            element={
+              <PermissionRoute requiredPermission={PERMISSIONS.EXPENSE_READ} showAccessDenied>
+                <ExpensesList />
+              </PermissionRoute>
+            }
+          />
+          <Route path="/expenses/create" element={<Navigate to="/expenses" replace />} />
+          <Route path="/expenses/edit/:id" element={<Navigate to="/expenses" replace />} />
+          
+          {/* Hotel Room Module Routes */}
+          <Route
+            path="/hotel-room/booking-pos"
+            element={
+              <PermissionRoute
+                requiredPermissions={[PERMISSIONS.ROOM_READ, PERMISSIONS.BOOKING_READ, PERMISSIONS.HOTEL_ROOM_DASHBOARD_READ]}
+                showAccessDenied
+              >
+                <RoomBookingPOS />
+              </PermissionRoute>
+            }
+          />
+          <Route
+            path="/hotel-room/room-types"
+            element={
+              <PermissionRoute requiredPermission={PERMISSIONS.ROOM_TYPE_READ} showAccessDenied>
+                <RoomCategoriesList />
+              </PermissionRoute>
+            }
+          />
+          <Route
+            path="/hotel-room/rooms"
+            element={
+              <PermissionRoute requiredPermission={PERMISSIONS.ROOM_READ} showAccessDenied>
+                <RoomsList />
+              </PermissionRoute>
+            }
+          />
+          <Route
+            path="/hotel-room/settings"
+            element={
+              <PermissionRoute requiredPermission={PERMISSIONS.HOTEL_SETTINGS_READ} showAccessDenied>
+                <RoomSettings />
+              </PermissionRoute>
+            }
+          />
+          <Route
+            path="/hotel-room/addon-services"
+            element={
+              <PermissionRoute requiredPermission={PERMISSIONS.ADDON_SERVICE_READ} showAccessDenied>
+                <AddonServicesList />
+              </PermissionRoute>
+            }
+          />
+          
+          {/* Default redirect - redirect to restaurant module dashboard */}
+          <Route 
+            path="/" 
+            element={<Navigate to="/restaurant/dashboard" replace />} 
+          />
         </Routes>
       </Suspense>
     </div>

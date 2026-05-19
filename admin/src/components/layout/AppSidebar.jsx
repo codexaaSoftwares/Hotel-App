@@ -16,17 +16,25 @@ import { AppSidebarNav } from './AppSidebarNav.jsx'
 // Replace CoreUI SVG logo with custom image logo
 import logoImg from 'src/assets/logo/logo-transprant.png'
 import { settingsService } from '../../services/settingsService'
+import { getImageUrl } from '../../utils/imageUtils'
 
 // sidebar nav config
-import navigation from '../../_nav.jsx'
+import { getNavigation } from '../../_nav.jsx'
 import { usePermissions } from '../../hooks'
+import { useModule } from '../../context/ModuleContext'
 
 const AppSidebar = () => {
   const dispatch = useDispatch()
   const unfoldable = useSelector((state) => state.sidebarUnfoldable)
   const sidebarShow = useSelector((state) => state.sidebarShow)
   const { hasPermission } = usePermissions()
+  const { activeModule } = useModule()
   const [businessLogo, setBusinessLogo] = useState(null)
+
+  // Get module-specific navigation
+  const navigation = useMemo(() => {
+    return getNavigation(activeModule)
+  }, [activeModule])
 
   useEffect(() => {
     // Get settings from localStorage (set by auth service)
@@ -52,27 +60,7 @@ const AppSidebar = () => {
             const logoPath = response.data.value
             // Convert storage path to URL
             let logoUrl
-            if (logoPath.startsWith('http')) {
-              // Already a full URL, use it as is
-              logoUrl = logoPath
-            } else {
-              // Construct URL from API base URL
-              let baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
-              // Remove trailing slash if present
-              baseUrl = baseUrl.replace(/\/+$/, '')
-              // For subdirectory installations (/admin/api), storage is at /admin/api/storage/
-              // If baseUrl includes /admin/api, use it as is
-              if (baseUrl.includes('/admin/api')) {
-                logoUrl = `${baseUrl}/storage/${logoPath}`
-              } else if (baseUrl.includes('/admin')) {
-                // If baseUrl is /admin, add /api/storage
-                logoUrl = `${baseUrl}/api/storage/${logoPath}`
-              } else {
-                // For root installations, remove /api if present and add /storage
-                baseUrl = baseUrl.replace(/\/api\/?$/, '')
-                logoUrl = `${baseUrl}/storage/${logoPath}`
-              }
-            }
+            logoUrl = getImageUrl(logoPath, logoPath)
             setBusinessLogo(logoUrl)
           }
         } catch (error) {
@@ -153,7 +141,7 @@ const AppSidebar = () => {
         <CSidebarBrand to="/" className="sidebar-brand-custom">
           <img
             src={businessLogo || logoImg}
-            alt="Codexaa Base Project"
+            alt="Teja Hotel"
             className="sidebar-brand-logo-full"
             onError={(e) => {
               // Fallback to default logo if business logo fails to load

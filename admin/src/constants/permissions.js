@@ -14,12 +14,6 @@ export const PERMISSIONS = {
   ROLE_DELETE: 'role:delete',
   ROLE_MANAGE: 'role:manage',
 
-  // Branch Management
-  BRANCH_READ: 'branch:read',
-  BRANCH_WRITE: 'branch:write',
-  BRANCH_DELETE: 'branch:delete',
-  BRANCH_MANAGE: 'branch:manage',
-
   // Dashboard
   DASHBOARD_READ: 'dashboard:read',
   DASHBOARD_WRITE: 'dashboard:write',
@@ -27,6 +21,13 @@ export const PERMISSIONS = {
   // Report Management
   REPORT_READ: 'report:read',
   REPORT_EXPORT: 'report:read', // Export uses same permission as view
+  SALES_REPORT_READ: 'sales_report:read',
+  EXPENSE_REPORT_READ: 'expense_report:read',
+  GST_REPORT_READ: 'gst_report:read',
+  CUSTOMER_PENDING_REPORT_READ: 'customer_pending_report:read',
+  CUSTOMER_LEDGER_REPORT_READ: 'customer_ledger_report:read',
+  STAFF_SALARY_REPORT_READ: 'staff_salary_report:read',
+  BUSINESS_DASHBOARD_READ: 'business_dashboard:read',
 
   // Settings
   SETTINGS_READ: 'settings:read',
@@ -35,6 +36,93 @@ export const PERMISSIONS = {
   // Profile
   PROFILE_READ: 'profile:read',
   PROFILE_WRITE: 'profile:write',
+
+  // Restaurant Management
+  FOOD_CATEGORY_READ: 'food_category:read',
+  FOOD_CATEGORY_WRITE: 'food_category:write',
+  FOOD_CATEGORY_DELETE: 'food_category:delete',
+  FOOD_ITEM_READ: 'food_item:read',
+  FOOD_ITEM_WRITE: 'food_item:write',
+  FOOD_ITEM_DELETE: 'food_item:delete',
+  TABLE_READ: 'table:read',
+  TABLE_WRITE: 'table:write',
+  TABLE_DELETE: 'table:delete',
+  RESTAURANT_SETTINGS_READ: 'restaurant_settings:read',
+  RESTAURANT_SETTINGS_WRITE: 'restaurant_settings:write',
+
+  // POS & Billing
+  BILL_READ: 'bill:read',
+  BILL_WRITE: 'bill:write',
+  BILL_DELETE: 'bill:delete',
+  BILL_CREATE: 'bill:create',
+  BILL_PAYMENT: 'bill:payment',
+  PENDING_BILL_READ: 'pending_bill:read',
+  PENDING_BILL_WRITE: 'pending_bill:write',
+
+  // Customer Management
+  CUSTOMER_READ: 'customer:read',
+  CUSTOMER_WRITE: 'customer:write',
+  CUSTOMER_DELETE: 'customer:delete',
+  CUSTOMER_LEDGER_READ: 'view_customer_ledger',
+
+  // Wallet Transaction Management
+  WALLET_TRANSACTION_READ: 'view_wallet_transaction',
+  WALLET_TRANSACTION_CREATE: 'create_wallet_transaction',
+  WALLET_TRANSACTION_EDIT: 'edit_wallet_transaction',
+  WALLET_TRANSACTION_DELETE: 'delete_wallet_transaction',
+
+  // Staff Management
+  STAFF_READ: 'staff:read',
+  STAFF_WRITE: 'staff:write',
+  STAFF_DELETE: 'staff:delete',
+  SALARY_READ: 'salary:read',
+  SALARY_WRITE: 'salary:write',
+
+  // Expense Management
+  EXPENSE_CATEGORY_READ: 'expense_category:read',
+  EXPENSE_CATEGORY_WRITE: 'expense_category:write',
+  EXPENSE_CATEGORY_DELETE: 'expense_category:delete',
+  EXPENSE_READ: 'expense:read',
+  EXPENSE_WRITE: 'expense:write',
+  EXPENSE_DELETE: 'expense:delete',
+
+  // Module-Specific Permissions
+  // Restaurant Module
+  RESTAURANT_DASHBOARD_READ: 'restaurant_dashboard:read',
+  
+  // Hotel Room Module (Planned)
+  HOTEL_ROOM_DASHBOARD_READ: 'hotel_room_dashboard:read',
+  ROOM_READ: 'room:read',
+  ROOM_WRITE: 'room:write',
+  ROOM_DELETE: 'room:delete',
+  // Room Category Management (permission names use room_type for backward compatibility)
+  ROOM_TYPE_READ: 'room_type:read',
+  ROOM_TYPE_WRITE: 'room_type:write',
+  ROOM_TYPE_DELETE: 'room_type:delete',
+  BOOKING_READ: 'booking:read',
+  BOOKING_WRITE: 'booking:write',
+  BOOKING_DELETE: 'booking:delete',
+  HOTEL_SETTINGS_READ: 'hotel_settings:read',
+  HOTEL_SETTINGS_WRITE: 'hotel_settings:write',
+  ADDON_SERVICE_READ: 'view_addon_service',
+  ADDON_SERVICE_WRITE: 'create_addon_service',
+  ADDON_SERVICE_DELETE: 'delete_addon_service',
+  OCCUPANCY_REPORT_READ: 'occupancy_report:read',
+  REVENUE_REPORT_READ: 'revenue_report:read',
+  BOOKING_REPORT_READ: 'booking_report:read',
+  
+  // Banquet Hall Module (Planned)
+  BANQUET_DASHBOARD_READ: 'banquet_dashboard:read',
+  HALL_READ: 'hall:read',
+  HALL_WRITE: 'hall:write',
+  HALL_DELETE: 'hall:delete',
+  BANQUET_BOOKING_READ: 'banquet_booking:read',
+  BANQUET_BOOKING_WRITE: 'banquet_booking:write',
+  BANQUET_BOOKING_DELETE: 'banquet_booking:delete',
+  BANQUET_SETTINGS_READ: 'banquet_settings:read',
+  BANQUET_SETTINGS_WRITE: 'banquet_settings:write',
+  BANQUET_REPORT_READ: 'banquet_report:read',
+  BANQUET_REVENUE_REPORT_READ: 'banquet_revenue_report:read',
 
   // Admin
   ADMIN_ACCESS: 'admin:access',
@@ -73,9 +161,6 @@ export const ROLE_PERMISSIONS = {
     PERMISSIONS.USER_DELETE,
     PERMISSIONS.ROLE_READ,
     PERMISSIONS.ROLE_WRITE,
-    PERMISSIONS.BRANCH_READ,
-    PERMISSIONS.BRANCH_WRITE,
-    PERMISSIONS.BRANCH_DELETE,
     PERMISSIONS.DASHBOARD_READ,
     PERMISSIONS.DASHBOARD_WRITE,
     PERMISSIONS.REPORT_READ,
@@ -88,8 +173,6 @@ export const ROLE_PERMISSIONS = {
   [ROLES.MANAGER]: [
     PERMISSIONS.USER_READ,
     PERMISSIONS.USER_WRITE,
-    PERMISSIONS.BRANCH_READ,
-    PERMISSIONS.BRANCH_WRITE,
     PERMISSIONS.DASHBOARD_READ,
     PERMISSIONS.DASHBOARD_WRITE,
     PERMISSIONS.REPORT_READ,
@@ -121,12 +204,6 @@ export const PERMISSION_GROUPS = {
     PERMISSIONS.ROLE_DELETE,
     PERMISSIONS.ROLE_MANAGE,
   ],
-  BRANCH_MANAGEMENT: [
-    PERMISSIONS.BRANCH_READ,
-    PERMISSIONS.BRANCH_WRITE,
-    PERMISSIONS.BRANCH_DELETE,
-    PERMISSIONS.BRANCH_MANAGE,
-  ],
   DASHBOARD: [
     PERMISSIONS.DASHBOARD_READ,
     PERMISSIONS.DASHBOARD_WRITE,
@@ -155,7 +232,6 @@ export const PERMISSION_GROUPS = {
     PERMISSIONS.VIEW_AUDIT_LOGS,
     PERMISSIONS.MANAGE_BACKUPS,
     PERMISSIONS.SYSTEM_MAINTENANCE,
-    PERMISSIONS.VIEW_ALL_BRANCHES,
     PERMISSIONS.OVERRIDE_RESTRICTIONS,
   ],
 }

@@ -14,12 +14,15 @@ export const TextField = ({
   invalid = false,
   feedback,
   labelClassName = '',
+  showLabel = true,
   ...props 
 }) => (
   <Col md={col}>
-    <FormLabel htmlFor={props.id} className={labelClassName}>
-      {label} {required && <span className="text-danger">*</span>}
-    </FormLabel>
+    {showLabel && label && (
+      <FormLabel htmlFor={props.id} className={labelClassName}>
+        {label} {required && <span className="text-danger">*</span>}
+      </FormLabel>
+    )}
     <FormControl
       {...props}
       value={value}
@@ -44,12 +47,15 @@ export const SelectField = ({
   col = 6,
   invalid = false,
   feedback,
+  showLabel = true,
   ...props 
 }) => (
   <Col md={col}>
-    <FormLabel htmlFor={props.id}>
-      {label} {required && <span className="text-danger">*</span>}
-    </FormLabel>
+    {showLabel && label && (
+      <FormLabel htmlFor={props.id}>
+        {label} {required && <span className="text-danger">*</span>}
+      </FormLabel>
+    )}
     <FormSelect
       {...props}
       value={value}
@@ -68,6 +74,40 @@ export const SelectField = ({
   </Col>
 )
 
+// TextArea Field
+export const TextAreaField = ({ 
+  label, 
+  value, 
+  onChange, 
+  placeholder, 
+  required = false, 
+  helpText, 
+  col = 12,
+  invalid = false,
+  feedback,
+  rows = 3,
+  labelClassName = '',
+  ...props 
+}) => (
+  <Col md={col}>
+    <FormLabel htmlFor={props.id} className={labelClassName}>
+      {label} {required && <span className="text-danger">*</span>}
+    </FormLabel>
+    <FormControl
+      {...props}
+      as="textarea"
+      rows={rows}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      required={required}
+      isInvalid={invalid}
+    />
+    {feedback && <div className="invalid-feedback d-block">{feedback}</div>}
+    {helpText && <FormText>{helpText}</FormText>}
+  </Col>
+)
+
 // Row Wrapper
 export const FormRow = ({ children, className = "mt-3" }) => (
   <Row className={className}>
@@ -76,7 +116,7 @@ export const FormRow = ({ children, className = "mt-3" }) => (
 )
 
 TextField.propTypes = {
-  label: PropTypes.string.isRequired,
+  label: PropTypes.string,
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   placeholder: PropTypes.string,
@@ -84,11 +124,12 @@ TextField.propTypes = {
   helpText: PropTypes.string,
   col: PropTypes.number,
   invalid: PropTypes.bool,
-  feedback: PropTypes.string
+  feedback: PropTypes.string,
+  showLabel: PropTypes.bool
 }
 
 SelectField.propTypes = {
-  label: PropTypes.string.isRequired,
+  label: PropTypes.string,
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   options: PropTypes.arrayOf(PropTypes.shape({
@@ -99,7 +140,22 @@ SelectField.propTypes = {
   helpText: PropTypes.string,
   col: PropTypes.number,
   invalid: PropTypes.bool,
-  feedback: PropTypes.string
+  feedback: PropTypes.string,
+  showLabel: PropTypes.bool
+}
+
+TextAreaField.propTypes = {
+  label: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  placeholder: PropTypes.string,
+  required: PropTypes.bool,
+  helpText: PropTypes.string,
+  col: PropTypes.number,
+  invalid: PropTypes.bool,
+  feedback: PropTypes.string,
+  rows: PropTypes.number,
+  labelClassName: PropTypes.string
 }
 
 FormRow.propTypes = {

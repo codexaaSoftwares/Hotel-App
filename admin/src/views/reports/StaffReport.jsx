@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
-import { Container, Row, Col, Button, FormControl, FormSelect, Card } from 'react-bootstrap'
+import { Container, Row, Col, Button, FormControl, Card } from 'react-bootstrap'
+import { SelectField } from '../../components/common/FormFields'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBarChart, faDownload } from '@fortawesome/free-solid-svg-icons'
 import reportService from '../../services/reportService'
 
 const StaffReport = () => {
   const [userId, setUserId] = useState('')
-  const [branchId, setBranchId] = useState('')
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [loading, setLoading] = useState(false)
@@ -16,7 +16,6 @@ const StaffReport = () => {
       setLoading(true)
       const response = await reportService.getStaffReport({
         user_id: userId,
-        branch_id: branchId,
         startDate,
         endDate
       })
@@ -43,24 +42,17 @@ const StaffReport = () => {
             <Card.Body>
               <Row className="g-3 mb-4">
                 <Col md={3}>
-                  <label className="form-label">Staff</label>
-                  <FormSelect
+                  <SelectField
+                    id="userId"
+                    label="Staff"
                     value={userId}
                     onChange={(e) => setUserId(e.target.value)}
-                  >
-                    <option value="">All Staff</option>
-                    {/* Add staff options */}
-                  </FormSelect>
-                </Col>
-                <Col md={3}>
-                  <label className="form-label">Branch</label>
-                  <FormSelect
-                    value={branchId}
-                    onChange={(e) => setBranchId(e.target.value)}
-                  >
-                    <option value="">All Branches</option>
-                    {/* Add branch options */}
-                  </FormSelect>
+                    options={[
+                      { value: '', label: 'All Staff' },
+                    ]}
+                    col={12}
+                    showLabel={true}
+                  />
                 </Col>
                 <Col md={2}>
                   <label className="form-label">Start Date</label>

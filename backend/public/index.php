@@ -43,6 +43,11 @@ if ($requestUri && str_starts_with($requestUri, $adminPathPrefix . '/api/storage
     // Extract the storage path (remove /admin/api/storage/)
     $storagePath = substr($requestUri, strlen($adminPathPrefix . '/api/storage/'));
     
+    // Remove query string from storage path (e.g., ?t=123456)
+    if (($queryPos = strpos($storagePath, '?')) !== false) {
+        $storagePath = substr($storagePath, 0, $queryPos);
+    }
+    
     // Build the full file path - point directly to storage/app/public (no symlink needed)
     $filePath = __DIR__ . '/../storage/app/public/' . $storagePath;
     

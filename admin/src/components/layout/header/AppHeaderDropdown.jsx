@@ -105,11 +105,22 @@ const AppHeaderDropdown = () => {
 
   return (
     <CDropdown variant="nav-item">
-      <CDropdownToggle placement="bottom-end" className="py-0 pe-0" caret={false}>
+      <CDropdownToggle 
+        placement="bottom-end" 
+        className="py-0 pe-0 header-avatar-toggle" 
+        caret={false}
+        style={{ background: 'transparent', border: 'none' }}
+      >
         <CAvatar 
           src={avatarUrl} 
           size="md"
           key={`avatar-${user?.id || 'default'}-${avatarKey}`} // Force re-render when avatar changes
+          className="header-avatar"
+          style={{ 
+            border: '2px solid rgba(255, 255, 255, 0.3)',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease'
+          }}
         />
       </CDropdownToggle>
       <CDropdownMenu className="pt-0" placement="bottom-end">

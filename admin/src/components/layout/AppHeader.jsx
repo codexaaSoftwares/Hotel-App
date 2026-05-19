@@ -1,28 +1,120 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { NavLink } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
 import {
-  CContainer,
   CHeader,
-  CHeaderNav,
-  CHeaderToggler,
 } from '@coreui/react'
-import CIcon from '@coreui/icons-react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
-  cilMenu,
-} from '@coreui/icons'
+  faExpand,
+  faClock,
+} from '@fortawesome/free-solid-svg-icons'
 
-import { AppBreadcrumb } from '../index'
-import { AppHeaderDropdown, ThemeToggle } from './header/index.jsx'
+import { AppHorizontalNav } from '../index'
+import { AppHeaderDropdown } from './header/index.jsx'
+import ModuleSwitcher from './ModuleSwitcher'
 import { useAuth } from '../../context/AuthContext'
+import { settingsService } from '../../services/settingsService'
+import logoImg from 'src/assets/logo/logo-transprant.png'
 
 const AppHeader = () => {
   const headerRef = useRef()
   const [currentTime, setCurrentTime] = useState(new Date())
+  const [businessName, setBusinessName] = useState('Teja Hotel')
+  const [businessLogo, setBusinessLogo] = useState(null)
 
-  const dispatch = useDispatch()
-  const sidebarShow = useSelector((state) => state.sidebarShow)
   const { user } = useAuth()
+
+  // Fetch business name and logo from settings
+  useEffect(() => {
+    const getBusinessInfo = () => {
+      try {
+        const settingsStr = localStorage.getItem('app_settings')
+        if (settingsStr) {
+          const settings = JSON.parse(settingsStr)
+          if (settings.company_name) {
+            setBusinessName(settings.company_name)
+          }
+          if (settings.business_logo) {
+            setBusinessLogo(settings.business_logo)
+          }
+          return
+        }
+      } catch (error) {
+        console.warn('Failed to parse app settings:', error)
+      }
+      
+      // Fallback: fetch from API
+      const fetchBusinessInfo = async () => {
+        try {
+          const [nameResponse, logoResponse] = await Promise.all([
+            settingsService.getSettingByKey('company_name', 'Business Information', true),
+            settingsService.getSettingByKey('business_logo', 'Business Information', true)
+          ])
+          
+          if (nameResponse.success && nameResponse.data && nameResponse.data.value) {
+            setBusinessName(nameResponse.data.value)
+          }
+          
+          if (logoResponse.success && logoResponse.data && logoResponse.data.value) {
+            const logoPath = logoResponse.data.value
+            let logoUrl
+            if (logoPath.startsWith('http')) {
+              logoUrl = logoPath
+            } else {
+              let baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+              baseUrl = baseUrl.replace(/\/+$/, '')
+              if (baseUrl.includes('/admin/api')) {
+                logoUrl = `${baseUrl}/storage/${logoPath}`
+              } else if (baseUrl.includes('/admin')) {
+                logoUrl = `${baseUrl}/api/storage/${logoPath}`
+              } else {
+                baseUrl = baseUrl.replace(/\/api\/?$/, '')
+                logoUrl = `${baseUrl}/storage/${logoPath}`
+              }
+            }
+            setBusinessLogo(logoUrl)
+          }
+        } catch (error) {
+          console.warn('Failed to fetch business info:', error)
+        }
+      }
+      fetchBusinessInfo()
+    }
+    
+    getBusinessInfo()
+    
+    // Listen for settings updates
+    const handleSettingsUpdate = (e) => {
+      try {
+        let settings = null
+        if (e.type === 'storage' && e.key === 'app_settings') {
+          settings = e.newValue ? JSON.parse(e.newValue) : null
+        } else if (e.type === 'settingsUpdated') {
+          settings = e.detail || null
+        }
+        
+        if (settings) {
+          if (settings.company_name) {
+            setBusinessName(settings.company_name)
+          }
+          if (settings.business_logo) {
+            setBusinessLogo(settings.business_logo)
+          } else if (settings.business_logo === null) {
+            setBusinessLogo(null)
+          }
+        }
+      } catch (error) {
+        console.warn('Failed to parse updated app settings:', error)
+      }
+    }
+    
+    window.addEventListener('storage', handleSettingsUpdate)
+    window.addEventListener('settingsUpdated', handleSettingsUpdate)
+    
+    return () => {
+      window.removeEventListener('storage', handleSettingsUpdate)
+      window.removeEventListener('settingsUpdated', handleSettingsUpdate)
+    }
+  }, [])
 
   useEffect(() => {
     document.addEventListener('scroll', () => {
@@ -57,44 +149,86 @@ const AppHeader = () => {
     })
   }
 
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen()
+    } else {
+      document.exitFullscreen()
+    }
+  }
+
   return (
-    <CHeader position="sticky" className="mb-0 p-0" ref={headerRef}>
-      <CContainer className="border-bottom px-4" fluid>
-        <CHeaderToggler
-          onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
-          style={{ marginInlineStart: '-14px' }}
-        >
-          <CIcon icon={cilMenu} size="lg" />
-        </CHeaderToggler>
-        <CHeaderNav className="d-none d-md-flex">
-          {user && (
-            <div className="text-center">
-              <div className="fw-semibold text-dark" style={{ fontSize: '0.9rem' }}>
-                Welcome {user.firstName} {user.lastName}
-              </div>
+    <CHeader position="sticky" className="mb-0 p-0 horizontal-header" ref={headerRef}>
+      {/* First Row - Logo, Hotel Name, Welcome, Watch, Fullscreen, User */}
+      <div className="top-header-bar">
+        <div className="top-header-container">
+          <div className="top-header-content">
+            {/* Left: Logo + Hotel Name */}
+            <div className="header-left-section">
+              <img
+                src={businessLogo || logoImg}
+                alt={businessName}
+                className="header-logo"
+                onError={(e) => {
+                  if (e.target.src !== logoImg) {
+                    e.target.src = logoImg
+                  }
+                }}
+              />
+              <h5 className="mb-0 text-white fw-bold brand-name">
+                {businessName}
+              </h5>
             </div>
-          )}
-        </CHeaderNav>
-        <CHeaderNav className="ms-auto">
-          <div className="d-flex align-items-center px-3 me-3">
-            <div className="text-center">
-              <div className="fw-bold text-primary" style={{ fontSize: '1rem', fontFamily: 'monospace' }}>
-                {formatTime(currentTime)}
+
+            {/* Middle: Welcome Message */}
+            <div className="header-center-section">
+              {user && (
+                <div className="text-white welcome-message">
+                  Welcome, <span className="fw-semibold">{user.firstName} {user.lastName}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Right: Module Switcher + Watch + Fullscreen + User */}
+            <div className="header-right-section">
+              {/* Module Switcher */}
+              <ModuleSwitcher />
+
+              {/* Watch/Time */}
+              <div className="watch-container">
+                <FontAwesomeIcon icon={faClock} className="text-white watch-icon" />
+                <div className="text-white watch-time">
+                  <div className="fw-bold watch-time-display">
+                    {formatTime(currentTime)}
+                  </div>
+                  <div className="watch-date-display">
+                    {formatDate(currentTime)}
+                  </div>
+                </div>
               </div>
-              <div className="text-muted small" style={{ fontSize: '0.7rem' }}>
-                {formatDate(currentTime)}
+
+              {/* Fullscreen Button */}
+              <button 
+                className="header-action-btn" 
+                title="Fullscreen"
+                onClick={toggleFullscreen}
+              >
+                <FontAwesomeIcon icon={faExpand} />
+              </button>
+
+              {/* User Button */}
+              <div className="header-user-section">
+                <AppHeaderDropdown />
               </div>
             </div>
           </div>
-          <ThemeToggle />
-        </CHeaderNav>
-        <CHeaderNav>
-          <AppHeaderDropdown />
-        </CHeaderNav>
-      </CContainer>
-      <CContainer className="px-4" fluid>
-        <AppBreadcrumb />
-      </CContainer>
+        </div>
+      </div>
+
+      {/* Second Row - Horizontal Navigation Menu */}
+      <div className="horizontal-nav-container">
+        <AppHorizontalNav />
+      </div>
     </CHeader>
   )
 }

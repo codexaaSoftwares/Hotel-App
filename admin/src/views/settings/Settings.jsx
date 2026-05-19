@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Container, Row, Col, Button, Spinner, Form, FormControl, FormSelect, FormText, Alert } from 'react-bootstrap'
+import { Container, Row, Col, Button, Spinner, Form, FormControl, FormText, Alert } from 'react-bootstrap'
+import { SelectField } from '../../components/common/FormFields'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBuilding, faEnvelope, faGlobe, faSave, faCheckCircle, faFileInvoice, faPaperPlane, faCog, faImage, faUpload, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faBuilding, faEnvelope, faSave, faCheckCircle, faPaperPlane, faCog, faImage, faUpload, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { useToast } from '../../components'
 import { settingsService } from '../../services/settingsService'
 import { usePermissions } from '../../hooks'
 import { PERMISSIONS } from '../../constants/permissions'
+import { getImageUrl } from '../../utils/imageUtils'
 
 const Settings = () => {
   const { hasPermission } = usePermissions()
@@ -21,21 +23,12 @@ const Settings = () => {
 
   const [settingsData, setSettingsData] = useState({
     businessInfo: {
-      company_name: 'Codexaa Base Project',
+      company_name: 'Teja Hotel',
       business_email: '',
       business_phone: '',
       business_website: '',
       gstNumber: '',
       businessAddress: ''
-    },
-    invoiceSettings: {
-      invoice_prefix: 'INV',
-      invoice_business_name: '',
-      invoice_business_website: '',
-      invoice_business_address: '',
-      invoice_contact_phone: '',
-      invoice_contact_email: '',
-      invoice_footer_text: ''
     },
     emailSettings: {
       mailer: 'smtp',
@@ -46,11 +39,6 @@ const Settings = () => {
       encryption: 'tls',
       from_address: '',
       from_name: ''
-    },
-    currencyRegional: {
-      currency: 'INR',
-      dateFormat: 'DD/MM/YYYY',
-      timeZone: 'Asia/Kolkata'
     },
     appSettings: {
       web_url: ''
@@ -77,13 +65,6 @@ const Settings = () => {
     'businessInfo.business_website': { key: 'business_website', section: 'Business Information' },
     'businessInfo.gstNumber': { key: 'gstNumber', section: 'Business Information' },
     'businessInfo.businessAddress': { key: 'businessAddress', section: 'Business Information' },
-    'invoiceSettings.invoice_prefix': { key: 'invoice_prefix', section: 'Invoice Settings' },
-    'invoiceSettings.invoice_business_name': { key: 'invoice_business_name', section: 'Invoice Settings' },
-    'invoiceSettings.invoice_business_website': { key: 'invoice_business_website', section: 'Invoice Settings' },
-    'invoiceSettings.invoice_business_address': { key: 'invoice_business_address', section: 'Invoice Settings' },
-    'invoiceSettings.invoice_contact_phone': { key: 'invoice_contact_phone', section: 'Invoice Settings' },
-    'invoiceSettings.invoice_contact_email': { key: 'invoice_contact_email', section: 'Invoice Settings' },
-    'invoiceSettings.invoice_footer_text': { key: 'invoice_footer_text', section: 'Invoice Settings' },
     'emailSettings.mailer': { key: 'mailer', section: 'Email Settings' },
     'emailSettings.host': { key: 'host', section: 'Email Settings' },
     'emailSettings.port': { key: 'port', section: 'Email Settings' },
@@ -92,9 +73,6 @@ const Settings = () => {
     'emailSettings.encryption': { key: 'encryption', section: 'Email Settings' },
     'emailSettings.from_address': { key: 'from_address', section: 'Email Settings' },
     'emailSettings.from_name': { key: 'from_name', section: 'Email Settings' },
-    'currencyRegional.currency': { key: 'currency', section: 'Currency & Regional' },
-    'currencyRegional.dateFormat': { key: 'dateFormat', section: 'Currency & Regional' },
-    'currencyRegional.timeZone': { key: 'timeZone', section: 'Currency & Regional' },
     'appSettings.web_url': { key: 'web_url', section: 'App Settings' }
   }
 
@@ -128,35 +106,13 @@ const Settings = () => {
         // Load business logo
         const logoResponse = await settingsService.getSettingByKey('business_logo', 'Business Information', true)
         if (logoResponse.success && logoResponse.data && logoResponse.data.value) {
-          const logoPath = logoResponse.data.value
-          // Convert storage path to URL
-          // For subdirectory installations like /admin/api, storage is at /admin/api/storage/
-          let logoUrl
-          if (logoPath.startsWith('http')) {
-            // Already a full URL, use it as is
-            logoUrl = logoPath
-          } else {
-            // Construct URL from API base URL
-            let baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
-            // Remove trailing slash if present
-            baseUrl = baseUrl.replace(/\/+$/, '')
-            // For subdirectory installations (/admin/api), storage is at /admin/api/storage/
-            // If baseUrl includes /admin/api, use it as is
-            if (baseUrl.includes('/admin/api')) {
-              logoUrl = `${baseUrl}/storage/${logoPath}`
-            } else if (baseUrl.includes('/admin')) {
-              // If baseUrl is /admin, add /api/storage
-              logoUrl = `${baseUrl}/api/storage/${logoPath}`
-            } else {
-              // For root installations, remove /api if present and add /storage
-              baseUrl = baseUrl.replace(/\/api\/?$/, '')
-              logoUrl = `${baseUrl}/storage/${logoPath}`
+          const logoUrl = getImageUrl(logoResponse.data.url, logoResponse.data.value)
+          if (logoUrl) {
+            if (import.meta.env.DEV) {
+              console.log('[Settings] Logo loaded:', { logoUrl, logoResponse: logoResponse.data })
             }
+            setLogoPreview(logoUrl)
           }
-          
-          // Add cache busting to prevent browser caching issues
-          const logoUrlWithCache = `${logoUrl}?t=${Date.now()}`
-          setLogoPreview(logoUrlWithCache)
         }
       } catch (err) {
         // If error occurs, use default values
@@ -351,10 +307,19 @@ const Settings = () => {
       const result = await settingsService.uploadLogo(file)
       if (result.success) {
         success('Logo uploaded successfully')
-        // Use URL from backend response, add cache busting
-        const logoUrl = result.data.url || result.data.path
-        const logoUrlWithCache = logoUrl ? `${logoUrl}?t=${Date.now()}` : null
-        setLogoPreview(logoUrlWithCache)
+        // Use URL from backend response (backend returns full URL in result.data.url)
+        const logoUrl = result.data?.url
+        if (logoUrl) {
+          // Use logo URL directly (backend handles caching via headers)
+          setLogoPreview(logoUrl)
+          
+          if (import.meta.env.DEV) {
+            console.log('[Settings] Logo uploaded:', { logoUrl, resultData: result.data })
+          }
+        } else {
+          console.error('[Settings] Logo URL not found in response:', result.data)
+          error('Logo uploaded but URL not received')
+        }
         
         // Update localStorage settings for immediate sidebar update
         try {
@@ -428,9 +393,9 @@ const Settings = () => {
   const renderBusinessInfo = () => (
     <div className="mb-5">
       {/* Section Header */}
-      <div className="d-flex align-items-center mb-4 pb-3 border-bottom border-success border-2">
-        <FontAwesomeIcon icon={faBuilding} className="me-3 text-success fs-4" />
-        <h4 className="mb-0 text-success">Business Information</h4>
+      <div className="d-flex align-items-center mb-4 pb-3 border-bottom border-primary border-2">
+        <FontAwesomeIcon icon={faBuilding} className="me-3 text-primary fs-4" />
+        <h4 className="mb-0 text-primary">Business Information</h4>
       </div>
 
       <Row>
@@ -482,9 +447,13 @@ const Settings = () => {
                       padding: '8px',
                       backgroundColor: '#f8f9fa'
                     }}
-                    onError={() => {
-                      setLogoPreview(null)
-                      error('Failed to load logo image')
+                    onError={(e) => {
+                      console.error('[Settings] Failed to load logo image:', {
+                        src: logoPreview,
+                        error: e
+                      })
+                      // Don't clear the preview immediately - might be a temporary network issue
+                      // Just log the error for debugging
                     }}
                   />
                   {!isReadOnly && (
@@ -643,182 +612,6 @@ const Settings = () => {
     </div>
   )
 
-  const renderInvoiceSettings = () => (
-    <div className="mb-5">
-      {/* Section Header */}
-      <div className="d-flex align-items-center mb-4 pb-3 border-bottom border-success border-2">
-        <FontAwesomeIcon icon={faFileInvoice} className="me-3 text-success fs-4" />
-        <h4 className="mb-0 text-success">Invoice Settings</h4>
-      </div>
-
-      <Row>
-        <Col md={6}>
-          <Form.Group className="mb-3">
-            <Form.Label className="fw-semibold">
-              Invoice Prefix
-              {autoSaving['invoiceSettings.invoice_prefix'] && (
-                <Spinner size="sm" className="ms-2" variant="primary" />
-              )}
-              {autoSaved['invoiceSettings.invoice_prefix'] && (
-                <FontAwesomeIcon icon={faCheckCircle} className="ms-2 text-success" />
-              )}
-            </Form.Label>
-            <FormControl
-              placeholder="INV"
-              value={settingsData.invoiceSettings.invoice_prefix}
-              onChange={(e) => handleChange('invoiceSettings', 'invoice_prefix', e.target.value)}
-              onBlur={(e) => handleBlur('invoiceSettings', 'invoice_prefix', e.target.value)}
-              className="border-2"
-            />
-            <FormText className="text-muted">Prefix for invoice numbers (e.g., INV-001, ORD-001)</FormText>
-          </Form.Group>
-        </Col>
-      </Row>
-
-      <Row>
-        <Col md={6}>
-          <Form.Group className="mb-3">
-            <Form.Label className="fw-semibold">
-              Invoice Business Name
-              {autoSaving['invoiceSettings.invoice_business_name'] && (
-                <Spinner size="sm" className="ms-2" variant="primary" />
-              )}
-              {autoSaved['invoiceSettings.invoice_business_name'] && (
-                <FontAwesomeIcon icon={faCheckCircle} className="ms-2 text-success" />
-              )}
-            </Form.Label>
-            <FormControl
-              placeholder="Your Business Name"
-              value={settingsData.invoiceSettings.invoice_business_name}
-              onChange={(e) => handleChange('invoiceSettings', 'invoice_business_name', e.target.value)}
-              onBlur={(e) => handleBlur('invoiceSettings', 'invoice_business_name', e.target.value)}
-              className="border-2"
-            />
-            <FormText className="text-muted">Business name to display on invoices</FormText>
-          </Form.Group>
-        </Col>
-        <Col md={6}>
-          <Form.Group className="mb-3">
-            <Form.Label className="fw-semibold">
-              Invoice Business Website
-              {autoSaving['invoiceSettings.invoice_business_website'] && (
-                <Spinner size="sm" className="ms-2" variant="primary" />
-              )}
-              {autoSaved['invoiceSettings.invoice_business_website'] && (
-                <FontAwesomeIcon icon={faCheckCircle} className="ms-2 text-success" />
-              )}
-            </Form.Label>
-            <FormControl
-              placeholder="https://www.example.com"
-              value={settingsData.invoiceSettings.invoice_business_website}
-              onChange={(e) => handleChange('invoiceSettings', 'invoice_business_website', e.target.value)}
-              onBlur={(e) => handleBlur('invoiceSettings', 'invoice_business_website', e.target.value)}
-              className="border-2"
-            />
-            <FormText className="text-muted">Business website URL to display on invoices</FormText>
-          </Form.Group>
-        </Col>
-      </Row>
-
-      <Row>
-        <Col md={12}>
-          <Form.Group className="mb-3">
-            <Form.Label className="fw-semibold">
-              Invoice Business Address
-              {autoSaving['invoiceSettings.invoice_business_address'] && (
-                <Spinner size="sm" className="ms-2" variant="primary" />
-              )}
-              {autoSaved['invoiceSettings.invoice_business_address'] && (
-                <FontAwesomeIcon icon={faCheckCircle} className="ms-2 text-success" />
-              )}
-            </Form.Label>
-            <FormControl
-              as="textarea"
-              rows={3}
-              placeholder="Street Address, City, State, ZIP Code"
-              value={settingsData.invoiceSettings.invoice_business_address}
-              onChange={(e) => handleChange('invoiceSettings', 'invoice_business_address', e.target.value)}
-              onBlur={(e) => handleBlur('invoiceSettings', 'invoice_business_address', e.target.value)}
-              className="border-2"
-            />
-            <FormText className="text-muted">Complete business address to display on invoices</FormText>
-          </Form.Group>
-        </Col>
-      </Row>
-
-      <Row>
-        <Col md={6}>
-          <Form.Group className="mb-3">
-            <Form.Label className="fw-semibold">
-              Invoice Contact Phone
-              {autoSaving['invoiceSettings.invoice_contact_phone'] && (
-                <Spinner size="sm" className="ms-2" variant="primary" />
-              )}
-              {autoSaved['invoiceSettings.invoice_contact_phone'] && (
-                <FontAwesomeIcon icon={faCheckCircle} className="ms-2 text-success" />
-              )}
-            </Form.Label>
-            <FormControl
-              placeholder="+1 234 567 8900"
-              value={settingsData.invoiceSettings.invoice_contact_phone}
-              onChange={(e) => handleChange('invoiceSettings', 'invoice_contact_phone', e.target.value)}
-              onBlur={(e) => handleBlur('invoiceSettings', 'invoice_contact_phone', e.target.value)}
-              className="border-2"
-            />
-            <FormText className="text-muted">Contact phone number to display on invoices</FormText>
-          </Form.Group>
-        </Col>
-        <Col md={6}>
-          <Form.Group className="mb-3">
-            <Form.Label className="fw-semibold">
-              Invoice Contact Email
-              {autoSaving['invoiceSettings.invoice_contact_email'] && (
-                <Spinner size="sm" className="ms-2" variant="primary" />
-              )}
-              {autoSaved['invoiceSettings.invoice_contact_email'] && (
-                <FontAwesomeIcon icon={faCheckCircle} className="ms-2 text-success" />
-              )}
-            </Form.Label>
-            <FormControl
-              type="email"
-              placeholder="contact@example.com"
-              value={settingsData.invoiceSettings.invoice_contact_email}
-              onChange={(e) => handleChange('invoiceSettings', 'invoice_contact_email', e.target.value)}
-              onBlur={(e) => handleBlur('invoiceSettings', 'invoice_contact_email', e.target.value)}
-              className="border-2"
-            />
-            <FormText className="text-muted">Contact email address to display on invoices</FormText>
-          </Form.Group>
-        </Col>
-      </Row>
-
-      <Row>
-        <Col md={12}>
-          <Form.Group className="mb-3">
-            <Form.Label className="fw-semibold">
-              Invoice Footer Text
-              {autoSaving['invoiceSettings.invoice_footer_text'] && (
-                <Spinner size="sm" className="ms-2" variant="primary" />
-              )}
-              {autoSaved['invoiceSettings.invoice_footer_text'] && (
-                <FontAwesomeIcon icon={faCheckCircle} className="ms-2 text-success" />
-              )}
-            </Form.Label>
-            <FormControl
-              as="textarea"
-              rows={3}
-              placeholder="Thank you for your business!"
-              value={settingsData.invoiceSettings.invoice_footer_text}
-              onChange={(e) => handleChange('invoiceSettings', 'invoice_footer_text', e.target.value)}
-              onBlur={(e) => handleBlur('invoiceSettings', 'invoice_footer_text', e.target.value)}
-              className="border-2"
-            />
-            <FormText className="text-muted">Footer text/message to display at the bottom of invoices</FormText>
-          </Form.Group>
-        </Col>
-      </Row>
-    </div>
-  )
 
   const handleSaveEmailSettings = async () => {
     if (!canEditSettings) {
@@ -944,9 +737,9 @@ const Settings = () => {
   const renderEmailSettings = () => (
     <div className="mb-5">
       {/* Section Header */}
-      <div className="d-flex align-items-center mb-4 pb-3 border-bottom border-success border-2">
-        <FontAwesomeIcon icon={faEnvelope} className="me-3 text-success fs-4" />
-        <h4 className="mb-0 text-success">Email Settings</h4>
+      <div className="d-flex align-items-center mb-4 pb-3 border-bottom border-primary border-2">
+        <FontAwesomeIcon icon={faEnvelope} className="me-3 text-primary fs-4" />
+        <h4 className="mb-0 text-primary">Email Settings</h4>
       </div>
 
       <Row>
@@ -1044,7 +837,7 @@ const Settings = () => {
           <Form.Group className="mb-3">
             <Form.Label className="fw-semibold">From Name</Form.Label>
             <FormControl
-              placeholder="e.g., Codexaa Base Project"
+              placeholder="e.g., Teja Hotel"
               value={settingsData.emailSettings.from_name}
               onChange={(e) => handleChange('emailSettings', 'from_name', e.target.value)}
               onBlur={(e) => handleBlur('emailSettings', 'from_name', e.target.value)}
@@ -1165,70 +958,6 @@ const Settings = () => {
     </div>
   )
 
-  const renderCurrencyRegional = () => (
-    <div className="mb-5">
-      {/* Section Header */}
-      <div className="d-flex align-items-center mb-4 pb-3 border-bottom border-success border-2">
-        <FontAwesomeIcon icon={faGlobe} className="me-3 text-success fs-4" />
-        <h4 className="mb-0 text-success">Currency & Regional Settings</h4>
-      </div>
-
-      <Row>
-        <Col md={4}>
-          <Form.Group className="mb-3">
-            <Form.Label className="fw-semibold">Currency</Form.Label>
-            <FormSelect
-              value={settingsData.currencyRegional.currency}
-              onChange={(e) => handleChange('currencyRegional', 'currency', e.target.value)}
-              onBlur={(e) => handleBlur('currencyRegional', 'currency', e.target.value)}
-              className="border-2"  
-            >
-              <option value="INR">Indian Rupee (INR)</option>
-              <option value="NZD">New Zealand Dollar (NZD)</option>
-              <option value="USD">US Dollar (USD)</option>
-              <option value="EUR">Euro (EUR)</option>
-              <option value="GBP">British Pound (GBP)</option>
-              <option value="AUD">Australian Dollar (AUD)</option>
-            </FormSelect>
-          </Form.Group>
-        </Col>
-        <Col md={4}>
-          <Form.Group className="mb-3">
-            <Form.Label className="fw-semibold">Date Format</Form.Label>
-            <FormSelect
-              value={settingsData.currencyRegional.dateFormat}
-              onChange={(e) => handleChange('currencyRegional', 'dateFormat', e.target.value)}
-              onBlur={(e) => handleBlur('currencyRegional', 'dateFormat', e.target.value)}
-              className="border-2"
-            >
-              <option value="DD/MM/YYYY">DD/MM/YYYY</option>
-              <option value="MM/DD/YYYY">MM/DD/YYYY</option>
-              <option value="YYYY-MM-DD">YYYY-MM-DD</option>
-              <option value="DD-MM-YYYY">DD-MM-YYYY</option>
-            </FormSelect>
-          </Form.Group>
-        </Col>
-        <Col md={4}>
-          <Form.Group className="mb-3">
-            <Form.Label className="fw-semibold">Time Zone</Form.Label>
-            <FormSelect
-              value={settingsData.currencyRegional.timeZone}
-              onChange={(e) => handleChange('currencyRegional', 'timeZone', e.target.value)}
-              onBlur={(e) => handleBlur('currencyRegional', 'timeZone', e.target.value)}
-              className="border-2"
-            >
-              <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
-              <option value="Pacific/Auckland">Pacific/Auckland (NZDT/NZST)</option>
-              <option value="UTC">UTC</option>
-              <option value="America/New_York">America/New_York (EST/EDT)</option>
-              <option value="Europe/London">Europe/London (GMT/BST)</option>
-              <option value="Asia/Tokyo">Asia/Tokyo (JST)</option>
-            </FormSelect>
-          </Form.Group>
-        </Col>
-      </Row>
-    </div>
-  )
 
   if (loading) {
     return (
@@ -1290,10 +1019,8 @@ const Settings = () => {
           <div className="bg-white rounded-3 shadow-sm p-4">
             <fieldset disabled={isReadOnly} style={{ border: 'none', padding: 0, margin: 0 }}>
               {renderBusinessInfo()}
-              {renderInvoiceSettings()}
               {renderEmailSettings()}
               {renderAppSettings()}
-              {renderCurrencyRegional()}
             </fieldset>
             
             {/* Bottom Save Button */}

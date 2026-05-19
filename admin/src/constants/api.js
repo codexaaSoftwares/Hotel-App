@@ -108,14 +108,38 @@ export const API_ENDPOINTS = {
     PREFERENCES: '/notifications/preferences',
   },
 
-  // Branch Management
-  BRANCHES: {
-    BASE: '/branches',
-    LIST: '/branches',
-    CREATE: '/branches',
-    GET_BY_ID: (id) => `/branches/${id}`,
-    UPDATE: (id) => `/branches/${id}`,
-    DELETE: (id) => `/branches/${id}`,
+  // Customer Management
+  CUSTOMERS: {
+    BASE: '/customers',
+    LIST: '/customers',
+    CREATE: '/customers',
+    GET_BY_ID: (id) => `/customers/${id}`,
+    UPDATE: (id) => `/customers/${id}`,
+    DELETE: (id) => `/customers/${id}`,
+  },
+
+  // Wallet Transaction Management
+  WALLET_TRANSACTIONS: {
+    BASE: '/wallet-transactions',
+    LIST: '/wallet-transactions',
+    CREATE: '/wallet-transactions',
+    GET_BY_ID: (id) => `/wallet-transactions/${id}`,
+    UPDATE: (id) => `/wallet-transactions/${id}`,
+    DELETE: (id) => `/wallet-transactions/${id}`,
+    GET_BY_CUSTOMER: (customerId) => `/customers/${customerId}/wallet-transactions`,
+    EXPORT_CUSTOMER_LEDGER: (customerId) => `/customers/${customerId}/wallet-transactions/export`,
+  },
+
+  // Bill Management
+  BILLS: {
+    BASE: '/bills',
+    LIST: '/bills',
+    CREATE: '/bills',
+    GET_BY_ID: (id) => `/bills/${id}`,
+    UPDATE: (id) => `/bills/${id}`,
+    DELETE: (id) => `/bills/${id}`,
+    GET_BY_TABLE: (tableId) => `/bills/table/${tableId}`,
+    PROCESS_PAYMENT: (id) => `/bills/${id}/process-payment`,
   },
 
   // Reports
@@ -123,9 +147,49 @@ export const API_ENDPOINTS = {
     BASE: '/reports',
     SALES: '/reports/sales',
     LEDGER: '/reports/ledger',
-    BRANCH: '/reports/branch',
     STAFF: '/reports/staff',
     EXPORT: (type) => `/reports/${type}/export`,
+  },
+
+  // Staff Management
+  STAFF: {
+    BASE: '/staff',
+    LIST: '/staff',
+    CREATE: '/staff',
+    GET_BY_ID: (id) => `/staff/${id}`,
+    UPDATE: (id) => `/staff/${id}`,
+    DELETE: (id) => `/staff/${id}`,
+  },
+
+  // Salary Payments
+  SALARY_PAYMENTS: {
+    BASE: '/salary-payments',
+    LIST: '/salary-payments',
+    CREATE: '/salary-payments',
+    GET_BY_ID: (id) => `/salary-payments/${id}`,
+    UPDATE: (id) => `/salary-payments/${id}`,
+    DELETE: (id) => `/salary-payments/${id}`,
+    GET_BY_STAFF: (staffId) => `/staff/${staffId}/salary-payments`,
+  },
+
+  // Expense Category Management
+  EXPENSE_CATEGORIES: {
+    BASE: '/expense-categories',
+    LIST: '/expense-categories',
+    CREATE: '/expense-categories',
+    GET_BY_ID: (id) => `/expense-categories/${id}`,
+    UPDATE: (id) => `/expense-categories/${id}`,
+    DELETE: (id) => `/expense-categories/${id}`,
+  },
+
+  // Expense Management
+  EXPENSES: {
+    BASE: '/expenses',
+    LIST: '/expenses',
+    CREATE: '/expenses',
+    GET_BY_ID: (id) => `/expenses/${id}`,
+    UPDATE: (id) => `/expenses/${id}`,
+    DELETE: (id) => `/expenses/${id}`,
   },
 }
 

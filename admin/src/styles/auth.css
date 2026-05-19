@@ -538,21 +538,21 @@ html[data-coreui-theme="dark"] .auth-card {
 }
 
 html[data-coreui-theme="dark"] .auth-card::before {
-  background: linear-gradient(90deg, #a78bfa, #8b5cf6, #a78bfa) !important;
+  background: linear-gradient(90deg, #14b8a6, #0d9488, #14b8a6) !important;
 }
 
 /* Dark Theme Auth Logo Section */
 html[data-coreui-theme="dark"] .auth-logo-icon {
-  background: linear-gradient(135deg, #a78bfa, #8b5cf6) !important;
-  box-shadow: 0 10px 30px rgba(167, 139, 250, 0.3) !important;
+  background: linear-gradient(135deg, #14b8a6, #0d9488) !important;
+  box-shadow: 0 10px 30px rgba(20, 184, 166, 0.3) !important;
 }
 
 html[data-coreui-theme="dark"] .auth-logo-icon::before {
-  background: linear-gradient(135deg, #a78bfa, #8b5cf6) !important;
+  background: linear-gradient(135deg, #14b8a6, #0d9488) !important;
 }
 
 html[data-coreui-theme="dark"] .auth-logo-title {
-  color: #a78bfa !important;
+  color: #14b8a6 !important;
 }
 
 html[data-coreui-theme="dark"] .auth-logo-subtitle {
@@ -567,8 +567,8 @@ html[data-coreui-theme="dark"] .auth-input {
 }
 
 html[data-coreui-theme="dark"] .auth-input:focus {
-  border-color: #a78bfa !important;
-  box-shadow: 0 0 0 0.3rem rgba(167, 139, 250, 0.2) !important;
+  border-color: #14b8a6 !important;
+  box-shadow: 0 0 0 0.3rem rgba(20, 184, 166, 0.2) !important;
   background: rgba(75, 85, 99, 0.95) !important;
 }
 

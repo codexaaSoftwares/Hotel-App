@@ -27,7 +27,7 @@ const config = {
 
   // App Information
   app: {
-    name: import.meta.env.VITE_APP_NAME || 'Codexaa Base Project',
+    name: import.meta.env.VITE_APP_NAME || 'Teja Hotel',
     version: import.meta.env.VITE_APP_VERSION || '1.0.0',
     description: import.meta.env.VITE_APP_DESCRIPTION || 'Base Project Template for Codexaa Applications',
   },

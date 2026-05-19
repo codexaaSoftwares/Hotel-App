@@ -1,4 +1,4 @@
-# Hotel Management Web Application
+# Teja Hotel - Hotel Management Web Application
 
 A comprehensive web application for managing hotel restaurant operations, room bookings, billing, and financial management.
 
@@ -21,7 +21,8 @@ cd backend
 composer install
 cp .env.example .env
 php artisan key:generate
-php artisan migrate
+php artisan migrate:fresh
+# optional:
 php artisan db:seed
 php artisan serve
 ```
@@ -47,7 +48,9 @@ API will be available at [http://localhost:8000/api](http://localhost:8000/api)
 Hotel-App/
 ├── admin/          # React frontend (admin panel)
 ├── backend/        # Laravel API backend
-└── structure & development guideline/  # Documentation
+├── scope/          # Product scope & feature specs
+├── structure & development guideline/  # Dev guidelines (API, DB, deploy)
+└── PROJECT_START_HERE.md  # Documentation index — read this first
 ```
 
 ## 🔧 Environment Setup
@@ -55,7 +58,11 @@ Hotel-App/
 1. Copy `admin/env.example` to `admin/.env.local`
 2. Copy `backend/env.example` to `backend/.env`
 3. Update database credentials and API URLs
-4. Run migrations and seeders
+4. Run `php artisan migrate:fresh` (and optionally `php artisan db:seed`) in `backend/`
+
+## 📚 Documentation
+
+Start with **[PROJECT_START_HERE.md](PROJECT_START_HERE.md)** for a map of all docs in `scope/` and `structure & development guideline/`.
 
 ## 📝 Development
 

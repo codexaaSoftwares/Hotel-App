@@ -5,6 +5,7 @@ import AppFooter from './layout/AppFooter'
 import AppHeader from './layout/AppHeader'
 import AppSidebar from './layout/AppSidebar'
 import { AppSidebarNav } from './layout/AppSidebarNav'
+import AppHorizontalNav from './layout/AppHorizontalNav'
 import PermissionRoute from './layout/PermissionRoute'
 import { AppHeaderDropdown } from './layout/header'
 
@@ -46,6 +47,7 @@ export {
   AppHeaderDropdown,
   AppSidebar,
   AppSidebarNav,
+  AppHorizontalNav,
   PermissionRoute,
   
   // Common
